@@ -9,6 +9,7 @@ import {relicStats} from "@/types.ts";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
+
     const titlePartRef = React.useRef<HTMLCanvasElement>(null);
     const mainStatsPartRef = React.useRef<HTMLCanvasElement>(null);
     const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
@@ -53,7 +54,7 @@ function App() {
 
         const worker = await createWorker('eng');
         const res = await window.ipcRenderer.captureScreen();
-        const croppedImage = res.crop({x: 10, y: 0, width: 500, height: 800});
+        const croppedImage = res.crop({x: 1400, y: 0, width: 445, height: 800});
 
         try {
             // trash icon
@@ -69,13 +70,13 @@ function App() {
             const minMaxLocTrashIcon = cv.minMaxLoc(trashIconRes);
 
             // anything above the trash icon should contain the relic title
-            const relicTitleRGB = ImageUtils.matCrop(imgRGB, 0, 100, 500, 90);
+            const relicTitleRGB = ImageUtils.matCrop(imgRGB, 0, 100, 445, 70);
 
             // anything below the trash icon should contain the relic stats
-            const relicMainStatsRGB = ImageUtils.matCrop(imgRGB, 0, minMaxLocTrashIcon.maxLoc.y + trashIconGray.rows + 50, 500, 50);
+            const relicMainStatsRGB = ImageUtils.matCrop(imgRGB, 0, minMaxLocTrashIcon.maxLoc.y + trashIconGray.rows + 50, 445, 50);
 
             // anything below the relic stats should contain the relic sub stats
-            const relicSubStatsRGB = ImageUtils.matCrop(imgRGB, 0, minMaxLocTrashIcon.maxLoc.y + trashIconGray.rows + 100, 500, imgGray.rows - 100 - minMaxLocTrashIcon.maxLoc.y - trashIconGray.rows);
+            const relicSubStatsRGB = ImageUtils.matCrop(imgRGB, 0, minMaxLocTrashIcon.maxLoc.y + trashIconGray.rows + 100, 445, imgGray.rows - 100 - minMaxLocTrashIcon.maxLoc.y - trashIconGray.rows);
 
 
             // convert each part to HSV
@@ -136,7 +137,8 @@ function App() {
                 <h4>{relicTitle}</h4>
                 <h4>Main Stats:</h4>
                 {
-                    mainRelicStatsError ? <div className={"error"}>{mainRelicStatsError}</div> :
+                    mainRelicStatsError || mainRelicStats.length == 0 ?
+                        <div className={"error"}>{mainRelicStatsError}</div> :
                         <div className={"statsContainer"}>
                             {
                                 mainRelicStats.map((stat, index) => (
@@ -150,7 +152,8 @@ function App() {
                 }
                 <h4>Sub Stats:</h4>
                 {
-                    subRelicStatsError ? <div className={"error"}>{subRelicStatsError}</div> :
+                    subRelicStatsError || subRelicStats.length == 0 ?
+                        <div className={"error"}>{subRelicStatsError}</div> :
                         <div className={"statsContainer"}>
                             {
                                 subRelicStats.map((stat, index) => (
