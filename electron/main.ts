@@ -1,4 +1,4 @@
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, desktopCapturer, ipcMain} from 'electron'
 import {createRequire} from 'node:module'
 import {fileURLToPath} from 'node:url'
 import path from 'node:path'
@@ -32,6 +32,24 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.mjs'),
         },
+    })
+
+    ipcMain.handle('ping', () => 'pong')
+
+    ipcMain.handle('capture-screen', async () => {
+        const sources = await desktopCapturer.getSources({
+            types: ['window'],
+            thumbnailSize: {width: 1920, height: 1080}
+        });
+
+        // Filter to find a specific window, e.g., by its name
+        const specificWindow = sources.find(source => source.name.includes('Honkai: Star Rail'));
+
+        if (specificWindow) {
+            return specificWindow.thumbnail;
+        } else {
+            return null; // Handle case where no matching window is found
+        }
     })
 
     // Test active push message to Renderer-process.

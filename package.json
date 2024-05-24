@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@techstark/opencv-js": "^4.9.0-release.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tesseract.js": "^5.1.0",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "devDependencies": {
