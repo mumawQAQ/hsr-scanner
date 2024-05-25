@@ -5,6 +5,7 @@ import './App.css';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "@/types.ts";
+import relic from "@/data/relic.ts";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -28,6 +29,15 @@ function App() {
     const [subRelicStatsError, setSubRelicStatsError] = useState<string | null>(null);
 
     const [absoluteScore, setAbsoluteScore] = useState('');
+    const [isMostValuableRelic, setIsMostValuableRelic] = useState(false);
+    const [isValuableRelic, setIsValuableRelic] = useState(false);
+    const [isValuableMainStats, setIsValuableMainStats] = useState(false);
+    const [isValuableSubStats, setIsValuableSubStats] = useState<{ [index: number]: boolean }>({
+        1: false,
+        2: false,
+        3: false,
+        4: false
+    });
 
     useEffect(() => {
         // Initialize the worker
@@ -66,6 +76,15 @@ function App() {
     }, [currentImage, workerInitialized, scanningInterval, scanningStatus]);
 
     useEffect(() => {
+        setIsMostValuableRelic(false)
+        setIsValuableRelic(false);
+        setIsValuableMainStats(false);
+        setIsValuableSubStats({
+            1: false,
+            2: false,
+            3: false,
+            4: false
+        })
         let maxAbsoluteScore = 0;
         let minAbsoluteScore = 0;
         if (mainRelicStatsError || subRelicStatsError || mainRelicStats.length == 0 || subRelicStats.length == 0) {
@@ -99,7 +118,62 @@ function App() {
             setAbsoluteScore(`${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`);
         }
 
-        // TODO: add relative score for each sub stat based on the relic type
+        // add relative score for each sub stat based on the relic type
+        // get the current relic rating
+        const currentRelicRating = relic.relicRating[relicTitle]
+
+        // TODO: if the currentRelicRating is not found, handle error
+        if (!currentRelicRating) {
+            return;
+        }
+
+        // check if the main stat exists in the relic rating
+        const mainStatRating = currentRelicRating[mainRelicStats[0].name]
+
+        if (!mainStatRating) {
+            return;
+        }
+
+        setIsValuableMainStats(true);
+        const validSubStats = mainStatRating.validSub
+        const shouldLockStats = mainStatRating.shouldLock
+
+        const isValuableSub: {
+            [index: number]: boolean
+        } = {
+            1: false,
+            2: false,
+            3: false,
+            4: false
+        }
+
+        let valuableSubStats = 0;
+        const subStatsList: string[] = []
+
+        for (let i = 0; i < subRelicStats.length; i++) {
+            const subStat = subRelicStats[i];
+            subStatsList.push(subStat.name);
+            if (validSubStats.includes(subStat.name)) {
+                isValuableSub[i + 1] = true;
+                valuableSubStats++;
+            }
+        }
+
+        shouldLockStats.forEach((shouldLock) => {
+            if (shouldLock.every((subStat) => subStatsList.includes(subStat))) {
+                setIsMostValuableRelic(true)
+            }
+        })
+
+
+        if (valuableSubStats >= 1) {
+            setIsValuableRelic(true);
+        } else {
+            setIsValuableRelic(false);
+        }
+        setIsValuableSubStats(isValuableSub)
+
+
         // TODO: add character relative score base on the character
 
     }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError]);
@@ -182,11 +256,6 @@ function App() {
 
             setSubRelicStats(relicSubStatsOCRResult.result);
 
-
-            console.log(relicTitleOCRResult);
-            console.log(relicMainStatsOCRResult);
-            console.log(relicSubStatsOCRResult);
-
             // release the memory
             imgGray.delete();
             imgRGB.delete();
@@ -210,12 +279,7 @@ function App() {
             <div className={"mainContainer"}>
                 <div className={"leftContainer"}>
                     <h3>HSR-Scanner</h3>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: '10px',
-                        flexDirection: 'column'
-                    }}>
+                    <div className={"controlsContainer"}>
                         <button onClick={captureScreen} onClickCapture={
                             () => {
                                 setScanningStatus(!scanningStatus);
@@ -228,7 +292,10 @@ function App() {
                             setScanningInterval(Number(e.target.value));
                         }}/>
                     </div>
-                    <div className={"title"}>{relicTitle}</div>
+                    <div className={`title ${
+                        isMostValuableRelic ? "isMostValuable" :
+                            isValuableRelic ? "isValuable" : "isNotValuable"
+                    }`}>{relicTitle}</div>
                     <div>
                         <span className="absoluteScoreTitle">
                             Absolute score:
@@ -244,7 +311,9 @@ function App() {
                             <div className={"statsContainer"}>
                                 {
                                     mainRelicStats.map((stat, index) => (
-                                        <div key={index}>
+                                        <div key={index} className={
+                                            isValuableMainStats ? "isValuable" : "isNotValuable"
+                                        }>
                                             <span className={"statsName"}>{stat.name}</span>
                                             :<span className={"statsNumber"}>{stat.number}</span>
                                             <span className={"statsLevel"}>Level:</span>
@@ -263,7 +332,9 @@ function App() {
                             <div className={"statsContainer"}>
                                 {
                                     subRelicStats.map((stat, index) => (
-                                        <div key={index}>
+                                        <div key={index} className={
+                                            isValuableSubStats[index + 1] ? "isValuable" : "isNotValuable"
+                                        }>
                                             <span className={"statsName"}>{stat.name}</span>
                                             :<span className={"statsNumber"}>{stat.number}</span>
                                             <span className={"statsScore"}>score:</span>

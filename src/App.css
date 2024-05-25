@@ -33,6 +33,13 @@
     gap: 2px;
 }
 
+.controlsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
 .title {
     font-size: 1rem;
     font-weight: bold;
@@ -78,4 +85,16 @@
 .statsScoreNumber {
     margin-left: 5px;
     color: #535bf2;
+}
+
+.isValuable {
+    color: green;
+}
+
+.isNotValuable {
+    color: red;
+}
+
+.isMostValuable {
+    color: gold;
 }

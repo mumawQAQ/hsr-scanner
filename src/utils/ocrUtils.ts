@@ -25,7 +25,10 @@ const relicStatsNumberExtractor = (statsText: string) => {
 const relicTitleExtractor = async (worker: Worker, image: string) => {
     try {
         const {data: {text: titleText}} = await worker.recognize(image);
-        return titleText;
+        if (!titleText) {
+            throw new Error('No title found');
+        }
+        return titleText.trim();
     } catch (e) {
         console.error('Error during OCR processing:', e);
         throw e;
