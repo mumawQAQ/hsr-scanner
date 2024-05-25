@@ -66,13 +66,14 @@ function App() {
                 minAbsoluteScore += minScore;
             } else {
                 maxAbsoluteScore += Number(subStat.score);
+                minAbsoluteScore += Number(subStat.score);
             }
         }
 
         maxAbsoluteScore = parseFloat(maxAbsoluteScore.toFixed(2));
         minAbsoluteScore = parseFloat(minAbsoluteScore.toFixed(2));
 
-        if (minAbsoluteScore == 0) {
+        if (minAbsoluteScore == maxAbsoluteScore) {
             setAbsoluteScore(`${maxAbsoluteScore} / ${maxScore}`);
         } else {
             setAbsoluteScore(`${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`);
@@ -164,6 +165,21 @@ function App() {
             console.log(relicTitleOCRResult);
             console.log(relicMainStatsOCRResult);
             console.log(relicSubStatsOCRResult);
+
+            // release the memory
+            imgGray.delete();
+            imgRGB.delete();
+            relicTitleRGB.delete();
+            relicMainStatsRGB.delete();
+            relicSubStatsRGB.delete();
+            relicTitleHSV.delete();
+            relicMainStatsHSV.delete();
+            relicSubStatsHSV.delete();
+            maskedRelicTitle.delete();
+            maskedRelicMainStats.delete();
+            maskedRelicSubStats.delete();
+            trashIconRes.delete();
+            trashIconGray.delete();
         } catch (e) {
             console.error(e);
         }

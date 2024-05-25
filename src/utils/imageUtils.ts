@@ -83,6 +83,25 @@ const applyFilter = (srcHSVMat: Mat, srcRGBMat: Mat): Mat => {
 
     // turn the image to gray
     cv.cvtColor(imgMasked, imgMasked, cv.COLOR_RGBA2GRAY);
+
+    // apply threshold to make the image binary
+    cv.threshold(imgMasked, imgMasked, 0, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
+
+    // invert the image to make the text black
+    cv.bitwise_not(imgMasked, imgMasked);
+
+
+    // release the memory
+    orangeLower.delete();
+    orangeUpper.delete();
+    orangeMask.delete();
+    whiteLower.delete();
+    whiteUpper.delete();
+    whiteMask.delete();
+    combinedMask.delete();
+    invertedMask.delete();
+    
+
     return imgMasked;
 }
 
