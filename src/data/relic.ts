@@ -671,11 +671,11 @@ const HertaCommonShouldLock = [
     [RelicType.SPD, RelicType.ATKPercentage],
 ]
 
-const TaliaCommonValidSub = [
+const IPCCommonValidSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.EffectHitRate
 ]
 
-const TaliaCommonShouldLock = [
+const IPCCommonShouldLock = [
     [RelicType.CRITRate, RelicType.CRITDMG],
     [RelicType.SPD, RelicType.ATKPercentage],
     [RelicType.SPD, RelicType.EffectHitRate],
@@ -714,6 +714,149 @@ const ElementalCommonShouldLock = [
     [RelicType.SPD, RelicType.CRITDMG],
     [RelicType.ATKPercentage, RelicType.CRITRate],
     [RelicType.ATKPercentage, RelicType.CRITDMG],
+]
+
+const XianZhouCommonValidSub = [
+    RelicType.SPD, RelicType.ATKPercentage
+]
+
+const XianZhouCommonShouldLock = [
+    [RelicType.SPD, RelicType.ATKPercentage]
+]
+
+const VonwacqCommonValidSub = [
+    RelicType.SPD, RelicType.ATKPercentage
+]
+
+const VonwacqCommonShouldLock = [
+    [RelicType.SPD, RelicType.ATKPercentage]
+]
+
+const PenaconyCommonValidSub = [
+    RelicType.SPD, RelicType.ATKPercentage
+]
+
+const PenaconyCommonShouldLock = [
+    [RelicType.SPD, RelicType.ATKPercentage]
+]
+
+const BelobogCommonValidSub = [
+    RelicType.SPD, RelicType.DEFPercentage, RelicType.EffectHitRate, RelicType.CRITRate, RelicType.CRITDMG
+]
+
+const BelobogCommonShouldLock = [
+    [RelicType.CRITRate, RelicType.CRITDMG],
+    [RelicType.SPD, RelicType.DEFPercentage],
+    [RelicType.SPD, RelicType.EffectHitRate],
+]
+
+const TaliaCommonValidSub = [
+    RelicType.SPD, RelicType.BreakEffect
+]
+
+const TaliaCommonShouldLock = [
+    [RelicType.SPD, RelicType.BreakEffect]
+]
+
+const SalsottoCommonValidSub = [
+    RelicType.SPD, RelicType.CRITDMG, RelicType.CRITRate, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
+]
+
+const SalsottoCommonShouldLock = [
+    [RelicType.CRITRate, RelicType.CRITDMG],
+    [RelicType.SPD, RelicType.ATKPercentage],
+    [RelicType.SPD, RelicType.CRITRate],
+    [RelicType.SPD, RelicType.CRITDMG],
+    [RelicType.ATKPercentage, RelicType.CRITRate],
+    [RelicType.ATKPercentage, RelicType.CRITDMG],
+]
+
+const TaikiyanCommonValidSub = [
+    RelicType.SPD, RelicType.CRITDMG, RelicType.CRITRate, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
+]
+
+const TaikiyanCommonShouldLock = [
+    [RelicType.CRITRate, RelicType.CRITDMG],
+    [RelicType.SPD, RelicType.ATKPercentage],
+    [RelicType.SPD, RelicType.CRITRate],
+    [RelicType.SPD, RelicType.CRITDMG],
+    [RelicType.ATKPercentage, RelicType.CRITRate],
+    [RelicType.ATKPercentage, RelicType.CRITDMG],
+]
+
+const SigoniaCommonValidSub = [
+    RelicType.SPD, RelicType.CRITDMG, RelicType.CRITRate, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
+]
+
+const SigoniaCommonShouldLock = [
+    [RelicType.CRITRate, RelicType.CRITDMG],
+    [RelicType.SPD, RelicType.ATKPercentage],
+    [RelicType.SPD, RelicType.CRITRate],
+    [RelicType.SPD, RelicType.CRITDMG],
+    [RelicType.ATKPercentage, RelicType.CRITRate],
+    [RelicType.ATKPercentage, RelicType.CRITDMG],
+]
+
+const ThiefCommonValidSub = [
+    RelicType.SPD, RelicType.BreakEffect, RelicType.ATKPercentage
+]
+
+const ThiefCommonShouldLock = [
+    [RelicType.SPD, RelicType.BreakEffect],
+    [RelicType.SPD, RelicType.ATKPercentage],
+    [RelicType.BreakEffect, RelicType.ATKPercentage],
+]
+
+const WatchmakerCommonValidSub = [
+    RelicType.SPD, RelicType.BreakEffect, RelicType.ATKPercentage
+]
+
+const WatchmakerCommonShouldLock = [
+    [RelicType.SPD, RelicType.BreakEffect],
+    [RelicType.SPD, RelicType.ATKPercentage],
+    [RelicType.BreakEffect, RelicType.ATKPercentage],
+]
+
+const PasserbyCommonValidSub = [
+    RelicType.SPD, RelicType.HPPercentage, RelicType.EffectRes, RelicType.ATKPercentage
+]
+
+const PasserbyCommonShouldLock = [
+    [RelicType.SPD, RelicType.HPPercentage],
+]
+
+const KnightCommonValidSub = [
+    RelicType.SPD, RelicType.DEFPercentage, RelicType.EffectRes, RelicType.CRITDMG, RelicType.CRITRate
+]
+
+const KnightCommonShouldLock = [
+    [RelicType.CRITRate, RelicType.CRITDMG],
+    [RelicType.SPD, RelicType.DEFPercentage],
+]
+
+const GuardCommonValidSub = [
+    RelicType.SPD, RelicType.DEFPercentage, RelicType.EffectRes, RelicType.EffectHitRate, RelicType.HPPercentage
+]
+
+const GuardCommonShouldLock = [
+    [RelicType.SPD, RelicType.DEFPercentage],
+]
+
+const MessengerCommonValidSub = [
+    RelicType.SPD, RelicType.CRITRate, RelicType.CRITDMG, RelicType.ATKPercentage
+]
+
+const MessengerCommonShouldLock = [
+    [RelicType.SPD, RelicType.CRITDMG],
+]
+
+const InsumousuCommonValidSub = [
+    RelicType.SPD, RelicType.EffectRes, RelicType.CRITDMG, RelicType.CRITRate
+]
+
+const InsumousuCommonShouldLock = [
+    [RelicType.CRITRate, RelicType.CRITDMG],
+    [RelicType.SPD, RelicType.EffectRes],
 ]
 
 const relicRating: RelicRating = {
@@ -936,48 +1079,48 @@ const relicRating: RelicRating = {
             shouldLock: HertaCommonShouldLock
         },
     },
-    'Talia\'s Nailscrap Town': {
+    'The IPC\'s Mega HQ': {
         [RelicType.ATKPercentage]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.PhysicalDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.FireDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.IceDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.LightningDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.WindDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.QuantumDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.ImaginaryDMGBoost]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         }
     },
-    'Talia\'s Exposed Electric Wire': {
+    'The IPC\'s Trade Route': {
         [RelicType.EnergyRegenerationRate]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
         [RelicType.ATKPercentage]: {
-            validSub: TaliaCommonValidSub,
-            shouldLock: TaliaCommonShouldLock
+            validSub: IPCCommonValidSub,
+            shouldLock: IPCCommonShouldLock
         },
     },
     'Disciple\'s Prosthetic Eye': {
@@ -1531,6 +1674,762 @@ const relicRating: RelicRating = {
             validSub: ElementalCommonValidSub,
             shouldLock: ElementalCommonShouldLock
         }
+    },
+    'The Xianzhou Luofu\'s Celestial Ark': {
+        [RelicType.ATKPercentage]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        }
+    },
+    'The Xianzhou Luofu\'s Ambrosial Arbor Vines': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: XianZhouCommonValidSub,
+            shouldLock: XianZhouCommonShouldLock
+        },
+    },
+    'Vonwacq\'s Island of Birth': {
+        [RelicType.ATKPercentage]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        }
+    },
+    'Vonwacq\'s Islandic Coast': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: VonwacqCommonValidSub,
+            shouldLock: VonwacqCommonShouldLock
+        }
+    },
+    'Penacony\'s Grand Hotel': {
+        [RelicType.ATKPercentage]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        }
+    },
+    'Penacony\'s Dream-Seeking Tracks': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: PenaconyCommonValidSub,
+            shouldLock: PenaconyCommonShouldLock
+        }
+    },
+    'Belobog\'s Fortress of Preservation': {
+        [RelicType.DEFPercentage]: {
+            validSub: BelobogCommonValidSub,
+            shouldLock: BelobogCommonShouldLock
+        }
+    },
+    'Belobog\'s Iron Defense': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: BelobogCommonValidSub,
+            shouldLock: BelobogCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: BelobogCommonValidSub,
+            shouldLock: BelobogCommonShouldLock
+        }
+    },
+    'Talia\'s Nailscrap Town': {
+        [RelicType.DEFPercentage]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        }
+    },
+    'Talia\'s Exposed Electric Wire': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        },
+        [RelicType.BreakEffect]: {
+            validSub: TaliaCommonValidSub,
+            shouldLock: TaliaCommonShouldLock
+        }
+    },
+    'Salsotto\'s Moving City': {
+        [RelicType.DEFPercentage]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        }
+    },
+    'Salsotto\'s Terminator Line': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.BreakEffect]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: SalsottoCommonValidSub,
+            shouldLock: SalsottoCommonShouldLock
+        },
+    },
+    'Taikiyan Laser Stadium': {
+        [RelicType.DEFPercentage]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        }
+    },
+    'Taikiyan\'s Arclight Race Track': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.BreakEffect]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: TaikiyanCommonValidSub,
+            shouldLock: TaikiyanCommonShouldLock
+        },
+    },
+    'Sigonia\'s Gaiathra Berth': {
+        [RelicType.DEFPercentage]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        }
+    },
+    'Sigonia\'s Knot of Cyclicality': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.BreakEffect]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: SigoniaCommonValidSub,
+            shouldLock: SigoniaCommonShouldLock
+        },
+    },
+    'Thief\'s Myriad-Faced Mask': {
+        [RelicType.HP]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        }
+    },
+    'Thief\'s Gloves With Prints': {
+        [RelicType.ATK]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        }
+    },
+    'Thief\'s Steel Grappling Hook': {
+        [RelicType.CRITRate]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.CRITDMG]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.EffectHitRate]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.OutgoingHealingBoost]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        }
+    },
+    'Thief\'s Meteor Boots': {
+        [RelicType.SPD]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: ThiefCommonValidSub,
+            shouldLock: ThiefCommonShouldLock
+        }
+    },
+    'Watchmaker\'s Telescoping Lens': {
+        [RelicType.HP]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        }
+    },
+    'Watchmaker\'s Fortuitous Wristwatch': {
+        [RelicType.ATK]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        }
+    },
+    'Watchmaker\'s Illusory Formal Suit': {
+        [RelicType.CRITRate]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.CRITDMG]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.EffectHitRate]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.OutgoingHealingBoost]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        }
+    },
+    'Watchmaker\'s Dream-Concealing Dress Shoes': {
+        [RelicType.SPD]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: WatchmakerCommonValidSub,
+            shouldLock: WatchmakerCommonShouldLock
+        }
+    },
+    'Passerby\'s Rejuvenated Wooden Hairstick': {
+        [RelicType.HP]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        }
+    },
+    'Passerby\'s Roaming Dragon Bracer': {
+        [RelicType.ATK]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        }
+    },
+    'Passerby\'s Ragged Embroided Coat': {
+        [RelicType.OutgoingHealingBoost]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        }
+    },
+    'Passerby\'s Stygian Hiking Boots': {
+        [RelicType.SPD]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: PasserbyCommonValidSub,
+            shouldLock: PasserbyCommonShouldLock
+        }
+    },
+    'Knight\'s Forgiving Casque': {
+        [RelicType.HP]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        }
+    },
+    'Knight\'s Silent Oath Ring': {
+        [RelicType.ATK]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        }
+    },
+    'Knight\'s Solemn Breastplate': {
+        [RelicType.HPPercentage]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        },
+        [RelicType.EffectHitRate]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        }
+    },
+    'Knight\'s Iron Boots of Order': {
+        [RelicType.SPD]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: KnightCommonValidSub,
+            shouldLock: KnightCommonShouldLock
+        }
+    },
+    'Guard\'s Cast Iron Helmet': {
+        [RelicType.HP]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        }
+    },
+    'Guard\'s Shining Gauntlets': {
+        [RelicType.ATK]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        }
+    },
+    'Guard\'s Uniform of Old': {
+        [RelicType.HPPercentage]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        },
+        [RelicType.EffectHitRate]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        }
+    },
+    'Guard\'s Silver Greaves': {
+        [RelicType.SPD]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: GuardCommonValidSub,
+            shouldLock: GuardCommonShouldLock
+        }
+    },
+    'Messenger\'s Holovisor': {
+        [RelicType.HP]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        }
+    },
+    'Messenger\'s Transformative Arm': {
+        [RelicType.ATK]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        }
+    },
+    'Messenger\'s Secret Satchel': {
+        [RelicType.HPPercentage]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        },
+        [RelicType.EffectHitRate]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        },
+        [RelicType.CRITRate]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        },
+        [RelicType.CRITDMG]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        },
+        [RelicType.OutgoingHealingBoost]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        }
+    },
+    'Messenger\'s Par-kool Sneakers': {
+        [RelicType.SPD]: {
+            validSub: MessengerCommonValidSub,
+            shouldLock: MessengerCommonShouldLock
+        }
+    },
+    'Insumousu\'s Whalefall Ship': {
+        [RelicType.ATKPercentage]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.PhysicalDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.FireDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.IceDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.LightningDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.WindDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.QuantumDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.ImaginaryDMGBoost]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        }
+    },
+    'Insumousu\'s Frayed Hawser': {
+        [RelicType.EnergyRegenerationRate]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.BreakEffect]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.DEFPercentage]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.ATKPercentage]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
+        [RelicType.HPPercentage]: {
+            validSub: InsumousuCommonValidSub,
+            shouldLock: InsumousuCommonShouldLock
+        },
     }
 
 }
