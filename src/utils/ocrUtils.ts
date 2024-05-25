@@ -1,6 +1,21 @@
 import {Worker} from 'tesseract.js';
 import statsRegs from "@/data/regex.ts";
+import relic from "@/data/relic.ts";
+import {RelicType} from "@/types.ts";
 
+
+const fixRelicType = (number: string, srcType: RelicType) => {
+    if (number.endsWith('%')) {
+        if (srcType === RelicType.DEF) {
+            return RelicType.DEFPercentage;
+        } else if (srcType === RelicType.HP) {
+            return RelicType.HPPercentage;
+        } else if (srcType === RelicType.ATK) {
+            return RelicType.ATKPercentage;
+        }
+    }
+    return srcType;
+}
 
 const relicStatsNumberExtractor = (statsText: string) => {
     const match = statsText.match(/(\d+(\.\d+)?%?)/);
@@ -31,7 +46,17 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
                 if (!number) {
                     continue;
                 }
-                matchedStats.push({name, number})
+                // fix the relic type if the number is a percentage
+                const fixedType = fixRelicType(number, name);
+
+                // calculate the level of the main stat
+                const {base, step} = relic.relicMainStatsLevel[fixedType]
+
+                // if number end with %, then get its value
+                const actualNum = number.endsWith('%') ? parseFloat(number) / 100 : parseFloat(number)
+                const level = Math.ceil((actualNum - base) / step)
+
+                matchedStats.push({name: fixedType, number: number, level: level})
             }
         }
 
@@ -71,10 +96,15 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
             if (match) {
                 // extract the number from the matched text
                 const number = relicStatsNumberExtractor(match[0]);
+
                 if (!number) {
                     continue;
                 }
-                matchedStats.push({name, number})
+                // fix the relic type if the number is a percentage
+                const fixedType = fixRelicType(number, name);
+                // calculate the score of the sub stat
+                const score = relic.relicSubStatsScore[fixedType][number]
+                matchedStats.push({name: fixedType, number: number, score: score})
             }
         }
 

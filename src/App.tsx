@@ -5,7 +5,7 @@ import './App.css';
 import trashIcon from './assets/trashIcon.png';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
-import {relicStats} from "@/types.ts";
+import {RelicMainStats, RelicSubStats} from "@/types.ts";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -15,8 +15,8 @@ function App() {
     const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
 
     const [relicTitle, setRelicTitle] = useState('');
-    const [mainRelicStats, setMainRelicStats] = useState<relicStats[]>([]);
-    const [subRelicStats, setSubRelicStats] = useState<relicStats[]>([]);
+    const [mainRelicStats, setMainRelicStats] = useState<RelicMainStats[]>([]);
+    const [subRelicStats, setSubRelicStats] = useState<RelicSubStats[]>([]);
 
 
     const [mainRelicStatsError, setMainRelicStatsError] = useState<string | null>(null);
@@ -128,49 +128,60 @@ function App() {
 
 
     return (
-        <div className={"mainContainer"}>
-            <div className={"leftContainer"}>
-                <h3>HSR-Scanner</h3>
-                <button onClick={captureScreen} style={{alignSelf: 'center'}}>
-                    Capture HSR-Scanner
-                </button>
-                <h4>{relicTitle}</h4>
-                <h4>Main Stats:</h4>
-                {
-                    mainRelicStatsError || mainRelicStats.length == 0 ?
-                        <div className={"error"}>{mainRelicStatsError}</div> :
-                        <div className={"statsContainer"}>
-                            {
-                                mainRelicStats.map((stat, index) => (
-                                    <div key={index}>
-                                        <span className={"statsName"}>{stat.name}</span>
-                                        :<span className={"statsNumber"}>{stat.number}</span>
-                                    </div>
-                                ))
-                            }
-                        </div>
-                }
-                <h4>Sub Stats:</h4>
-                {
-                    subRelicStatsError || subRelicStats.length == 0 ?
-                        <div className={"error"}>{subRelicStatsError}</div> :
-                        <div className={"statsContainer"}>
-                            {
-                                subRelicStats.map((stat, index) => (
-                                    <div key={index}>
-                                        <span className={"statsName"}>{stat.name}</span>
-                                        :<span className={"statsNumber"}>{stat.number}</span>
-                                    </div>
-                                ))
-                            }
-                        </div>
-                }
-            </div>
-            <div className={"rightContainer"}>
-                <h3>Image Captured</h3>
-                <canvas ref={titlePartRef}/>
-                <canvas ref={mainStatsPartRef}/>
-                <canvas ref={subStatsPartRef}/>
+        <div>
+            <div className={"error"}>Make sure the relics in Unlock state, or the result will contain error</div>
+            <div className={"mainContainer"}>
+                <div className={"leftContainer"}>
+                    <h3>HSR-Scanner</h3>
+                    <button onClick={captureScreen} style={{alignSelf: 'center'}}>
+                        Scan
+                    </button>
+                    <div className={"title"}>{relicTitle}</div>
+                    <div className={"title"}>Main Stats:</div>
+                    {
+                        mainRelicStatsError || mainRelicStats.length == 0 ?
+                            <div className={"error"}>{mainRelicStatsError}</div> :
+                            <div className={"statsContainer"}>
+                                {
+                                    mainRelicStats.map((stat, index) => (
+                                        <div key={index}>
+                                            <span className={"statsName"}>{stat.name}</span>
+                                            :<span className={"statsNumber"}>{stat.number}</span>
+                                            <span className={"statsLevel"}>Level:</span>
+                                            <span className={"statsLevelNumber"}>{
+                                                stat.level
+                                            }</span>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                    }
+                    <div className={"title"}>Sub Stats:</div>
+                    {
+                        subRelicStatsError || subRelicStats.length == 0 ?
+                            <div className={"error"}>{subRelicStatsError}</div> :
+                            <div className={"statsContainer"}>
+                                {
+                                    subRelicStats.map((stat, index) => (
+                                        <div key={index}>
+                                            <span className={"statsName"}>{stat.name}</span>
+                                            :<span className={"statsNumber"}>{stat.number}</span>
+                                            <span className={"statsScore"}>score:</span>
+                                            <span className={"statsNumber"}>{
+                                                stat.score instanceof Array ? stat.score.join(' | ') : stat.score
+                                            }</span>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                    }
+                </div>
+                <div className={"rightContainer"}>
+                    <h3>Image Captured</h3>
+                    <canvas ref={titlePartRef}/>
+                    <canvas ref={mainStatsPartRef}/>
+                    <canvas ref={subStatsPartRef}/>
+                </div>
             </div>
         </div>
 
