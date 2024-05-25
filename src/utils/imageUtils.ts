@@ -100,7 +100,7 @@ const applyFilter = (srcHSVMat: Mat, srcRGBMat: Mat): Mat => {
     whiteMask.delete();
     combinedMask.delete();
     invertedMask.delete();
-    
+
 
     return imgMasked;
 }

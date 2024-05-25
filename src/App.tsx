@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {createWorker, Worker} from "tesseract.js";
 import cv from '@techstark/opencv-js';
 import './App.css';
-import trashIcon from './assets/trashIcon.png';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "@/types.ts";
@@ -14,6 +13,12 @@ function App() {
     const mainStatsPartRef = React.useRef<HTMLCanvasElement>(null);
     const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
 
+    const [currentImage, setCurrentImage] = useState<HTMLImageElement | null>(null);
+    const [workerInitialized, setWorkerInitialized] = useState(false);
+    const [scanningStatus, setScanningStatus] = useState(false);
+    const [scanningInterval, setScanningInterval] = useState<number>(2000);
+
+
     const [relicTitle, setRelicTitle] = useState('');
     const [mainRelicStats, setMainRelicStats] = useState<RelicMainStats[]>([]);
     const [subRelicStats, setSubRelicStats] = useState<RelicSubStats[]>([]);
@@ -24,17 +29,13 @@ function App() {
 
     const [absoluteScore, setAbsoluteScore] = useState('');
 
-
-    // setInterval(async () => {
-    //     await captureScreen();
-    // }, 1000);
-
     useEffect(() => {
         // Initialize the worker
         const initializeWorker = async () => {
             const newWorker = await createWorker('eng');
             await newWorker.load();
             setWorker(newWorker);
+            setWorkerInitialized(true);
         };
 
         initializeWorker();
@@ -44,6 +45,25 @@ function App() {
             worker?.terminate();
         };
     }, []);
+
+
+    useEffect(() => {
+        // make sure the worker is initialized
+        if (!workerInitialized) {
+            return;
+        }
+
+        // if the scanning is started, then start the interval
+        if (!scanningStatus) {
+            return;
+        }
+
+        const interval = setInterval(async () => {
+            await captureScreen();
+        }, scanningInterval);
+
+        return () => clearInterval(interval);
+    }, [currentImage, workerInitialized, scanningInterval, scanningStatus]);
 
     useEffect(() => {
         let maxAbsoluteScore = 0;
@@ -78,6 +98,10 @@ function App() {
         } else {
             setAbsoluteScore(`${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`);
         }
+
+        // TODO: add relative score for each sub stat based on the relic type
+        // TODO: add character relative score base on the character
+
     }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError]);
 
 
@@ -92,35 +116,32 @@ function App() {
 
 
     const captureScreen = async () => {
-
-        // reset the stats
-        resetAttributes();
-
-        const worker = await createWorker('eng');
         const res = await window.ipcRenderer.captureScreen();
         const croppedImage = res.crop({x: 1400, y: 0, width: 445, height: 800});
 
-        try {
-            // trash icon
-            const trashIconGray = await ImageUtils.img2MatGray(trashIcon);
+        // if the image is not changed, do not process it
+        if (currentImage && currentImage == croppedImage.toDataURL()) {
+            console.log('Image not changed');
+            return;
+        }
 
+        // reset the stats
+        resetAttributes();
+        setCurrentImage(croppedImage.toDataURL());
+
+        try {
             // source image
             const imgGray = await ImageUtils.img2MatGray(croppedImage.toDataURL());
             const imgRGB = await ImageUtils.img2MatRGB(croppedImage.toDataURL());
-
-            // match the trash icon
-            const trashIconRes = new cv.Mat();
-            cv.matchTemplate(imgGray, trashIconGray, trashIconRes, cv.TM_CCOEFF_NORMED);
-            const minMaxLocTrashIcon = cv.minMaxLoc(trashIconRes);
 
             // anything above the trash icon should contain the relic title
             const relicTitleRGB = ImageUtils.matCrop(imgRGB, 0, 100, 445, 70);
 
             // anything below the trash icon should contain the relic stats
-            const relicMainStatsRGB = ImageUtils.matCrop(imgRGB, 0, minMaxLocTrashIcon.maxLoc.y + trashIconGray.rows + 50, 445, 50);
+            const relicMainStatsRGB = ImageUtils.matCrop(imgRGB, 0, 392, 445, 50);
 
             // anything below the relic stats should contain the relic sub stats
-            const relicSubStatsRGB = ImageUtils.matCrop(imgRGB, 0, minMaxLocTrashIcon.maxLoc.y + trashIconGray.rows + 100, 445, imgGray.rows - 100 - minMaxLocTrashIcon.maxLoc.y - trashIconGray.rows);
+            const relicSubStatsRGB = ImageUtils.matCrop(imgRGB, 0, 442, 445, 358);
 
 
             // convert each part to HSV
@@ -178,8 +199,6 @@ function App() {
             maskedRelicTitle.delete();
             maskedRelicMainStats.delete();
             maskedRelicSubStats.delete();
-            trashIconRes.delete();
-            trashIconGray.delete();
         } catch (e) {
             console.error(e);
         }
@@ -188,13 +207,27 @@ function App() {
 
     return (
         <div>
-            <div className={"error"}>Make sure the relics in Unlock state, or the result will contain error</div>
             <div className={"mainContainer"}>
                 <div className={"leftContainer"}>
                     <h3>HSR-Scanner</h3>
-                    <button onClick={captureScreen} style={{alignSelf: 'center'}}>
-                        Scan
-                    </button>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '10px',
+                        flexDirection: 'column'
+                    }}>
+                        <button onClick={captureScreen} onClickCapture={
+                            () => {
+                                setScanningStatus(!scanningStatus);
+                            }
+                        }>
+                            {scanningStatus ? 'Stop' : 'Start'} scanning
+                        </button>
+                        <label>Scanning interval (ms):</label>
+                        <input type="number" value={scanningInterval} onChange={(e) => {
+                            setScanningInterval(Number(e.target.value));
+                        }}/>
+                    </div>
                     <div className={"title"}>{relicTitle}</div>
                     <div>
                         <span className="absoluteScoreTitle">

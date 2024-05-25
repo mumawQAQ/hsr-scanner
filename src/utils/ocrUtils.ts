@@ -37,6 +37,8 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         const {data: {text: mainStatsText}} = await worker.recognize(image);
         const matchedStats = [];
 
+        // TODO: When HP is 112 then it is recognized as 12, need to fix this
+
         // match the main stats from the reg expressions
         for (const {name, reg} of statsRegs.mainStatsRegs) {
             const match = mainStatsText.match(reg);
