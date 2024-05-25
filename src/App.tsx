@@ -22,6 +22,8 @@ function App() {
     const [mainRelicStatsError, setMainRelicStatsError] = useState<string | null>(null);
     const [subRelicStatsError, setSubRelicStatsError] = useState<string | null>(null);
 
+    const [absoluteScore, setAbsoluteScore] = useState('');
+
 
     // setInterval(async () => {
     //     await captureScreen();
@@ -43,14 +45,55 @@ function App() {
         };
     }, []);
 
-    const captureScreen = async () => {
+    useEffect(() => {
+        let maxAbsoluteScore = 0;
+        let minAbsoluteScore = 0;
+        if (mainRelicStatsError || subRelicStatsError || mainRelicStats.length == 0 || subRelicStats.length == 0) {
+            return;
+        }
 
-        // reset the stats
+        // The relic can have 3-4 sub stats at level 0, each 3 levels will increase the score by 1
+        const maxScore = mainRelicStats[0].level == 0 ? 4 : Math.floor(mainRelicStats[0].level / 3) + 4
+
+        // Calculate the current relic score
+        for (let i = 0; i < subRelicStats.length; i++) {
+            const subStat = subRelicStats[i];
+            // the spd can have multiple scores
+            if (subStat.score instanceof Array) {
+                const maxScore = Math.max(...subStat.score);
+                const minScore = Math.min(...subStat.score);
+                maxAbsoluteScore += maxScore;
+                minAbsoluteScore += minScore;
+            } else {
+                maxAbsoluteScore += Number(subStat.score);
+            }
+        }
+
+        maxAbsoluteScore = parseFloat(maxAbsoluteScore.toFixed(2));
+        minAbsoluteScore = parseFloat(minAbsoluteScore.toFixed(2));
+
+        if (minAbsoluteScore == 0) {
+            setAbsoluteScore(`${maxAbsoluteScore} / ${maxScore}`);
+        } else {
+            setAbsoluteScore(`${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`);
+        }
+    }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError]);
+
+
+    const resetAttributes = () => {
+        setAbsoluteScore('');
         setRelicTitle('');
         setMainRelicStats([]);
         setSubRelicStats([]);
         setMainRelicStatsError(null);
         setSubRelicStatsError(null);
+    }
+
+
+    const captureScreen = async () => {
+
+        // reset the stats
+        resetAttributes();
 
         const worker = await createWorker('eng');
         const res = await window.ipcRenderer.captureScreen();
@@ -137,6 +180,14 @@ function App() {
                         Scan
                     </button>
                     <div className={"title"}>{relicTitle}</div>
+                    <div>
+                        <span className="absoluteScoreTitle">
+                            Absolute score:
+                        </span>
+                        <span className="absoluteScore">
+                            {absoluteScore}
+                        </span>
+                    </div>
                     <div className={"title"}>Main Stats:</div>
                     {
                         mainRelicStatsError || mainRelicStats.length == 0 ?

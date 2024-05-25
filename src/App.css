@@ -38,6 +38,15 @@
     font-weight: bold;
 }
 
+.absoluteScoreTitle {
+    font-weight: bold;
+}
+
+.absoluteScore {
+    margin-left: 5px;
+    color: #535bf2;
+}
+
 .statsContainer {
     border: 1px solid black
 }
