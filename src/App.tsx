@@ -6,6 +6,7 @@ import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
 import ValuableSubList from "@/components/ValuableSubList";
+import relicUtils from "@/utils/relicUtils.ts";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -125,64 +126,42 @@ function App() {
 
         // add relative score for each sub stat based on the relic type
         // get the current relic rating
-
-        (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`).then((currentRelicRating: any) => {
-            console.log(currentRelicRating)
-            // TODO: if the currentRelicRating is not found, handle error
-            if (!currentRelicRating) {
+        relicUtils.getRelicRatingInfo(relicTitle, mainRelicStats[0].name).then((relicRatingInfo: any) => {
+            // if the relicRatingInfo is not found
+            if (!relicRatingInfo) {
                 return;
             }
 
-            // check if the main stat exists in the relic rating
-            const mainStatRating = currentRelicRating[mainRelicStats[0].name]
-
-            if (!mainStatRating) {
-                return;
-            }
-
-            const configValuableSubStats = mainStatRating.valuableSub
-            const configShouldLockStats = mainStatRating.shouldLock
-
+            // the relicRatingInfo is found
             setIsValuableMainStats(true);
+
+            const configValuableSubStats = relicRatingInfo.validSub;
+            const configShouldLockStats = relicRatingInfo.shouldLock;
+
             setValuableSubStats(configValuableSubStats);
             setShouldLockStats(configShouldLockStats);
 
-            const isValuableSub: {
-                [index: number]: boolean
-            } = {
-                1: false,
-                2: false,
-                3: false,
-                4: false
+
+            // extract the name from the subRelicStats
+            const subStatsList = subRelicStats.map(stat => stat.name);
+
+            // check if the relic is the most valuable relic
+            if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList)) {
+                setIsMostValuableRelic(true)
             }
 
-            let valuableSubStats = 0;
-            const subStatsList: string[] = []
+            // label the valuable sub stats
+            const labeledSubStats = relicUtils.labelValuableSubStats(configValuableSubStats, subStatsList)
 
-            for (let i = 0; i < subRelicStats.length; i++) {
-                const subStat = subRelicStats[i];
-                subStatsList.push(subStat.name);
-                if (configValuableSubStats.includes(subStat.name)) {
-                    isValuableSub[i + 1] = true;
-                    valuableSubStats++;
-                }
-            }
+            setIsValuableSubStats(labeledSubStats)
 
-            shouldLockStats.forEach((shouldLock: string[]) => {
-                if (shouldLock.every((subStat: string) => subStatsList.includes(subStat))) {
-                    setIsMostValuableRelic(true)
-                }
-            })
-
-
-            if (valuableSubStats >= 1) {
+            // if the valuable sub stats is more than 1, then the relic is valuable
+            if (Object.values(labeledSubStats).filter(val => val).length >= 1) {
                 setIsValuableRelic(true);
             } else {
                 setIsValuableRelic(false);
             }
-            setIsValuableSubStats(isValuableSub)
-
-        })
+        });
 
     }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError]);
 

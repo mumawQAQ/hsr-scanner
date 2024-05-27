@@ -4,15 +4,23 @@ import './Valuable.css';
 import {Add, Clear} from "@mui/icons-material";
 
 interface IValuableSubListProps {
+    relicTitle: string;
     valuableSubStats: string[];
     setValuableSubStats: (valuableSubStats: string[]) => void;
 }
 
 
-const ValuableSubList: React.FC<IValuableSubListProps> = ({valuableSubStats, setValuableSubStats}) => {
+const ValuableSubList: React.FC<IValuableSubListProps> = ({valuableSubStats, setValuableSubStats, relicTitle}) => {
 
     const handleRemoveItem = async (index: number) => {
-        setValuableSubStats(valuableSubStats.filter((_, idx) => idx !== index));
+
+        const newSubStats = valuableSubStats.filter((_, idx) => idx !== index);
+        setValuableSubStats(newSubStats);
+        // update the user's valuable relic sub stats
+        const relicRating = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`)
+        relicRating['validSub'] = newSubStats
+        const result = await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRating)
+        console.log(result)
     }
 
 
