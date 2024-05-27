@@ -140,12 +140,12 @@ function App() {
                 return;
             }
 
-            const validSubStats = mainStatRating.validSub
-            const shouldLockStats = mainStatRating.shouldLock
+            const configValuableSubStats = mainStatRating.valuableSub
+            const configShouldLockStats = mainStatRating.shouldLock
 
             setIsValuableMainStats(true);
-            setValuableSubStats(validSubStats);
-            setShouldLockStats(shouldLockStats);
+            setValuableSubStats(configValuableSubStats);
+            setShouldLockStats(configShouldLockStats);
 
             const isValuableSub: {
                 [index: number]: boolean
@@ -162,7 +162,7 @@ function App() {
             for (let i = 0; i < subRelicStats.length; i++) {
                 const subStat = subRelicStats[i];
                 subStatsList.push(subStat.name);
-                if (validSubStats.includes(subStat.name)) {
+                if (configValuableSubStats.includes(subStat.name)) {
                     isValuableSub[i + 1] = true;
                     valuableSubStats++;
                 }
@@ -356,7 +356,12 @@ function App() {
                                 }
                             </div>
                     }
-                    <ValuableSubList valuableSubStats={valuableSubStats} setValuableSubStats={setValuableSubStats}/>
+
+                    {
+                        relicTitle &&
+                        <ValuableSubList valuableSubStats={valuableSubStats} setValuableSubStats={setValuableSubStats}
+                                         relicTitle={relicTitle}/>
+                    }
                 </div>
                 <div className={"rightContainer"}>
                     <h3>Image Captured</h3>
