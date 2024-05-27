@@ -25,4 +25,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         return ipcRenderer.invoke('capture-screen')
     },
 
+    storeGet(key: string) {
+        return ipcRenderer.invoke('store-get', key)
+    },
+
+    storeSet(key: string, value: any) {
+        return ipcRenderer.invoke('store-set', key, value)
+    },
 })

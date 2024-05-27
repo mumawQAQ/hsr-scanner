@@ -1,23 +1,29 @@
-import {RelicType} from "@/types.ts";
+import ElectronStore from 'electron-store';
+import {RelicType} from "../types.ts";
 
-export interface RelicSubStatsScore {
-    [index: string]: { [index: string]: number | number[] }
-}
-
-export interface RelicMainStatsLevel {
-    [index: string]: { base: number, step: number }
-}
-
-export interface RelicRating {
-    [index: string]: {
-        [index: string]: {
-            validSub: string[]
-            shouldLock: string[][]
+interface StoreData {
+    data: {
+        relicMainStatsLevel: {
+            [index: string]: {
+                base: number;
+                step: number;
+            }
         }
-    }
+        relicSubStatsScore: {
+            [index: string]: { [index: string]: number | number[] }
+        }
+        relicRating: {
+            [index: string]: {
+                [index: string]: {
+                    validSub: string[]
+                    shouldLock: string[][]
+                }
+            }
+        }
+    };
 }
 
-const relicMainStatsLevel: RelicMainStatsLevel = {
+const relicMainStatsLevel = {
     [RelicType.HP]: {
         base: 112.896,
         step: 39.5136
@@ -96,7 +102,7 @@ const relicMainStatsLevel: RelicMainStatsLevel = {
     },
 }
 
-const relicSubStatsScore: RelicSubStatsScore = {
+const relicSubStatsScore = {
     [RelicType.HP]: {
         "33": 0.8,
         "38": 0.9,
@@ -620,7 +626,6 @@ const relicSubStatsScore: RelicSubStatsScore = {
     },
 }
 
-
 const MusketeerCommonValidSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage
 ]
@@ -859,7 +864,7 @@ const InsumousuCommonShouldLock = [
     [RelicType.SPD, RelicType.EffectRes],
 ]
 
-const relicRating: RelicRating = {
+const relicRating = {
     'Musketeer\'s Wild Wheat Felt Hat': {
         [RelicType.HP]: {
             validSub: MusketeerCommonValidSub,
@@ -2434,8 +2439,14 @@ const relicRating: RelicRating = {
 
 }
 
-export default {
-    relicMainStatsLevel,
-    relicSubStatsScore,
-    relicRating
-}
+const store = new ElectronStore<StoreData>({
+    defaults: {
+        data: {
+            relicMainStatsLevel: relicMainStatsLevel,
+            relicSubStatsScore: relicSubStatsScore,
+            relicRating: relicRating,
+        }
+    }
+});
+
+export default store;

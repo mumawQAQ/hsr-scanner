@@ -1,4 +1,4 @@
-import {RelicType} from "@/types.ts";
+import {RelicType} from "../../types.ts";
 
 const commonStatsRegs = [
     {

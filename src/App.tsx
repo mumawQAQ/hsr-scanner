@@ -4,8 +4,8 @@ import cv from '@techstark/opencv-js';
 import './App.css';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
-import {RelicMainStats, RelicSubStats} from "@/types.ts";
-import relic from "@/data/relic.ts";
+import {RelicMainStats, RelicSubStats} from "../types.ts";
+import ValuableSubList from "@/components/ValuableSubList";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -23,6 +23,9 @@ function App() {
     const [relicTitle, setRelicTitle] = useState('');
     const [mainRelicStats, setMainRelicStats] = useState<RelicMainStats[]>([]);
     const [subRelicStats, setSubRelicStats] = useState<RelicSubStats[]>([]);
+
+    const [valuableSubStats, setValuableSubStats] = useState<string[]>([]);
+    const [shouldLockStats, setShouldLockStats] = useState<string[][]>([]);
 
 
     const [mainRelicStatsError, setMainRelicStatsError] = useState<string | null>(null);
@@ -85,6 +88,8 @@ function App() {
             3: false,
             4: false
         })
+        setValuableSubStats([]);
+        setShouldLockStats([]);
         let maxAbsoluteScore = 0;
         let minAbsoluteScore = 0;
         if (mainRelicStatsError || subRelicStatsError || mainRelicStats.length == 0 || subRelicStats.length == 0) {
@@ -120,61 +125,64 @@ function App() {
 
         // add relative score for each sub stat based on the relic type
         // get the current relic rating
-        const currentRelicRating = relic.relicRating[relicTitle]
 
-        // TODO: if the currentRelicRating is not found, handle error
-        if (!currentRelicRating) {
-            return;
-        }
-
-        // check if the main stat exists in the relic rating
-        const mainStatRating = currentRelicRating[mainRelicStats[0].name]
-
-        if (!mainStatRating) {
-            return;
-        }
-
-        setIsValuableMainStats(true);
-        const validSubStats = mainStatRating.validSub
-        const shouldLockStats = mainStatRating.shouldLock
-
-        const isValuableSub: {
-            [index: number]: boolean
-        } = {
-            1: false,
-            2: false,
-            3: false,
-            4: false
-        }
-
-        let valuableSubStats = 0;
-        const subStatsList: string[] = []
-
-        for (let i = 0; i < subRelicStats.length; i++) {
-            const subStat = subRelicStats[i];
-            subStatsList.push(subStat.name);
-            if (validSubStats.includes(subStat.name)) {
-                isValuableSub[i + 1] = true;
-                valuableSubStats++;
+        (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`).then((currentRelicRating: any) => {
+            console.log(currentRelicRating)
+            // TODO: if the currentRelicRating is not found, handle error
+            if (!currentRelicRating) {
+                return;
             }
-        }
 
-        shouldLockStats.forEach((shouldLock) => {
-            if (shouldLock.every((subStat) => subStatsList.includes(subStat))) {
-                setIsMostValuableRelic(true)
+            // check if the main stat exists in the relic rating
+            const mainStatRating = currentRelicRating[mainRelicStats[0].name]
+
+            if (!mainStatRating) {
+                return;
             }
+
+            const validSubStats = mainStatRating.validSub
+            const shouldLockStats = mainStatRating.shouldLock
+
+            setIsValuableMainStats(true);
+            setValuableSubStats(validSubStats);
+            setShouldLockStats(shouldLockStats);
+
+            const isValuableSub: {
+                [index: number]: boolean
+            } = {
+                1: false,
+                2: false,
+                3: false,
+                4: false
+            }
+
+            let valuableSubStats = 0;
+            const subStatsList: string[] = []
+
+            for (let i = 0; i < subRelicStats.length; i++) {
+                const subStat = subRelicStats[i];
+                subStatsList.push(subStat.name);
+                if (validSubStats.includes(subStat.name)) {
+                    isValuableSub[i + 1] = true;
+                    valuableSubStats++;
+                }
+            }
+
+            shouldLockStats.forEach((shouldLock: string[]) => {
+                if (shouldLock.every((subStat: string) => subStatsList.includes(subStat))) {
+                    setIsMostValuableRelic(true)
+                }
+            })
+
+
+            if (valuableSubStats >= 1) {
+                setIsValuableRelic(true);
+            } else {
+                setIsValuableRelic(false);
+            }
+            setIsValuableSubStats(isValuableSub)
+
         })
-
-
-        if (valuableSubStats >= 1) {
-            setIsValuableRelic(true);
-        } else {
-            setIsValuableRelic(false);
-        }
-        setIsValuableSubStats(isValuableSub)
-
-
-        // TODO: add character relative score base on the character
 
     }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError]);
 
@@ -190,7 +198,7 @@ function App() {
 
 
     const captureScreen = async () => {
-        const res = await window.ipcRenderer.captureScreen();
+        const res = await (window as any).ipcRenderer.captureScreen();
         const croppedImage = res.crop({x: 1400, y: 0, width: 445, height: 800});
 
         // if the image is not changed, do not process it
@@ -287,10 +295,12 @@ function App() {
                         }>
                             {scanningStatus ? 'Stop' : 'Start'} scanning
                         </button>
-                        <label>Scanning interval (ms):</label>
-                        <input type="number" value={scanningInterval} onChange={(e) => {
-                            setScanningInterval(Number(e.target.value));
-                        }}/>
+                        <div className={"inputContainer"}>
+                            <label htmlFor={"scanInterval"}>Scanning interval (ms):</label>
+                            <input id={"scanInterval"} type="number" value={scanningInterval} onChange={(e) => {
+                                setScanningInterval(Number(e.target.value));
+                            }}/>
+                        </div>
                     </div>
                     <div className={`title ${
                         isMostValuableRelic ? "isMostValuable" :
@@ -346,6 +356,7 @@ function App() {
                                 }
                             </div>
                     }
+                    <ValuableSubList valuableSubStats={valuableSubStats} setValuableSubStats={setValuableSubStats}/>
                 </div>
                 <div className={"rightContainer"}>
                     <h3>Image Captured</h3>

@@ -1,9 +1,8 @@
 import {app, BrowserWindow, desktopCapturer, ipcMain} from 'electron'
-import {createRequire} from 'node:module'
 import {fileURLToPath} from 'node:url'
 import path from 'node:path'
+import store from "./store.ts";
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -34,8 +33,6 @@ function createWindow() {
         },
     })
 
-    ipcMain.handle('ping', () => 'pong')
-
     ipcMain.handle('capture-screen', async () => {
         const sources = await desktopCapturer.getSources({
             types: ['window'],
@@ -50,6 +47,14 @@ function createWindow() {
         } else {
             return null; // Handle case where no matching window is found
         }
+    })
+
+    ipcMain.handle("store-get", async (_, key) => {
+        return store.get(key)
+    })
+
+    ipcMain.handle("store-set", async (_, key, value) => {
+        return store.set(key, value)
     })
 
     // Test active push message to Renderer-process.

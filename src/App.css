@@ -1,8 +1,14 @@
 #root {
-    max-width: 1280px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
+}
+
+ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .error {
@@ -36,6 +42,13 @@
 .controlsContainer {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: row;
     justify-content: center;
     gap: 10px;
 }
