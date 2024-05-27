@@ -22,13 +22,8 @@ const getRelicRatingInfo = async (relicTitle: string, relicMainStat: string) => 
 }
 
 
-const isMostValuableRelic = (shouldLock: string[][], relicSubStats: string[]) => {
-    shouldLock.forEach((shouldLock: string[]) => {
-        if (shouldLock.every((subStat: string) => relicSubStats.includes(subStat))) {
-            return true;
-        }
-    })
-    return false;
+const isMostValuableRelic = (shouldLock: string[][], relicSubStats: string[]): boolean => {
+    return shouldLock.some(lock => lock.every(subStat => relicSubStats.includes(subStat)));
 }
 
 const labelValuableSubStats = (validSub: string[], relicSubStats: string[]) => {
