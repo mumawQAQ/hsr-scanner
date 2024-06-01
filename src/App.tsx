@@ -5,7 +5,7 @@ import './App.css';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
-import ValuableSubList from "@/components/ValuableSubList";
+import ValuableSubList from "@/components/ValuableSubList.tsx";
 import relicUtils from "@/utils/relicUtils.ts";
 
 function App() {
@@ -135,7 +135,7 @@ function App() {
             // the relicRatingInfo is found
             setIsValuableMainStats(true);
 
-            const configValuableSubStats = relicRatingInfo.validSub;
+            const configValuableSubStats = relicRatingInfo.valuableSub;
             const configShouldLockStats = relicRatingInfo.shouldLock;
 
             setValuableSubStats(configValuableSubStats);
@@ -163,7 +163,7 @@ function App() {
             }
         });
 
-    }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError]);
+    }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError, relicTitle]);
 
 
     const resetAttributes = () => {
@@ -220,28 +220,37 @@ function App() {
             const maskedRelicMainStats = ImageUtils.applyFilter(relicMainStatsHSV, relicMainStatsRGB);
             const maskedRelicSubStats = ImageUtils.applyFilter(relicSubStatsHSV, relicSubStatsRGB);
 
-            // Show image
-            cv.imshow(titlePartRef.current, maskedRelicTitle);
-            cv.imshow(mainStatsPartRef.current, maskedRelicMainStats);
-            cv.imshow(subStatsPartRef.current, maskedRelicSubStats);
+
+            // make sure the work in initialized
+            if (worker) {
+                if (titlePartRef.current) {
+                    cv.imshow(titlePartRef.current, maskedRelicTitle);
+                    const relicTitleOCRResult = await OcrUtils.relicTitleExtractor(worker, titlePartRef.current.toDataURL());
+                    setRelicTitle(relicTitleOCRResult);
+                }
 
 
-            const relicTitleOCRResult = await OcrUtils.relicTitleExtractor(worker, titlePartRef.current.toDataURL());
-            const relicMainStatsOCRResult = await OcrUtils.relicMainStatsExtractor(worker, mainStatsPartRef.current.toDataURL());
-            const relicSubStatsOCRResult = await OcrUtils.relicSubStatsExtractor(worker, subStatsPartRef.current.toDataURL());
+                if (mainStatsPartRef.current) {
+                    cv.imshow(mainStatsPartRef.current, maskedRelicMainStats);
+                    const relicMainStatsOCRResult = await OcrUtils.relicMainStatsExtractor(worker, mainStatsPartRef.current.toDataURL());
 
+                    if (relicMainStatsOCRResult.error) {
+                        setMainRelicStatsError(relicMainStatsOCRResult.error);
+                    }
+                    setMainRelicStats(relicMainStatsOCRResult.result);
+                }
 
-            setRelicTitle(relicTitleOCRResult);
-            if (relicMainStatsOCRResult.error) {
-                setMainRelicStatsError(relicMainStatsOCRResult.error);
+                if (subStatsPartRef.current) {
+                    cv.imshow(subStatsPartRef.current, maskedRelicSubStats);
+                    const relicSubStatsOCRResult = await OcrUtils.relicSubStatsExtractor(worker, subStatsPartRef.current.toDataURL());
+                    if (relicSubStatsOCRResult.error) {
+                        setSubRelicStatsError(relicSubStatsOCRResult.error);
+                    }
+                    setSubRelicStats(relicSubStatsOCRResult.result);
+                }
+
             }
-            setMainRelicStats(relicMainStatsOCRResult.result);
 
-            if (relicSubStatsOCRResult.error) {
-                setSubRelicStatsError(relicSubStatsOCRResult.error);
-            }
-
-            setSubRelicStats(relicSubStatsOCRResult.result);
 
             // release the memory
             imgGray.delete();
@@ -337,9 +346,9 @@ function App() {
                     }
 
                     {
-                        relicTitle &&
-                        <ValuableSubList valuableSubStats={valuableSubStats} setValuableSubStats={setValuableSubStats}
-                                         relicTitle={relicTitle}/>
+                        relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
+                        <ValuableSubList valuableSubStats={valuableSubStats} relicTitle={relicTitle}
+                                         mainRelicStats={mainRelicStats[0].name}/>
                     }
                 </div>
                 <div className={"rightContainer"}>
