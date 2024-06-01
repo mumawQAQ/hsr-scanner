@@ -7,6 +7,7 @@ import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
 import relicUtils from "@/utils/relicUtils.ts";
+import Box from "@mui/material/Box";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -59,7 +60,6 @@ function App() {
             worker?.terminate();
         };
     }, []);
-
 
     useEffect(() => {
         // make sure the worker is initialized
@@ -272,7 +272,14 @@ function App() {
 
     return (
         <div>
-            <div className={"mainContainer"}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                rowGap: 10,
+                minHeight: '100%',
+                minWidth: '100%',
+            }}>
                 <div className={"leftContainer"}>
                     <h3>HSR-Scanner</h3>
                     <div className={"controlsContainer"}>
@@ -357,7 +364,7 @@ function App() {
                     <canvas ref={mainStatsPartRef}/>
                     <canvas ref={subStatsPartRef}/>
                 </div>
-            </div>
+            </Box>
         </div>
 
     );

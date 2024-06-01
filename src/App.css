@@ -15,14 +15,6 @@ ul {
     color: red;
 }
 
-.mainContainer {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-    width: 100%;
-    justify-content: space-between;
-    gap: 10px;
-}
 
 .leftContainer {
     width: 50%;
