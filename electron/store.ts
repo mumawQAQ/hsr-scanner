@@ -635,7 +635,7 @@ const MusketeerCommonShouldLock = [
 ]
 
 const PrisonerCommonValuableSub = [
-    RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.SPD, RelicType.ATKPercentage,
+    RelicType.CRITRate, RelicType.CRITDMG, RelicType.ATKPercentage, RelicType.SPD,
     RelicType.EffectHitRate
 ]
 
