@@ -64,6 +64,11 @@ function createWindow() {
         win?.webContents.send('main-process-message', (new Date).toLocaleString())
     })
 
+    // set the window stick to the top
+    // TODO: make it configurable by user
+    win.setAlwaysOnTop(true, 'normal')
+
+
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL)
     } else {
