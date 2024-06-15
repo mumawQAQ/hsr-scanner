@@ -27,7 +27,9 @@ function App() {
     const [subRelicStats, setSubRelicStats] = useState<RelicSubStats[]>([]);
 
     const [valuableSubStats, setValuableSubStats] = useState<string[]>([]);
-    const [shouldLockStats, setShouldLockStats] = useState<string[][]>([]);
+
+    
+    const [_, setShouldLockStats] = useState<string[][]>([]);
 
 
     const [mainRelicStatsError, setMainRelicStatsError] = useState<string | null>(null);

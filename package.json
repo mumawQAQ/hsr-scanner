@@ -1,8 +1,19 @@
 {
   "name": "hsr-scanner",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "description": "A simple relic scanner for HSR",
+  "author": {
+    "email": "guangrui_wang@outlook.com",
+    "name": "Muma",
+    "url": "https://mumawqaq.github.io/"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mumawQAQ/hsr-scanner.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
