@@ -313,7 +313,7 @@ function App() {
                     <div className={"font-bold"}>主属性:</div>
                     {
                         mainRelicStatsError || mainRelicStats.length == 0 ?
-                            <div className={"text-red-700"}>{mainRelicStatsError}</div> :
+                            <div className={"text-red-700 my-2"}>{mainRelicStatsError}</div> :
                             <div className={"border-2 shadow"}>
                                 {
                                     mainRelicStats.map((stat, index) => (
@@ -338,7 +338,7 @@ function App() {
                     <div className={"font-bold"}>副属性:</div>
                     {
                         subRelicStatsError || subRelicStats.length == 0 ?
-                            <div className={"text-red-700"}>{subRelicStatsError}</div> :
+                            <div className={"text-red-700 my-2"}>{subRelicStatsError}</div> :
                             <div className={"border-2 shadow"}>
                                 {
                                     subRelicStats.map((stat, index) => (
