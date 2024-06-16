@@ -25,6 +25,7 @@ function App() {
     const [workerInitialized, setWorkerInitialized] = useState(false);
     const [scanningStatus, setScanningStatus] = useState(false);
     const [scanningInterval, setScanningInterval] = useState<number>(2000);
+    const [imageCapturedShowed, setImageCapturedShowed] = useState(true);
 
 
     const [relicTitle, setRelicTitle] = useState('');
@@ -32,7 +33,6 @@ function App() {
     const [subRelicStats, setSubRelicStats] = useState<RelicSubStats[]>([]);
 
     const [valuableSubStats, setValuableSubStats] = useState<string[]>([]);
-
 
     const [_, setShouldLockStats] = useState<string[][]>([]);
 
@@ -296,17 +296,26 @@ function App() {
         }
     }
 
+    const handleToggleImageCaptured = () => {
+        setImageCapturedShowed(!imageCapturedShowed);
+    }
+
     return (
         <div>
             <ToastContainer/>
             <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full"}>
                 <div className={"w-1/2"}>
                     <div className={"flex flex-col justify-center gap-2"}>
-                        <Button onPress={() => {
-                            setScanningStatus(!scanningStatus);
-                        }}>
-                            {scanningStatus ? '停止' : '开始'}扫描
-                        </Button>
+                        <div className={"flex justify-center gap-2"}>
+                            <Button onPress={() => {
+                                setScanningStatus(!scanningStatus);
+                            }}>
+                                {scanningStatus ? '停止' : '开始'}扫描
+                            </Button>
+                            <Button onPress={handleToggleImageCaptured}>
+                                {imageCapturedShowed ? '隐藏' : '显示'}图像
+                            </Button>
+                        </div>
                         <div>
                             <Input
                                 label={"扫描频率(ms):"}
@@ -418,8 +427,15 @@ function App() {
                                          mainRelicStats={mainRelicStats[0].name}/>
                     }
                 </div>
-                <div className={"w-1/2"}>
-                    <h3>图像捕获</h3>
+                <div className={clsx(
+                    {
+                        hidden: !imageCapturedShowed
+                    },
+                    "w-1/2 flex flex-col gap-2 justify-center items-center"
+                )}>
+                    <div>
+                        图像捕获
+                    </div>
                     <canvas ref={titlePartRef}/>
                     <canvas ref={mainStatsPartRef}/>
                     <canvas ref={subStatsPartRef}/>
