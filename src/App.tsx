@@ -7,7 +7,7 @@ import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
-import {Button, Input} from "@nextui-org/react";
+import {Button, Chip, Input} from "@nextui-org/react";
 import clsx from "clsx";
 import {Add, Remove} from "@mui/icons-material";
 import {toast, ToastContainer} from "react-toastify";
@@ -331,16 +331,23 @@ function App() {
                         </div>
                     </div>
 
-                    <div className={
-                        clsx({
-                            isMostValuable: isMostValuableRelic,
-                            isValuable: isValuableRelic,
-                            isNotValuable: !isValuableRelic
-                        }, "font-bold")
-                    }>{relicTitle}</div>
+                    <div className={"flex flex-row justify-center gap-2 p-2"}>
+                        <div className={"font-bold"}>{relicTitle}</div>
+                        {
+                            <Chip color={
+                                isMostValuableRelic ? "success" :
+                                    isValuableRelic ? "warning" : "danger"
+                            }>
+                                {
+                                    isMostValuableRelic ? "建议锁定" :
+                                        isValuableRelic ? "可以保留" : "建议分解"
+                                }
+                            </Chip>
+                        }
+                    </div>
                     <div className={"flex gap-1 justify-center"}>
                         <span className="font-bold">
-                            绝对评分:
+                            遗器成长值:
                         </span>
                         <span className={"text-blue-500"}>
                             {absoluteScore}
