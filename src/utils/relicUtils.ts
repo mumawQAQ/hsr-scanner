@@ -20,18 +20,19 @@ const getRelicRatingInfo = async (relicTitle: string, relicMainStat: string) => 
 }
 
 const updateRelicRatingValuableSub = async (relicTitle: string, relicMainStat: string, valuableSub: string[]) => {
+    console.log('relicTitle', relicTitle)
     const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
     if (!relicRatingInfo) {
         return {
             success: false,
-            message: 'relicRatingInfo is not found by relicTitle'
+            message: '无法找到当前遗器，请向Github提交issue'
         };
     }
 
     if (!relicRatingInfo[relicMainStat]) {
         return {
             success: false,
-            message: 'relicRatingDetail is not found by relicMainStat'
+            message: '当前遗器的主属性无法找到，请先添加主属性为有效属性'
         };
     }
     // update the valuableSub
@@ -42,7 +43,7 @@ const updateRelicRatingValuableSub = async (relicTitle: string, relicMainStat: s
 
     return {
         success: true,
-        message: 'valuableSub is updated'
+        message: '有效副属性已更新'
     }
 }
 
@@ -52,14 +53,14 @@ const updateRelicRatingShouldLock = async (relicTitle: string, relicMainStat: st
     if (!relicRatingInfo) {
         return {
             success: false,
-            message: 'relicRatingInfo is not found by relicTitle'
+            message: '无法找到当前遗器，请向Github提交issue'
         };
     }
 
     if (!relicRatingInfo[relicMainStat]) {
         return {
             success: false,
-            message: 'relicRatingDetail is not found by relicMainStat'
+            message: '当前遗器的主属性无法找到，请先添加主属性为有效属性'
         };
     }
     // update the shouldLock
@@ -70,7 +71,7 @@ const updateRelicRatingShouldLock = async (relicTitle: string, relicMainStat: st
 
     return {
         success: true,
-        message: 'shouldLock is updated'
+        message: '锁定副属性已更新'
     }
 }
 
