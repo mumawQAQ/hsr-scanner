@@ -304,7 +304,9 @@ function App() {
         <div>
             <ToastContainer/>
             <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full"}>
-                <div className={"w-1/2"}>
+                <div className={
+                    clsx(imageCapturedShowed ? "w-1/2" : "w-full")
+                }>
                     <div className={"flex flex-col justify-center gap-2"}>
                         <div className={"flex justify-center gap-2"}>
                             <Button onPress={() => {
