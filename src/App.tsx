@@ -7,7 +7,8 @@ import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
-import {Button} from "@nextui-org/react";
+import {Button, Input} from "@nextui-org/react";
+import clsx from "clsx";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -271,57 +272,62 @@ function App() {
         }
     };
 
-    ///                display: 'flex',
-    //                 flexDirection: 'row',
-    //                 justifyContent: 'space-between',
-    //                 rowGap: 10,
-    //                 minHeight: '100%',
-    //                 minWidth: '100%',
-
     return (
         <div>
             <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full"}>
-                <div className={"leftContainer"}>
-                    <div className={"controlsContainer"}>
+                <div className={"w-1/2"}>
+                    <div className={"flex flex-col justify-center gap-2"}>
                         <Button onPress={() => {
                             setScanningStatus(!scanningStatus);
                         }}>
                             {scanningStatus ? '停止' : '开始'}扫描
-
                         </Button>
-                        <div className={"inputContainer"}>
-                            <label htmlFor={"scanInterval"}>扫描频率(ms):</label>
-                            <input id={"scanInterval"} type="number" value={scanningInterval} onChange={(e) => {
-                                setScanningInterval(Number(e.target.value));
-                            }}/>
+                        <div>
+                            <Input
+                                label={"扫描频率(ms):"}
+                                type="number"
+                                value={scanningInterval.toString()}
+                                onChange={(e) => {
+                                    setScanningStatus(false)
+                                    setScanningInterval(Number(e.target.value));
+                                }}
+                            />
                         </div>
                     </div>
-                    <div className={`title ${
-                        isMostValuableRelic ? "isMostValuable" :
-                            isValuableRelic ? "isValuable" : "isNotValuable"
-                    }`}>{relicTitle}</div>
-                    <div>
-                        <span className="absoluteScoreTitle">
+
+                    <div className={
+                        clsx({
+                            isMostValuable: isMostValuableRelic,
+                            isValuable: isValuableRelic,
+                            isNotValuable: !isValuableRelic
+                        }, "font-bold")
+                    }>{relicTitle}</div>
+                    <div className={"flex gap-1 justify-center"}>
+                        <span className="font-bold">
                             绝对评分:
                         </span>
-                        <span className="absoluteScore">
+                        <span className={"text-blue-500"}>
                             {absoluteScore}
                         </span>
                     </div>
-                    <div className={"title"}>主属性:</div>
+                    <div className={"font-bold"}>主属性:</div>
                     {
                         mainRelicStatsError || mainRelicStats.length == 0 ?
-                            <div className={"error"}>{mainRelicStatsError}</div> :
-                            <div className={"statsContainer"}>
+                            <div className={"text-red-700"}>{mainRelicStatsError}</div> :
+                            <div className={"border-2 shadow"}>
                                 {
                                     mainRelicStats.map((stat, index) => (
                                         <div key={index} className={
-                                            isValuableMainStats ? "isValuable" : "isNotValuable"
+                                            clsx({
+                                                    isValuable: isValuableMainStats,
+                                                    isNotValuable: !isValuableMainStats
+                                                }, "flex justify-center gap-1"
+                                            )
                                         }>
-                                            <span className={"statsName"}>{stat.name}</span>
-                                            :<span className={"statsNumber"}>{stat.number}</span>
-                                            <span className={"statsLevel"}>Level:</span>
-                                            <span className={"statsLevelNumber"}>{
+                                            <span className={"font-bold"}>{stat.name}</span>
+                                            :<span className={"text-blue-500"}>{stat.number}</span>
+                                            <span className={"font-bold"}>Level:</span>
+                                            <span className={"text-blue-500"}>{
                                                 stat.level
                                             }</span>
                                         </div>
@@ -329,20 +335,24 @@ function App() {
                                 }
                             </div>
                     }
-                    <div className={"title"}>副属性:</div>
+                    <div className={"font-bold"}>副属性:</div>
                     {
                         subRelicStatsError || subRelicStats.length == 0 ?
-                            <div className={"error"}>{subRelicStatsError}</div> :
-                            <div className={"statsContainer"}>
+                            <div className={"text-red-700"}>{subRelicStatsError}</div> :
+                            <div className={"border-2 shadow"}>
                                 {
                                     subRelicStats.map((stat, index) => (
                                         <div key={index} className={
-                                            isValuableSubStats[index + 1] ? "isValuable" : "isNotValuable"
+                                            clsx({
+                                                    isValuable: isValuableSubStats[index + 1],
+                                                    isNotValuable: !isValuableSubStats[index + 1]
+                                                }, "flex justify-center gap-1"
+                                            )
                                         }>
-                                            <span className={"statsName"}>{stat.name}</span>
-                                            :<span className={"statsNumber"}>{stat.number}</span>
-                                            <span className={"statsScore"}>score:</span>
-                                            <span className={"statsNumber"}>{
+                                            <span className={"font-bold"}>{stat.name}</span>
+                                            :<span className={"text-blue-500"}>{stat.number}</span>
+                                            <span className={"font-bold"}>score:</span>
+                                            <span className={"text-blue-500"}>{
                                                 stat.score instanceof Array ? stat.score.join(' | ') : stat.score
                                             }</span>
                                         </div>
@@ -356,7 +366,7 @@ function App() {
                                          mainRelicStats={mainRelicStats[0].name}/>
                     }
                 </div>
-                <div className={"rightContainer"}>
+                <div className={"w-1/2"}>
                     <h3>图像捕获</h3>
                     <canvas ref={titlePartRef}/>
                     <canvas ref={mainStatsPartRef}/>
