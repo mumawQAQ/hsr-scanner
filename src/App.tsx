@@ -9,8 +9,8 @@ import relicUtils from "@/utils/relicUtils.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
 import {Button, Input} from "@nextui-org/react";
 import clsx from "clsx";
-import {Add} from "@mui/icons-material";
-import {ToastContainer} from "react-toastify";
+import {Add, Remove} from "@mui/icons-material";
+import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -276,6 +276,26 @@ function App() {
         }
     };
 
+    const handleAddValuableMainStats = async () => {
+        const result = await relicUtils.addRelicRatingValuableMain(relicTitle, mainRelicStats[0].name);
+        if (result.success) {
+            setIsValuableMainStats(true);
+            toast(result.message, {type: "success"})
+        } else {
+            toast(result.message, {type: "error"})
+        }
+    }
+
+    const handleRemoveValuableMainStats = async () => {
+        const result = await relicUtils.removeRelicRatingValuableMain(relicTitle, mainRelicStats[0].name);
+        if (result.success) {
+            setIsValuableMainStats(false);
+            toast(result.message, {type: "success"})
+        } else {
+            toast(result.message, {type: "error"})
+        }
+    }
+
     return (
         <div>
             <ToastContainer/>
@@ -339,16 +359,27 @@ function App() {
                                     ))
                                 }
                                 {
-                                    !isValuableMainStats &&
-                                    <div className={"my-2"}>
-                                        <Button
-                                            endContent={<Add/>}
-                                            variant={"flat"}
-                                            color={"success"}
-                                        >
-                                            添加为有效主属性
-                                        </Button>
-                                    </div>
+                                    isValuableMainStats ?
+                                        <div className={"my-2"}>
+                                            <Button
+                                                startContent={<Remove/>}
+                                                variant={"flat"}
+                                                color={"danger"}
+                                                onPress={handleRemoveValuableMainStats}
+                                            >
+                                                移除有效主属性
+                                            </Button>
+                                        </div> :
+                                        <div className={"my-2"}>
+                                            <Button
+                                                startContent={<Add/>}
+                                                variant={"flat"}
+                                                color={"success"}
+                                                onPress={handleAddValuableMainStats}
+                                            >
+                                                添加为有效主属性
+                                            </Button>
+                                        </div>
                                 }
                             </div>
                     }

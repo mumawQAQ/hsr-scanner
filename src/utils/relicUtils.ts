@@ -19,8 +19,50 @@ const getRelicRatingInfo = async (relicTitle: string, relicMainStat: string) => 
     };
 }
 
+const addRelicRatingValuableMain = async (relicTitle: string, relicMainStat: string) => {
+    const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
+    if (!relicRatingInfo) {
+        return {
+            success: false,
+            message: '无法找到当前遗器，请向Github提交issue'
+        };
+    }
+
+    relicRatingInfo[relicMainStat] = {
+        valuableSub: [],
+        shouldLock: []
+    };
+
+    await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
+
+    return {
+        success: true,
+        message: '成功添加有效主属性'
+    }
+
+
+}
+
+const removeRelicRatingValuableMain = async (relicTitle: string, relicMainStat: string) => {
+    const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
+    if (!relicRatingInfo) {
+        return {
+            success: false,
+            message: '无法找到当前遗器，请向Github提交issue'
+        };
+    }
+
+    delete relicRatingInfo[relicMainStat];
+    await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
+
+    return {
+        success: true,
+        message: '成功删除有效主属性'
+    }
+}
+
+
 const updateRelicRatingValuableSub = async (relicTitle: string, relicMainStat: string, valuableSub: string[]) => {
-    console.log('relicTitle', relicTitle)
     const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
     if (!relicRatingInfo) {
         return {
@@ -100,6 +142,8 @@ const labelValuableSubStats = (valuableSub: string[], relicSubStats: string[]) =
 
 export default {
     getRelicRatingInfo,
+    addRelicRatingValuableMain,
+    removeRelicRatingValuableMain,
     updateRelicRatingValuableSub,
     updateRelicRatingShouldLock,
     isMostValuableRelic,
