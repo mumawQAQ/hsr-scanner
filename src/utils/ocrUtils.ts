@@ -23,10 +23,17 @@ const relicStatsNumberExtractor = (statsText: string) => {
 
 const relicTitleExtractor = async (worker: Worker, image: string) => {
     try {
-        const {data: {text: titleText}} = await worker.recognize(image);
+        let {data: {text: titleText}} = await worker.recognize(image);
         if (!titleText) {
             throw new Error('No title found');
         }
+
+        // replace any ’ with '
+        titleText = titleText.replace('’', "'");
+
+        // remove any new line characters
+        titleText = titleText.replace(/\n/g, ' ');
+
         return titleText.trim();
     } catch (e) {
         console.error('Error during OCR processing:', e);
