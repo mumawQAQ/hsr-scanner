@@ -67,14 +67,14 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         if (matchedStats.length === 0) {
             return {
                 result: matchedStats,
-                error: 'No main stats found'
+                error: '没有检测到足够的主属性，如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进'
             }
         }
 
         if (matchedStats.length > 1) {
             return {
                 result: matchedStats,
-                error: 'Multiple main stats found'
+                error: '检测到异常数量的主属性, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进'
             }
         }
 
@@ -108,7 +108,7 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
                 const fixedType = fixRelicType(number, name);
                 // calculate the score of the sub stat'
                 const score = (await (window as any).ipcRenderer.storeGet(`data.relicSubStatsScore.${fixedType}`))[number]
-                
+
                 // const score = relic.relicSubStatsScore[fixedType][number]
                 matchedStats.push({name: fixedType, number: number, score: score})
             }
@@ -117,14 +117,14 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
         if (matchedStats.length < 3) {
             return {
                 result: matchedStats,
-                error: 'Not enough sub stats found'
+                error: '没有检测到足够的副属性, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进'
             }
         }
 
         if (matchedStats.length > 4) {
             return {
                 result: matchedStats,
-                error: 'Too many sub stats found'
+                error: '检测到异常数量的副属性, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进'
             }
         }
 
