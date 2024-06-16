@@ -2,9 +2,9 @@ import * as React from "react";
 import {useEffect} from "react";
 import {Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/react";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {RelicType} from "../../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
 import {toast} from "react-toastify";
+import {AllSubStats} from "../../types.ts";
 
 type ITestValuableSubListProps = {
     relicTitle: string;
@@ -18,8 +18,6 @@ const ValuableSubList: React.FC<ITestValuableSubListProps> = (
         mainRelicStats,
         valuableSubStats
     }) => {
-
-    const allStats = Object.values(RelicType) as string[];
 
     const [selectedStats, setSelectedStats] = React.useState(new Set(valuableSubStats));
 
@@ -67,7 +65,7 @@ const ValuableSubList: React.FC<ITestValuableSubListProps> = (
                     className={"max-h-60 overflow-y-auto"}
                 >
                     {
-                        allStats.map((stat) => {
+                        AllSubStats.map((stat) => {
                             return <DropdownItem key={stat}>{stat}</DropdownItem>
                         })
                     }

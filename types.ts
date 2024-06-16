@@ -34,3 +34,18 @@ export enum RelicType {
     QuantumDMGBoost = '量子属性伤害提高',
     ImaginaryDMGBoost = '虚数属性伤害提高',
 }
+
+export const AllSubStats: string[] = [
+    RelicType.HP,
+    RelicType.HPPercentage,
+    RelicType.ATK,
+    RelicType.ATKPercentage,
+    RelicType.DEF,
+    RelicType.DEFPercentage,
+    RelicType.SPD,
+    RelicType.CRITRate,
+    RelicType.CRITDMG,
+    RelicType.BreakEffect,
+    RelicType.EffectHitRate,
+    RelicType.EffectRes,
+]
