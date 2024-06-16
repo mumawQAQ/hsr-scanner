@@ -4,6 +4,7 @@ import {Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@next
 import SettingsIcon from "@mui/icons-material/Settings";
 import {RelicType} from "../../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
+import {toast} from "react-toastify";
 
 type ITestValuableSubListProps = {
     relicTitle: string;
@@ -34,12 +35,11 @@ const ValuableSubList: React.FC<ITestValuableSubListProps> = (
         const result = await relicUtils.updateRelicRatingValuableSub(relicTitle, mainRelicStats, [...selectedKeys]);
 
         if (result.success) {
-            console.log("update relic rating success");
-
             // Update the state only after the successful update to ensure consistency
             setSelectedStats(new Set(selectedKeys)); // Update state if successful
+            console.log(result.message)
         } else {
-            console.log("update relic rating failed");
+            toast(result.message, {type: "error"})
         }
     };
 
@@ -61,6 +61,7 @@ const ValuableSubList: React.FC<ITestValuableSubListProps> = (
                     selectionMode="multiple"
                     selectedKeys={selectedStats}
                     // TODO: fix this type error
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
                     onSelectionChange={onSelectionChange}
                     className={"max-h-60 overflow-y-auto"}
