@@ -9,6 +9,10 @@ import relicUtils from "@/utils/relicUtils.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
 import {Button, Input} from "@nextui-org/react";
 import clsx from "clsx";
+import {Add} from "@mui/icons-material";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -274,6 +278,7 @@ function App() {
 
     return (
         <div>
+            <ToastContainer/>
             <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full"}>
                 <div className={"w-1/2"}>
                     <div className={"flex flex-col justify-center gap-2"}>
@@ -326,12 +331,24 @@ function App() {
                                         }>
                                             <span className={"font-bold"}>{stat.name}</span>
                                             :<span className={"text-blue-500"}>{stat.number}</span>
-                                            <span className={"font-bold"}>Level:</span>
+                                            <span className={"font-bold"}>等级:</span>
                                             <span className={"text-blue-500"}>{
                                                 stat.level
                                             }</span>
                                         </div>
                                     ))
+                                }
+                                {
+                                    !isValuableMainStats &&
+                                    <div className={"my-2"}>
+                                        <Button
+                                            endContent={<Add/>}
+                                            variant={"flat"}
+                                            color={"success"}
+                                        >
+                                            添加为有效主属性
+                                        </Button>
+                                    </div>
                                 }
                             </div>
                     }
@@ -346,15 +363,19 @@ function App() {
                                             clsx({
                                                     isValuable: isValuableSubStats[index + 1],
                                                     isNotValuable: !isValuableSubStats[index + 1]
-                                                }, "flex justify-center gap-1"
+                                                }, "flex justify-center gap-2"
                                             )
                                         }>
-                                            <span className={"font-bold"}>{stat.name}</span>
-                                            :<span className={"text-blue-500"}>{stat.number}</span>
-                                            <span className={"font-bold"}>score:</span>
-                                            <span className={"text-blue-500"}>{
-                                                stat.score instanceof Array ? stat.score.join(' | ') : stat.score
-                                            }</span>
+                                            <div className={"flex gap-1"}>
+                                                <span className={"font-bold"}>{stat.name}</span>
+                                                :<span className={"text-blue-500"}>{stat.number}</span>
+                                            </div>
+                                            <div className={"flex gap-1"}>
+                                                <span className={"font-bold"}>评分:</span>
+                                                <span className={"text-blue-500"}>{
+                                                    stat.score instanceof Array ? stat.score.join(' | ') : stat.score
+                                                }</span>
+                                            </div>
                                         </div>
                                     ))
                                 }
