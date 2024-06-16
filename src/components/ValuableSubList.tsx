@@ -58,11 +58,10 @@ const ValuableSubList: React.FC<ITestValuableSubListProps> = (
                 <DropdownMenu
                     variant="flat"
                     closeOnSelect={false}
-                    disallowEmptySelection
                     selectionMode="multiple"
                     selectedKeys={selectedStats}
                     // TODO: fix this type error
-                    // @ts-ignore
+                    // @ts-expect-error
                     onSelectionChange={onSelectionChange}
                     className={"max-h-60 overflow-y-auto"}
                 >
