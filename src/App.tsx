@@ -6,7 +6,6 @@ import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
-import Box from "@mui/material/Box";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
 import {Button} from "@nextui-org/react";
 
@@ -272,27 +271,26 @@ function App() {
         }
     };
 
+    ///                display: 'flex',
+    //                 flexDirection: 'row',
+    //                 justifyContent: 'space-between',
+    //                 rowGap: 10,
+    //                 minHeight: '100%',
+    //                 minWidth: '100%',
 
     return (
         <div>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                rowGap: 10,
-                minHeight: '100%',
-                minWidth: '100%',
-            }}>
+            <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full"}>
                 <div className={"leftContainer"}>
-                    <h3>HSR-Scanner</h3>
                     <div className={"controlsContainer"}>
                         <Button onPress={() => {
                             setScanningStatus(!scanningStatus);
                         }}>
-                            {scanningStatus ? 'Stop' : 'Start'} scanning
+                            {scanningStatus ? '停止' : '开始'}扫描
+
                         </Button>
                         <div className={"inputContainer"}>
-                            <label htmlFor={"scanInterval"}>Scanning interval (ms):</label>
+                            <label htmlFor={"scanInterval"}>扫描频率(ms):</label>
                             <input id={"scanInterval"} type="number" value={scanningInterval} onChange={(e) => {
                                 setScanningInterval(Number(e.target.value));
                             }}/>
@@ -304,13 +302,13 @@ function App() {
                     }`}>{relicTitle}</div>
                     <div>
                         <span className="absoluteScoreTitle">
-                            Absolute score:
+                            绝对评分:
                         </span>
                         <span className="absoluteScore">
                             {absoluteScore}
                         </span>
                     </div>
-                    <div className={"title"}>Main Stats:</div>
+                    <div className={"title"}>主属性:</div>
                     {
                         mainRelicStatsError || mainRelicStats.length == 0 ?
                             <div className={"error"}>{mainRelicStatsError}</div> :
@@ -331,7 +329,7 @@ function App() {
                                 }
                             </div>
                     }
-                    <div className={"title"}>Sub Stats:</div>
+                    <div className={"title"}>副属性:</div>
                     {
                         subRelicStatsError || subRelicStats.length == 0 ?
                             <div className={"error"}>{subRelicStatsError}</div> :
@@ -359,12 +357,12 @@ function App() {
                     }
                 </div>
                 <div className={"rightContainer"}>
-                    <h3>Image Captured</h3>
+                    <h3>图像捕获</h3>
                     <canvas ref={titlePartRef}/>
                     <canvas ref={mainStatsPartRef}/>
                     <canvas ref={subStatsPartRef}/>
                 </div>
-            </Box>
+            </div>
         </div>
 
     );
