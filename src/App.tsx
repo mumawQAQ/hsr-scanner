@@ -5,9 +5,10 @@ import './App.css';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
-import ValuableSubList from "@/components/ValuableSubList.tsx";
 import relicUtils from "@/utils/relicUtils.ts";
 import Box from "@mui/material/Box";
+import ValuableSubList from "@/components/ValuableSubList.tsx";
+import {Button} from "@nextui-org/react";
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
@@ -28,7 +29,7 @@ function App() {
 
     const [valuableSubStats, setValuableSubStats] = useState<string[]>([]);
 
-    
+
     const [_, setShouldLockStats] = useState<string[][]>([]);
 
 
@@ -285,13 +286,11 @@ function App() {
                 <div className={"leftContainer"}>
                     <h3>HSR-Scanner</h3>
                     <div className={"controlsContainer"}>
-                        <button onClick={captureScreen} onClickCapture={
-                            () => {
-                                setScanningStatus(!scanningStatus);
-                            }
-                        }>
+                        <Button onPress={() => {
+                            setScanningStatus(!scanningStatus);
+                        }}>
                             {scanningStatus ? 'Stop' : 'Start'} scanning
-                        </button>
+                        </Button>
                         <div className={"inputContainer"}>
                             <label htmlFor={"scanInterval"}>Scanning interval (ms):</label>
                             <input id={"scanInterval"} type="number" value={scanningInterval} onChange={(e) => {
@@ -353,7 +352,6 @@ function App() {
                                 }
                             </div>
                     }
-
                     {
                         relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
                         <ValuableSubList valuableSubStats={valuableSubStats} relicTitle={relicTitle}
