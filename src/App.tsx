@@ -7,11 +7,12 @@ import OcrUtils from "@/utils/ocrUtils.ts";
 import {RelicMainStats, RelicSubStats} from "../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
-import {Button, Chip, Input} from "@nextui-org/react";
+import {Button, Chip, Input, Skeleton} from "@nextui-org/react";
 import clsx from "clsx";
 import {Add, Remove} from "@mui/icons-material";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import ShouldLockRulesList from "@/components/ShouldLockRulesList.tsx";
 
 
 function App() {
@@ -21,11 +22,12 @@ function App() {
     const mainStatsPartRef = React.useRef<HTMLCanvasElement>(null);
     const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
 
+    const [isLoaded, setIsLoaded] = useState(false);
     const [currentImage, setCurrentImage] = useState<HTMLImageElement | null>(null);
     const [workerInitialized, setWorkerInitialized] = useState(false);
     const [scanningStatus, setScanningStatus] = useState(false);
     const [scanningInterval, setScanningInterval] = useState<number>(2000);
-    const [imageCapturedShowed, setImageCapturedShowed] = useState(true);
+    const [imageCapturedShowed, setImageCapturedShowed] = useState(false);
 
 
     const [relicTitle, setRelicTitle] = useState('');
@@ -193,6 +195,7 @@ function App() {
             return;
         }
 
+        setIsLoaded(false);
         // reset the stats
         resetAttributes();
         setCurrentImage(croppedImage.toDataURL());
@@ -274,6 +277,7 @@ function App() {
         } catch (e) {
             console.error(e);
         }
+        setIsLoaded(true);
     };
 
     const handleAddValuableMainStats = async () => {
@@ -334,6 +338,7 @@ function App() {
                     <div className={"flex flex-row justify-center gap-2 p-2"}>
                         <div className={"font-bold"}>{relicTitle}</div>
                         {
+                            relicTitle &&
                             <Chip color={
                                 isMostValuableRelic ? "success" :
                                     isValuableRelic ? "warning" : "danger"
@@ -354,87 +359,99 @@ function App() {
                         </span>
                     </div>
                     <div className={"font-bold"}>主属性:</div>
-                    {
-                        mainRelicStatsError || mainRelicStats.length == 0 ?
-                            <div className={"text-red-700 my-2"}>{mainRelicStatsError}</div> :
-                            <div className={"border-2 shadow"}>
-                                {
-                                    mainRelicStats.map((stat, index) => (
-                                        <div key={index} className={
-                                            clsx({
-                                                    isValuable: isValuableMainStats,
-                                                    isNotValuable: !isValuableMainStats
-                                                }, "flex justify-center gap-1"
-                                            )
-                                        }>
-                                            <span className={"font-bold"}>{stat.name}</span>
-                                            :<span className={"text-blue-500"}>{stat.number}</span>
-                                            <span className={"font-bold"}>等级:</span>
-                                            <span className={"text-blue-500"}>{
-                                                stat.level
-                                            }</span>
+                    <Skeleton isLoaded={isLoaded} className={"h-24"}>
+                        {
+                            mainRelicStatsError || mainRelicStats.length === 0 ?
+                                <div className="text-red-700 my-2">
+                                    {mainRelicStatsError}
+                                </div>
+                                :
+                                <div className="border-2 shadow">
+                                    {mainRelicStats.map((stat, index) => (
+                                        <div key={index} className={clsx(
+                                            {
+                                                'isValuable': isValuableMainStats,
+                                                'isNotValuable': !isValuableMainStats
+                                            },
+                                            "flex justify-center gap-1"
+                                        )}>
+                                            <span className="font-bold">{stat.name}</span>:
+                                            <span className="text-blue-500">{stat.number}</span>
+                                            <span className="font-bold">等级:</span>
+                                            <span className="text-blue-500">{stat.level}</span>
                                         </div>
-                                    ))
-                                }
-                                {
-                                    isValuableMainStats ?
-                                        <div className={"my-2"}>
-                                            <Button
-                                                startContent={<Remove/>}
-                                                variant={"flat"}
-                                                color={"danger"}
-                                                onPress={handleRemoveValuableMainStats}
-                                            >
-                                                移除有效主属性
-                                            </Button>
-                                        </div> :
-                                        <div className={"my-2"}>
-                                            <Button
-                                                startContent={<Add/>}
-                                                variant={"flat"}
-                                                color={"success"}
-                                                onPress={handleAddValuableMainStats}
-                                            >
-                                                添加为有效主属性
-                                            </Button>
-                                        </div>
-                                }
-                            </div>
-                    }
+                                    ))}
+                                    {
+                                        isValuableMainStats ?
+                                            <div className="my-2">
+                                                <Button
+                                                    startContent={<Remove/>}
+                                                    variant="flat"
+                                                    color="danger"
+                                                    onPress={handleRemoveValuableMainStats}
+                                                >
+                                                    移除有效主属性
+                                                </Button>
+                                            </div>
+                                            :
+                                            <div className="my-2">
+                                                <Button
+                                                    startContent={<Add/>}
+                                                    variant="flat"
+                                                    color="success"
+                                                    onPress={handleAddValuableMainStats}
+                                                >
+                                                    添加为有效主属性
+                                                </Button>
+                                            </div>
+                                    }
+                                </div>
+                        }
+                    </Skeleton>
                     <div className={"font-bold"}>副属性:</div>
-                    {
-                        subRelicStatsError || subRelicStats.length == 0 ?
-                            <div className={"text-red-700 my-2"}>{subRelicStatsError}</div> :
-                            <div className={"border-2 shadow"}>
-                                {
-                                    subRelicStats.map((stat, index) => (
-                                        <div key={index} className={
-                                            clsx({
-                                                    isValuable: isValuableSubStats[index + 1],
-                                                    isNotValuable: !isValuableSubStats[index + 1]
-                                                }, "flex justify-center gap-2"
-                                            )
-                                        }>
-                                            <div className={"flex gap-1"}>
-                                                <span className={"font-bold"}>{stat.name}</span>
-                                                :<span className={"text-blue-500"}>{stat.number}</span>
+                    <Skeleton isLoaded={isLoaded} className="h-24">
+                        {
+                            subRelicStatsError || subRelicStats.length === 0 ?
+                                <div className="text-red-700 my-2">
+                                    {subRelicStatsError}
+                                </div>
+                                :
+                                <div className="border-2 shadow">
+                                    {subRelicStats.map((stat, index) => (
+                                        <div key={index} className={clsx(
+                                            {
+                                                'isValuable': isValuableSubStats[index + 1],
+                                                'isNotValuable': !isValuableSubStats[index + 1]
+                                            },
+                                            "flex justify-center gap-2"
+                                        )}>
+                                            <div className="flex gap-1">
+                                                <span className="font-bold">{stat.name}</span>:
+                                                <span className="text-blue-500">{stat.number}</span>
                                             </div>
-                                            <div className={"flex gap-1"}>
-                                                <span className={"font-bold"}>评分:</span>
-                                                <span className={"text-blue-500"}>{
-                                                    stat.score instanceof Array ? stat.score.join(' | ') : stat.score
-                                                }</span>
+                                            <div className="flex gap-1">
+                                                <span className="font-bold">评分:</span>
+                                                <span className="text-blue-500">
+                                {Array.isArray(stat.score) ? stat.score.join(' | ') : stat.score}
+                            </span>
                                             </div>
                                         </div>
-                                    ))
-                                }
-                            </div>
-                    }
-                    {
-                        relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
-                        <ValuableSubList valuableSubStats={valuableSubStats} relicTitle={relicTitle}
-                                         mainRelicStats={mainRelicStats[0].name}/>
-                    }
+                                    ))}
+                                </div>
+                        }
+                    </Skeleton>
+                    <div className={"flex flex-row mt-2 gap-2 justify-around"}>
+                        {
+                            relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
+                            <ValuableSubList valuableSubStats={valuableSubStats} relicTitle={relicTitle}
+                                             mainRelicStats={mainRelicStats[0].name}/>
+                        }
+                        {
+                            relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
+                            <ShouldLockRulesList relicTitle={relicTitle} mainRelicStats={mainRelicStats[0].name}/>
+                        }
+                    </div>
+
                 </div>
                 <div className={clsx(
                     {
