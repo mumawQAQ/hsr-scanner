@@ -4,7 +4,6 @@ import cv from '@techstark/opencv-js';
 import './App.css';
 import ImageUtils from "@/utils/imageUtils.ts";
 import OcrUtils from "@/utils/ocrUtils.ts";
-import {RelicMainStats, RelicSubStats} from "../types.ts";
 import relicUtils from "@/utils/relicUtils.ts";
 import ValuableSubList from "@/components/ValuableSubList.tsx";
 import {Button, Chip, Input, Skeleton} from "@nextui-org/react";
@@ -13,10 +12,27 @@ import {Add, Remove} from "@mui/icons-material";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ShouldLockRulesList from "@/components/ShouldLockRulesList.tsx";
+import useRelicStore from "@/store/relicStore.ts";
 
 
 function App() {
     const [worker, setWorker] = useState<Worker | null>(null);
+
+    const {
+        relicTitle,
+        setRelicTitle,
+
+        mainRelicStats,
+        setMainRelicStats,
+
+        subRelicStats,
+        setSubRelicStats,
+
+        relicRatingInfo,
+        fetchRelicRatingInfo,
+        setRelicRatingInfo,
+
+    } = useRelicStore();
 
     const titlePartRef = React.useRef<HTMLCanvasElement>(null);
     const mainStatsPartRef = React.useRef<HTMLCanvasElement>(null);
@@ -28,16 +44,6 @@ function App() {
     const [scanningStatus, setScanningStatus] = useState(false);
     const [scanningInterval, setScanningInterval] = useState<number>(2000);
     const [imageCapturedShowed, setImageCapturedShowed] = useState(false);
-
-
-    const [relicTitle, setRelicTitle] = useState('');
-    const [mainRelicStats, setMainRelicStats] = useState<RelicMainStats[]>([]);
-    const [subRelicStats, setSubRelicStats] = useState<RelicSubStats[]>([]);
-
-    const [valuableSubStats, setValuableSubStats] = useState<string[]>([]);
-
-    const [_, setShouldLockStats] = useState<string[][]>([]);
-
 
     const [mainRelicStatsError, setMainRelicStatsError] = useState<string | null>(null);
     const [subRelicStatsError, setSubRelicStatsError] = useState<string | null>(null);
@@ -88,6 +94,13 @@ function App() {
         return () => clearInterval(interval);
     }, [currentImage, workerInitialized, scanningInterval, scanningStatus]);
 
+
+    useEffect(() => {
+        fetchRelicRatingInfo().then(result => {
+            setRelicRatingInfo(result)
+        })
+    }, [relicTitle, mainRelicStats, fetchRelicRatingInfo, setRelicRatingInfo])
+
     useEffect(() => {
         setIsMostValuableRelic(false)
         setIsValuableRelic(false);
@@ -98,16 +111,19 @@ function App() {
             3: false,
             4: false
         })
-        setValuableSubStats([]);
-        setShouldLockStats([]);
+
+        if (!relicRatingInfo) {
+            return
+        }
+
         let maxAbsoluteScore = 0;
         let minAbsoluteScore = 0;
-        if (mainRelicStatsError || subRelicStatsError || mainRelicStats.length == 0 || subRelicStats.length == 0) {
+        if (mainRelicStatsError || subRelicStatsError || !mainRelicStats || subRelicStats.length == 0) {
             return;
         }
 
         // The relic can have 3-4 sub stats at level 0, each 3 levels will increase the score by 1
-        const maxScore = mainRelicStats[0].level == 0 ? 4 : Math.floor(mainRelicStats[0].level / 3) + 4
+        const maxScore = mainRelicStats.level == 0 ? 4 : Math.floor(mainRelicStats.level / 3) + 4
 
         // Calculate the current relic score
         for (let i = 0; i < subRelicStats.length; i++) {
@@ -133,55 +149,44 @@ function App() {
             setAbsoluteScore(`${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`);
         }
 
-        // add relative score for each sub stat based on the relic type
-        // get the current relic rating
-        relicUtils.getRelicRatingInfo(relicTitle, mainRelicStats[0].name).then((relicRatingInfo: any) => {
-            // if the relicRatingInfo is not found
-            if (!relicRatingInfo) {
-                return;
-            }
 
-            // the relicRatingInfo is found
-            setIsValuableMainStats(true);
+        setIsValuableMainStats(true);
 
-            const configValuableSubStats = relicRatingInfo.valuableSub;
-            const configShouldLockStats = relicRatingInfo.shouldLock;
+        const configValuableSubStats = relicRatingInfo.valuableSub;
+        const configShouldLockStats = relicRatingInfo.shouldLock;
 
-            setValuableSubStats(configValuableSubStats);
-            setShouldLockStats(configShouldLockStats);
+        // extract the name from the subRelicStats
+        const subStatsList = subRelicStats.map(stat => stat.name);
+
+        // check if the relic is the most valuable relic
+        if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList)) {
+            setIsMostValuableRelic(true)
+        }
+
+        // label the valuable sub stats
+        const labeledSubStats = relicUtils.labelValuableSubStats(configValuableSubStats, subStatsList)
+
+        setIsValuableSubStats(labeledSubStats)
+
+        // if the valuable sub stats is more than 1, then the relic is valuable
+        if (Object.values(labeledSubStats).filter(val => val).length >= 1) {
+            setIsValuableRelic(true);
+        } else {
+            setIsValuableRelic(false);
+        }
 
 
-            // extract the name from the subRelicStats
-            const subStatsList = subRelicStats.map(stat => stat.name);
-
-            // check if the relic is the most valuable relic
-            if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList)) {
-                setIsMostValuableRelic(true)
-            }
-
-            // label the valuable sub stats
-            const labeledSubStats = relicUtils.labelValuableSubStats(configValuableSubStats, subStatsList)
-
-            setIsValuableSubStats(labeledSubStats)
-
-            // if the valuable sub stats is more than 1, then the relic is valuable
-            if (Object.values(labeledSubStats).filter(val => val).length >= 1) {
-                setIsValuableRelic(true);
-            } else {
-                setIsValuableRelic(false);
-            }
-        });
-
-    }, [mainRelicStats, subRelicStats, mainRelicStatsError, subRelicStatsError, relicTitle]);
+    }, [mainRelicStats, mainRelicStatsError, relicRatingInfo, subRelicStats, subRelicStatsError]);
 
 
     const resetAttributes = () => {
         setAbsoluteScore('');
         setRelicTitle('');
-        setMainRelicStats([]);
+        setMainRelicStats(null);
         setSubRelicStats([]);
         setMainRelicStatsError(null);
         setSubRelicStatsError(null);
+        setRelicRatingInfo(null);
     }
 
 
@@ -247,7 +252,7 @@ function App() {
                     if (relicMainStatsOCRResult.error) {
                         setMainRelicStatsError(relicMainStatsOCRResult.error);
                     }
-                    setMainRelicStats(relicMainStatsOCRResult.result);
+                    setMainRelicStats(relicMainStatsOCRResult.result[0]);
                 }
 
                 if (subStatsPartRef.current) {
@@ -281,7 +286,12 @@ function App() {
     };
 
     const handleAddValuableMainStats = async () => {
-        const result = await relicUtils.addRelicRatingValuableMain(relicTitle, mainRelicStats[0].name);
+        if (!relicTitle || !mainRelicStats) {
+            toast("请先开始扫描遗器", {type: "error"})
+            return;
+        }
+        const result = await relicUtils.addRelicRatingValuableMain(relicTitle, mainRelicStats.name);
+        await fetchRelicRatingInfo()
         if (result.success) {
             setIsValuableMainStats(true);
             toast(result.message, {type: "success"})
@@ -291,7 +301,12 @@ function App() {
     }
 
     const handleRemoveValuableMainStats = async () => {
-        const result = await relicUtils.removeRelicRatingValuableMain(relicTitle, mainRelicStats[0].name);
+        if (!relicTitle || !mainRelicStats) {
+            toast("请先开始扫描遗器", {type: "error"})
+            return;
+        }
+        const result = await relicUtils.removeRelicRatingValuableMain(relicTitle, mainRelicStats.name);
+        await fetchRelicRatingInfo()
         if (result.success) {
             setIsValuableMainStats(false);
             toast(result.message, {type: "success"})
@@ -361,26 +376,24 @@ function App() {
                     <div className={"font-bold"}>主属性:</div>
                     <Skeleton isLoaded={isLoaded} className={"h-24"}>
                         {
-                            mainRelicStatsError || mainRelicStats.length === 0 ?
+                            mainRelicStatsError || !mainRelicStats ?
                                 <div className="text-red-700 my-2">
                                     {mainRelicStatsError}
                                 </div>
                                 :
                                 <div className="border-2 shadow">
-                                    {mainRelicStats.map((stat, index) => (
-                                        <div key={index} className={clsx(
-                                            {
-                                                'isValuable': isValuableMainStats,
-                                                'isNotValuable': !isValuableMainStats
-                                            },
-                                            "flex justify-center gap-1"
-                                        )}>
-                                            <span className="font-bold">{stat.name}</span>:
-                                            <span className="text-blue-500">{stat.number}</span>
-                                            <span className="font-bold">等级:</span>
-                                            <span className="text-blue-500">{stat.level}</span>
-                                        </div>
-                                    ))}
+                                    <div className={clsx(
+                                        {
+                                            'isValuable': isValuableMainStats,
+                                            'isNotValuable': !isValuableMainStats
+                                        },
+                                        "flex justify-center gap-1"
+                                    )}>
+                                        <span className="font-bold">{mainRelicStats.name}</span>:
+                                        <span className="text-blue-500">{mainRelicStats.number}</span>
+                                        <span className="font-bold">等级:</span>
+                                        <span className="text-blue-500">{mainRelicStats.level}</span>
+                                    </div>
                                     {
                                         isValuableMainStats ?
                                             <div className="my-2">
@@ -441,15 +454,8 @@ function App() {
                         }
                     </Skeleton>
                     <div className={"flex flex-row mt-2 gap-2 justify-around"}>
-                        {
-                            relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
-                            <ValuableSubList valuableSubStats={valuableSubStats} relicTitle={relicTitle}
-                                             mainRelicStats={mainRelicStats[0].name}/>
-                        }
-                        {
-                            relicTitle && mainRelicStats && mainRelicStats.length > 0 &&
-                            <ShouldLockRulesList relicTitle={relicTitle} mainRelicStats={mainRelicStats[0].name}/>
-                        }
+                        <ValuableSubList/>
+                        <ShouldLockRulesList/>
                     </div>
 
                 </div>
