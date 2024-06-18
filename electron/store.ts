@@ -16,7 +16,10 @@ interface StoreData {
             [index: string]: {
                 [index: string]: {
                     valuableSub: string[]
-                    shouldLock: string[][]
+                    shouldLock: {
+                        contain: string
+                        include: { [index: string]: string[] }
+                    }
                 }
             }
         }
@@ -630,1810 +633,2714 @@ const MusketeerCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage
 ]
 
-const MusketeerCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG]
-]
-
 const PrisonerCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.ATKPercentage, RelicType.SPD,
     RelicType.EffectHitRate
 ]
 
-const PrisonerCommonShouldLock = [
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.EffectHitRate],
-    [RelicType.ATKPercentage, RelicType.EffectHitRate],
-    [RelicType.CRITRate, RelicType.CRITDMG],
-]
 
 const GlamothCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.EffectHitRate
-]
-
-const GlamothCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.CRITRate],
-    [RelicType.SPD, RelicType.CRITDMG],
-    [RelicType.ATKPercentage, RelicType.CRITRate],
-    [RelicType.ATKPercentage, RelicType.CRITDMG],
 ]
 
 const lzumoCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage
 ]
 
-const lzumoCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-]
 
 const HertaCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.EffectHitRate
 ]
 
-const HertaCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-]
 
 const IPCCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.EffectHitRate
 ]
 
-const IPCCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.EffectHitRate],
-    [RelicType.ATKPercentage, RelicType.EffectHitRate],
-]
 
 const DiscipleCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.HPPercentage
 ]
 
-const DiscipleCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-]
 
 const GrandDukeCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
 ]
 
-const GrandDukeCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.CRITRate],
-    [RelicType.SPD, RelicType.CRITDMG],
-    [RelicType.ATKPercentage, RelicType.CRITRate],
-    [RelicType.ATKPercentage, RelicType.CRITDMG],
-]
 
 const ElementalCommonValuableSub = [
     RelicType.CRITRate, RelicType.CRITDMG, RelicType.SPD, RelicType.ATKPercentage, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
 ]
 
-const ElementalCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.CRITRate],
-    [RelicType.SPD, RelicType.CRITDMG],
-    [RelicType.ATKPercentage, RelicType.CRITRate],
-    [RelicType.ATKPercentage, RelicType.CRITDMG],
-]
 
 const XianZhouCommonValuableSub = [
     RelicType.SPD, RelicType.ATKPercentage
 ]
 
-const XianZhouCommonShouldLock = [
-    [RelicType.SPD, RelicType.ATKPercentage]
-]
 
 const VonwacqCommonValuableSub = [
     RelicType.SPD, RelicType.ATKPercentage
-]
-
-const VonwacqCommonShouldLock = [
-    [RelicType.SPD, RelicType.ATKPercentage]
 ]
 
 const PenaconyCommonValuableSub = [
     RelicType.SPD, RelicType.ATKPercentage
 ]
 
-const PenaconyCommonShouldLock = [
-    [RelicType.SPD, RelicType.ATKPercentage]
-]
 
 const BelobogCommonValuableSub = [
     RelicType.SPD, RelicType.DEFPercentage, RelicType.EffectHitRate, RelicType.CRITRate, RelicType.CRITDMG
 ]
 
-const BelobogCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.DEFPercentage],
-    [RelicType.SPD, RelicType.EffectHitRate],
-]
 
 const TaliaCommonValuableSub = [
     RelicType.SPD, RelicType.BreakEffect
 ]
 
-const TaliaCommonShouldLock = [
-    [RelicType.SPD, RelicType.BreakEffect]
-]
 
 const SalsottoCommonValuableSub = [
     RelicType.SPD, RelicType.CRITDMG, RelicType.CRITRate, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
 ]
 
-const SalsottoCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.CRITRate],
-    [RelicType.SPD, RelicType.CRITDMG],
-    [RelicType.ATKPercentage, RelicType.CRITRate],
-    [RelicType.ATKPercentage, RelicType.CRITDMG],
-]
 
 const TaikiyanCommonValuableSub = [
     RelicType.SPD, RelicType.CRITDMG, RelicType.CRITRate, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
 ]
 
-const TaikiyanCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.CRITRate],
-    [RelicType.SPD, RelicType.CRITDMG],
-    [RelicType.ATKPercentage, RelicType.CRITRate],
-    [RelicType.ATKPercentage, RelicType.CRITDMG],
-]
 
 const SigoniaCommonValuableSub = [
     RelicType.SPD, RelicType.CRITDMG, RelicType.CRITRate, RelicType.ATKPercentage, RelicType.DEFPercentage, RelicType.HPPercentage
 ]
 
-const SigoniaCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.SPD, RelicType.CRITRate],
-    [RelicType.SPD, RelicType.CRITDMG],
-    [RelicType.ATKPercentage, RelicType.CRITRate],
-    [RelicType.ATKPercentage, RelicType.CRITDMG],
-]
 
 const ThiefCommonValuableSub = [
     RelicType.SPD, RelicType.BreakEffect, RelicType.ATKPercentage
-]
-
-const ThiefCommonShouldLock = [
-    [RelicType.SPD, RelicType.BreakEffect],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.BreakEffect, RelicType.ATKPercentage],
 ]
 
 const WatchmakerCommonValuableSub = [
     RelicType.SPD, RelicType.BreakEffect, RelicType.ATKPercentage
 ]
 
-const WatchmakerCommonShouldLock = [
-    [RelicType.SPD, RelicType.BreakEffect],
-    [RelicType.SPD, RelicType.ATKPercentage],
-    [RelicType.BreakEffect, RelicType.ATKPercentage],
-]
 
 const PasserbyCommonValuableSub = [
     RelicType.SPD, RelicType.HPPercentage, RelicType.EffectRes, RelicType.ATKPercentage
 ]
 
-const PasserbyCommonShouldLock = [
-    [RelicType.SPD, RelicType.HPPercentage],
-]
 
 const KnightCommonValuableSub = [
     RelicType.SPD, RelicType.DEFPercentage, RelicType.EffectRes, RelicType.CRITDMG, RelicType.CRITRate
 ]
 
-const KnightCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.DEFPercentage],
-]
 
 const GuardCommonValuableSub = [
     RelicType.SPD, RelicType.DEFPercentage, RelicType.EffectRes, RelicType.EffectHitRate, RelicType.HPPercentage
 ]
 
-const GuardCommonShouldLock = [
-    [RelicType.SPD, RelicType.DEFPercentage],
-]
 
 const MessengerCommonValuableSub = [
     RelicType.SPD, RelicType.CRITRate, RelicType.CRITDMG, RelicType.ATKPercentage
-]
-
-const MessengerCommonShouldLock = [
-    [RelicType.SPD, RelicType.CRITDMG],
 ]
 
 const InsumousuCommonValuableSub = [
     RelicType.SPD, RelicType.EffectRes, RelicType.CRITDMG, RelicType.CRITRate
 ]
 
-const InsumousuCommonShouldLock = [
-    [RelicType.CRITRate, RelicType.CRITDMG],
-    [RelicType.SPD, RelicType.EffectRes],
-]
 
 const relicRating = {
     'Musketeer\'s Wild Wheat Felt Hat': {
         [RelicType.HP]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Musketeer\'s Coarse Leather Gloves': {
         [RelicType.ATK]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Musketeer\'s Wind-Hunting Shawl': {
         [RelicType.CRITRate]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.OutgoingHealingBoost]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: [
-                [RelicType.CRITRate, RelicType.CRITDMG],
-                [RelicType.SPD, RelicType.ATKPercentage]
-            ]
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Musketeer\'s Rivets Riding Boots': {
         [RelicType.SPD]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: MusketeerCommonValuableSub,
-            shouldLock: MusketeerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Prisoner\'s Sealed Muzzle': {
         [RelicType.HP]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Prisoner\'s Leadstone Shackles': {
         [RelicType.ATK]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Prisoner\'s Repressive Straitjacket': {
         [RelicType.CRITRate]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Prisoner\'s Restrictive Fetters': {
         [RelicType.SPD]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: PrisonerCommonValuableSub,
-            shouldLock: PrisonerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Glamoth\'s Iron Cavalry Regiment': {
         [RelicType.ATKPercentage]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Glamoth\'s Silent Tombstone': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: GlamothCommonValuableSub,
-            shouldLock: GlamothCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'lzumo\'s Magatsu no Morokami': {
         [RelicType.ATKPercentage]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'lzumo\'s Blades of Origin and End': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: lzumoCommonValuableSub,
-            shouldLock: lzumoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Herta\'s Space Station': {
         [RelicType.ATKPercentage]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Herta\'s Wandering Trek': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: HertaCommonValuableSub,
-            shouldLock: HertaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'The IPC\'s Mega HQ': {
         [RelicType.ATKPercentage]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'The IPC\'s Trade Route': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: IPCCommonValuableSub,
-            shouldLock: IPCCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Disciple\'s Prosthetic Eye': {
         [RelicType.HP]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Disciple\'s Ingenium Hand': {
         [RelicType.ATK]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Disciple\'s Dewy Feather Garb': {
         [RelicType.CRITRate]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Disciple\'s Celestial Silk Sandals': {
         [RelicType.SPD]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: DiscipleCommonValuableSub,
-            shouldLock: DiscipleCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Grand Duke\'s Crown of Netherflame': {
         [RelicType.HP]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Grand Duke\'s Gloves of Fieryfur': {
         [RelicType.ATK]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Grand Duke\'s Robe of Grace': {
         [RelicType.CRITRate]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Grand Duke\'s Ceremonial Boots': {
         [RelicType.SPD]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: GrandDukeCommonValuableSub,
-            shouldLock: GrandDukeCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Pioneer\'s Heatproof Shell': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Pioneer\'s Lacuna Compass': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Pioneer\'s Sealed Lead Apron': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Pioneer\'s Starfaring Anchor': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Hunter\'s Artaius Hood': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Hunter\'s Lizard Gloves': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Hunter\'s Ice Dragon Cloak': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Hunter\'s Soft Elkskin Boots': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Champion\'s Headgear': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Champion\'s Heavy Gloves': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Champion\'s Chest Guard': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Champion\'s Fleetfoot Boots': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Firesmith\'s Obsidian Goggles': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Firesmith\'s Ring of Flame-Mastery': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Firesmith\'s Fireproof Apron': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Firesmith\'s Alloy Leg': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Genius\'s Ultraremote Sensing Visor': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Genius\'s Frequency Catcher': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Genius\'s Metafield Suit': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Genius\'s Gravity Walker': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Band\'s Polarized Sunglasses': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Band\'s Touring Bracelet': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Band\'s Leather Jacket With Studs': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Band\'s Ankle Boots With Rivets': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Eagle\'s Beaked Helmet': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Eagle\'s Soaring Ring': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Eagle\'s Winged Suit Harness': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Eagle\'s Quilted Puttees': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Wastelander\'s Breathing Mask': {
         [RelicType.HP]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Wastelander\'s Desert Terminal': {
         [RelicType.ATK]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Wastelander\'s Friar Robe': {
         [RelicType.CRITRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Wastelander\'s Powered Greaves': {
         [RelicType.SPD]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ElementalCommonValuableSub,
-            shouldLock: ElementalCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'The Xianzhou Luofu\'s Celestial Ark': {
         [RelicType.ATKPercentage]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'The Xianzhou Luofu\'s Ambrosial Arbor Vines': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: XianZhouCommonValuableSub,
-            shouldLock: XianZhouCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Vonwacq\'s Island of Birth': {
         [RelicType.ATKPercentage]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Vonwacq\'s Islandic Coast': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: VonwacqCommonValuableSub,
-            shouldLock: VonwacqCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Penacony\'s Grand Hotel': {
         [RelicType.ATKPercentage]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Penacony\'s Dream-Seeking Tracks': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: PenaconyCommonValuableSub,
-            shouldLock: PenaconyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Belobog\'s Fortress of Preservation': {
         [RelicType.DEFPercentage]: {
             valuableSub: BelobogCommonValuableSub,
-            shouldLock: BelobogCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Belobog\'s Iron Defense': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: BelobogCommonValuableSub,
-            shouldLock: BelobogCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: BelobogCommonValuableSub,
-            shouldLock: BelobogCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Talia\'s Nailscrap Town': {
         [RelicType.DEFPercentage]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Talia\'s Exposed Electric Wire': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.BreakEffect]: {
             valuableSub: TaliaCommonValuableSub,
-            shouldLock: TaliaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Salsotto\'s Moving City': {
         [RelicType.DEFPercentage]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Salsotto\'s Terminator Line': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.BreakEffect]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: SalsottoCommonValuableSub,
-            shouldLock: SalsottoCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Taikiyan Laser Stadium': {
         [RelicType.DEFPercentage]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Taikiyan\'s Arclight Race Track': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.BreakEffect]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: TaikiyanCommonValuableSub,
-            shouldLock: TaikiyanCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Sigonia\'s Gaiathra Berth': {
         [RelicType.DEFPercentage]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Sigonia\'s Knot of Cyclicality': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.BreakEffect]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: SigoniaCommonValuableSub,
-            shouldLock: SigoniaCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     },
     'Thief\'s Myriad-Faced Mask': {
         [RelicType.HP]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Thief\'s Gloves With Prints': {
         [RelicType.ATK]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Thief\'s Steel Grappling Hook': {
         [RelicType.CRITRate]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.OutgoingHealingBoost]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Thief\'s Meteor Boots': {
         [RelicType.SPD]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: ThiefCommonValuableSub,
-            shouldLock: ThiefCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Watchmaker\'s Telescoping Lens': {
         [RelicType.HP]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Watchmaker\'s Fortuitous Wristwatch': {
         [RelicType.ATK]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Watchmaker\'s Illusory Formal Suit': {
         [RelicType.CRITRate]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.OutgoingHealingBoost]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Watchmaker\'s Dream-Concealing Dress Shoes': {
         [RelicType.SPD]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: WatchmakerCommonValuableSub,
-            shouldLock: WatchmakerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Passerby\'s Rejuvenated Wooden Hairstick': {
         [RelicType.HP]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Passerby\'s Roaming Dragon Bracer': {
         [RelicType.ATK]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Passerby\'s Ragged Embroided Coat': {
         [RelicType.OutgoingHealingBoost]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Passerby\'s Stygian Hiking Boots': {
         [RelicType.SPD]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: PasserbyCommonValuableSub,
-            shouldLock: PasserbyCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Knight\'s Forgiving Casque': {
         [RelicType.HP]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Knight\'s Silent Oath Ring': {
         [RelicType.ATK]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Knight\'s Solemn Breastplate': {
         [RelicType.HPPercentage]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Knight\'s Iron Boots of Order': {
         [RelicType.SPD]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: KnightCommonValuableSub,
-            shouldLock: KnightCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Guard\'s Cast Iron Helmet': {
         [RelicType.HP]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Guard\'s Shining Gauntlets': {
         [RelicType.ATK]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Guard\'s Uniform of Old': {
         [RelicType.HPPercentage]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Guard\'s Silver Greaves': {
         [RelicType.SPD]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: GuardCommonValuableSub,
-            shouldLock: GuardCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Messenger\'s Holovisor': {
         [RelicType.HP]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Messenger\'s Transformative Arm': {
         [RelicType.ATK]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Messenger\'s Secret Satchel': {
         [RelicType.HPPercentage]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.EffectHitRate]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITRate]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.CRITDMG]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.OutgoingHealingBoost]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Messenger\'s Par-kool Sneakers': {
         [RelicType.SPD]: {
             valuableSub: MessengerCommonValuableSub,
-            shouldLock: MessengerCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Insumousu\'s Whalefall Ship': {
         [RelicType.ATKPercentage]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.PhysicalDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.FireDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.IceDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.LightningDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.WindDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.QuantumDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ImaginaryDMGBoost]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         }
     },
     'Insumousu\'s Frayed Hawser': {
         [RelicType.EnergyRegenerationRate]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.BreakEffect]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.DEFPercentage]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.ATKPercentage]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
         [RelicType.HPPercentage]: {
             valuableSub: InsumousuCommonValuableSub,
-            shouldLock: InsumousuCommonShouldLock
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
         },
     }
 
