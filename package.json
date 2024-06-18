@@ -31,7 +31,8 @@
     "react-dom": "^18.2.0",
     "react-toastify": "^10.0.5",
     "tesseract.js": "^5.1.0",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite-tsconfig-paths": "^4.3.2",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.64",
