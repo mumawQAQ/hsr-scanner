@@ -24,11 +24,13 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
+let floatingWin: BrowserWindow | null
 
-function createWindow() {
+function createMainWindow() {
     win = new BrowserWindow({
         width: 1000,
         height: 1000,
+        // autoHideMenuBar: true,
         icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.mjs'),
@@ -59,14 +61,24 @@ function createWindow() {
         return store.set(key, value)
     })
 
+    ipcMain.handle("close-floating-window", async () => {
+        floatingWin?.close()
+        floatingWin = null
+    })
+
+    ipcMain.handle("open-floating-window", async () => {
+        if (floatingWin) {
+            floatingWin.show()
+        } else {
+            createFloatingWindow()
+        }
+    })
+
+
     // Test active push message to Renderer-process.
     win.webContents.on('did-finish-load', () => {
         win?.webContents.send('main-process-message', (new Date).toLocaleString())
     })
-
-    // set the window stick to the top
-    // TODO: make it configurable by user
-    win.setAlwaysOnTop(true, 'normal')
 
 
     if (VITE_DEV_SERVER_URL) {
@@ -76,6 +88,31 @@ function createWindow() {
         win.loadFile(path.join(RENDERER_DIST, 'index.html'))
     }
 }
+
+function createFloatingWindow() {
+    floatingWin = new BrowserWindow({
+        width: 450,
+        height: 350,
+        // frame: false,
+        transparent: true,
+        alwaysOnTop: true,
+
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.mjs'),
+        },
+    })
+
+    floatingWin.setPosition(1400, 600)
+    floatingWin.setAlwaysOnTop(true, 'screen-saver', 1)
+
+
+    if (VITE_DEV_SERVER_URL) {
+        floatingWin.loadURL(`${VITE_DEV_SERVER_URL}/floating.html`)
+    } else {
+        floatingWin.loadFile(path.join(RENDERER_DIST, 'floating.html'))
+    }
+}
+
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -91,8 +128,11 @@ app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow()
+        createMainWindow()
     }
 })
 
-app.whenReady().then(createWindow)
+
+app.whenReady().then(
+    createMainWindow
+)
