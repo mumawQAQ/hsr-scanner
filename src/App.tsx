@@ -43,7 +43,9 @@ function App() {
     const [workerInitialized, setWorkerInitialized] = useState(false);
     const [scanningStatus, setScanningStatus] = useState(false);
     const [scanningInterval, setScanningInterval] = useState<number>(2000);
+
     const [imageCapturedShowed, setImageCapturedShowed] = useState(false);
+    const [floatingWindowShowed, setFloatingWindowShowed] = useState(false);
 
     const [mainRelicStatsError, setMainRelicStatsError] = useState<string | null>(null);
     const [subRelicStatsError, setSubRelicStatsError] = useState<string | null>(null);
@@ -153,15 +155,15 @@ function App() {
         setIsValuableMainStats(true);
 
         const configValuableSubStats = relicRatingInfo.valuableSub;
-        const configShouldLockStats = relicRatingInfo.shouldLock;
+        // const configShouldLockStats = relicRatingInfo.shouldLock;
 
         // extract the name from the subRelicStats
         const subStatsList = subRelicStats.map(stat => stat.name);
 
         // check if the relic is the most valuable relic
-        if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList)) {
-            setIsMostValuableRelic(true)
-        }
+        // if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList)) {
+        //     setIsMostValuableRelic(true)
+        // }
 
         // label the valuable sub stats
         const labeledSubStats = relicUtils.labelValuableSubStats(configValuableSubStats, subStatsList)
@@ -319,10 +321,20 @@ function App() {
         setImageCapturedShowed(!imageCapturedShowed);
     }
 
+    const handleToggleFloatingWindow = async () => {
+        if (floatingWindowShowed) {
+            await (window as any).ipcRenderer.closeFloatingWindow();
+        } else {
+            await (window as any).ipcRenderer.openFloatingWindow();
+        }
+        setFloatingWindowShowed(!floatingWindowShowed);
+    }
+
     return (
+
         <div>
             <ToastContainer/>
-            <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full"}>
+            <div className={"flex flex-row justify-around gap-2 min-h-full min-w-full p-8 text-center"}>
                 <div className={
                     clsx(imageCapturedShowed ? "w-1/2" : "w-full")
                 }>
@@ -335,6 +347,9 @@ function App() {
                             </Button>
                             <Button onPress={handleToggleImageCaptured}>
                                 {imageCapturedShowed ? '隐藏' : '显示'}图像
+                            </Button>
+                            <Button onPress={handleToggleFloatingWindow}>
+                                {floatingWindowShowed ? '关闭' : '打开'}悬浮窗口
                             </Button>
                         </div>
                         <div>
