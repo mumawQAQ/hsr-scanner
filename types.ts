@@ -11,6 +11,28 @@ export type RelicMainStats = {
     level: number;
 }
 
+enum FloatingWindowMessageType {
+    RelicInfo
+}
+
+export type FloatingWindowMessageRelicInfo = {
+    type: FloatingWindowMessageType.RelicInfo;
+    data: {
+        'relicTitle': string,
+        'mainRelicStats': RelicMainStats,
+        'subRelicStats': RelicSubStats[],
+        'absoluteScore': string,
+        'isMostValuableRelic': boolean,
+        'isValuableRelic': boolean,
+        'isValuableMainStats': boolean,
+        'isValuableSubStats': {
+            [key: number]: boolean
+        }
+    }
+}
+
+export type FloatingWindowMessage = FloatingWindowMessageRelicInfo
+
 export enum RelicType {
     DEF = '防御',
     HP = '生命',

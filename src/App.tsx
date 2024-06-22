@@ -104,6 +104,22 @@ function App() {
     }, [relicTitle, mainRelicStats, fetchRelicRatingInfo, setRelicRatingInfo])
 
     useEffect(() => {
+        (window as any).ipcRenderer.send('message-to-floating-window', {
+            'type': 'relic-info',
+            'data': {
+                'relicTitle': relicTitle,
+                'mainRelicStats': mainRelicStats,
+                'subRelicStats': subRelicStats,
+                'absoluteScore': absoluteScore,
+                'isMostValuableRelic': isMostValuableRelic,
+                'isValuableRelic': isValuableRelic,
+                'isValuableMainStats': isValuableMainStats,
+                'isValuableSubStats': isValuableSubStats
+            }
+        })
+    }, [absoluteScore, isMostValuableRelic, isValuableMainStats, isValuableRelic, isValuableSubStats, mainRelicStats, relicTitle, subRelicStats]);
+
+    useEffect(() => {
         setIsMostValuableRelic(false)
         setIsValuableRelic(false);
         setIsValuableMainStats(false);
@@ -145,13 +161,15 @@ function App() {
         maxAbsoluteScore = parseFloat(maxAbsoluteScore.toFixed(2));
         minAbsoluteScore = parseFloat(minAbsoluteScore.toFixed(2));
 
+        let absoluteScore = '';
+
         if (minAbsoluteScore == maxAbsoluteScore) {
-            setAbsoluteScore(`${maxAbsoluteScore} / ${maxScore}`);
+            absoluteScore = `${maxAbsoluteScore} / ${maxScore}`;
         } else {
-            setAbsoluteScore(`${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`);
+            absoluteScore = `${minAbsoluteScore} - ${maxAbsoluteScore} / ${maxScore}`
         }
 
-
+        setAbsoluteScore(absoluteScore);
         setIsValuableMainStats(true);
 
         const configValuableSubStats = relicRatingInfo.valuableSub;

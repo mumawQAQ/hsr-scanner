@@ -2,6 +2,7 @@ import {app, BrowserWindow, desktopCapturer, ipcMain} from 'electron'
 import {fileURLToPath} from 'node:url'
 import path from 'node:path'
 import store from "./store.ts";
+import {FloatingWindowMessage} from "../types.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -74,10 +75,21 @@ function createMainWindow() {
         }
     })
 
+    ipcMain.on("message-to-floating-window", (_, message: FloatingWindowMessage) => {
+        if (floatingWin) {
+            floatingWin.webContents.send("main-process-message", message)
+        }
+    })
+
 
     // Test active push message to Renderer-process.
     win.webContents.on('did-finish-load', () => {
         win?.webContents.send('main-process-message', (new Date).toLocaleString())
+    })
+
+    win.on('closed', () => {
+        // make sure to close the floating window when the main window is closed
+        floatingWin?.close()
     })
 
 
@@ -93,7 +105,7 @@ function createFloatingWindow() {
     floatingWin = new BrowserWindow({
         width: 450,
         height: 350,
-        // frame: false,
+        frame: false,
         transparent: true,
         alwaysOnTop: true,
 
