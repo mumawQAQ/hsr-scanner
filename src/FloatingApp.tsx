@@ -13,7 +13,7 @@ function FloatingApp() {
 
 
     return (
-        <div className={"flex flex-col justify-center items-center py-2 text-center"}>
+        <div className={"flex flex-col justify-center items-center py-1 text-center"}>
             {
                 relicInfo && relicInfo.data && (
                     <div>
