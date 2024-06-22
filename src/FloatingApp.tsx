@@ -86,6 +86,9 @@ function FloatingApp() {
                                 </div>
                             ))}
                         </div>
+                        <div className={"mt-2 text-red-700 font-bold"}>
+                            如须修改评分标准, 请在主页面中修改
+                        </div>
                     </div>
                 )
 
