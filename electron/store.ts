@@ -3342,7 +3342,51 @@ const relicRating = {
                 include: {}
             }
         },
-    }
+    },
+    'Valorous Mask of Northern Skies': {
+        [RelicType.HP]: {
+            valuableSub: [],
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
+        }
+    },
+    'Valorous Bracelet of Grappling Hooks': {
+        [RelicType.ATK]: {
+            valuableSub: [],
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
+        }
+    },
+    'Valorous Plate of Souring Flight': {},
+    'Valorous Greaves of Pursuing Hunt': {},
+    'Iron Cavalry\'s Homing Helm': {
+        [RelicType.HP]: {
+            valuableSub: [],
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
+        }
+    },
+    'Iron Cavalry\'s Crushing Wristguard': {
+        [RelicType.ATK]: {
+            valuableSub: [],
+            shouldLock: {
+                contain: "",
+                include: {}
+            }
+        }
+    },
+    'Iron Cavalry\'s Silvery Armor': {},
+    'Iron Cavalry\'s Skywalk Greaves': {},
+    'Forge\'s Lotus Lantern Wick': {},
+    'Forge\'s Heavenly Flamewheel Silk': {},
+    'Duran\'s Mechabeast Bridle': {},
+    'Duran\'s Tent of Golden Sky': {},
 
 }
 
