@@ -173,18 +173,20 @@ function App() {
         setIsValuableMainStats(true);
 
         const configValuableSubStats = relicRatingInfo.valuableSub;
-        // const configShouldLockStats = relicRatingInfo.shouldLock;
+        const configShouldLockStats = relicRatingInfo.shouldLock;
 
         // extract the name from the subRelicStats
         const subStatsList = subRelicStats.map(stat => stat.name);
 
-        // check if the relic is the most valuable relic
-        // if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList)) {
-        //     setIsMostValuableRelic(true)
-        // }
 
         // label the valuable sub stats
         const labeledSubStats = relicUtils.labelValuableSubStats(configValuableSubStats, subStatsList)
+
+
+        // check if the relic is the most valuable relic
+        if (relicUtils.isMostValuableRelic(configShouldLockStats, subStatsList, Object.values(labeledSubStats).filter(val => val).length)) {
+            setIsMostValuableRelic(true)
+        }
 
         setIsValuableSubStats(labeledSubStats)
 
