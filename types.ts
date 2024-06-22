@@ -11,6 +11,16 @@ export type RelicMainStats = {
     level: number;
 }
 
+export type RelicRatingInfo = {
+    valuableSub: string[];
+    shouldLock: {
+        contain: string;
+        include: {
+            [key: string]: string[];
+        }
+    }
+}
+
 enum FloatingWindowMessageType {
     RelicInfo
 }
