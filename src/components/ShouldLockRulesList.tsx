@@ -1,38 +1,105 @@
 import * as React from "react";
+import {useEffect} from "react";
 import {Chip, Radio, RadioGroup} from "@nextui-org/react";
 import {Add, Delete} from "@mui/icons-material";
 import SubStatsDropDown from "@/components/SubStatsDropDown.tsx";
 import {toast} from "react-toastify";
-import {RelicType} from "../../types.ts";
 import useRelicStore from "@/store/relicStore.ts";
+import relicUtils from "@/utils/relicUtils.ts";
 
-const Test = {
-    contain: "1",
-    include: {
-        "1": new Set([RelicType.HP, RelicType.SPD]),
-        "2": new Set([RelicType.CRITRate, RelicType.CRITDMG]),
+const includeListObjToSet = (includeObj: { [p: string]: string[] } | undefined) => {
+    const includeSet: { [key: string]: Set<string> } = {}
+    if (!includeObj) {
+        return includeSet
     }
+    Object.keys(includeObj).forEach((key) => {
+        if (includeObj[key]) {
+            includeSet[key] = new Set(includeObj[key])
+        }
+    })
+    return includeSet
 }
 
+
 const ShouldLockRulesList: React.FC = () => {
-    const {relicTitle, mainRelicStats, relicRatingInfo} = useRelicStore();
+    const defaultContain = ""
+
+    const {relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo} = useRelicStore();
 
     const [isEditingContain, setIsEditingContain] = React.useState(false);
-    const [containSelected, setContainSelected] = React.useState(Test.contain);
+    const [containSelected, setContainSelected] = React.useState(relicRatingInfo?.shouldLock.contain || defaultContain);
     const [includeSelected, setIncludeSelected] = React.useState<{
         [key: string]: Set<string>
-    }>(Test.include);
+    }>(includeListObjToSet(relicRatingInfo?.shouldLock.include));
 
+
+    useEffect(() => {
+        setContainSelected(relicRatingInfo?.shouldLock.contain || defaultContain);
+        setIncludeSelected(includeListObjToSet(relicRatingInfo?.shouldLock.include));
+    }, [relicRatingInfo]);
 
     if (!relicTitle || !mainRelicStats || !relicRatingInfo?.shouldLock) {
         return null
+    }
+
+    const handleContainChange = async (value: string) => {
+        const newRelicRatingInfo = {...relicRatingInfo}
+        newRelicRatingInfo.shouldLock.contain = value
+        const result = await relicUtils.updateRelicRatingShouldLock(relicTitle, mainRelicStats.name, newRelicRatingInfo.shouldLock);
+        if (result.success) {
+            setIsEditingContain(false)
+            await fetchRelicRatingInfo();
+        } else {
+            toast(result.message, {type: "error"})
+        }
+    }
+
+    const handleDeleteContainRule = async () => {
+        const newRelicRatingInfo = {...relicRatingInfo}
+        newRelicRatingInfo.shouldLock.contain = defaultContain
+        const result = await relicUtils.updateRelicRatingShouldLock(relicTitle, mainRelicStats.name, newRelicRatingInfo.shouldLock);
+        if (result.success) {
+            setIsEditingContain(false)
+            await fetchRelicRatingInfo();
+        } else {
+            toast(result.message, {type: "error"})
+        }
+    }
+
+    const handleIncludeChange = async (id: string, selectedKeys: Set<string>) => {
+        if (selectedKeys.size > 4) {
+            toast("同时拥有的副属性不能超过4条", {type: "error"})
+            return
+        }
+        const newRelicRatingInfo = {...relicRatingInfo}
+        newRelicRatingInfo.shouldLock.include[id] = [...selectedKeys]
+
+        const result = await relicUtils.updateRelicRatingShouldLock(relicTitle, mainRelicStats.name, newRelicRatingInfo.shouldLock);
+        if (result.success) {
+            await fetchRelicRatingInfo();
+        } else {
+            toast(result.message, {type: "error"})
+        }
+    }
+
+    const handleDeleteIncludeRule = async (id: string) => {
+        const newRelicRatingInfo = {...relicRatingInfo}
+        delete newRelicRatingInfo.shouldLock.include[id]
+
+        const result = await relicUtils.updateRelicRatingShouldLock(relicTitle, mainRelicStats.name, newRelicRatingInfo.shouldLock);
+        if (result.success) {
+            // Update the state only after the successful update to ensure consistency
+            await fetchRelicRatingInfo();
+        } else {
+            toast(result.message, {type: "error"})
+        }
     }
 
 
     return (
         <div className={"w-min h-fit flex flex-col justify-center"}>
             <div className={"font-bold text-nowrap"}>
-                建议保留规则
+                建议锁定规则
             </div>
             <ul className={"flex flex-col gap-2 float-left mt-2"}>
                 {
@@ -41,10 +108,7 @@ const ShouldLockRulesList: React.FC = () => {
                             <RadioGroup
                                 className={"text-nowrap p-2"}
                                 value={containSelected}
-                                onValueChange={(value) => {
-                                    setContainSelected(value)
-                                    setIsEditingContain(false)
-                                }}
+                                onValueChange={handleContainChange}
                             >
                                 <Radio value="1">包含1条有效属性</Radio>
                                 <Radio value="2">包含2条有效属性</Radio>
@@ -57,16 +121,18 @@ const ShouldLockRulesList: React.FC = () => {
                 <li>
                     <div className="flex flex-row justify-center items-center">
                         <Chip
-                            color={"success"}
+                            color={
+                                containSelected ? "success" : "warning"
+                            }
                             radius={"sm"}
                             variant={"shadow"}
                             onClick={() => {
                                 setIsEditingContain(true)
                             }}
                         >
-                            包含{containSelected}条有效属性
+                            {!containSelected ? "暂未启用包含有效属性的条数" : `包含${containSelected}条有效属性`}
                         </Chip>
-                        <div>
+                        <div onClick={handleDeleteContainRule}>
                             <Delete color={"error"}/>
                         </div>
                     </div>
@@ -88,28 +154,18 @@ const ShouldLockRulesList: React.FC = () => {
                                                 >
                                                     同时拥有
                                                     <span className={"font-bold ml-1"}>
-                                                    {[...includeSelected[id]].map((stat) => stat).join(" | ")}
+                                                        {[...includeSelected[id]].map((stat) => stat).join(" | ")}
                                                 </span>
                                                 </Chip>
                                             }
                                             selectedKeys={includeSelected[id]}
-                                            onSelectionChange={(selectedKeys) => {
-                                                // the includeSelected can't contain more than 4 sub stats
-                                                if (selectedKeys.size > 4) {
-                                                    toast("同时拥有的副属性不能超过4条", {type: "error"})
-                                                    return
-                                                }
-                                                setIncludeSelected({
-                                                    ...includeSelected,
-                                                    [id]: selectedKeys
-                                                })
+                                            onSelectionChange={async (selectedKeys) => {
+                                                await handleIncludeChange(id, selectedKeys)
                                             }}
                                         />
                                         <div onClick={
-                                            () => {
-                                                const newIncludeSelected = {...includeSelected}
-                                                delete newIncludeSelected[id]
-                                                setIncludeSelected(newIncludeSelected)
+                                            async () => {
+                                                await handleDeleteIncludeRule(id)
                                             }
                                         }>
                                             <Delete color={"error"} className={"cursor-pointer"}/>
