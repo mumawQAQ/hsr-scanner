@@ -30,7 +30,10 @@ const addRelicRatingValuableMain = async (relicTitle: string, relicMainStat: str
 
     relicRatingInfo[relicMainStat] = {
         valuableSub: [],
-        shouldLock: []
+        shouldLock: {
+            contain: "",
+            include: {}
+        }
     };
 
     await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
@@ -90,7 +93,12 @@ const updateRelicRatingValuableSub = async (relicTitle: string, relicMainStat: s
 }
 
 
-const updateRelicRatingShouldLock = async (relicTitle: string, relicMainStat: string, shouldLock: string[][]) => {
+const updateRelicRatingShouldLock = async (relicTitle: string, relicMainStat: string, shouldLock: {
+    contain: string
+    include: {
+        [key: string]: string[]
+    }
+}) => {
     const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
     if (!relicRatingInfo) {
         return {
@@ -118,8 +126,38 @@ const updateRelicRatingShouldLock = async (relicTitle: string, relicMainStat: st
 }
 
 
-const isMostValuableRelic = (shouldLock: string[][], relicSubStats: string[]): boolean => {
-    return shouldLock.some(lock => lock.every(subStat => relicSubStats.includes(subStat)));
+const isMostValuableRelic = (shouldLock: {
+    contain: string
+    include: {
+        [key: string]: string[]
+    }
+}, relicSubStats: string[], containedSubStats: number): boolean => {
+    let isMostValuable = false;
+
+    let contain = Number(shouldLock.contain);
+
+    // 5 should be impossible to achieve
+    if (isNaN(contain) || contain == 0) {
+        contain = 5;
+    }
+
+    if (containedSubStats >= contain) {
+        isMostValuable = true;
+        return isMostValuable;
+    }
+
+
+    // check if the relicSubStats contains any of the shouldLock.include
+    for (const subStat in shouldLock.include) {
+        if (shouldLock.include[subStat].length > 0) {
+            if (shouldLock.include[subStat].every((valuableSub: string) => relicSubStats.includes(valuableSub))) {
+                isMostValuable = true;
+                return isMostValuable;
+            }
+        }
+    }
+
+    return isMostValuable;
 }
 
 const labelValuableSubStats = (valuableSub: string[], relicSubStats: string[]) => {
