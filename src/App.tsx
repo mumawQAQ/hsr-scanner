@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { createWorker, Worker } from 'tesseract.js';
 
-import './App.css';
 import ShouldLockRulesList from '@/components/ShouldLockRulesList.tsx';
 import ValuableSubList from '@/components/ValuableSubList.tsx';
 import useRelicStore from '@/store/relicStore.ts';
@@ -14,6 +13,7 @@ import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicUtils.ts';
 
+import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
