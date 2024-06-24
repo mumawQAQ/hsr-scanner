@@ -1,5 +1,5 @@
-import { Add, Delete } from '@mui/icons-material';
 import { Chip, Radio, RadioGroup } from '@nextui-org/react';
+import { Minus, Plus } from 'lucide-react';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -136,9 +136,14 @@ const ShouldLockRulesList: React.FC = () => {
             >
               {!containSelected ? '暂未启用包含有效属性的条数' : `包含${containSelected}条有效属性`}
             </Chip>
-            <div onClick={handleDeleteContainRule}>
-              <Delete color={'error'} />
-            </div>
+            {containSelected && (
+              <Minus
+                className={
+                  'ml-2 cursor-pointer rounded border-2 border-red-600 text-red-600 transition-all hover:border-red-500/80 hover:text-red-500/80'
+                }
+                onClick={handleDeleteContainRule}
+              />
+            )}
           </div>
         </li>
         <li>
@@ -161,13 +166,14 @@ const ShouldLockRulesList: React.FC = () => {
                         await handleIncludeChange(id, selectedKeys);
                       }}
                     />
-                    <div
+                    <Minus
+                      className={
+                        'ml-2 cursor-pointer rounded border-2 border-red-600 text-red-600 transition-all hover:border-red-500/80 hover:text-red-500/80'
+                      }
                       onClick={async () => {
                         await handleDeleteIncludeRule(id);
                       }}
-                    >
-                      <Delete color={'error'} className={'cursor-pointer'} />
-                    </div>
+                    />
                   </li>
                 );
               })}
@@ -177,7 +183,7 @@ const ShouldLockRulesList: React.FC = () => {
             color="warning"
             variant="shadow"
             radius="sm"
-            startContent={<Add />}
+            startContent={<Plus />}
             className={'mt-3 cursor-pointer'}
             onClick={() => {
               setIncludeSelected({
