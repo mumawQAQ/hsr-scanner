@@ -1,8 +1,11 @@
-import { app, BrowserWindow, desktopCapturer, ipcMain } from 'electron';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import store from './store.ts';
+import { fileURLToPath } from 'node:url';
+
+import { app, BrowserWindow, desktopCapturer, ipcMain } from 'electron';
+
 import { FloatingWindowMessage } from '../types.ts';
+
+import store from './store.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

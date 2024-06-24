@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { FloatingWindowMessageRelicInfo } from '../types.ts';
-import './App.css';
-import clsx from 'clsx';
 import { Chip } from '@nextui-org/react';
+import clsx from 'clsx';
+import { useState } from 'react';
+
+import { FloatingWindowMessageRelicInfo } from '../types.ts';
+
+import './App.css';
 
 function FloatingApp() {
   const [relicInfo, setRelicInfo] = useState<FloatingWindowMessageRelicInfo | null>(null);
@@ -63,7 +65,7 @@ function FloatingApp() {
               </div>
             ))}
           </div>
-          <div className={'mt-2 font-bold text-red-700'}>如须修改评分标准, 请在主页面中修改</div>
+          <div className={'mt-2 font-bold text-red-700'}>如需修改评分标准, 请在主页面中修改</div>
         </div>
       )}
     </div>
