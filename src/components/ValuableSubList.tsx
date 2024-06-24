@@ -1,4 +1,3 @@
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Chip } from '@nextui-org/react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -7,6 +6,7 @@ import { toast } from 'react-toastify';
 import SubStatsDropDown from '@/components/SubStatsDropDown.tsx';
 import useRelicStore from '@/store/relicStore.ts';
 import relicUtils from '@/utils/relicUtils.ts';
+import { Settings2 } from 'lucide-react';
 
 const ValuableSubList: React.FC = () => {
   const { relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo } = useRelicStore();
@@ -42,7 +42,7 @@ const ValuableSubList: React.FC = () => {
         trigger={
           <div className="flex cursor-pointer flex-row gap-2">
             <div className={'text-nowrap font-bold'}>有效副属性</div>
-            <SettingsIcon />
+            <Settings2 />
           </div>
         }
         selectedKeys={selectedStats}

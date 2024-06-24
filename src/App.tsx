@@ -1,7 +1,7 @@
-import { Add, Remove } from '@mui/icons-material';
 import { Button, Chip, Input, Skeleton } from '@nextui-org/react';
 import cv from '@techstark/opencv-js';
 import clsx from 'clsx';
+import { Minus, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { createWorker, Worker } from 'tesseract.js';
@@ -430,7 +430,7 @@ function App() {
                 {isValuableMainStats ? (
                   <div className="my-2">
                     <Button
-                      startContent={<Remove />}
+                      startContent={<Minus />}
                       variant="flat"
                       color="danger"
                       onPress={handleRemoveValuableMainStats}
@@ -440,7 +440,7 @@ function App() {
                   </div>
                 ) : (
                   <div className="my-2">
-                    <Button startContent={<Add />} variant="flat" color="success" onPress={handleAddValuableMainStats}>
+                    <Button startContent={<Plus />} variant="flat" color="success" onPress={handleAddValuableMainStats}>
                       添加为有效主属性
                     </Button>
                   </div>
