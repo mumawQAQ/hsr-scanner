@@ -1,6 +1,8 @@
 import { Worker } from 'tesseract.js';
-import statsRegs from '@/data/regex.ts';
+
 import { RelicType } from '../../types.ts';
+
+import statsRegs from '@/data/regex.ts';
 
 const fixRelicType = (number: string, srcType: RelicType) => {
   if (number.endsWith('%')) {

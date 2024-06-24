@@ -1,11 +1,12 @@
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Chip } from '@nextui-org/react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Chip } from '@nextui-org/react';
-import SettingsIcon from '@mui/icons-material/Settings';
-import relicUtils from '@/utils/relicUtils.ts';
 import { toast } from 'react-toastify';
+
 import SubStatsDropDown from '@/components/SubStatsDropDown.tsx';
 import useRelicStore from '@/store/relicStore.ts';
+import relicUtils from '@/utils/relicUtils.ts';
 
 const ValuableSubList: React.FC = () => {
   const { relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo } = useRelicStore();

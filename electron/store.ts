@@ -1,4 +1,5 @@
 import ElectronStore from 'electron-store';
+
 import { RelicType } from '../types.ts';
 
 interface StoreData {

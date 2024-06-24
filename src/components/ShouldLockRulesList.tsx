@@ -1,9 +1,10 @@
+import { Add, Delete } from '@mui/icons-material';
+import { Chip, Radio, RadioGroup } from '@nextui-org/react';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { Chip, Radio, RadioGroup } from '@nextui-org/react';
-import { Add, Delete } from '@mui/icons-material';
-import SubStatsDropDown from '@/components/SubStatsDropDown.tsx';
 import { toast } from 'react-toastify';
+
+import SubStatsDropDown from '@/components/SubStatsDropDown.tsx';
 import useRelicStore from '@/store/relicStore.ts';
 import relicUtils from '@/utils/relicUtils.ts';
 

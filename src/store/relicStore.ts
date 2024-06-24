@@ -1,5 +1,7 @@
 import { create } from 'zustand';
+
 import { RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../types.ts';
+
 import RelicUtils from '@/utils/relicUtils.ts';
 
 type RelicStore = {
@@ -14,7 +16,7 @@ type RelicStore = {
   subRelicStats: RelicSubStats[] | [];
   getSubRelicStats: () => RelicSubStats[] | [];
   setSubRelicStats: (subRelicStats: RelicSubStats[]) => void;
-  
+
   relicRatingInfo: RelicRatingInfo | null;
   fetchRelicRatingInfo: () => Promise<any>;
   setRelicRatingInfo: (relicRatingInfo: RelicRatingInfo | null) => void;
