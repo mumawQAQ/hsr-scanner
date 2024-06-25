@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 import { NavigationItem } from '@/components/navigation/navigation-item.tsx';
 import RelicToolPanel from '@/components/panel/relic-tool-panel.tsx';
 import ScanPanel from '@/components/panel/scan-panel/scan-panel.tsx';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
@@ -18,6 +20,7 @@ const App = () => {
             <Route path="/relic-tools" element={<RelicToolPanel />} />
           </Routes>
         </div>
+        <ToastContainer position="top-left" pauseOnHover={false} autoClose={1500} closeOnClick />
       </div>
     </Router>
   );
