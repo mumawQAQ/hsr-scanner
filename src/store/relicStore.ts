@@ -54,9 +54,7 @@ const useRelicStore = create<RelicStore>((set, get) => ({
     if (!relicMainStatName || !relicTitle) {
       return;
     }
-    const relicRatingInfo = await RelicUtils.getRelicRatingInfo(relicTitle, relicMainStatName);
-    set({ relicRatingInfo });
-    return relicRatingInfo;
+    return await RelicUtils.getRelicRatingInfo(relicTitle, relicMainStatName);
   },
   setRelicRatingInfo: relicRatingInfo => {
     set({ relicRatingInfo });
