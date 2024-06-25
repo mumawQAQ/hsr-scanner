@@ -13,7 +13,11 @@ import relicUtils from '@/utils/relicUtils.ts';
 const ShouldLockRolesList: React.FC = () => {
   const defaultContain = '';
 
-  const { relicTitle, mainRelicStats, relicRatingInfo, setRelicRatingInfo } = useRelicStore();
+  const { relicTitle, mainRelicStats, relicRatingInfo } = useRelicStore(state => ({
+    relicTitle: state.relicTitle,
+    mainRelicStats: state.mainRelicStats,
+    relicRatingInfo: state.relicRatingInfo,
+  }));
 
   const [isEditingContain, setIsEditingContain] = React.useState(false);
   const [containSelected, setContainSelected] = React.useState(relicRatingInfo?.shouldLock.contain || defaultContain);
@@ -40,7 +44,6 @@ const ShouldLockRolesList: React.FC = () => {
     );
     if (result.success) {
       setIsEditingContain(false);
-      setRelicRatingInfo(newRelicRatingInfo);
     } else {
       toast(result.message, { type: 'error' });
     }
@@ -55,9 +58,7 @@ const ShouldLockRolesList: React.FC = () => {
       newRelicRatingInfo.shouldLock
     );
     if (result.success) {
-      // TODO: fix this when delete contain rule, 建议锁定没有消失
       setIsEditingContain(false);
-      setRelicRatingInfo(newRelicRatingInfo);
     } else {
       toast(result.message, { type: 'error' });
     }
@@ -97,9 +98,7 @@ const ShouldLockRolesList: React.FC = () => {
       mainRelicStats.name,
       newRelicRatingInfo.shouldLock
     );
-    if (result.success) {
-      setRelicRatingInfo(newRelicRatingInfo);
-    } else {
+    if (!result.success) {
       toast(result.message, { type: 'error' });
     }
   };
@@ -113,10 +112,7 @@ const ShouldLockRolesList: React.FC = () => {
       mainRelicStats.name,
       newRelicRatingInfo.shouldLock
     );
-    if (result.success) {
-      // Update the state only after the successful update to ensure consistency
-      setRelicRatingInfo(newRelicRatingInfo);
-    } else {
+    if (!result.success) {
       toast(result.message, { type: 'error' });
     }
   };

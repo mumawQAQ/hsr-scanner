@@ -8,7 +8,11 @@ import useRelicStore from '@/store/relicStore.ts';
 import relicUtils from '@/utils/relicUtils.ts';
 
 const ValuableSubList: React.FC = () => {
-  const { relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo, setRelicRatingInfo } = useRelicStore();
+  const { relicTitle, mainRelicStats, relicRatingInfo } = useRelicStore(state => ({
+    relicTitle: state.relicTitle,
+    mainRelicStats: state.mainRelicStats,
+    relicRatingInfo: state.relicRatingInfo,
+  }));
 
   const [selectedStats, setSelectedStats] = useState<string[]>([]);
 
@@ -28,8 +32,6 @@ const ValuableSubList: React.FC = () => {
     if (result.success) {
       // Update the state only after the successful update to ensure consistency
       setSelectedStats(selectedKeys); // Update state if successful
-      const newRelicRatingInfo = await fetchRelicRatingInfo();
-      setRelicRatingInfo(newRelicRatingInfo);
     } else {
       toast(result.message, { type: 'error' });
     }

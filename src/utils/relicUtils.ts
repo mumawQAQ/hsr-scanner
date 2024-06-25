@@ -1,3 +1,5 @@
+import relicStore from '@/store/relicStore.ts';
+
 const getRelicRatingInfo = async (relicTitle: string, relicMainStat: string) => {
   const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
 
@@ -38,6 +40,17 @@ const addRelicRatingValuableMain = async (relicTitle: string, relicMainStat: str
 
   await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
 
+  // update the relicStore
+  relicStore.setState({
+    relicRatingInfo: {
+      valuableSub: [],
+      shouldLock: {
+        contain: '',
+        include: {},
+      },
+    },
+  });
+
   return {
     success: true,
     message: '成功添加有效主属性',
@@ -55,6 +68,17 @@ const removeRelicRatingValuableMain = async (relicTitle: string, relicMainStat: 
 
   delete relicRatingInfo[relicMainStat];
   await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
+
+  // update the relicStore
+  relicStore.setState({
+    relicRatingInfo: {
+      valuableSub: [],
+      shouldLock: {
+        contain: '',
+        include: {},
+      },
+    },
+  });
 
   return {
     success: true,
@@ -82,6 +106,11 @@ const updateRelicRatingValuableSub = async (relicTitle: string, relicMainStat: s
 
   // save the updated relicRatingInfo
   await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
+
+  // update the relicStore
+  relicStore.setState({
+    relicRatingInfo: relicRatingInfo[relicMainStat],
+  });
 
   return {
     success: true,
@@ -118,6 +147,11 @@ const updateRelicRatingShouldLock = async (
 
   // save the updated relicRatingInfo
   await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
+
+  // update the relicStore
+  relicStore.setState({
+    relicRatingInfo: relicRatingInfo[relicMainStat],
+  });
 
   return {
     success: true,
