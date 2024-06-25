@@ -222,7 +222,6 @@ function App() {
 
   const captureScreen = async () => {
     const res = await (window as any).ipcRenderer.captureScreen();
-    
     const croppedImage = res.crop({
       x: 1400,
       y: 0,
@@ -239,7 +238,7 @@ function App() {
     setIsLoaded(false);
     // reset the stats
     resetAttributes();
-    setCurrentImage(croppedImage);
+    setCurrentImage(croppedImage.toDataURL());
 
     try {
       // source image
