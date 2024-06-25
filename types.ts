@@ -1,3 +1,7 @@
+export type RelicRulesTemplate = {
+  name: string;
+};
+
 export type RelicSubStats = {
   name: RelicType;
   number: string;
