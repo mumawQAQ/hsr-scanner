@@ -1,5 +1,27 @@
 import cv, { Mat } from '@techstark/opencv-js';
 
+const img2MatHSV = (image: string): Promise<Mat> => {
+  return new Promise((resolve, reject) => {
+    const imgElement = new Image();
+    imgElement.src = image;
+
+    imgElement.onload = () => {
+      try {
+        const imgHSV = new cv.Mat();
+        cv.cvtColor(cv.imread(imgElement), imgHSV, cv.COLOR_RGBA2RGB);
+        cv.cvtColor(imgHSV, imgHSV, cv.COLOR_RGB2HSV);
+        resolve(imgHSV);
+      } catch (e) {
+        reject(e);
+      }
+    };
+
+    imgElement.onerror = e => {
+      reject(e);
+    };
+  });
+};
+
 const img2MatGray = (image: string): Promise<Mat> => {
   return new Promise((resolve, reject) => {
     const imgElement = new Image();
@@ -103,6 +125,7 @@ const applyFilter = (srcHSVMat: Mat, srcRGBMat: Mat): Mat => {
 };
 
 export default {
+  img2MatHSV,
   img2MatGray,
   img2MatRGB,
   matCrop,
