@@ -32,7 +32,7 @@ let floatingWin: BrowserWindow | null;
 
 function createMainWindow() {
   win = new BrowserWindow({
-    width: 1000,
+    width: 1200,
     height: 1000,
     // autoHideMenuBar: true,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
@@ -115,7 +115,6 @@ function createFloatingWindow() {
     },
   });
 
-  floatingWin.setPosition(1400, 600);
   floatingWin.setAlwaysOnTop(true, 'screen-saver', 1);
 
   if (VITE_DEV_SERVER_URL) {

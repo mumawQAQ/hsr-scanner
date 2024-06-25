@@ -28,7 +28,10 @@ const relicTitleExtractor = async (worker: Worker, image: string) => {
       data: { text: titleText },
     } = await worker.recognize(image);
     if (!titleText) {
-      throw new Error('No title found');
+      return {
+        result: null,
+        error: '没有检测到标题, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进',
+      };
     }
 
     // replace any ’ with '
@@ -37,7 +40,10 @@ const relicTitleExtractor = async (worker: Worker, image: string) => {
     // remove any new line characters
     titleText = titleText.replace(/\n/g, ' ');
 
-    return titleText.trim();
+    return {
+      result: titleText.trim(),
+      error: null,
+    };
   } catch (e) {
     console.error('Error during OCR processing:', e);
     throw e;
@@ -91,7 +97,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
     }
 
     return {
-      result: matchedStats,
+      result: matchedStats[0],
       error: null,
     };
   } catch (error) {
