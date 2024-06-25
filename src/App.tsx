@@ -66,7 +66,6 @@ function App() {
     // Initialize the worker
     const initializeWorker = async () => {
       const newWorker = await createWorker('eng');
-      await newWorker.load();
       setWorker(newWorker);
       setWorkerInitialized(true);
     };
@@ -223,6 +222,7 @@ function App() {
 
   const captureScreen = async () => {
     const res = await (window as any).ipcRenderer.captureScreen();
+    
     const croppedImage = res.crop({
       x: 1400,
       y: 0,
@@ -239,7 +239,7 @@ function App() {
     setIsLoaded(false);
     // reset the stats
     resetAttributes();
-    setCurrentImage(croppedImage.toDataURL());
+    setCurrentImage(croppedImage);
 
     try {
       // source image

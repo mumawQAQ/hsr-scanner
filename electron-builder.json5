@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+    "app.manifest"
   ],
   "mac": {
     "target": [
@@ -29,6 +30,12 @@
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}",
     "requestedExecutionLevel": "requireAdministrator"
   },
+  "extraResources": [
+      {
+        "from": "app.manifest",
+        "to": "app.manifest"
+      }
+    ],
   "nsis": {
     "oneClick": false,
     "perMachine": false,
