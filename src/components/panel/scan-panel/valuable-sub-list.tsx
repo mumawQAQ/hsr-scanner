@@ -1,36 +1,35 @@
-import { Chip } from '@nextui-org/react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import SubStatsDropDown from '@/components/SubStatsDropDown.tsx';
+import SubStatsDropDown from '@/components/panel/scan-panel/sub-stats-drop-down.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
 import useRelicStore from '@/store/relicStore.ts';
 import relicUtils from '@/utils/relicUtils.ts';
-import { Settings2 } from 'lucide-react';
 
 const ValuableSubList: React.FC = () => {
-  const { relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo } = useRelicStore();
+  const { relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo, setRelicRatingInfo } = useRelicStore();
 
-  const [selectedStats, setSelectedStats] = useState<Set<string>>(new Set([]));
+  const [selectedStats, setSelectedStats] = useState<string[]>([]);
 
   useEffect(() => {
-    setSelectedStats(new Set(relicRatingInfo?.valuableSub || []));
+    setSelectedStats(relicRatingInfo?.valuableSub || []);
   }, [relicRatingInfo]);
 
   if (!relicTitle || !mainRelicStats || !relicRatingInfo?.valuableSub) {
     return null;
   }
 
-  const onSelectionChange = async (selectedKeys: Set<string>) => {
+  const onSelectionChange = async (selectedKeys: string[]) => {
     console.log('selectedKeys', [...selectedKeys]);
 
-    const result = await relicUtils.updateRelicRatingValuableSub(relicTitle, mainRelicStats.name, [...selectedKeys]);
+    const result = await relicUtils.updateRelicRatingValuableSub(relicTitle, mainRelicStats.name, selectedKeys);
 
     if (result.success) {
       // Update the state only after the successful update to ensure consistency
-      setSelectedStats(new Set(selectedKeys)); // Update state if successful
-      await fetchRelicRatingInfo();
-      console.log(result.message);
+      setSelectedStats(selectedKeys); // Update state if successful
+      const newRelicRatingInfo = await fetchRelicRatingInfo();
+      setRelicRatingInfo(newRelicRatingInfo);
     } else {
       toast(result.message, { type: 'error' });
     }
@@ -41,8 +40,7 @@ const ValuableSubList: React.FC = () => {
       <SubStatsDropDown
         trigger={
           <div className="flex cursor-pointer flex-row gap-2">
-            <div className={'text-nowrap font-bold'}>有效副属性</div>
-            <Settings2 />
+            <div className={'text-nowrap font-semibold'}>有效副属性</div>
           </div>
         }
         selectedKeys={selectedStats}
@@ -51,10 +49,8 @@ const ValuableSubList: React.FC = () => {
       <ul className={'float-left mt-2 flex flex-col gap-2'}>
         {[...selectedStats].map((valuableSubStat, index) => {
           return (
-            <li key={index}>
-              <Chip color="success" variant="shadow" radius="sm">
-                {valuableSubStat}
-              </Chip>
+            <li key={index} className={'text-nowrap'}>
+              <Badge>{valuableSubStat}</Badge>
             </li>
           );
         })}
