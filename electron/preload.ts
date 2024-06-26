@@ -32,12 +32,4 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   storeSet(key: string, value: any) {
     return ipcRenderer.invoke('store-set', key, value);
   },
-
-  closeFloatingWindow() {
-    return ipcRenderer.invoke('close-floating-window');
-  },
-
-  openFloatingWindow() {
-    return ipcRenderer.invoke('open-floating-window');
-  },
 });
