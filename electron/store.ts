@@ -1,6 +1,6 @@
 import ElectronStore from 'electron-store';
 
-import { RelicType } from '../types.ts';
+import { RelicRulesTemplateStore, RelicType } from '../types.ts';
 
 interface StoreData {
   data: {
@@ -24,6 +24,7 @@ interface StoreData {
         };
       };
     };
+    relicRulesTemplates: RelicRulesTemplateStore;
   };
 }
 
@@ -3407,6 +3408,7 @@ const store = new ElectronStore<StoreData>({
       relicMainStatsLevel: relicMainStatsLevel,
       relicSubStatsScore: relicSubStatsScore,
       relicRating: relicRating,
+      relicRulesTemplates: {},
     },
   },
 });

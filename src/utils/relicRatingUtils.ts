@@ -1,4 +1,4 @@
-import relicStore from '@/store/relicStore.ts';
+import relicStore from '@/hooks/use-relic-store.ts';
 
 const getRelicRatingInfo = async (relicTitle: string, relicMainStat: string) => {
   const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
@@ -18,6 +18,48 @@ const getRelicRatingInfo = async (relicTitle: string, relicMainStat: string) => 
   return {
     valuableSub: relicRatingDetail['valuableSub'],
     shouldLock: relicRatingDetail['shouldLock'],
+  };
+};
+
+/**
+ * Check if the relic has already set as valuable main stat, if not, set it as valuable main stat
+ * @param relicTitle the relic title
+ * @param relicMainStat the relic main stat
+ */
+const checkAndSetRelicRatingValuableMain = async (relicTitle: string, relicMainStat: string) => {
+  const relicRatingInfo = await (window as any).ipcRenderer.storeGet(`data.relicRating.${relicTitle}`);
+  if (!relicRatingInfo) {
+    return {
+      success: false,
+      message: '无法找到当前遗器，请向Github提交issue',
+    };
+  }
+
+  if (!relicRatingInfo[relicMainStat]) {
+    relicRatingInfo[relicMainStat] = {
+      valuableSub: [],
+      shouldLock: {
+        contain: '',
+        include: {},
+      },
+    };
+
+    relicStore.setState({
+      relicRatingInfo: {
+        valuableSub: [],
+        shouldLock: {
+          contain: '',
+          include: {},
+        },
+      },
+    });
+
+    await (window as any).ipcRenderer.storeSet(`data.relicRating.${relicTitle}`, relicRatingInfo);
+  }
+
+  return {
+    success: true,
+    message: '成功添加有效主属性',
   };
 };
 
@@ -215,6 +257,7 @@ const labelValuableSubStats = (valuableSub: string[], relicSubStats: string[]) =
 
 export default {
   getRelicRatingInfo,
+  checkRelicRatingValuableMainAndSet: checkAndSetRelicRatingValuableMain,
   addRelicRatingValuableMain,
   removeRelicRatingValuableMain,
   updateRelicRatingValuableSub,

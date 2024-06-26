@@ -2,9 +2,9 @@ import { create } from 'zustand';
 
 import { RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../types.ts';
 
-import RelicUtils from '@/utils/relicUtils.ts';
+import RelicUtils from '@/utils/relicRatingUtils.ts';
 
-type RelicStore = {
+type UseRelicStore = {
   relicTitle: string;
   getRelicTitle: () => string;
   setRelicTitle: (relicTitle: string) => void;
@@ -22,7 +22,7 @@ type RelicStore = {
   setRelicRatingInfo: (relicRatingInfo: RelicRatingInfo | null) => void;
 };
 
-const useRelicStore = create<RelicStore>((set, get) => ({
+const useRelicStore = create<UseRelicStore>((set, get) => ({
   relicTitle: '',
   getRelicTitle: () => {
     return get().relicTitle;

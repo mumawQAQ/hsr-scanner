@@ -32,6 +32,10 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
     onOpen('create-relic-rules-template');
   };
 
+  const handleRelicRuleTemplateIn = () => {
+    onOpen('import-relic-rules-template');
+  };
+
   return (
     <div className="flex h-full min-w-[15%] flex-col gap-y-4">
       <div className="flex flex-col items-center gap-y-4">
@@ -60,9 +64,11 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         <Switch id="small-screen" checked={floatingWindowShowed} onCheckedChange={handleToggleFloatingWindow} />
       </div>
       <Button size="sm" onClick={handleRelicRuleTemplateOut}>
+        导出模板
+      </Button>
+      <Button size="sm" onClick={handleRelicRuleTemplateIn}>
         导入模板
       </Button>
-      <Button size="sm">导入模板</Button>
     </div>
   );
 };

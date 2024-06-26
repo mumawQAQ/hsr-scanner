@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 
-import { RelicRulesTemplate } from '../../types.ts';
+export type ModalType = 'create-relic-rules-template' | 'import-relic-rules-template';
 
-export type ModalType = 'create-relic-rules-template';
-
-interface ModalData {
-  relicRulesTemplate?: RelicRulesTemplate;
-}
+interface ModalData {}
 
 interface ModalStore {
   type: ModalType | null;

@@ -7,10 +7,10 @@ import { OCRResult, RelicMainStats, RelicRatingInfo, RelicSubStats } from '../..
 
 import { Badge } from '@/components/ui/badge.tsx';
 import { cn } from '@/lib/utils.ts';
-import useRelicStore from '@/store/relicStore.ts';
+import useRelicStore from '@/hooks/use-relic-store.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
-import relicUtils from '@/utils/relicUtils.ts';
+import relicUtils from '@/utils/relicRatingUtils.ts';
 
 type ScanContentProps = {
   scanningStatus: boolean;

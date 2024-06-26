@@ -4,8 +4,8 @@ import { toast } from 'react-toastify';
 
 import SubStatsDropDown from '@/components/panel/scan-panel/sub-stats-drop-down.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import useRelicStore from '@/store/relicStore.ts';
-import relicUtils from '@/utils/relicUtils.ts';
+import useRelicStore from '@/hooks/use-relic-store.ts';
+import relicUtils from '@/utils/relicRatingUtils.ts';
 
 const ValuableSubList: React.FC = () => {
   const { relicTitle, mainRelicStats, relicRatingInfo } = useRelicStore(state => ({

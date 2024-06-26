@@ -7,8 +7,8 @@ import SubStatsDropDown from '@/components/panel/scan-panel/sub-stats-drop-down.
 import { Badge } from '@/components/ui/badge.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group.tsx';
-import useRelicStore from '@/store/relicStore.ts';
-import relicUtils from '@/utils/relicUtils.ts';
+import useRelicStore from '@/hooks/use-relic-store.ts';
+import relicUtils from '@/utils/relicRatingUtils.ts';
 
 const ShouldLockRolesList: React.FC = () => {
   const defaultContain = '';
