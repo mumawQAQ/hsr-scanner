@@ -9,6 +9,13 @@
     "name": "Muma",
     "url": "https://mumawqaq.github.io/"
   },
+  "contributors": [
+    {
+      "email": "yystommy829@163.com",
+      "name": "Tommy Zhao",
+      "url": "https://github.com/MingzhenZhao"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
