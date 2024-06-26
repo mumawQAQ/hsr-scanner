@@ -56,26 +56,6 @@ export type RelicRatingInfo = {
   };
 };
 
-enum FloatingWindowMessageType {
-  RelicInfo,
-}
-
-export type FloatingWindowMessageRelicInfo = {
-  type: FloatingWindowMessageType.RelicInfo;
-  data: {
-    OCRResult?: OCRResult;
-    absoluteScore: string;
-    isMostValuableRelic: boolean;
-    isValuableRelic: boolean;
-    isValuableMainStats: boolean;
-    isValuableSubStats: {
-      [key: number]: boolean;
-    };
-  };
-};
-
-export type FloatingWindowMessage = FloatingWindowMessageRelicInfo;
-
 export enum RelicType {
   DEF = '防御',
   HP = '生命',

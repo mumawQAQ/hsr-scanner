@@ -6,8 +6,8 @@ import { createWorker, Worker } from 'tesseract.js';
 import { OCRResult, RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../../../types.ts';
 
 import { Badge } from '@/components/ui/badge.tsx';
-import { cn } from '@/lib/utils.ts';
 import useRelicStore from '@/hooks/use-relic-store.ts';
+import { cn } from '@/lib/utils.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicRatingUtils.ts';
@@ -136,30 +136,6 @@ const ScanContent = ({
 
     evaluateRelic(subRelicStats, relicRatingInfo);
   }, [OCRResult, relicRatingInfo]);
-
-  useEffect(() => {
-    (window as any).ipcRenderer.send('message-to-floating-window', {
-      type: 'relic-info',
-      data: {
-        OCRResult: OCRResult,
-        absoluteScore: relicGrowthRate
-          ? relicGrowthRate.minGrowthScore === relicGrowthRate.maxGrowthScore
-            ? parseFloat(relicGrowthRate.minGrowthScore.toFixed(2)) +
-              ' / ' +
-              parseFloat(relicGrowthRate.maxScore.toFixed(2))
-            : parseFloat(relicGrowthRate.minGrowthScore.toFixed(2)) +
-              ' - ' +
-              parseFloat(relicGrowthRate.maxGrowthScore.toFixed(2)) +
-              ' / ' +
-              parseFloat(relicGrowthRate.maxScore.toFixed(2))
-          : '',
-        isMostValuableRelic: isMostValuableRelic,
-        isValuableRelic: isValuableRelic,
-        isValuableMainStats: isValuableMainStats,
-        isValuableSubStats: isValuableSubStats,
-      },
-    });
-  }, [OCRResult, isMostValuableRelic, isValuableMainStats, isValuableRelic, isValuableSubStats, relicGrowthRate]);
 
   function resetAll() {
     setOCRResult(null);

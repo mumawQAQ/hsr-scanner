@@ -3,8 +3,6 @@ import { fileURLToPath } from 'node:url';
 
 import { app, BrowserWindow, desktopCapturer, ipcMain } from 'electron';
 
-import { FloatingWindowMessage } from '../types.ts';
-
 import store from './store.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -34,6 +32,7 @@ function createMainWindow() {
   win = new BrowserWindow({
     width: 1200,
     height: 1000,
+    alwaysOnTop: true,
     // autoHideMenuBar: true,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
@@ -65,25 +64,6 @@ function createMainWindow() {
     return store.set(key, value);
   });
 
-  ipcMain.handle('close-floating-window', async () => {
-    floatingWin?.close();
-    floatingWin = null;
-  });
-
-  ipcMain.handle('open-floating-window', async () => {
-    if (floatingWin) {
-      floatingWin.show();
-    } else {
-      createFloatingWindow();
-    }
-  });
-
-  ipcMain.on('message-to-floating-window', (_, message: FloatingWindowMessage) => {
-    if (floatingWin) {
-      floatingWin.webContents.send('main-process-message', message);
-    }
-  });
-
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
@@ -99,28 +79,6 @@ function createMainWindow() {
   } else {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'));
-  }
-}
-
-function createFloatingWindow() {
-  floatingWin = new BrowserWindow({
-    width: 450,
-    height: 350,
-    frame: false,
-    transparent: true,
-    alwaysOnTop: true,
-
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
-    },
-  });
-
-  floatingWin.setAlwaysOnTop(true, 'screen-saver', 1);
-
-  if (VITE_DEV_SERVER_URL) {
-    floatingWin.loadURL(`${VITE_DEV_SERVER_URL}/floating.html`);
-  } else {
-    floatingWin.loadFile(path.join(RENDERER_DIST, 'floating.html'));
   }
 }
 
