@@ -40,6 +40,8 @@ function createMainWindow() {
     },
   });
 
+  win.setAlwaysOnTop(true, 'screen-saver', 1);
+
   ipcMain.handle('capture-screen', async () => {
     const sources = await desktopCapturer.getSources({
       types: ['window'],
