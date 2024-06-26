@@ -1,3 +1,18 @@
+export type RelicRulesTemplate = {
+  name: string;
+  valuableSub?: string[];
+  shouldLock?: {
+    contain: string;
+    include: {
+      [key: string]: string[];
+    };
+  };
+};
+
+export type RelicRulesTemplateStore = {
+  [key: string]: RelicRulesTemplate;
+};
+
 export type RelicSubStats = {
   name: RelicType;
   number: string;

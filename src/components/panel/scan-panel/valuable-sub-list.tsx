@@ -4,11 +4,15 @@ import { toast } from 'react-toastify';
 
 import SubStatsDropDown from '@/components/panel/scan-panel/sub-stats-drop-down.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
-import useRelicStore from '@/store/relicStore.ts';
-import relicUtils from '@/utils/relicUtils.ts';
+import useRelicStore from '@/hooks/use-relic-store.ts';
+import relicUtils from '@/utils/relicRatingUtils.ts';
 
 const ValuableSubList: React.FC = () => {
-  const { relicTitle, mainRelicStats, relicRatingInfo, fetchRelicRatingInfo, setRelicRatingInfo } = useRelicStore();
+  const { relicTitle, mainRelicStats, relicRatingInfo } = useRelicStore(state => ({
+    relicTitle: state.relicTitle,
+    mainRelicStats: state.mainRelicStats,
+    relicRatingInfo: state.relicRatingInfo,
+  }));
 
   const [selectedStats, setSelectedStats] = useState<string[]>([]);
 
@@ -28,8 +32,6 @@ const ValuableSubList: React.FC = () => {
     if (result.success) {
       // Update the state only after the successful update to ensure consistency
       setSelectedStats(selectedKeys); // Update state if successful
-      const newRelicRatingInfo = await fetchRelicRatingInfo();
-      setRelicRatingInfo(newRelicRatingInfo);
     } else {
       toast(result.message, { type: 'error' });
     }

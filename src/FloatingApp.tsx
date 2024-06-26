@@ -78,7 +78,7 @@ function FloatingApp() {
                   <div>
                     {subStat.name}: {subStat.number}
                   </div>
-                  <div>评分: {subStat.score}</div>
+                  <div>评分: {Array.isArray(subStat.score) ? subStat.score.join(' | ') : subStat.score}</div>
                 </div>
               ))}
             </div>

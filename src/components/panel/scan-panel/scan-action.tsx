@@ -1,7 +1,10 @@
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/button.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
-import { useState } from 'react';
+import { useModal } from '@/hooks/use-modal-store.ts';
 
 type ScanActionProps = {
   scanningStatus: boolean;
@@ -11,6 +14,7 @@ type ScanActionProps = {
 };
 
 const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanInterval }: ScanActionProps) => {
+  const { onOpen } = useModal();
   const [floatingWindowShowed, setFloatingWindowShowed] = useState(false);
 
   const handleToggleFloatingWindow = async (state: boolean) => {
@@ -22,6 +26,14 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
       await (window as any).ipcRenderer.openFloatingWindow();
     }
     setFloatingWindowShowed(!floatingWindowShowed);
+  };
+
+  const handleRelicRuleTemplateOut = () => {
+    onOpen('create-relic-rules-template');
+  };
+
+  const handleRelicRuleTemplateIn = () => {
+    onOpen('import-relic-rules-template');
   };
 
   return (
@@ -51,6 +63,12 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         </Label>
         <Switch id="small-screen" checked={floatingWindowShowed} onCheckedChange={handleToggleFloatingWindow} />
       </div>
+      <Button size="sm" onClick={handleRelicRuleTemplateOut}>
+        导出模板
+      </Button>
+      <Button size="sm" onClick={handleRelicRuleTemplateIn}>
+        导入模板
+      </Button>
     </div>
   );
 };

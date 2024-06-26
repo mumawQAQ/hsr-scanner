@@ -7,10 +7,10 @@ import { OCRResult, RelicMainStats, RelicRatingInfo, RelicSubStats } from '../..
 
 import { Badge } from '@/components/ui/badge.tsx';
 import { cn } from '@/lib/utils.ts';
-import useRelicStore from '@/store/relicStore.ts';
+import useRelicStore from '@/hooks/use-relic-store.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
-import relicUtils from '@/utils/relicUtils.ts';
+import relicUtils from '@/utils/relicRatingUtils.ts';
 
 type ScanContentProps = {
   scanningStatus: boolean;
@@ -35,7 +35,15 @@ const ScanContent = ({
     relicRatingInfo,
     fetchRelicRatingInfo,
     setRelicRatingInfo,
-  } = useRelicStore();
+  } = useRelicStore(state => ({
+    setRelicTitle: state.setRelicTitle,
+    setMainRelicStats: state.setMainRelicStats,
+    setSubRelicStats: state.setSubRelicStats,
+
+    relicRatingInfo: state.relicRatingInfo,
+    fetchRelicRatingInfo: state.fetchRelicRatingInfo,
+    setRelicRatingInfo: state.setRelicRatingInfo,
+  }));
 
   const [worker, setWorker] = useState<Worker | null>(null);
   const [workerInitialized, setWorkerInitialized] = useState(false);
@@ -424,7 +432,9 @@ const ScanContent = ({
           <div key={index} className="grid grid-cols-4 items-center gap-2">
             <div className="mb-1 overflow-hidden whitespace-nowrap">{subStat.name}</div>
             <div className="mb-1 overflow-hidden whitespace-nowrap">{subStat.number}</div>
-            <div className="mb-1 overflow-hidden whitespace-nowrap">{subStat.score}</div>
+            <div className="mb-1 overflow-hidden whitespace-nowrap">
+              {Array.isArray(subStat.score) ? subStat.score.join(' | ') : subStat.score}
+            </div>
             <div className="mb-1 text-center">
               <Badge
                 className={cn({
@@ -458,8 +468,6 @@ const ScanContent = ({
     }
     if (isValuableMainStats) {
       const result = await relicUtils.removeRelicRatingValuableMain(relicTitle, mainRelicStats.name);
-      const newRatingInfo = await fetchRelicRatingInfo();
-      setRelicRatingInfo(newRatingInfo);
       if (result.success) {
         setIsValuableMainStats(false);
         toast(result.message, { type: 'success' });
@@ -468,8 +476,6 @@ const ScanContent = ({
       }
     } else {
       const result = await relicUtils.addRelicRatingValuableMain(relicTitle, mainRelicStats.name);
-      const newRatingInfo = await fetchRelicRatingInfo();
-      setRelicRatingInfo(newRatingInfo);
       if (result.success) {
         setIsValuableMainStats(true);
         toast(result.message, { type: 'success' });
