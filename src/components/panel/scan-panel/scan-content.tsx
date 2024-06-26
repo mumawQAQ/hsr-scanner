@@ -337,6 +337,7 @@ const ScanContent = ({
 
       releaseMemory(imgRGB, imgHSV, maskedSourceImg, maskedRelicTitle, maskedRelicMainStats, maskedRelicSubStats);
     } catch (e) {
+      toast('未知问题，建议重启软件', { type: 'error' });
       console.error(e); // TODO: log this to the log area
     }
   };

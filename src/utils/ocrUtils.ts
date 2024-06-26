@@ -1,6 +1,6 @@
 import { Worker } from 'tesseract.js';
 
-import { RelicType } from '../../types.ts';
+import { FuzzyTitleSet, RelicType } from '../../types.ts';
 
 import statsRegs from '@/data/regex.ts';
 
@@ -40,8 +40,20 @@ const relicTitleExtractor = async (worker: Worker, image: string) => {
     // remove any new line characters
     titleText = titleText.replace(/\n/g, ' ');
 
+    // trim the text
+    titleText = titleText.trim();
+
+    const fuzzyTitleResult = FuzzyTitleSet.get(titleText);
+
+    if (!fuzzyTitleResult || fuzzyTitleResult.length === 0) {
+      return {
+        result: null,
+        error: '未能识别标题, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进',
+      };
+    }
+
     return {
-      result: titleText.trim(),
+      result: fuzzyTitleResult[0][1],
       error: null,
     };
   } catch (e) {
