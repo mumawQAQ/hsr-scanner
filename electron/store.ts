@@ -3,29 +3,27 @@ import ElectronStore from 'electron-store';
 import { RatingTemplateStore, RelicType } from '../src/types.ts';
 
 interface StoreData {
-  data: {
-    relicMainStatsLevel: {
-      [index: string]: {
-        base: number;
-        step: number;
-      };
+  relicMainStatsLevel: {
+    [index: string]: {
+      base: number;
+      step: number;
     };
-    relicSubStatsScore: {
-      [index: string]: { [index: string]: number | number[] };
-    };
-    relicRating: {
+  };
+  relicSubStatsScore: {
+    [index: string]: { [index: string]: number | number[] };
+  };
+  relicRating: {
+    [index: string]: {
       [index: string]: {
-        [index: string]: {
-          valuableSub: string[];
-          shouldLock: {
-            contain: string;
-            include: { [index: string]: string[] };
-          };
+        valuableSub: string[];
+        shouldLock: {
+          contain: string;
+          include: { [index: string]: string[] };
         };
       };
     };
-    ratingTemplates: RatingTemplateStore;
   };
+  ratingTemplates: RatingTemplateStore;
 }
 
 const relicMainStatsLevel = {
@@ -3404,12 +3402,10 @@ const relicRating = {
 
 const store = new ElectronStore<StoreData>({
   defaults: {
-    data: {
-      relicMainStatsLevel: relicMainStatsLevel,
-      relicSubStatsScore: relicSubStatsScore,
-      relicRating: relicRating,
-      ratingTemplates: {},
-    },
+    relicMainStatsLevel: relicMainStatsLevel,
+    relicSubStatsScore: relicSubStatsScore,
+    relicRating: relicRating,
+    ratingTemplates: {},
   },
 });
 
