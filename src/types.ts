@@ -12,7 +12,6 @@ import image17 from '../src/assets/icon/relic/17.png';
 import image18 from '../src/assets/icon/relic/18.png';
 import image19 from '../src/assets/icon/relic/19.png';
 import image2 from '../src/assets/icon/relic/2.png';
-import image20 from '../src/assets/icon/relic/20.png';
 import image21 from '../src/assets/icon/relic/21.png';
 import image22 from '../src/assets/icon/relic/22.png';
 import image23 from '../src/assets/icon/relic/23.png';
@@ -89,6 +88,7 @@ import char49 from '../src/assets/icon/character/img_48.png';
 import char50 from '../src/assets/icon/character/img_49.png';
 import char51 from '../src/assets/icon/character/img_50.png';
 import char52 from '../src/assets/icon/character/img_51.png';
+import image20 from '../src/assets/icon/relic/20.png';
 
 export type RelicRulesTemplate = {
   name: string;
