@@ -218,6 +218,7 @@ export const RelicSets: {
   [key: string]: {
     name: string;
     icon: string;
+    isInner?: boolean;
     parts: {
       [key: string]: string;
     };
@@ -225,6 +226,7 @@ export const RelicSets: {
 } = {
   'Iron Cavalry Against the Scourge': {
     name: '荡除蠹灾的铁骑',
+    isInner: false,
     icon: image8,
     parts: {
       Head: "Iron Cavalry's Homing Helm",
@@ -236,6 +238,7 @@ export const RelicSets: {
   'Band of Sizzling Thunder': {
     name: '激奏雷电的乐队',
     icon: image1,
+    isInner: false,
     parts: {
       Head: "Band's Polarized Sunglasses",
       Hand: "Band's Touring Bracelet",
@@ -246,6 +249,7 @@ export const RelicSets: {
   'Champion of Streetwise Boxing': {
     name: '街头出身的拳王',
     icon: image2,
+    isInner: false,
     parts: {
       Head: "Champion's Headgear",
       Hand: "Champion's Heavy Gloves",
@@ -256,6 +260,7 @@ export const RelicSets: {
   'Eagle of Twilight Line': {
     name: '晨昏交界的翔鹰',
     icon: image3,
+    isInner: false,
     parts: {
       Head: "Eagle's Beaked Helmet",
       Hand: "Eagle's Soaring Ring",
@@ -266,6 +271,7 @@ export const RelicSets: {
   'Firesmith of Lava-Forging': {
     name: '熔岩锻铸的火匠',
     icon: image4,
+    isInner: false,
     parts: {
       Head: "Firesmith's Obsidian Goggles",
       Hand: "Firesmith's Ring of Flame-Mastery",
@@ -276,6 +282,7 @@ export const RelicSets: {
   'Genius of Brilliant Stars': {
     name: '繁星璀璨的天才',
     icon: image5,
+    isInner: false,
     parts: {
       Head: "Genius's Ultraremote Sensing Visor",
       Hand: "Genius's Frequency Catcher",
@@ -286,6 +293,7 @@ export const RelicSets: {
   'Guard of Wuthering Snow': {
     name: '戍卫风雪的铁卫',
     icon: image6,
+    isInner: false,
     parts: {
       Head: "Guard's Cast Iron Helmet",
       Hand: "Guard's Shining Gauntlets",
@@ -296,6 +304,7 @@ export const RelicSets: {
   'Hunter of Glacial Forest': {
     name: '密林卧雪的猎人',
     icon: image7,
+    isInner: false,
     parts: {
       Head: "Hunter's Artaius Hood",
       Hand: "Hunter's Lizard Gloves",
@@ -306,6 +315,7 @@ export const RelicSets: {
   'Knight of Purity Palace': {
     name: '净庭教宗的圣骑士',
     icon: image9,
+    isInner: false,
     parts: {
       Head: "Knight's Forgiving Casque",
       Hand: "Knight's Silent Oath Ring",
@@ -316,6 +326,7 @@ export const RelicSets: {
   'Longevous Disciple': {
     name: '宝命长存的莳者',
     icon: image10,
+    isInner: false,
     parts: {
       Head: "Disciple's Prosthetic Eye",
       Hand: "Disciple's Ingenium Hand",
@@ -326,6 +337,7 @@ export const RelicSets: {
   'Messenger Traversing Hackerspace': {
     name: '骇域漫游的信使',
     icon: image11,
+    isInner: false,
     parts: {
       Head: "Messenger's Holovisor",
       Hand: "Messenger's Transformative Arm",
@@ -336,6 +348,7 @@ export const RelicSets: {
   'Musketeer of Wild Wheat': {
     name: '野穗伴行的快枪手',
     icon: image12,
+    isInner: false,
     parts: {
       Head: "Musketeer's Wild Wheat Felt Hat",
       Hand: "Musketeer's Coarse Leather Gloves",
@@ -346,6 +359,7 @@ export const RelicSets: {
   'Passerby of Wandering Cloud': {
     name: '云无留迹的过客',
     icon: image13,
+    isInner: false,
     parts: {
       Head: "Passerby's Rejuvenated Wooden Hairstick",
       Hand: "Passerby's Roaming Dragon Bracer",
@@ -356,6 +370,7 @@ export const RelicSets: {
   'Pioneer Diver of Dead Waters': {
     name: '死水深潜的先驱',
     icon: image14,
+    isInner: false,
     parts: {
       Head: "Pioneer's Heatproof Shell",
       Hand: "Pioneer's Lacuna Compass",
@@ -366,6 +381,7 @@ export const RelicSets: {
   'Prisoner in Deep Confinement': {
     name: '幽锁深牢的系囚',
     icon: image15,
+    isInner: false,
     parts: {
       Head: "Prisoner's Sealed Muzzle",
       Hand: "Prisoner's Leadstone Shackles",
@@ -376,6 +392,7 @@ export const RelicSets: {
   'The Ashblazing Grand Duke': {
     name: '毁烬焚骨的大公',
     icon: image16,
+    isInner: false,
     parts: {
       Head: "Grand Duke's Crown of Netherflame",
       Hand: "Grand Duke's Gloves of Fieryfur",
@@ -386,6 +403,7 @@ export const RelicSets: {
   'The Wind-Soaring Valorous': {
     name: '风举云飞的勇烈',
     icon: image17,
+    isInner: false,
     parts: {
       Head: "Champion's Headgear",
       Hand: "Champion's Heavy Gloves",
@@ -396,6 +414,7 @@ export const RelicSets: {
   'Thief of Shooting Meteor': {
     name: '流星追迹的怪盗',
     icon: image18,
+    isInner: false,
     parts: {
       Head: "Thief's Myriad-Faced Mask",
       Hand: "Thief's Gloves With Prints",
@@ -406,6 +425,7 @@ export const RelicSets: {
   'Wastelander of Banditry Desert': {
     name: '盗匪荒漠的废土客',
     icon: image19,
+    isInner: false,
     parts: {
       Head: "Wastelander's Breathing Mask",
       Hand: "Wastelander's Desert Terminal",
@@ -416,6 +436,7 @@ export const RelicSets: {
   'Watchmaker, Master of Dream Machinations': {
     name: '机心戏梦的钟表匠',
     icon: image20,
+    isInner: false,
     parts: {
       Head: "Watchmaker's Telescoping Lens",
       Hand: "Watchmaker's Fortuitous Wristwatch",
@@ -426,6 +447,7 @@ export const RelicSets: {
   'Belobog of the Architects': {
     name: '筑城者的贝洛伯格',
     icon: image21,
+    isInner: true,
     parts: {
       Sphere: "Belobog's Fortress of Preservation",
       Rope: "Belobog's Iron Defense",
@@ -434,6 +456,7 @@ export const RelicSets: {
   'Broken Keel': {
     name: '折断的龙骨',
     icon: image22,
+    isInner: true,
     parts: {
       Sphere: "Insumousu's Whalefall Ship",
       Rope: "Insumousu's Frayed Hawser",
@@ -442,6 +465,7 @@ export const RelicSets: {
   'Celestial Differentiator': {
     name: '星体差分机',
     icon: image23,
+    isInner: true,
     parts: {
       Sphere: "Planet Screwllum's Mechanical Sun",
       Rope: "Planet Screwllum's Ring System",
@@ -450,6 +474,7 @@ export const RelicSets: {
   'Duran, Dynasty of Running Wolves': {
     name: '奔狼的都蓝王朝',
     icon: image24,
+    isInner: true,
     parts: {
       Sphere: "Duran's Tent of Golden Sky",
       Rope: "Duran's Mechabeast Bridle",
@@ -458,6 +483,7 @@ export const RelicSets: {
   'Firmament Frontline: Glamoth': {
     name: '苍穹战线格拉默',
     icon: image25,
+    isInner: true,
     parts: {
       Sphere: "Glamoth's Iron Cavalry Regiment",
       Rope: "Glamoth's Silent Tombstone",
@@ -466,6 +492,7 @@ export const RelicSets: {
   'Fleet of the Ageless': {
     name: '不老者的仙舟',
     icon: image26,
+    isInner: true,
     parts: {
       Sphere: "The Xianzhou Luofu's Celestial Ark",
       Rope: "The Xianzhou Luofu's Ambrosial Arbor Vines",
@@ -474,6 +501,7 @@ export const RelicSets: {
   'Forge of the Kalpagni Lantern': {
     name: '劫火莲灯铸炼宫',
     icon: image27,
+    isInner: true,
     parts: {
       Sphere: "Forge's Lotus Lantern Wick",
       Rope: "Forge's Heavenly Flamewheel Silk",
@@ -482,6 +510,7 @@ export const RelicSets: {
   'Inert Salsotto': {
     name: '停转的萨尔索图',
     icon: image28,
+    isInner: true,
     parts: {
       Sphere: "Salsotto's Moving City",
       Rope: "Salsotto's Terminator Line",
@@ -490,6 +519,7 @@ export const RelicSets: {
   'Izumo Gensei and Takama Divine Realm': {
     name: '出云显世与高天神国',
     icon: image29,
+    isInner: true,
     parts: {
       Sphere: "lzumo's Magatsu no Morokami",
       Rope: "lzumo's Blades of Origin and End",
@@ -498,6 +528,7 @@ export const RelicSets: {
   'Pan-Cosmic Commercial Enterprise': {
     name: '泛银河商业公司',
     icon: image30,
+    isInner: true,
     parts: {
       Sphere: "The IPC's Mega HQ",
       Rope: "The IPC's Trade Route",
@@ -506,6 +537,7 @@ export const RelicSets: {
   'Penacony, Land of the Dreams	': {
     name: '梦想之地匹诺康尼',
     icon: image31,
+    isInner: true,
     parts: {
       Sphere: "Penacony's Grand Hotel",
       Rope: "Penacony's Dream-Seeking Tracks",
@@ -514,6 +546,7 @@ export const RelicSets: {
   'Rutilant Arena': {
     name: '繁星竞技场',
     icon: image32,
+    isInner: true,
     parts: {
       Sphere: 'Taikiyan Laser Stadium',
       Rope: "Taikiyan's Arclight Race Track",
@@ -522,6 +555,7 @@ export const RelicSets: {
   'Sigonia, the Unclaimed Desolation': {
     name: '无主荒星茨冈尼亚',
     icon: image33,
+    isInner: true,
     parts: {
       Sphere: "Sigonia's Gaiathra Berth",
       Rope: "Sigonia's Knot of Cyclicality",
@@ -530,6 +564,7 @@ export const RelicSets: {
   'Space Sealing Station': {
     name: '太空封印站',
     icon: image34,
+    isInner: true,
     parts: {
       Sphere: "Herta's Space Station",
       Rope: "Herta's Wandering Trek",
@@ -538,6 +573,7 @@ export const RelicSets: {
   'Sprightly Vonwacq': {
     name: '生命的翁瓦克',
     icon: image35,
+    isInner: true,
     parts: {
       Sphere: "Vonwacq's Island of Birth",
       Rope: "Vonwacq's Islandic Coast",
@@ -546,6 +582,7 @@ export const RelicSets: {
   'Talia: Kingdom of Banditry': {
     name: '盗贼公国塔利亚',
     icon: image36,
+    isInner: true,
     parts: {
       Sphere: "Talia's Nailscrap Town",
       Rope: "Talia's Exposed Electric Wire",
