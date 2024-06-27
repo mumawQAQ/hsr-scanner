@@ -11,7 +11,7 @@ const getAllRelicRulesTemplates = async (): Promise<RatingTemplateStore> => {
   return templates as RatingTemplateStore;
 };
 
-const addRelicRulesTemplate = async (
+const createRelicRulesTemplate = async (
   templateId: string,
   relicRulesTemplate: RatingTemplate
 ): Promise<{
@@ -24,7 +24,7 @@ const addRelicRulesTemplate = async (
   if (!relicRulesTemplates) {
     return {
       success: false,
-      message: '无法找到当前遗器模板，请向Github提交issue',
+      message: '无法找到模板储存，请向Github提交issue',
     };
   }
 
@@ -32,14 +32,17 @@ const addRelicRulesTemplate = async (
   relicRulesTemplates[templateId] = relicRulesTemplate;
 
   // save relicRulesTemplates
-  await (window as any).ipcRenderer.storeSet(`data.relicRulesTemplates`, relicRulesTemplates);
+  await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
 
   // update relicRulesTemplateStore
-  useRelicTemplateStore.setState({ relicRulesTemplateStore: relicRulesTemplates });
+  useRelicTemplateStore.setState({
+    relicRulesTemplateStore: relicRulesTemplates,
+    currentRelicRulesTemplate: relicRulesTemplate,
+  });
 
   return {
     success: true,
-    message: '成功添加遗器模板',
+    message: '成功创建遗器模板',
   };
 };
 
@@ -58,7 +61,7 @@ const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: 
   delete relicRulesTemplates[templateId];
 
   // save relicRulesTemplates
-  await (window as any).ipcRenderer.storeSet(`data.relicRulesTemplates`, relicRulesTemplates);
+  await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
 
   // update relicRulesTemplateStore
   useRelicTemplateStore.setState({ relicRulesTemplateStore: relicRulesTemplates });
@@ -69,4 +72,4 @@ const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: 
   };
 };
 
-export { getAllRelicRulesTemplates, addRelicRulesTemplate, removeRelicRulesTemplate };
+export { getAllRelicRulesTemplates, createRelicRulesTemplate, removeRelicRulesTemplate };
