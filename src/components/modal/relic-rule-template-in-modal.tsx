@@ -12,7 +12,7 @@ import relicRatingUtils from '@/utils/relicRatingUtils.ts';
 
 const RelicRuleTemplateInModal = () => {
   const { isOpen, onClose, type, onOpen } = useModal();
-  const { removeRelicRulesTemplate, relicRulesTemplateStore } = useRelicTemplateStore();
+  const { removeRelicRatingRulesTemplate, relicRatingRulesTemplateStore } = useRelicTemplateStore();
 
   const { relicTitle, mainRelicStats } = useRelicStore();
 
@@ -63,7 +63,7 @@ const RelicRuleTemplateInModal = () => {
   };
 
   const handleDeleteRulesTemplate = async (templateId: string) => {
-    const result = await removeRelicRulesTemplate(templateId);
+    const result = await removeRelicRatingRulesTemplate(templateId);
     if (result.success) {
       toast('删除成功', { type: 'success' });
     } else {
@@ -91,9 +91,9 @@ const RelicRuleTemplateInModal = () => {
         </DialogHeader>
         <ScrollArea className="h-[500px] p-6">
           <div className="mb-2 text-center font-semibold">储存的模板</div>
-          {relicRulesTemplateStore &&
-            Object.keys(relicRulesTemplateStore).map(templateId => {
-              const template = relicRulesTemplateStore[templateId];
+          {relicRatingRulesTemplateStore &&
+            Object.keys(relicRatingRulesTemplateStore).map(templateId => {
+              const template = relicRatingRulesTemplateStore[templateId];
               return (
                 <div
                   key={templateId}
@@ -111,7 +111,7 @@ const RelicRuleTemplateInModal = () => {
                 </div>
               );
             })}
-          {(!relicRulesTemplateStore || Object.keys(relicRulesTemplateStore).length === 0) && (
+          {(!relicRatingRulesTemplateStore || Object.keys(relicRatingRulesTemplateStore).length === 0) && (
             <div className="my-2 rounded border-2 p-2 text-center font-black">暂无模板, 请先创建或导入模板</div>
           )}
         </ScrollArea>

@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 
@@ -10,7 +11,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
-import { toast } from 'react-toastify';
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -27,7 +27,7 @@ const formSchema = z.object({
 const RelicCreateTemplateModal = () => {
   const navigate = useNavigate();
   const { isOpen, onClose, type } = useModal();
-  const { createRelicRulesTemplate } = useRelicTemplateStore();
+  const { createRelicRatingRulesTemplate } = useRelicTemplateStore();
 
   const isModalOpen = isOpen && type === 'create-relic-rules-template';
 
@@ -43,7 +43,7 @@ const RelicCreateTemplateModal = () => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     // generate a new uuid for the template
     const templateId = uuidv4();
-    const result = await createRelicRulesTemplate(templateId, {
+    const result = await createRelicRatingRulesTemplate(templateId, {
       templateName: data.name,
       templateDescription: data.description,
       author: data.author,

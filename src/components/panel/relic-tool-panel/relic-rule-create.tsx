@@ -1,10 +1,19 @@
 import { useParams } from 'react-router-dom';
 
+import RelicRuleCard from '@/components/panel/relic-tool-panel/relic-rule-card.tsx';
+import RelicRuleEmptyCard from '@/components/panel/relic-tool-panel/relic-rule-empty-card.tsx';
+
 const RelicRuleCreate = () => {
-  const { templateName, templateDescription, author } = useParams();
+  const { templateId } = useParams();
+
+  if (!templateId) {
+    return null;
+  }
+
   return (
-    <div>
-      <h1>{`Create template with name: ${templateName} and description: ${templateDescription} and author is :${author}`}</h1>
+    <div className={'grid min-h-[800px] grid-cols-3 gap-4 overflow-y-auto px-2 py-2'}>
+      <RelicRuleCard ruleId={'1'} />
+      <RelicRuleEmptyCard templateId={templateId} />
     </div>
   );
 };

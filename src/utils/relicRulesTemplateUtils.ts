@@ -6,7 +6,7 @@ const getAllRelicRulesTemplates = async (): Promise<RatingTemplateStore> => {
   const templates = await (window as any).ipcRenderer.storeGet(`data.ratingTemplates`);
 
   // update relicRulesTemplateStore
-  useRelicTemplateStore.setState({ relicRulesTemplateStore: templates });
+  useRelicTemplateStore.setState({ relicRatingRulesTemplateStore: templates });
 
   return templates as RatingTemplateStore;
 };
@@ -19,7 +19,7 @@ const createRelicRulesTemplate = async (
   message: string;
 }> => {
   // get all relicRulesTemplates
-  const relicRulesTemplates = useRelicTemplateStore.getState().relicRulesTemplateStore;
+  const relicRulesTemplates = useRelicTemplateStore.getState().relicRatingRulesTemplateStore;
 
   if (!relicRulesTemplates) {
     return {
@@ -36,8 +36,8 @@ const createRelicRulesTemplate = async (
 
   // update relicRulesTemplateStore
   useRelicTemplateStore.setState({
-    relicRulesTemplateStore: relicRulesTemplates,
-    currentRelicRulesTemplate: relicRulesTemplate,
+    relicRatingRulesTemplateStore: relicRulesTemplates,
+    currentRelicRatingRulesTemplate: relicRulesTemplate,
   });
 
   return {
@@ -48,7 +48,7 @@ const createRelicRulesTemplate = async (
 
 const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: boolean; message: string }> => {
   // get all relicRulesTemplates
-  const relicRulesTemplates = useRelicTemplateStore.getState().relicRulesTemplateStore;
+  const relicRulesTemplates = useRelicTemplateStore.getState().relicRatingRulesTemplateStore;
 
   if (!relicRulesTemplates) {
     return {
@@ -64,7 +64,7 @@ const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: 
   await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
 
   // update relicRulesTemplateStore
-  useRelicTemplateStore.setState({ relicRulesTemplateStore: relicRulesTemplates });
+  useRelicTemplateStore.setState({ relicRatingRulesTemplateStore: relicRulesTemplates });
 
   return {
     success: true,

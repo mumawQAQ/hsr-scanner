@@ -9,11 +9,11 @@ import {
 } from '@/utils/relicRulesTemplateUtils.ts';
 
 type RelicTemplateStore = {
-  relicRulesTemplateStore: RatingTemplateStore | null;
+  relicRatingRulesTemplateStore: RatingTemplateStore | null;
 
-  fetchRelicRulesTemplateStore: () => Promise<void>;
+  fetchRelicRatingRulesTemplateStore: () => Promise<void>;
 
-  createRelicRulesTemplate: (
+  createRelicRatingRulesTemplate: (
     templateId: string,
     relicRulesTemplate: RatingTemplate
   ) => Promise<{
@@ -21,35 +21,35 @@ type RelicTemplateStore = {
     message: string;
   }>;
 
-  removeRelicRulesTemplate: (templateId: string) => Promise<{ success: boolean; message: string }>;
+  removeRelicRatingRulesTemplate: (templateId: string) => Promise<{ success: boolean; message: string }>;
 
-  currentRelicRulesTemplate: RatingTemplate | null;
+  currentRelicRatingRulesTemplate: RatingTemplate | null;
 
-  setCurrentRelicRulesTemplate: (template: RatingTemplate) => void;
+  setCurrentRelicRatingRulesTemplate: (template: RatingTemplate) => void;
 };
 
 export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
-  relicRulesTemplateStore: null,
+  relicRatingRulesTemplateStore: null,
 
-  fetchRelicRulesTemplateStore: async () => {
+  fetchRelicRatingRulesTemplateStore: async () => {
     await getAllRelicRulesTemplates();
   },
 
-  createRelicRulesTemplate: async (templateId, relicRulesTemplate) => {
+  createRelicRatingRulesTemplate: async (templateId, relicRulesTemplate) => {
     return await createRelicRulesTemplate(templateId, relicRulesTemplate);
   },
 
-  removeRelicRulesTemplate: async templateId => {
+  removeRelicRatingRulesTemplate: async templateId => {
     return await removeRelicRulesTemplate(templateId);
   },
 
-  currentRelicRulesTemplate: null,
+  currentRelicRatingRulesTemplate: null,
 
-  setCurrentRelicRulesTemplate: template => {
-    set({ currentRelicRulesTemplate: template });
+  setCurrentRelicRatingRulesTemplate: template => {
+    set({ currentRelicRatingRulesTemplate: template });
   },
 }));
 
-useRelicTemplateStore.getState().fetchRelicRulesTemplateStore();
+useRelicTemplateStore.getState().fetchRelicRatingRulesTemplateStore();
 
 export default useRelicTemplateStore;
