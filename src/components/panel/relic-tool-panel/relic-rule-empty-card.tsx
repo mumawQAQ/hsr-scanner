@@ -1,13 +1,30 @@
 import { Plus } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Card } from '@/components/ui/card.tsx';
+import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
 interface RelicRuleEmptyCardProps {
   templateId: string;
 }
 
 const RelicRuleEmptyCard = ({ templateId }: RelicRuleEmptyCardProps) => {
-  const handleCreateNewRule = () => {};
+  const { createRelicRatingRule } = useRelicTemplateStore();
+
+  const handleCreateNewRule = async () => {
+    // generate a new rule id
+    const ruleId = uuidv4();
+    const result = await createRelicRatingRule(templateId, ruleId, {
+      setNames: [],
+      partNames: {},
+      valuableSub: [],
+      fitCharacters: [],
+    });
+    if (!result.success) {
+      toast(result.message, { type: 'error' });
+    }
+  };
 
   return (
     <Card

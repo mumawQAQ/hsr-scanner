@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 
-import { RatingTemplate, RatingTemplateStore } from '../types.ts';
+import { RatingRule, RatingTemplate, RatingTemplateStore } from '../types.ts';
 
 import {
+  createRelicRatingRule,
   createRelicRulesTemplate,
   getAllRelicRulesTemplates,
   removeRelicRulesTemplate,
@@ -26,6 +27,15 @@ type RelicTemplateStore = {
   currentRelicRatingRulesTemplate: RatingTemplate | null;
 
   setCurrentRelicRatingRulesTemplate: (template: RatingTemplate) => void;
+
+  createRelicRatingRule: (
+    templateId: string,
+    ruleId: string,
+    rule: RatingRule
+  ) => Promise<{
+    success: boolean;
+    message: string;
+  }>;
 };
 
 export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
@@ -47,6 +57,10 @@ export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
 
   setCurrentRelicRatingRulesTemplate: template => {
     set({ currentRelicRatingRulesTemplate: template });
+  },
+
+  createRelicRatingRule: async (templateId, ruleId, rule) => {
+    return await createRelicRatingRule(templateId, ruleId, rule);
   },
 }));
 

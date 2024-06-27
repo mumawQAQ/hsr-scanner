@@ -1,4 +1,4 @@
-import { RatingTemplate, RatingTemplateStore } from '../types.ts';
+import { RatingRule, RatingTemplate, RatingTemplateStore } from '../types.ts';
 
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
@@ -72,4 +72,40 @@ const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: 
   };
 };
 
-export { getAllRelicRulesTemplates, createRelicRulesTemplate, removeRelicRulesTemplate };
+const createRelicRatingRule = async (
+  templateId: string,
+  ruleId: string,
+  rule: RatingRule
+): Promise<{ success: boolean; message: string }> => {
+  // get all relicRulesTemplates
+  const relicRulesTemplates = useRelicTemplateStore.getState().relicRatingRulesTemplateStore;
+
+  // get current relicRulesTemplate
+  const currentRelicRulesTemplate = useRelicTemplateStore.getState().currentRelicRatingRulesTemplate;
+
+  if (!relicRulesTemplates || !currentRelicRulesTemplate) {
+    return {
+      success: false,
+      message: '无法找到当前遗器模板，请向Github提交issue',
+    };
+  }
+
+  // add new relicRatingRule
+  relicRulesTemplates[templateId].rules[ruleId] = rule;
+  currentRelicRulesTemplate.rules[ruleId] = rule;
+
+  // save relicRulesTemplates
+  await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
+
+  useRelicTemplateStore.setState({
+    relicRatingRulesTemplateStore: relicRulesTemplates,
+    currentRelicRatingRulesTemplate: currentRelicRulesTemplate,
+  });
+
+  return {
+    success: true,
+    message: '成功创建遗器规则',
+  };
+};
+
+export { getAllRelicRulesTemplates, createRelicRulesTemplate, removeRelicRulesTemplate, createRelicRatingRule };
