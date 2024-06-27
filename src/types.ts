@@ -90,21 +90,26 @@ import image8 from '../src/assets/icon/relic/8.png';
 import image9 from '../src/assets/icon/relic/9.png';
 
 export type RatingTemplate = {
-  [ruleID: string]: {
-    setNames: string[];
-    partNames: {
-      [partName: string]: {
-        valuableMain:
-          | RelicHeadMainStatsType[]
-          | RelicGloveMainStatsType[]
-          | RelicBodyMainStatsType[]
-          | RelicShoeMainStatsType[]
-          | RelicRopeMainStatsType[]
-          | RelicSphereMainStatsType[];
+  templateName: string;
+  templateDescription: string;
+  author: string;
+  rules: {
+    [ruleID: string]: {
+      setNames: string[];
+      partNames: {
+        [partName: string]: {
+          valuableMain:
+            | RelicHeadMainStatsType[]
+            | RelicGloveMainStatsType[]
+            | RelicBodyMainStatsType[]
+            | RelicShoeMainStatsType[]
+            | RelicRopeMainStatsType[]
+            | RelicSphereMainStatsType[];
+        };
       };
+      valuableSub: RelicSubStatsType[];
+      fitCharacters: string[];
     };
-    valuableSub: RelicSubStatsType[];
-    fitCharacters: string[];
   };
 };
 
