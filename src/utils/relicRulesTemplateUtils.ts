@@ -1,19 +1,19 @@
-import { RelicRulesTemplate, RelicRulesTemplateStore } from '../types.ts';
+import { RatingTemplate, RatingTemplateStore } from '../types.ts';
 
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
-const getAllRelicRulesTemplates = async (): Promise<RelicRulesTemplateStore> => {
-  const templates = await (window as any).ipcRenderer.storeGet(`data.relicRulesTemplates`);
+const getAllRelicRulesTemplates = async (): Promise<RatingTemplateStore> => {
+  const templates = await (window as any).ipcRenderer.storeGet(`data.ratingTemplates`);
 
   // update relicRulesTemplateStore
   useRelicTemplateStore.setState({ relicRulesTemplateStore: templates });
 
-  return templates as RelicRulesTemplateStore;
+  return templates as RatingTemplateStore;
 };
 
 const addRelicRulesTemplate = async (
   templateId: string,
-  relicRulesTemplate: RelicRulesTemplate
+  relicRulesTemplate: RatingTemplate
 ): Promise<{
   success: boolean;
   message: string;
