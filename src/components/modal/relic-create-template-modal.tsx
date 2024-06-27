@@ -1,5 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button.tsx';
@@ -7,7 +9,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
-import { useNavigate } from 'react-router-dom';
+import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
+import { toast } from 'react-toastify';
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -24,6 +27,7 @@ const formSchema = z.object({
 const RelicCreateTemplateModal = () => {
   const navigate = useNavigate();
   const { isOpen, onClose, type } = useModal();
+  const { createRelicRulesTemplate } = useRelicTemplateStore();
 
   const isModalOpen = isOpen && type === 'create-relic-rules-template';
 
@@ -37,7 +41,20 @@ const RelicCreateTemplateModal = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    navigate(`/relic-tools/create/${data.name}/${data.author}/${data.description}`);
+    // generate a new uuid for the template
+    const templateId = uuidv4();
+    const result = await createRelicRulesTemplate(templateId, {
+      templateName: data.name,
+      templateDescription: data.description,
+      author: data.author,
+      rules: {},
+    });
+    if (!result.success) {
+      toast(result.message, { type: 'error' });
+    } else {
+      toast('成功创建遗器模板', { type: 'success' });
+      navigate(`/relic-tools/create/${templateId}`);
+    }
     handleClose();
   };
 
