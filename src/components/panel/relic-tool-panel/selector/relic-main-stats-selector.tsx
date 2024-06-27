@@ -42,7 +42,7 @@ const RelicMainStatsSelector: React.FC<RelicMainStatsSelectorProps> = ({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="mr-2 inline-flex flex-row">
+    <div className="mr-2 flex flex-row">
       <div className="mr-2 flex font-semibold">{partName}:</div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

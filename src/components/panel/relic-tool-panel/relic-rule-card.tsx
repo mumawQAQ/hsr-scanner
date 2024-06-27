@@ -54,7 +54,7 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
     );
   };
 
-  const handleSetNames = (setNames: string[]) => {
+  const handleSetNamesChange = (setNames: string[]) => {
     // if the new setNames is empty, clear all main stats
     if (setNames.length === 0) {
       handleClearAll();
@@ -98,7 +98,7 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
               </div>
             }
             selectedKeys={setNames}
-            onSelectionChange={handleSetNames}
+            onSelectionChange={handleSetNamesChange}
           />
         </div>
         <div>
@@ -110,17 +110,10 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
               </Badge>
             ))}
         </div>
-        {
-          // only show the main stats selector when there is any set selected
-          setNames && setNames.length > 0 && <Separator />
-        }
-        {
-          // only show the main stats selector when there is any set selected
-          setNames && setNames.length > 0 && <div className="font-semibold">遗器主属性:</div>
-        }
-        {
-          // only show the main stats selector when there is any set selected
-          setNames && setNames.length > 0 && (
+        {setNames.length > 0 && (
+          <div>
+            <Separator className="my-2" />
+            <div className="font-semibold">遗器主属性:</div>
             <div>
               {
                 // any setName is not inner to show the head, glove, body, shoe
@@ -132,24 +125,28 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
                       onSelectionChange={setHeadMainStats}
                       mainStats={Object.values(RelicHeadMainStatsType)}
                     />
+                    {headMainStats.length > 0 && <StatsBadgeList stats={headMainStats} />}
                     <RelicMainStatsSelector
                       partName="手"
                       selectedKeys={gloveMainStats}
                       onSelectionChange={setGloveMainStats}
                       mainStats={Object.values(RelicGloveMainStatsType)}
                     />
+                    {gloveMainStats.length > 0 && <StatsBadgeList stats={gloveMainStats} />}
                     <RelicMainStatsSelector
                       partName="衣"
                       selectedKeys={bodyMainStats}
                       onSelectionChange={setBodyMainStats}
                       mainStats={Object.values(RelicBodyMainStatsType)}
                     />
+                    {bodyMainStats.length > 0 && <StatsBadgeList stats={bodyMainStats} />}
                     <RelicMainStatsSelector
                       partName="鞋"
                       selectedKeys={shoeMainStats}
                       onSelectionChange={setShoeMainStats}
                       mainStats={Object.values(RelicShoeMainStatsType)}
                     />
+                    {shoeMainStats.length > 0 && <StatsBadgeList stats={shoeMainStats} />}
                   </div>
                 )
               }
@@ -163,44 +160,32 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
                       onSelectionChange={setSphereMainStats}
                       mainStats={Object.values(RelicSphereMainStatsType)}
                     />
+                    {sphereMainStats.length > 0 && <StatsBadgeList stats={sphereMainStats} />}
                     <RelicMainStatsSelector
                       partName="绳"
                       selectedKeys={ropeMainStats}
                       onSelectionChange={setRopeMainStats}
                       mainStats={Object.values(RelicRopeMainStatsType)}
                     />
+                    {ropeMainStats.length > 0 && <StatsBadgeList stats={ropeMainStats} />}
                   </div>
                 )
               }
-              {headMainStats.length > 0 && <StatsBadgeList stats={headMainStats} partName="头" />}
-              {gloveMainStats.length > 0 && <StatsBadgeList stats={gloveMainStats} partName="手" />}
-              {bodyMainStats.length > 0 && <StatsBadgeList stats={bodyMainStats} partName="衣" />}
-              {shoeMainStats.length > 0 && <StatsBadgeList stats={shoeMainStats} partName="鞋" />}
-              {sphereMainStats.length > 0 && <StatsBadgeList stats={sphereMainStats} partName="球" />}
-              {ropeMainStats.length > 0 && <StatsBadgeList stats={ropeMainStats} partName="绳" />}
             </div>
-          )
-        }
-
-        {
-          // only show the relic sub stats separator when there is any main stats selected
-          !isMainStatsEmpty() && <Separator />
-        }
-        {
-          // only show the relic sub stats title when there is any main stats selected
-          !isMainStatsEmpty() && <div className="font-semibold">遗器副属性:</div>
-        }
-        {!isMainStatsEmpty() && (
-          <div>
-            <RelicSubStatsSelector
-              selectedKeys={subStats}
-              onSelectionChange={setSubStats}
-              subStats={Object.values(RelicSubStatsType)}
-            />
+            <Separator className="my-2" />
+            <div className="flex flex-row gap-2">
+              <div className="font-semibold">遗器副属性:</div>
+              <RelicSubStatsSelector
+                selectedKeys={subStats}
+                onSelectionChange={setSubStats}
+                subStats={Object.values(RelicSubStatsType)}
+              />
+            </div>
             <StatsBadgeList stats={subStats} />
+            <Separator className="my-2" />
+            <div className="font-semibold">适用角色:</div>
           </div>
         )}
-        <div className="font-semibold">适用角色:</div>
       </CardContent>
     </Card>
   );
