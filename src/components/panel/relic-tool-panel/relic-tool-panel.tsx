@@ -12,7 +12,7 @@ const RelicToolPanel = () => {
       <Routes>
         <Route index element={<RelicRuleTemplateList />} />
         <Route path="edit/:templateId" element={<RelicRuleEdit />} />
-        <Route path="create/:templateName/:templateDescription/:author" element={<RelicRuleCreate />} />
+        <Route path="create/:templateId" element={<RelicRuleCreate />} />
       </Routes>
     </div>
   );
