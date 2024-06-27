@@ -11,19 +11,23 @@ import {
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import { RelicSets } from '@/types.ts';
+import { ChevronDown } from 'lucide-react';
 
 type RelicSetSelectorProps = {
-  trigger: React.ReactNode;
   selectedKeys: string[];
   onSelectionChange: (selectedKeys: string[]) => void;
 };
 
-const RelicSetSelector: React.FC<RelicSetSelectorProps> = ({ trigger, selectedKeys, onSelectionChange }) => {
+const RelicSetSelector: React.FC<RelicSetSelectorProps> = ({ selectedKeys, onSelectionChange }) => {
   const [open, setOpen] = React.useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+      <PopoverTrigger asChild>
+        <div className="flex cursor-pointer flex-row rounded-lg pl-2 text-indigo-500 hover:ring-1">
+          选择 <ChevronDown />
+        </div>
+      </PopoverTrigger>
       <PopoverContent>
         <Command>
           <CommandInput placeholder="搜索套装" />

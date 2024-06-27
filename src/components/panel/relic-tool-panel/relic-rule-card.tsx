@@ -1,4 +1,4 @@
-import { ChevronDown, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useState } from 'react';
 
 import StatsBadgeList from '@/components/panel/relic-tool-panel/badge-list/stats-badge-list.tsx';
@@ -43,17 +43,6 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
     setSubStats([]);
   };
 
-  const isMainStatsEmpty = () => {
-    return (
-      headMainStats.length === 0 &&
-      gloveMainStats.length === 0 &&
-      bodyMainStats.length === 0 &&
-      shoeMainStats.length === 0 &&
-      sphereMainStats.length === 0 &&
-      ropeMainStats.length === 0
-    );
-  };
-
   const handleSetNamesChange = (setNames: string[]) => {
     // if the new setNames is empty, clear all main stats
     if (setNames.length === 0) {
@@ -91,15 +80,7 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
       <CardContent className="flex flex-col gap-2">
         <div className="flex flex-row gap-2">
           <div className="font-semibold">遗器套装:</div>
-          <RelicSetSelector
-            trigger={
-              <div className="flex cursor-pointer flex-row rounded-lg pl-2 text-indigo-500 hover:ring-1">
-                选择 <ChevronDown />
-              </div>
-            }
-            selectedKeys={setNames}
-            onSelectionChange={handleSetNamesChange}
-          />
+          <RelicSetSelector selectedKeys={setNames} onSelectionChange={handleSetNamesChange} />
         </div>
         <div>
           {setNames &&
