@@ -1,6 +1,6 @@
 import { Worker } from 'tesseract.js';
 
-import { FuzzyTitleSet, RelicType } from '../../types.ts';
+import { FuzzyTitleSet, RelicType } from '../types.ts';
 
 import statsRegs from '@/data/regex.ts';
 
