@@ -103,3 +103,13 @@ app.on('activate', () => {
 });
 
 app.whenReady().then(createMainWindow);
+
+
+// Change the window size when the user click a button in Scan Panel.
+ipcMain.on('change-window-mode', (_, isLightMode) => {
+  if (isLightMode) {
+    win?.setSize(600, 400); // 轻量模式尺寸
+  } else {
+    win?.setSize(1200, 1000); // 全尺寸模式
+  }
+});
