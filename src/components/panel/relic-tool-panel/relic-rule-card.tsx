@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { Card, CardContent } from '@/components/ui/card.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import {
+  Characters,
   RelicBodyMainStatsType,
   RelicGloveMainStatsType,
   RelicHeadMainStatsType,
@@ -18,6 +19,7 @@ import {
   RelicSphereMainStatsType,
   RelicSubStatsType,
 } from '@/types.ts';
+import CharacterSelector from '@/components/panel/relic-tool-panel/selector/character-selector.tsx';
 
 type RelicRuleCardProps = {
   ruleId: string;
@@ -32,6 +34,7 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
   const [sphereMainStats, setSphereMainStats] = useState<string[]>([]);
   const [ropeMainStats, setRopeMainStats] = useState<string[]>([]);
   const [subStats, setSubStats] = useState<string[]>([]);
+  const [characters, setCharacters] = useState<string[]>([]);
 
   const handleClearAll = () => {
     setHeadMainStats([]);
@@ -164,7 +167,19 @@ const RelicRuleCard = ({ ruleId }: RelicRuleCardProps) => {
             </div>
             <StatsBadgeList stats={subStats} />
             <Separator className="my-2" />
-            <div className="font-semibold">适用角色:</div>
+            <div className="flex flex-row gap-2">
+              <div className="font-semibold">适用角色:</div>
+              <CharacterSelector selectedKeys={characters} onSelectionChange={setCharacters} />
+            </div>
+            <div className="mt-2">
+              {characters &&
+                characters.map((character, index) => (
+                  <Badge key={index} className="mr-2 inline-flex flex-row items-center gap-1">
+                    <img src={Characters[character].icon} className="h-6 w-6" alt="relic icon" />
+                    {Characters[character].name}
+                  </Badge>
+                ))}
+            </div>
           </div>
         )}
       </CardContent>

@@ -11,14 +11,14 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { RelicSets } from '@/types.ts';
+import { Characters } from '@/types.ts';
 
-type RelicSetSelectorProps = {
+type CharacterSelectorProps = {
   selectedKeys: string[];
   onSelectionChange: (selectedKeys: string[]) => void;
 };
 
-const RelicSetSelector: React.FC<RelicSetSelectorProps> = ({ selectedKeys, onSelectionChange }) => {
+const CharacterSelector: React.FC<CharacterSelectorProps> = ({ selectedKeys, onSelectionChange }) => {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -30,11 +30,11 @@ const RelicSetSelector: React.FC<RelicSetSelectorProps> = ({ selectedKeys, onSel
       </PopoverTrigger>
       <PopoverContent>
         <Command>
-          <CommandInput placeholder="搜索套装" />
+          <CommandInput placeholder="搜索角色" />
           <CommandList>
-            <CommandEmpty>没有找到对应套装</CommandEmpty>
+            <CommandEmpty>没有找到对应角色</CommandEmpty>
             <CommandGroup>
-              {Object.entries(RelicSets).map(([key, value]) => (
+              {Object.entries(Characters).map(([key, value]) => (
                 <CommandItem key={key} value={value.name}>
                   <Checkbox
                     checked={selectedKeys ? selectedKeys.includes(key) : false}
@@ -65,4 +65,4 @@ const RelicSetSelector: React.FC<RelicSetSelectorProps> = ({ selectedKeys, onSel
     </Popover>
   );
 };
-export default RelicSetSelector;
+export default CharacterSelector;
