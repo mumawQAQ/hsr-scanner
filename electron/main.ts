@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { app, BrowserWindow, desktopCapturer, ipcMain } from 'electron';
 
 import store from './store.ts';
+import { RatingTemplate, RatingTemplateStore } from '@/types.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -64,6 +65,70 @@ function createMainWindow() {
 
   ipcMain.handle('store-set', async (_, key, value) => {
     return store.set(key, value);
+  });
+
+  ipcMain.handle('store-delete-rating-template', async (_, templateId) => {
+    try {
+      const templates = store.get('ratingTemplates', {});
+      if (!templates[templateId]) {
+        return { success: false, message: '没有找到遗器模板' };
+      }
+
+      delete templates[templateId];
+      store.set('ratingTemplates', templates);
+      return { success: true, message: '遗器模板删除成功' };
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      return { success: false, message: error instanceof Error ? error.message : '删除模板时，储存未知错误' };
+    }
+  });
+
+  ipcMain.handle('store-update-add-rating-template', async (_, templateId, template) => {
+    try {
+      store.set(`ratingTemplates.${templateId}`, template);
+      return { success: true, message: '遗器模板添加成功' };
+    } catch (error) {
+      console.error('Error updating template:', error);
+      return { success: false, message: error instanceof Error ? error.message : '添加模板时，储存未知错误' };
+    }
+  });
+
+  ipcMain.handle('store-delete-rating-rule', async (_, templateId, ruleId) => {
+    try {
+      const templates = store.get('ratingTemplates', {} as RatingTemplateStore);
+      if (!templates[templateId]) {
+        return { success: false, message: '没有找到遗器模板' };
+      }
+
+      const currentTemplate = templates[templateId] as RatingTemplate;
+
+      if (!currentTemplate.rules[ruleId]) {
+        return { success: false, message: '没有找到规则' };
+      }
+
+      delete templates[templateId].rules[ruleId];
+      store.set('ratingTemplates', templates);
+      return { success: true, message: '规则删除成功' };
+    } catch (error) {
+      console.error('Error deleting rule:', error);
+      return { success: false, message: error instanceof Error ? error.message : '删除规则时，储存未知错误' };
+    }
+  });
+
+  ipcMain.handle('store-update-add-rating-rule', async (_, templateId, ruleId, rule) => {
+    try {
+      // need to make sure the template exists
+      const templates = store.get(`ratingTemplates.${templateId}`);
+      if (!templates) {
+        return { success: false, message: '没有找到遗器模板' };
+      }
+
+      store.set(`ratingTemplates.${templateId}.rules.${ruleId}`, rule);
+      return { success: true, message: '规则添加成功' };
+    } catch (error) {
+      console.error('Error updating rule:', error);
+      return { success: false, message: error instanceof Error ? error.message : '添加规则时，储存未知错误' };
+    }
   });
 
   // Test active push message to Renderer-process.
