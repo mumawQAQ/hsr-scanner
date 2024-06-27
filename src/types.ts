@@ -37,6 +37,59 @@ import image7 from '../src/assets/icon/relic/7.png';
 import image8 from '../src/assets/icon/relic/8.png';
 import image9 from '../src/assets/icon/relic/9.png';
 
+import char1 from '../src/assets/icon/character/img.png';
+import char2 from '../src/assets/icon/character/img_1.png';
+import char3 from '../src/assets/icon/character/img_2.png';
+import char4 from '../src/assets/icon/character/img_3.png';
+import char5 from '../src/assets/icon/character/img_4.png';
+import char6 from '../src/assets/icon/character/img_5.png';
+import char7 from '../src/assets/icon/character/img_6.png';
+import char8 from '../src/assets/icon/character/img_7.png';
+import char9 from '../src/assets/icon/character/img_8.png';
+import char10 from '../src/assets/icon/character/img_9.png';
+import char11 from '../src/assets/icon/character/img_10.png';
+import char12 from '../src/assets/icon/character/img_11.png';
+import char13 from '../src/assets/icon/character/img_12.png';
+import char14 from '../src/assets/icon/character/img_13.png';
+import char15 from '../src/assets/icon/character/img_14.png';
+import char16 from '../src/assets/icon/character/img_15.png';
+import char17 from '../src/assets/icon/character/img_16.png';
+import char18 from '../src/assets/icon/character/img_17.png';
+import char19 from '../src/assets/icon/character/img_18.png';
+import char20 from '../src/assets/icon/character/img_19.png';
+import char21 from '../src/assets/icon/character/img_20.png';
+import char22 from '../src/assets/icon/character/img_21.png';
+import char23 from '../src/assets/icon/character/img_22.png';
+import char24 from '../src/assets/icon/character/img_23.png';
+import char25 from '../src/assets/icon/character/img_24.png';
+import char26 from '../src/assets/icon/character/img_25.png';
+import char27 from '../src/assets/icon/character/img_26.png';
+import char28 from '../src/assets/icon/character/img_27.png';
+import char29 from '../src/assets/icon/character/img_28.png';
+import char30 from '../src/assets/icon/character/img_29.png';
+import char31 from '../src/assets/icon/character/img_30.png';
+import char32 from '../src/assets/icon/character/img_31.png';
+import char33 from '../src/assets/icon/character/img_32.png';
+import char34 from '../src/assets/icon/character/img_33.png';
+import char35 from '../src/assets/icon/character/img_34.png';
+import char36 from '../src/assets/icon/character/img_35.png';
+import char37 from '../src/assets/icon/character/img_36.png';
+import char38 from '../src/assets/icon/character/img_37.png';
+import char39 from '../src/assets/icon/character/img_38.png';
+import char40 from '../src/assets/icon/character/img_39.png';
+import char41 from '../src/assets/icon/character/img_40.png';
+import char42 from '../src/assets/icon/character/img_41.png';
+import char43 from '../src/assets/icon/character/img_42.png';
+import char44 from '../src/assets/icon/character/img_43.png';
+import char45 from '../src/assets/icon/character/img_44.png';
+import char46 from '../src/assets/icon/character/img_45.png';
+import char47 from '../src/assets/icon/character/img_46.png';
+import char48 from '../src/assets/icon/character/img_47.png';
+import char49 from '../src/assets/icon/character/img_48.png';
+import char50 from '../src/assets/icon/character/img_49.png';
+import char51 from '../src/assets/icon/character/img_50.png';
+import char52 from '../src/assets/icon/character/img_51.png';
+
 export type RelicRulesTemplate = {
   name: string;
   valuableSub?: string[];
@@ -222,211 +275,211 @@ export const Characters: {
 } = {
   'Fu Xuan': {
     name: '符玄',
-    icon: '',
+    icon: char1,
   },
   Acheron: {
     name: '黄泉',
-    icon: '',
+    icon: char2,
   },
   Argenti: {
     name: '银枝',
-    icon: '',
+    icon: char3,
   },
   Arlan: {
     name: '阿兰',
-    icon: '',
+    icon: char4,
   },
   Asta: {
     name: '艾丝妲',
-    icon: '',
+    icon: char5,
   },
   Aventurine: {
     name: '砂金',
-    icon: '',
+    icon: char6,
   },
   Bailu: {
     name: '白鹿',
-    icon: '',
+    icon: char7,
   },
   'Black Swan': {
     name: '黑天鹅',
-    icon: '',
+    icon: char8,
   },
   Blade: {
     name: '刃',
-    icon: '',
+    icon: char9,
   },
   Boothill: {
     name: '波提欧',
-    icon: '',
+    icon: char10,
   },
   Bronya: {
     name: '布洛妮娅',
-    icon: '',
+    icon: char11,
   },
   Clara: {
     name: '克拉拉',
-    icon: '',
+    icon: char12,
   },
   'Dan Heng': {
     name: '丹恒',
-    icon: '',
+    icon: char13,
   },
   'Dan Heng Imbibitor Lunae': {
     name: '丹恒•饮月',
-    icon: '',
+    icon: char14,
   },
   'Dr. Ratio': {
     name: '真理医生',
-    icon: '',
+    icon: char15,
   },
   Firefly: {
     name: '流萤',
-    icon: '',
+    icon: char16,
   },
   Gallagher: {
     name: '加拉赫',
-    icon: '',
+    icon: char17,
   },
   Gepard: {
     name: '杰帕德',
-    icon: '',
+    icon: char18,
   },
   Guinaifen: {
     name: '桂乃芬',
-    icon: '',
+    icon: char19,
   },
   Hanya: {
     name: '寒鸦',
-    icon: '',
+    icon: char20,
   },
   Herta: {
     name: '黑塔',
-    icon: '',
+    icon: char21,
   },
   Himeko: {
     name: '姬子',
-    icon: '',
+    icon: char22,
   },
   Hook: {
     name: '虎克',
-    icon: '',
+    icon: char23,
   },
   Huohuo: {
     name: '藿藿',
-    icon: '',
+    icon: char24,
   },
   'Jing Yuan': {
     name: '景元',
-    icon: '',
+    icon: char25,
   },
   Jingliu: {
     name: '静流',
-    icon: '',
+    icon: char26,
   },
   Kafka: {
     name: '卡芙卡',
-    icon: '',
+    icon: char27,
   },
   Luka: {
     name: '卢卡',
-    icon: '',
+    icon: char28,
   },
   Luocha: {
     name: '罗刹',
-    icon: '',
+    icon: char29,
   },
   Lynx: {
     name: '玲可',
-    icon: '',
+    icon: char30,
   },
   'March 7th': {
     name: '三月七',
-    icon: '',
+    icon: char31,
   },
   Misha: {
     name: '米沙',
-    icon: '',
+    icon: char32,
   },
   Natasha: {
     name: '娜塔莎',
-    icon: '',
+    icon: char33,
   },
   Pela: {
     name: '佩拉',
-    icon: '',
+    icon: char34,
   },
   Qingque: {
     name: '青雀',
-    icon: '',
+    icon: char35,
   },
   Robin: {
     name: '知更鸟',
-    icon: '',
+    icon: char36,
   },
   'Ruan Mei': {
     name: '阮•梅',
-    icon: '',
+    icon: char37,
   },
   Sampo: {
     name: '桑博',
-    icon: '',
+    icon: char38,
   },
   Seele: {
     name: '希儿',
-    icon: '',
+    icon: char39,
   },
   Serval: {
     name: '希露瓦',
-    icon: '',
+    icon: char40,
   },
   'Silver Wolf': {
     name: '银狼',
-    icon: '',
+    icon: char41,
   },
   Sparkle: {
     name: '花火',
-    icon: '',
+    icon: char42,
   },
   Sushang: {
     name: '素裳',
-    icon: '',
+    icon: char43,
   },
   Tingyun: {
     name: '停云',
-    icon: '',
+    icon: char44,
   },
   'Topaz and Numby': {
     name: '托帕&账账',
-    icon: '',
+    icon: char45,
   },
   'Trailblazer: Destruction': {
     name: '开拓者•毁灭',
-    icon: '',
+    icon: char46,
   },
   'Trailblazer: Preservation': {
     name: '开拓者•存护',
-    icon: '',
+    icon: char47,
   },
   'Trailblazer: Harmony': {
     name: '开拓者•同谐',
-    icon: '',
+    icon: char48,
   },
   Welt: {
     name: '瓦尔特',
-    icon: '',
+    icon: char49,
   },
   Xueyi: {
     name: '雪衣',
-    icon: '',
+    icon: char50,
   },
   Yanqing: {
     name: '彦卿',
-    icon: '',
+    icon: char51,
   },
   Yukong: {
     name: '驭空',
-    icon: '',
+    icon: char52,
   },
 };
 
