@@ -1,0 +1,665 @@
+import FuzzySet from 'fuzzyset.js';
+
+import image1 from '../src/assets/icon/relic/1.png';
+import image10 from '../src/assets/icon/relic/10.png';
+import image11 from '../src/assets/icon/relic/11.png';
+import image12 from '../src/assets/icon/relic/12.png';
+import image13 from '../src/assets/icon/relic/13.png';
+import image14 from '../src/assets/icon/relic/14.png';
+import image15 from '../src/assets/icon/relic/15.png';
+import image16 from '../src/assets/icon/relic/16.png';
+import image17 from '../src/assets/icon/relic/17.png';
+import image18 from '../src/assets/icon/relic/18.png';
+import image19 from '../src/assets/icon/relic/19.png';
+import image2 from '../src/assets/icon/relic/2.png';
+import image20 from '../src/assets/icon/relic/20.png';
+import image21 from '../src/assets/icon/relic/21.png';
+import image22 from '../src/assets/icon/relic/22.png';
+import image23 from '../src/assets/icon/relic/23.png';
+import image24 from '../src/assets/icon/relic/24.png';
+import image25 from '../src/assets/icon/relic/25.png';
+import image26 from '../src/assets/icon/relic/26.png';
+import image27 from '../src/assets/icon/relic/27.png';
+import image28 from '../src/assets/icon/relic/28.png';
+import image29 from '../src/assets/icon/relic/29.png';
+import image3 from '../src/assets/icon/relic/3.png';
+import image30 from '../src/assets/icon/relic/30.png';
+import image31 from '../src/assets/icon/relic/31.png';
+import image32 from '../src/assets/icon/relic/32.png';
+import image33 from '../src/assets/icon/relic/33.png';
+import image34 from '../src/assets/icon/relic/34.png';
+import image35 from '../src/assets/icon/relic/35.png';
+import image36 from '../src/assets/icon/relic/36.png';
+import image4 from '../src/assets/icon/relic/4.png';
+import image5 from '../src/assets/icon/relic/5.png';
+import image6 from '../src/assets/icon/relic/6.png';
+import image7 from '../src/assets/icon/relic/7.png';
+import image8 from '../src/assets/icon/relic/8.png';
+import image9 from '../src/assets/icon/relic/9.png';
+
+export type RelicRulesTemplate = {
+  name: string;
+  valuableSub?: string[];
+  shouldLock?: {
+    contain: string;
+    include: {
+      [key: string]: string[];
+    };
+  };
+};
+
+export type RelicRulesTemplateStore = {
+  [key: string]: RelicRulesTemplate;
+};
+
+export type RelicSubStats = {
+  name: RelicType;
+  number: string;
+  score: [number] | number;
+};
+
+export type RelicMainStats = {
+  name: RelicType;
+  number: string;
+  level: number;
+};
+
+export type OCRResult = {
+  title: OCRTitleResult;
+  mainStats: OCRMainStatsResult;
+  subStats: OCRSubStatsResult;
+};
+
+export type OCRTitleResult = {
+  result: string | null;
+  error: string | null;
+};
+
+export type OCRMainStatsResult = {
+  result: RelicMainStats | null;
+  error: string | null;
+};
+
+export type OCRSubStatsResult = {
+  result: RelicSubStats[] | null;
+  error: string | null;
+};
+
+export type RelicRatingInfo = {
+  valuableSub: string[];
+  shouldLock: {
+    contain: string;
+    include: {
+      [key: string]: string[];
+    };
+  };
+};
+
+export enum RelicHeadMainStatsType {
+  HP = '生命',
+}
+
+export enum RelicGloveMainStatsType {
+  ATK = '攻击',
+}
+
+export enum RelicBodyMainStatsType {
+  HPPercentage = '生命百分比',
+  ATKPercentage = '攻击百分比',
+  DEFPercentage = '防御百分比',
+  CRITRate = '暴击率',
+  CRITDMG = '暴击伤害',
+  OutgoingHealingBoost = '治疗量加成',
+  EffectHitRate = '效果命中',
+}
+
+export enum RelicShoeMainStatsType {
+  SPD = '速度',
+  HPPercentage = '生命百分比',
+  ATKPercentage = '攻击百分比',
+  DEFPercentage = '防御百分比',
+}
+
+export enum RelicRopeMainStatsType {
+  HPPercentage = '生命百分比',
+  ATKPercentage = '攻击百分比',
+  DEFPercentage = '防御百分比',
+  BreakEffect = '击破特攻',
+  EnergyRegenerationRate = '能量回复效率',
+}
+
+export enum RelicSphereMainStatsType {
+  HPPercentage = '生命百分比',
+  ATKPercentage = '攻击百分比',
+  DEFPercentage = '防御百分比',
+  PhysicalDMGBoost = '物理属性伤害提高',
+  FireDMGBoost = '火属性伤害提高',
+  IceDMGBoost = '冰属性伤害提高',
+  LightningDMGBoost = '雷属性伤害提高',
+  WindDMGBoost = '风属性伤害提高',
+  QuantumDMGBoost = '量子属性伤害提高',
+  ImaginaryDMGBoost = '虚数属性伤害提高',
+}
+
+export enum RelicSubStatsType {
+  HP = '生命',
+  HPPercentage = '生命百分比',
+  ATK = '攻击',
+  ATKPercentage = '攻击百分比',
+  DEF = '防御',
+  DEFPercentage = '防御百分比',
+  SPD = '速度',
+  CRITRate = '暴击率',
+  CRITDMG = '暴击伤害',
+  BreakEffect = '击破特攻',
+  EffectHitRate = '效果命中',
+  EffectRes = '效果抵抗',
+}
+
+export enum RelicType {
+  DEF = '防御',
+  HP = '生命',
+  HPPercentage = '生命百分比',
+  ATK = '攻击',
+  ATKPercentage = '攻击百分比',
+  DEFPercentage = '防御百分比',
+  SPD = '速度',
+  CRITRate = '暴击率',
+  CRITDMG = '暴击伤害',
+  BreakEffect = '击破特攻',
+  EffectHitRate = '效果命中',
+  EffectRes = '效果抵抗',
+  OutgoingHealingBoost = '治疗量加成',
+  EnergyRegenerationRate = '能量回复效率',
+  PhysicalDMGBoost = '物理属性伤害提高',
+  FireDMGBoost = '火属性伤害提高',
+  IceDMGBoost = '冰属性伤害提高',
+  LightningDMGBoost = '雷属性伤害提高',
+  WindDMGBoost = '风属性伤害提高',
+  QuantumDMGBoost = '量子属性伤害提高',
+  ImaginaryDMGBoost = '虚数属性伤害提高',
+}
+
+export const AllSubStats: string[] = [
+  RelicType.HP,
+  RelicType.HPPercentage,
+  RelicType.ATK,
+  RelicType.ATKPercentage,
+  RelicType.DEF,
+  RelicType.DEFPercentage,
+  RelicType.SPD,
+  RelicType.CRITRate,
+  RelicType.CRITDMG,
+  RelicType.BreakEffect,
+  RelicType.EffectHitRate,
+  RelicType.EffectRes,
+];
+
+export type RatingTemplate = {
+  [ruleID: string]: {
+    setNames: string[];
+    partNames: {
+      [partName: string]: {
+        valuableMain:
+          | RelicHeadMainStatsType[]
+          | RelicGloveMainStatsType[]
+          | RelicBodyMainStatsType[]
+          | RelicShoeMainStatsType[]
+          | RelicRopeMainStatsType[]
+          | RelicSphereMainStatsType[];
+      };
+    };
+    valuableSub: RelicSubStatsType[];
+    fitCharacters: string[];
+  };
+};
+
+export const RelicSets: {
+  [key: string]: {
+    name: string;
+    icon: string;
+    parts: {
+      [key: string]: string;
+    };
+  };
+} = {
+  'Iron Cavalry Against the Scourge': {
+    name: '荡除蠹灾的铁骑',
+    icon: image8,
+    parts: {
+      Head: "Iron Cavalry's Homing Helm",
+      Hand: "Iron Cavalry's Crushing Wristguard",
+      Body: "Iron Cavalry's Silvery Armor",
+      Feet: "Iron Cavalry's Skywalk Greaves",
+    },
+  },
+  'Band of Sizzling Thunder': {
+    name: '激奏雷电的乐队',
+    icon: image1,
+    parts: {
+      Head: "Band's Polarized Sunglasses",
+      Hand: "Band's Touring Bracelet",
+      Body: "Band's Leather Jacket With Studs",
+      Feet: "Band's Ankle Boots With Rivets",
+    },
+  },
+  'Champion of Streetwise Boxing': {
+    name: '街头出身的拳王',
+    icon: image2,
+    parts: {
+      Head: "Champion's Headgear",
+      Hand: "Champion's Heavy Gloves",
+      Body: "Champion's Chest Guard",
+      Feet: "Champion's Fleetfoot Boots",
+    },
+  },
+  'Eagle of Twilight Line': {
+    name: '晨昏交界的翔鹰',
+    icon: image3,
+    parts: {
+      Head: "Eagle's Beaked Helmet",
+      Hand: "Eagle's Soaring Ring",
+      Body: "Eagle's Winged Suit Harness",
+      Feet: "Eagle's Quilted Puttees",
+    },
+  },
+  'Firesmith of Lava-Forging': {
+    name: '熔岩锻铸的火匠',
+    icon: image4,
+    parts: {
+      Head: "Firesmith's Obsidian Goggles",
+      Hand: "Firesmith's Ring of Flame-Mastery",
+      Body: "Firesmith's Fireproof Apron",
+      Feet: "Firesmith's Alloy Leg",
+    },
+  },
+  'Genius of Brilliant Stars': {
+    name: '繁星璀璨的天才',
+    icon: image5,
+    parts: {
+      Head: "Genius's Ultraremote Sensing Visor",
+      Hand: "Genius's Frequency Catcher",
+      Body: "Genius's Metafield Suit",
+      Feet: "Genius's Gravity Walker",
+    },
+  },
+  'Guard of Wuthering Snow': {
+    name: '戍卫风雪的铁卫',
+    icon: image6,
+    parts: {
+      Head: "Guard's Cast Iron Helmet",
+      Hand: "Guard's Shining Gauntlets",
+      Body: "Guard's Uniform of Old",
+      Feet: "Guard's Silver Greaves",
+    },
+  },
+  'Hunter of Glacial Forest': {
+    name: '密林卧雪的猎人',
+    icon: image7,
+    parts: {
+      Head: "Hunter's Artaius Hood",
+      Hand: "Hunter's Lizard Gloves",
+      Body: "Hunter's Ice Dragon Cloak",
+      Feet: "Hunter's Soft Elkskin Boots",
+    },
+  },
+  'Knight of Purity Palace': {
+    name: '净庭教宗的圣骑士',
+    icon: image9,
+    parts: {
+      Head: "Knight's Forgiving Casque",
+      Hand: "Knight's Silent Oath Ring",
+      Body: "Knight's Solemn Breastplate",
+      Feet: "Knight's Iron Boots of Order",
+    },
+  },
+  'Longevous Disciple': {
+    name: '宝命长存的莳者',
+    icon: image10,
+    parts: {
+      Head: "Disciple's Prosthetic Eye",
+      Hand: "Disciple's Ingenium Hand",
+      Body: "Disciple's Dewy Feather Garb",
+      Feet: "Disciple's Celestial Silk Sandals",
+    },
+  },
+  'Messenger Traversing Hackerspace': {
+    name: '骇域漫游的信使',
+    icon: image11,
+    parts: {
+      Head: "Messenger's Holovisor",
+      Hand: "Messenger's Transformative Arm",
+      Body: "Messenger's Secret Satchel",
+      Feet: "Messenger's Par-kool Sneakers",
+    },
+  },
+  'Musketeer of Wild Wheat': {
+    name: '野穗伴行的快枪手',
+    icon: image12,
+    parts: {
+      Head: "Musketeer's Wild Wheat Felt Hat",
+      Hand: "Musketeer's Coarse Leather Gloves",
+      Body: "Musketeer's Wind-Hunting Shawl",
+      Feet: "Musketeer's Rivets Riding Boots",
+    },
+  },
+  'Passerby of Wandering Cloud': {
+    name: '云无留迹的过客',
+    icon: image13,
+    parts: {
+      Head: "Passerby's Rejuvenated Wooden Hairstick",
+      Hand: "Passerby's Roaming Dragon Bracer",
+      Body: "Passerby's Ragged Embroided Coat",
+      Feet: "Passerby's Stygian Hiking Boots",
+    },
+  },
+  'Pioneer Diver of Dead Waters': {
+    name: '死水深潜的先驱',
+    icon: image14,
+    parts: {
+      Head: "Pioneer's Heatproof Shell",
+      Hand: "Pioneer's Lacuna Compass",
+      Body: "Pioneer's Sealed Lead Apron",
+      Feet: "Pioneer's Starfaring Anchor",
+    },
+  },
+  'Prisoner in Deep Confinement': {
+    name: '幽锁深牢的系囚',
+    icon: image15,
+    parts: {
+      Head: "Prisoner's Sealed Muzzle",
+      Hand: "Prisoner's Leadstone Shackles",
+      Body: "Prisoner's Repressive Straitjacket",
+      Feet: "Prisoner's Restrictive Fetters",
+    },
+  },
+  'The Ashblazing Grand Duke': {
+    name: '毁烬焚骨的大公',
+    icon: image16,
+    parts: {
+      Head: "Grand Duke's Crown of Netherflame",
+      Hand: "Grand Duke's Gloves of Fieryfur",
+      Body: "Grand Duke's Robe of Grace",
+      Feet: "Grand Duke's Ceremonial Boots",
+    },
+  },
+  'The Wind-Soaring Valorous': {
+    name: '风举云飞的勇烈',
+    icon: image17,
+    parts: {
+      Head: "Champion's Headgear",
+      Hand: "Champion's Heavy Gloves",
+      Body: "Champion's Chest Guard",
+      Feet: "Champion's Fleetfoot Boots",
+    },
+  },
+  'Thief of Shooting Meteor': {
+    name: '流星追迹的怪盗',
+    icon: image18,
+    parts: {
+      Head: "Thief's Myriad-Faced Mask",
+      Hand: "Thief's Gloves With Prints",
+      Body: "Thief's Steel Grappling Hook",
+      Feet: "Thief's Meteor Boots",
+    },
+  },
+  'Wastelander of Banditry Desert': {
+    name: '盗匪荒漠的废土客',
+    icon: image19,
+    parts: {
+      Head: "Wastelander's Breathing Mask",
+      Hand: "Wastelander's Desert Terminal",
+      Body: "Wastelander's Friar Robe",
+      Feet: "Wastelander's Powered Greaves",
+    },
+  },
+  'Watchmaker, Master of Dream Machinations': {
+    name: '机心戏梦的钟表匠',
+    icon: image20,
+    parts: {
+      Head: "Watchmaker's Telescoping Lens",
+      Hand: "Watchmaker's Fortuitous Wristwatch",
+      Body: "Watchmaker's Illusory Formal Suit",
+      Feet: "Watchmaker's Dream-Concealing Dress Shoes",
+    },
+  },
+  'Belobog of the Architects': {
+    name: '筑城者的贝洛伯格',
+    icon: image21,
+    parts: {
+      Sphere: "Belobog's Fortress of Preservation",
+      Rope: "Belobog's Iron Defense",
+    },
+  },
+  'Broken Keel': {
+    name: '折断的龙骨',
+    icon: image22,
+    parts: {
+      Sphere: "Insumousu's Whalefall Ship",
+      Rope: "Insumousu's Frayed Hawser",
+    },
+  },
+  'Celestial Differentiator': {
+    name: '星体差分机',
+    icon: image23,
+    parts: {
+      Sphere: "Planet Screwllum's Mechanical Sun",
+      Rope: "Planet Screwllum's Ring System",
+    },
+  },
+  'Duran, Dynasty of Running Wolves': {
+    name: '奔狼的都蓝王朝',
+    icon: image24,
+    parts: {
+      Sphere: "Duran's Tent of Golden Sky",
+      Rope: "Duran's Mechabeast Bridle",
+    },
+  },
+  'Firmament Frontline: Glamoth': {
+    name: '苍穹战线格拉默',
+    icon: image25,
+    parts: {
+      Sphere: "Glamoth's Iron Cavalry Regiment",
+      Rope: "Glamoth's Silent Tombstone",
+    },
+  },
+  'Fleet of the Ageless': {
+    name: '不老者的仙舟',
+    icon: image26,
+    parts: {
+      Sphere: "The Xianzhou Luofu's Celestial Ark",
+      Rope: "The Xianzhou Luofu's Ambrosial Arbor Vines",
+    },
+  },
+  'Forge of the Kalpagni Lantern': {
+    name: '劫火莲灯铸炼宫',
+    icon: image27,
+    parts: {
+      Sphere: "Forge's Lotus Lantern Wick",
+      Rope: "Forge's Heavenly Flamewheel Silk",
+    },
+  },
+  'Inert Salsotto': {
+    name: '停转的萨尔索图',
+    icon: image28,
+    parts: {
+      Sphere: "Salsotto's Moving City",
+      Rope: "Salsotto's Terminator Line",
+    },
+  },
+  'Izumo Gensei and Takama Divine Realm': {
+    name: '出云显世与高天神国',
+    icon: image29,
+    parts: {
+      Sphere: "lzumo's Magatsu no Morokami",
+      Rope: "lzumo's Blades of Origin and End",
+    },
+  },
+  'Pan-Cosmic Commercial Enterprise': {
+    name: '泛银河商业公司',
+    icon: image30,
+    parts: {
+      Sphere: "The IPC's Mega HQ",
+      Rope: "The IPC's Trade Route",
+    },
+  },
+  'Penacony, Land of the Dreams	': {
+    name: '梦想之地匹诺康尼',
+    icon: image31,
+    parts: {
+      Sphere: "Penacony's Grand Hotel",
+      Rope: "Penacony's Dream-Seeking Tracks",
+    },
+  },
+  'Rutilant Arena': {
+    name: '繁星竞技场',
+    icon: image32,
+    parts: {
+      Sphere: 'Taikiyan Laser Stadium',
+      Rope: "Taikiyan's Arclight Race Track",
+    },
+  },
+  'Sigonia, the Unclaimed Desolation': {
+    name: '无主荒星茨冈尼亚',
+    icon: image33,
+    parts: {
+      Sphere: "Sigonia's Gaiathra Berth",
+      Rope: "Sigonia's Knot of Cyclicality",
+    },
+  },
+  'Space Sealing Station': {
+    name: '太空封印站',
+    icon: image34,
+    parts: {
+      Sphere: "Herta's Space Station",
+      Rope: "Herta's Wandering Trek",
+    },
+  },
+  'Sprightly Vonwacq': {
+    name: '生命的翁瓦克',
+    icon: image35,
+    parts: {
+      Sphere: "Vonwacq's Island of Birth",
+      Rope: "Vonwacq's Islandic Coast",
+    },
+  },
+  'Talia: Kingdom of Banditry': {
+    name: '盗贼公国塔利亚',
+    icon: image36,
+    parts: {
+      Sphere: "Talia's Nailscrap Town",
+      Rope: "Talia's Exposed Electric Wire",
+    },
+  },
+};
+
+export enum RelicTitleType {
+  "Musketeer's Wild Wheat Felt Hat",
+  "Musketeer's Coarse Leather Gloves",
+  "Musketeer's Wind-Hunting Shawl",
+  "Musketeer's Rivets Riding Boots",
+  "Prisoner's Sealed Muzzle",
+  "Prisoner's Leadstone Shackles",
+  "Prisoner's Repressive Straitjacket",
+  "Prisoner's Restrictive Fetters",
+  "Glamoth's Iron Cavalry Regiment",
+  "Glamoth's Silent Tombstone",
+  "lzumo's Magatsu no Morokami",
+  "lzumo's Blades of Origin and End",
+  "Herta's Space Station",
+  "Herta's Wandering Trek",
+  "The IPC's Mega HQ",
+  "The IPC's Trade Route",
+  "Disciple's Prosthetic Eye",
+  "Disciple's Ingenium Hand",
+  "Disciple's Dewy Feather Garb",
+  "Disciple's Celestial Silk Sandals",
+  "Grand Duke's Crown of Netherflame",
+  "Grand Duke's Gloves of Fieryfur",
+  "Grand Duke's Robe of Grace",
+  "Grand Duke's Ceremonial Boots",
+  "Pioneer's Heatproof Shell",
+  "Pioneer's Lacuna Compass",
+  "Pioneer's Sealed Lead Apron",
+  "Pioneer's Starfaring Anchor",
+  "Hunter's Artaius Hood",
+  "Hunter's Lizard Gloves",
+  "Hunter's Ice Dragon Cloak",
+  "Hunter's Soft Elkskin Boots",
+  "Champion's Headgear",
+  "Champion's Heavy Gloves",
+  "Champion's Chest Guard",
+  "Champion's Fleetfoot Boots",
+  "Firesmith's Obsidian Goggles",
+  "Firesmith's Ring of Flame-Mastery",
+  "Firesmith's Fireproof Apron",
+  "Firesmith's Alloy Leg",
+  "Genius's Ultraremote Sensing Visor",
+  "Genius's Frequency Catcher",
+  "Genius's Metafield Suit",
+  "Genius's Gravity Walker",
+  "Band's Polarized Sunglasses",
+  "Band's Touring Bracelet",
+  "Band's Leather Jacket With Studs",
+  "Band's Ankle Boots With Rivets",
+  "Eagle's Beaked Helmet",
+  "Eagle's Soaring Ring",
+  "Eagle's Winged Suit Harness",
+  "Eagle's Quilted Puttees",
+  "Wastelander's Breathing Mask",
+  "Wastelander's Desert Terminal",
+  "Wastelander's Friar Robe",
+  "Wastelander's Powered Greaves",
+  "The Xianzhou Luofu's Celestial Ark",
+  "The Xianzhou Luofu's Ambrosial Arbor Vines",
+  "Vonwacq's Island of Birth",
+  "Vonwacq's Islandic Coast",
+  "Penacony's Grand Hotel",
+  "Penacony's Dream-Seeking Tracks",
+  "Belobog's Fortress of Preservation",
+  "Belobog's Iron Defense",
+  "Talia's Nailscrap Town",
+  "Talia's Exposed Electric Wire",
+  "Salsotto's Moving City",
+  "Salsotto's Terminator Line",
+  'Taikiyan Laser Stadium',
+  "Taikiyan's Arclight Race Track",
+  "Sigonia's Gaiathra Berth",
+  "Sigonia's Knot of Cyclicality",
+  "Thief's Myriad-Faced Mask",
+  "Thief's Gloves With Prints",
+  "Thief's Steel Grappling Hook",
+  "Thief's Meteor Boots",
+  "Watchmaker's Telescoping Lens",
+  "Watchmaker's Fortuitous Wristwatch",
+  "Watchmaker's Illusory Formal Suit",
+  "Watchmaker's Dream-Concealing Dress Shoes",
+  "Passerby's Rejuvenated Wooden Hairstick",
+  "Passerby's Roaming Dragon Bracer",
+  "Passerby's Ragged Embroided Coat",
+  "Passerby's Stygian Hiking Boots",
+  "Knight's Forgiving Casque",
+  "Knight's Silent Oath Ring",
+  "Knight's Solemn Breastplate",
+  "Knight's Iron Boots of Order",
+  "Guard's Cast Iron Helmet",
+  "Guard's Shining Gauntlets",
+  "Guard's Uniform of Old",
+  "Guard's Silver Greaves",
+  "Messenger's Holovisor",
+  "Messenger's Transformative Arm",
+  "Messenger's Secret Satchel",
+  "Messenger's Par-kool Sneakers",
+  "Insumousu's Whalefall Ship",
+  "Insumousu's Frayed Hawser",
+  "Iron Cavalry's Homing Helm",
+  "Iron Cavalry's Crushing Wristguard",
+  "Iron Cavalry's Silvery Armor",
+  "Iron Cavalry's Skywalk Greaves",
+  "Forge's Lotus Lantern Wick",
+  "Forge's Heavenly Flamewheel Silk",
+  "Duran's Mechabeast Bridle",
+  "Duran's Tent of Golden Sky",
+}
+
+export const FuzzyTitleSet = FuzzySet(Object.keys(RelicTitleType));
