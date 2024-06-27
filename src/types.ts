@@ -214,6 +214,222 @@ export type RatingTemplate = {
   };
 };
 
+export const Characters: {
+  [key: string]: {
+    name: string;
+    icon: string;
+  };
+} = {
+  'Fu Xuan': {
+    name: '符玄',
+    icon: '',
+  },
+  Acheron: {
+    name: '黄泉',
+    icon: '',
+  },
+  Argenti: {
+    name: '银枝',
+    icon: '',
+  },
+  Arlan: {
+    name: '阿兰',
+    icon: '',
+  },
+  Asta: {
+    name: '艾丝妲',
+    icon: '',
+  },
+  Aventurine: {
+    name: '砂金',
+    icon: '',
+  },
+  Bailu: {
+    name: '白鹿',
+    icon: '',
+  },
+  'Black Swan': {
+    name: '黑天鹅',
+    icon: '',
+  },
+  Blade: {
+    name: '刃',
+    icon: '',
+  },
+  Boothill: {
+    name: '波提欧',
+    icon: '',
+  },
+  Bronya: {
+    name: '布洛妮娅',
+    icon: '',
+  },
+  Clara: {
+    name: '克拉拉',
+    icon: '',
+  },
+  'Dan Heng': {
+    name: '丹恒',
+    icon: '',
+  },
+  'Dan Heng Imbibitor Lunae': {
+    name: '丹恒•饮月',
+    icon: '',
+  },
+  'Dr. Ratio': {
+    name: '真理医生',
+    icon: '',
+  },
+  Firefly: {
+    name: '流萤',
+    icon: '',
+  },
+  Gallagher: {
+    name: '加拉赫',
+    icon: '',
+  },
+  Gepard: {
+    name: '杰帕德',
+    icon: '',
+  },
+  Guinaifen: {
+    name: '桂乃芬',
+    icon: '',
+  },
+  Hanya: {
+    name: '寒鸦',
+    icon: '',
+  },
+  Herta: {
+    name: '黑塔',
+    icon: '',
+  },
+  Himeko: {
+    name: '姬子',
+    icon: '',
+  },
+  Hook: {
+    name: '虎克',
+    icon: '',
+  },
+  Huohuo: {
+    name: '藿藿',
+    icon: '',
+  },
+  'Jing Yuan': {
+    name: '景元',
+    icon: '',
+  },
+  Jingliu: {
+    name: '静流',
+    icon: '',
+  },
+  Kafka: {
+    name: '卡芙卡',
+    icon: '',
+  },
+  Luka: {
+    name: '卢卡',
+    icon: '',
+  },
+  Luocha: {
+    name: '罗刹',
+    icon: '',
+  },
+  Lynx: {
+    name: '玲可',
+    icon: '',
+  },
+  'March 7th': {
+    name: '三月七',
+    icon: '',
+  },
+  Misha: {
+    name: '米沙',
+    icon: '',
+  },
+  Natasha: {
+    name: '娜塔莎',
+    icon: '',
+  },
+  Pela: {
+    name: '佩拉',
+    icon: '',
+  },
+  Qingque: {
+    name: '青雀',
+    icon: '',
+  },
+  Robin: {
+    name: '知更鸟',
+    icon: '',
+  },
+  'Ruan Mei': {
+    name: '阮•梅',
+    icon: '',
+  },
+  Sampo: {
+    name: '桑博',
+    icon: '',
+  },
+  Seele: {
+    name: '希儿',
+    icon: '',
+  },
+  Serval: {
+    name: '希露瓦',
+    icon: '',
+  },
+  'Silver Wolf': {
+    name: '银狼',
+    icon: '',
+  },
+  Sparkle: {
+    name: '花火',
+    icon: '',
+  },
+  Sushang: {
+    name: '素裳',
+    icon: '',
+  },
+  Tingyun: {
+    name: '停云',
+    icon: '',
+  },
+  'Topaz and Numby': {
+    name: '托帕&账账',
+    icon: '',
+  },
+  'Trailblazer: Destruction': {
+    name: '开拓者•毁灭',
+    icon: '',
+  },
+  'Trailblazer: Preservation': {
+    name: '开拓者•存护',
+    icon: '',
+  },
+  'Trailblazer: Harmony': {
+    name: '开拓者•同谐',
+    icon: '',
+  },
+  Welt: {
+    name: '瓦尔特',
+    icon: '',
+  },
+  Xueyi: {
+    name: '雪衣',
+    icon: '',
+  },
+  Yanqing: {
+    name: '彦卿',
+    icon: '',
+  },
+  Yukong: {
+    name: '驭空',
+    icon: '',
+  },
+};
+
 export const RelicSets: {
   [key: string]: {
     name: string;
