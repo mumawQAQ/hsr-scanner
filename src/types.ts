@@ -1,5 +1,57 @@
 import FuzzySet from 'fuzzyset.js';
 
+import char1 from '../src/assets/icon/character/img.png';
+import char2 from '../src/assets/icon/character/img_1.png';
+import char11 from '../src/assets/icon/character/img_10.png';
+import char12 from '../src/assets/icon/character/img_11.png';
+import char13 from '../src/assets/icon/character/img_12.png';
+import char14 from '../src/assets/icon/character/img_13.png';
+import char15 from '../src/assets/icon/character/img_14.png';
+import char16 from '../src/assets/icon/character/img_15.png';
+import char17 from '../src/assets/icon/character/img_16.png';
+import char18 from '../src/assets/icon/character/img_17.png';
+import char19 from '../src/assets/icon/character/img_18.png';
+import char20 from '../src/assets/icon/character/img_19.png';
+import char3 from '../src/assets/icon/character/img_2.png';
+import char21 from '../src/assets/icon/character/img_20.png';
+import char22 from '../src/assets/icon/character/img_21.png';
+import char23 from '../src/assets/icon/character/img_22.png';
+import char24 from '../src/assets/icon/character/img_23.png';
+import char25 from '../src/assets/icon/character/img_24.png';
+import char26 from '../src/assets/icon/character/img_25.png';
+import char27 from '../src/assets/icon/character/img_26.png';
+import char28 from '../src/assets/icon/character/img_27.png';
+import char29 from '../src/assets/icon/character/img_28.png';
+import char30 from '../src/assets/icon/character/img_29.png';
+import char4 from '../src/assets/icon/character/img_3.png';
+import char31 from '../src/assets/icon/character/img_30.png';
+import char32 from '../src/assets/icon/character/img_31.png';
+import char33 from '../src/assets/icon/character/img_32.png';
+import char34 from '../src/assets/icon/character/img_33.png';
+import char35 from '../src/assets/icon/character/img_34.png';
+import char36 from '../src/assets/icon/character/img_35.png';
+import char37 from '../src/assets/icon/character/img_36.png';
+import char38 from '../src/assets/icon/character/img_37.png';
+import char39 from '../src/assets/icon/character/img_38.png';
+import char40 from '../src/assets/icon/character/img_39.png';
+import char5 from '../src/assets/icon/character/img_4.png';
+import char41 from '../src/assets/icon/character/img_40.png';
+import char42 from '../src/assets/icon/character/img_41.png';
+import char43 from '../src/assets/icon/character/img_42.png';
+import char44 from '../src/assets/icon/character/img_43.png';
+import char45 from '../src/assets/icon/character/img_44.png';
+import char46 from '../src/assets/icon/character/img_45.png';
+import char47 from '../src/assets/icon/character/img_46.png';
+import char48 from '../src/assets/icon/character/img_47.png';
+import char49 from '../src/assets/icon/character/img_48.png';
+import char50 from '../src/assets/icon/character/img_49.png';
+import char6 from '../src/assets/icon/character/img_5.png';
+import char51 from '../src/assets/icon/character/img_50.png';
+import char52 from '../src/assets/icon/character/img_51.png';
+import char7 from '../src/assets/icon/character/img_6.png';
+import char8 from '../src/assets/icon/character/img_7.png';
+import char9 from '../src/assets/icon/character/img_8.png';
+import char10 from '../src/assets/icon/character/img_9.png';
 import image1 from '../src/assets/icon/relic/1.png';
 import image10 from '../src/assets/icon/relic/10.png';
 import image11 from '../src/assets/icon/relic/11.png';
@@ -12,6 +64,7 @@ import image17 from '../src/assets/icon/relic/17.png';
 import image18 from '../src/assets/icon/relic/18.png';
 import image19 from '../src/assets/icon/relic/19.png';
 import image2 from '../src/assets/icon/relic/2.png';
+import image20 from '../src/assets/icon/relic/20.png';
 import image21 from '../src/assets/icon/relic/21.png';
 import image22 from '../src/assets/icon/relic/22.png';
 import image23 from '../src/assets/icon/relic/23.png';
@@ -36,73 +89,27 @@ import image7 from '../src/assets/icon/relic/7.png';
 import image8 from '../src/assets/icon/relic/8.png';
 import image9 from '../src/assets/icon/relic/9.png';
 
-import char1 from '../src/assets/icon/character/img.png';
-import char2 from '../src/assets/icon/character/img_1.png';
-import char3 from '../src/assets/icon/character/img_2.png';
-import char4 from '../src/assets/icon/character/img_3.png';
-import char5 from '../src/assets/icon/character/img_4.png';
-import char6 from '../src/assets/icon/character/img_5.png';
-import char7 from '../src/assets/icon/character/img_6.png';
-import char8 from '../src/assets/icon/character/img_7.png';
-import char9 from '../src/assets/icon/character/img_8.png';
-import char10 from '../src/assets/icon/character/img_9.png';
-import char11 from '../src/assets/icon/character/img_10.png';
-import char12 from '../src/assets/icon/character/img_11.png';
-import char13 from '../src/assets/icon/character/img_12.png';
-import char14 from '../src/assets/icon/character/img_13.png';
-import char15 from '../src/assets/icon/character/img_14.png';
-import char16 from '../src/assets/icon/character/img_15.png';
-import char17 from '../src/assets/icon/character/img_16.png';
-import char18 from '../src/assets/icon/character/img_17.png';
-import char19 from '../src/assets/icon/character/img_18.png';
-import char20 from '../src/assets/icon/character/img_19.png';
-import char21 from '../src/assets/icon/character/img_20.png';
-import char22 from '../src/assets/icon/character/img_21.png';
-import char23 from '../src/assets/icon/character/img_22.png';
-import char24 from '../src/assets/icon/character/img_23.png';
-import char25 from '../src/assets/icon/character/img_24.png';
-import char26 from '../src/assets/icon/character/img_25.png';
-import char27 from '../src/assets/icon/character/img_26.png';
-import char28 from '../src/assets/icon/character/img_27.png';
-import char29 from '../src/assets/icon/character/img_28.png';
-import char30 from '../src/assets/icon/character/img_29.png';
-import char31 from '../src/assets/icon/character/img_30.png';
-import char32 from '../src/assets/icon/character/img_31.png';
-import char33 from '../src/assets/icon/character/img_32.png';
-import char34 from '../src/assets/icon/character/img_33.png';
-import char35 from '../src/assets/icon/character/img_34.png';
-import char36 from '../src/assets/icon/character/img_35.png';
-import char37 from '../src/assets/icon/character/img_36.png';
-import char38 from '../src/assets/icon/character/img_37.png';
-import char39 from '../src/assets/icon/character/img_38.png';
-import char40 from '../src/assets/icon/character/img_39.png';
-import char41 from '../src/assets/icon/character/img_40.png';
-import char42 from '../src/assets/icon/character/img_41.png';
-import char43 from '../src/assets/icon/character/img_42.png';
-import char44 from '../src/assets/icon/character/img_43.png';
-import char45 from '../src/assets/icon/character/img_44.png';
-import char46 from '../src/assets/icon/character/img_45.png';
-import char47 from '../src/assets/icon/character/img_46.png';
-import char48 from '../src/assets/icon/character/img_47.png';
-import char49 from '../src/assets/icon/character/img_48.png';
-import char50 from '../src/assets/icon/character/img_49.png';
-import char51 from '../src/assets/icon/character/img_50.png';
-import char52 from '../src/assets/icon/character/img_51.png';
-import image20 from '../src/assets/icon/relic/20.png';
-
-export type RelicRulesTemplate = {
-  name: string;
-  valuableSub?: string[];
-  shouldLock?: {
-    contain: string;
-    include: {
-      [key: string]: string[];
+export type RatingTemplate = {
+  [ruleID: string]: {
+    setNames: string[];
+    partNames: {
+      [partName: string]: {
+        valuableMain:
+          | RelicHeadMainStatsType[]
+          | RelicGloveMainStatsType[]
+          | RelicBodyMainStatsType[]
+          | RelicShoeMainStatsType[]
+          | RelicRopeMainStatsType[]
+          | RelicSphereMainStatsType[];
+      };
     };
+    valuableSub: RelicSubStatsType[];
+    fitCharacters: string[];
   };
 };
 
-export type RelicRulesTemplateStore = {
-  [key: string]: RelicRulesTemplate;
+export type RatingTemplateStore = {
+  [key: string]: RatingTemplate;
 };
 
 export type RelicSubStats = {
@@ -247,25 +254,6 @@ export const AllSubStats: string[] = [
   RelicType.EffectHitRate,
   RelicType.EffectRes,
 ];
-
-export type RatingTemplate = {
-  [ruleID: string]: {
-    setNames: string[];
-    partNames: {
-      [partName: string]: {
-        valuableMain:
-          | RelicHeadMainStatsType[]
-          | RelicGloveMainStatsType[]
-          | RelicBodyMainStatsType[]
-          | RelicShoeMainStatsType[]
-          | RelicRopeMainStatsType[]
-          | RelicSphereMainStatsType[];
-      };
-    };
-    valuableSub: RelicSubStatsType[];
-    fitCharacters: string[];
-  };
-};
 
 export const Characters: {
   [key: string]: {
