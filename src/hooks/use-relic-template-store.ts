@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { RelicRulesTemplate, RelicRulesTemplateStore } from '../../types.ts';
+import { RelicRulesTemplate, RelicRulesTemplateStore } from '../types.ts';
 
 import {
   addRelicRulesTemplate,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AllSubStats } from '../../../../types.ts';
+import { AllSubStats } from '../../../types.ts';
 
 import { Checkbox } from '@/components/ui/checkbox.tsx';
 import {

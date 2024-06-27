@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RelicRulesTemplate } from '../../types.ts';
+import { RelicRulesTemplate } from '../types.ts';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 

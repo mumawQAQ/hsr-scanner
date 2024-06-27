@@ -1,6 +1,6 @@
 import ElectronStore from 'electron-store';
 
-import { RelicRulesTemplateStore, RelicType } from '../types.ts';
+import { RelicRulesTemplateStore, RelicType } from '../src/types.ts';
 
 interface StoreData {
   data: {

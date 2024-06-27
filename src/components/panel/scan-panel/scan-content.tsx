@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { createWorker, Worker } from 'tesseract.js';
 
-import { OCRResult, RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../../../types.ts';
+import { OCRResult, RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../../types.ts';
 
 import { Badge } from '@/components/ui/badge.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';

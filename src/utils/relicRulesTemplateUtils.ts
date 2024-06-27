@@ -1,4 +1,4 @@
-import { RelicRulesTemplate, RelicRulesTemplateStore } from '../../types.ts';
+import { RelicRulesTemplate, RelicRulesTemplateStore } from '../types.ts';
 
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
