@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { app, BrowserWindow, desktopCapturer, ipcMain } from 'electron';
 
 import store from './store.ts';
+
 import { RatingTemplate, RatingTemplateStore } from '@/type/types.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
