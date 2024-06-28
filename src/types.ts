@@ -93,16 +93,10 @@ export type RatingRule = {
   setNames: string[];
   partNames: {
     [partName: string]: {
-      valuableMain:
-        | RelicHeadMainStatsType[]
-        | RelicGloveMainStatsType[]
-        | RelicBodyMainStatsType[]
-        | RelicShoeMainStatsType[]
-        | RelicRopeMainStatsType[]
-        | RelicSphereMainStatsType[];
+      valuableMain: string[];
     };
   };
-  valuableSub: RelicSubStatsType[];
+  valuableSub: string[];
   fitCharacters: string[];
 };
 
