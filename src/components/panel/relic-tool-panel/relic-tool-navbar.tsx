@@ -1,8 +1,9 @@
-import { Button } from '@/components/ui/button.tsx';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils.ts';
 import { ChevronLeft } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import { Button } from '@/components/ui/button.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
+import { cn } from '@/lib/utils.ts';
 
 export function RelicToolNavbar() {
   const navigate = useNavigate();
@@ -10,8 +11,7 @@ export function RelicToolNavbar() {
   const { onOpen } = useModal();
 
   const shouldShowBackButton = location.pathname !== '/relic-tools';
-  const shouldShowExportButton =
-    location.pathname.includes('/relic-tools/edit') || location.pathname.includes('/relic-tools/create');
+  const shouldShowExportButton = location.pathname.includes('/relic-tools/createEdit');
 
   const handleCreateTemplate = () => {
     onOpen('create-relic-rules-template');
