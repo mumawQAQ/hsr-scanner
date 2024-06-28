@@ -1,4 +1,3 @@
-import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button.tsx';
@@ -6,28 +5,18 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
+import { RatingTemplate } from '@/types.ts';
 
 const RelicRuleTemplateInModal = () => {
   const { isOpen, onClose, type, onOpen } = useModal();
-  const { removeRelicRatingRulesTemplate, relicRatingRulesTemplateStore, currentRelicRatingRulesTemplate } =
+  const { removeRelicRatingRulesTemplate, relicRatingRulesTemplateStore, setCurrentRelicRatingRulesTemplate } =
     useRelicTemplateStore();
 
   const isModalOpen = isOpen && type === 'import-relic-rules-template';
 
-  const handleImportRelicRulesTemplate = async () => {
-    const jsonTemplate = JSON.stringify(currentRelicRatingRulesTemplate);
-
-    try {
-      // generate a qr code from jsonTemplate
-      const qrcode = await QRCode.toDataURL(jsonTemplate);
-      onOpen('export-relic-rules-template', { qrCode: qrcode });
-    } catch (error) {
-      if (error instanceof Error) {
-        toast(`导出失败，${error.message}`, { type: 'error' });
-      } else {
-        toast('未知原因，导出失败', { type: 'error' });
-      }
-    }
+  const handleUseTemplate = async (template: RatingTemplate) => {
+    setCurrentRelicRatingRulesTemplate(template);
+    toast('已成功使用模板', { type: 'success' });
   };
 
   const handleDeleteRulesTemplate = async (templateId: string) => {
@@ -66,10 +55,13 @@ const RelicRuleTemplateInModal = () => {
                   key={templateId}
                   className="my-2 flex flex-row items-center justify-between rounded border-2 p-2 hover:border-gray-700"
                 >
-                  <div className="font-black">{template.templateName}</div>
+                  <div>
+                    <span className="font-black">{template.templateName}</span>
+                    <span className="text-sm text-gray-600"> by {template.author}</span>
+                  </div>
                   <div className="space-x-2">
-                    <Button size="sm" onClick={handleImportRelicRulesTemplate}>
-                      导入
+                    <Button size="sm" onClick={() => handleUseTemplate(template)}>
+                      使用
                     </Button>
                     <Button size="sm" variant="destructive" onClick={() => handleDeleteRulesTemplate(templateId)}>
                       删除

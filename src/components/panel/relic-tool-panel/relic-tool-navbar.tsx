@@ -37,6 +37,10 @@ export function RelicToolNavbar() {
     }
   };
 
+  const handleImport = () => {
+    onOpen('import-qr-code-model');
+  };
+
   return (
     <div className="mb-4 flex justify-between">
       <ChevronLeft
@@ -49,7 +53,7 @@ export function RelicToolNavbar() {
       <div className="flex gap-5">
         {!shouldShowBackButton && <Button onClick={handleCreateTemplate}>创建新规则模板</Button>}
         {shouldShowExportButton && <Button onClick={handleExport}>导出</Button>}
-        {!shouldShowBackButton && <Button>导入</Button>}
+        {!shouldShowBackButton && <Button onClick={handleImport}>导入</Button>}
       </div>
     </div>
   );
