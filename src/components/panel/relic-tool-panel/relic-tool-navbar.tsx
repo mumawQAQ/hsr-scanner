@@ -1,12 +1,12 @@
 import { ChevronLeft } from 'lucide-react';
+import QRCode from 'qrcode';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
-import { cn } from '@/lib/utils.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
-import QRCode from 'qrcode';
-import { toast } from 'react-toastify';
+import { cn } from '@/lib/utils.ts';
 
 export function RelicToolNavbar() {
   const navigate = useNavigate();
