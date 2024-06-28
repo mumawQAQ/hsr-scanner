@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 
 import ScanAction from '@/components/panel/scan-panel/scan-action.tsx';
 import ScanContent from '@/components/panel/scan-panel/scan-content.tsx';
-import ShouldLockRolesList from '@/components/panel/scan-panel/should-lock-roles-list.tsx';
-import ValuableSubList from '@/components/panel/scan-panel/valuable-sub-list.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 
 const ScanPanel = () => {
@@ -31,8 +29,6 @@ const ScanPanel = () => {
             subStatsPartRef={subStatsPartRef}
             mainStatsPartRef={mainStatsPartRef}
           />
-          <ValuableSubList />
-          <ShouldLockRolesList />
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
