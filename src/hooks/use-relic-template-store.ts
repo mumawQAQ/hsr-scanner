@@ -1,69 +1,82 @@
 import { create } from 'zustand';
 
-import { RelicRulesTemplate, RelicRulesTemplateStore } from '../../types.ts';
+import { RatingRule, RatingTemplate, RatingTemplateStore } from '../type/types.ts';
 
 import {
-  addRelicRulesTemplate,
+  createOrUpdateRelicRatingRule,
+  createOrUpdateRelicRulesTemplate,
   getAllRelicRulesTemplates,
+  removeRelicRatingRule,
   removeRelicRulesTemplate,
 } from '@/utils/relicRulesTemplateUtils.ts';
 
 type RelicTemplateStore = {
-  relicRulesTemplateStore: RelicRulesTemplateStore | null;
-  fetchRelicRulesTemplateStore: () => Promise<void>;
-  addRelicRulesTemplate: (
+  relicRatingRulesTemplateStore: RatingTemplateStore | null;
+
+  fetchRelicRatingRulesTemplateStore: () => Promise<void>;
+
+  createOrUpdateRelicRatingRulesTemplate: (
     templateId: string,
-    relicRulesTemplate: RelicRulesTemplate
+    relicRulesTemplate: RatingTemplate
   ) => Promise<{
     success: boolean;
     message: string;
   }>;
-  removeRelicRulesTemplate: (templateId: string) => Promise<{ success: boolean; message: string }>;
 
-  relicTempRulesTemplateStore: RelicRulesTemplateStore;
-  addRelicTempRulesTemplate: (
+  removeRelicRatingRulesTemplate: (templateId: string) => Promise<{ success: boolean; message: string }>;
+
+  currentRelicRatingRulesTemplate: RatingTemplate | null;
+
+  setCurrentRelicRatingRulesTemplate: (template: RatingTemplate) => void;
+
+  createOrUpdateRelicRatingRule: (
     templateId: string,
-    relicRulesTemplate: RelicRulesTemplate
-  ) => { success: boolean; message: string };
-  removeRelicTempRulesTemplate: (templateId: string) => { success: boolean; message: string };
+    ruleId: string,
+    rule: RatingRule
+  ) => Promise<{
+    success: boolean;
+    message: string;
+  }>;
+
+  removeRelicRatingRule: (
+    templateId: string,
+    ruleId: string
+  ) => Promise<{
+    success: boolean;
+    message: string;
+  }>;
 };
 
-export const useRelicTemplateStore = create<RelicTemplateStore>((set, get) => ({
-  relicRulesTemplateStore: null,
-  relicTempRulesTemplateStore: {} as RelicRulesTemplateStore,
+export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
+  relicRatingRulesTemplateStore: null,
 
-  fetchRelicRulesTemplateStore: async () => {
+  fetchRelicRatingRulesTemplateStore: async () => {
     await getAllRelicRulesTemplates();
   },
 
-  addRelicRulesTemplate: async (templateId, relicRulesTemplate) => {
-    return await addRelicRulesTemplate(templateId, relicRulesTemplate);
+  createOrUpdateRelicRatingRulesTemplate: async (templateId, relicRulesTemplate) => {
+    return await createOrUpdateRelicRulesTemplate(templateId, relicRulesTemplate);
   },
 
-  removeRelicRulesTemplate: async templateId => {
+  removeRelicRatingRulesTemplate: async templateId => {
     return await removeRelicRulesTemplate(templateId);
   },
 
-  addRelicTempRulesTemplate: (templateId, relicRulesTemplate) => {
-    set({ relicTempRulesTemplateStore: { ...get().relicTempRulesTemplateStore, [templateId]: relicRulesTemplate } });
-    return { success: true, message: 'success' };
+  currentRelicRatingRulesTemplate: null,
+
+  setCurrentRelicRatingRulesTemplate: template => {
+    set({ currentRelicRatingRulesTemplate: template });
   },
 
-  removeRelicTempRulesTemplate: templateId => {
-    // if the templateId does not exist, return error
-    if (!get().relicTempRulesTemplateStore || !get().relicTempRulesTemplateStore[templateId]) {
-      return { success: false, message: '模板不存在' };
-    }
+  createOrUpdateRelicRatingRule: async (templateId, ruleId, rule) => {
+    return await createOrUpdateRelicRatingRule(templateId, ruleId, rule);
+  },
 
-    // remove the template from the store
-    const newRelicTempRulesTemplateStore = { ...get().relicTempRulesTemplateStore };
-    delete newRelicTempRulesTemplateStore[templateId];
-    set({ relicTempRulesTemplateStore: newRelicTempRulesTemplateStore });
-
-    return { success: true, message: 'success' };
+  removeRelicRatingRule: async (templateId, ruleId) => {
+    return await removeRelicRatingRule(templateId, ruleId);
   },
 }));
 
-useRelicTemplateStore.getState().fetchRelicRulesTemplateStore();
+useRelicTemplateStore.getState().fetchRelicRatingRulesTemplateStore();
 
 export default useRelicTemplateStore;

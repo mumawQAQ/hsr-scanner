@@ -3,7 +3,7 @@ import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import { NavigationItem } from '@/components/navigation/navigation-item.tsx';
-import RelicToolPanel from '@/components/panel/relic-tool-panel.tsx';
+import RelicToolPanel from '@/components/panel/relic-tool-panel/relic-tool-panel.tsx';
 import ScanPanel from '@/components/panel/scan-panel/scan-panel.tsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { ModalProvider } from '@/providers/modal-provider.tsx';

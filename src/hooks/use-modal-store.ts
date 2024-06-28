@@ -1,8 +1,14 @@
 import { create } from 'zustand';
 
-export type ModalType = 'create-relic-rules-template' | 'import-relic-rules-template';
+export type ModalType =
+  | 'create-relic-rules-template'
+  | 'import-relic-rules-template'
+  | 'export-relic-rules-template'
+  | 'import-qr-code-model';
 
-interface ModalData {}
+interface ModalData {
+  qrCode?: string;
+}
 
 interface ModalStore {
   type: ModalType | null;

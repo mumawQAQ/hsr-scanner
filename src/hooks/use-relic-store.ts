@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../types.ts';
+import { RelicMainStats, RelicRatingInfo, RelicSubStats } from '../type/types.ts';
 
 import RelicUtils from '@/utils/relicRatingUtils.ts';
 

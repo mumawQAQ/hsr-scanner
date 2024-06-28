@@ -14,10 +14,6 @@ type ScanActionProps = {
 const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanInterval }: ScanActionProps) => {
   const { onOpen } = useModal();
 
-  const handleRelicRuleTemplateOut = () => {
-    onOpen('create-relic-rules-template');
-  };
-
   const handleRelicRuleTemplateIn = () => {
     onOpen('import-relic-rules-template');
   };
@@ -43,9 +39,6 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         </Label>
         <Switch id="scan-mode" checked={scanningStatus} onCheckedChange={setScanningStatus} />
       </div>
-      <Button size="sm" onClick={handleRelicRuleTemplateOut}>
-        导出模板
-      </Button>
       <Button size="sm" onClick={handleRelicRuleTemplateIn}>
         导入模板
       </Button>

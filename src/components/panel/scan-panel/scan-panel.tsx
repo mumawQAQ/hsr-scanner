@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 
 import ScanAction from '@/components/panel/scan-panel/scan-action.tsx';
 import ScanContent from '@/components/panel/scan-panel/scan-content.tsx';
-import ShouldLockRolesList from '@/components/panel/scan-panel/should-lock-roles-list.tsx';
-import ValuableSubList from '@/components/panel/scan-panel/valuable-sub-list.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
@@ -57,8 +55,6 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
               subStatsPartRef={subStatsPartRef}
               mainStatsPartRef={mainStatsPartRef}
             />
-            <ValuableSubList />
-            <ShouldLockRolesList />
           </div>
         </ResizablePanel>
         {isLightMode ? (

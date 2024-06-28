@@ -1,5 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
+import { RatingRule, RatingTemplate } from '@/type/types.ts';
+
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on(...args: Parameters<typeof ipcRenderer.on>) {
@@ -33,6 +35,21 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     return ipcRenderer.invoke('store-set', key, value);
   },
 
+  storeDeleteRatingTemplate(templateId: string) {
+    return ipcRenderer.invoke('store-delete-rating-template', templateId);
+  },
+
+  storeUpdateAddRatingTemplate(templateId: string, template: RatingTemplate) {
+    return ipcRenderer.invoke('store-update-add-rating-template', templateId, template);
+  },
+
+  storeDeleteRatingRule(templateId: string, ruleId: string) {
+    return ipcRenderer.invoke('store-delete-rating-rule', templateId, ruleId);
+  },
+
+  storeUpdateAddRatingRule(templateId: string, ruleId: string, rule: RatingRule) {
+    return ipcRenderer.invoke('store-update-add-rating-rule', templateId, ruleId, rule);
+  },
   changeWindowMode(mode: boolean) {
     ipcRenderer.send('change-window-mode', mode);
   }
