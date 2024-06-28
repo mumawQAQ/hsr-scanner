@@ -3,7 +3,7 @@ import { RatingRule, RatingTemplate, RatingTemplateStore } from '../types.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
 const getAllRelicRulesTemplates = async (): Promise<RatingTemplateStore> => {
-  const templates = await (window as any).ipcRenderer.storeGet(`data.ratingTemplates`);
+  const templates = await (window as any).ipcRenderer.storeGet(`ratingTemplates`);
 
   // update relicRulesTemplateStore
   useRelicTemplateStore.setState({ relicRatingRulesTemplateStore: templates });
@@ -11,7 +11,7 @@ const getAllRelicRulesTemplates = async (): Promise<RatingTemplateStore> => {
   return templates as RatingTemplateStore;
 };
 
-const createRelicRulesTemplate = async (
+const createOrUpdateRelicRulesTemplate = async (
   templateId: string,
   relicRulesTemplate: RatingTemplate
 ): Promise<{
@@ -24,7 +24,7 @@ const createRelicRulesTemplate = async (
   if (!relicRulesTemplates) {
     return {
       success: false,
-      message: '无法找到模板储存，请向Github提交issue',
+      message: 'zustand创建或移除遗器模板时，无法找到模板储存，请向Github提交issue',
     };
   }
 
@@ -32,7 +32,11 @@ const createRelicRulesTemplate = async (
   relicRulesTemplates[templateId] = relicRulesTemplate;
 
   // save relicRulesTemplates
-  await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
+  const result = await (window as any).ipcRenderer.storeUpdateAddRatingTemplate(templateId, relicRulesTemplate);
+
+  if (!result.success) {
+    return result;
+  }
 
   // update relicRulesTemplateStore
   useRelicTemplateStore.setState({
@@ -40,10 +44,7 @@ const createRelicRulesTemplate = async (
     currentRelicRatingRulesTemplate: relicRulesTemplate,
   });
 
-  return {
-    success: true,
-    message: '成功创建遗器模板',
-  };
+  return result;
 };
 
 const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: boolean; message: string }> => {
@@ -53,7 +54,7 @@ const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: 
   if (!relicRulesTemplates) {
     return {
       success: false,
-      message: '无法找到当前遗器模板，请向Github提交issue',
+      message: 'zustand移除遗器模板时，无法找到模板储存，请向Github提交issue',
     };
   }
 
@@ -61,18 +62,19 @@ const removeRelicRulesTemplate = async (templateId: string): Promise<{ success: 
   delete relicRulesTemplates[templateId];
 
   // save relicRulesTemplates
-  await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
+  const result = await (window as any).ipcRenderer.storeDeleteRatingTemplate(templateId);
+
+  if (!result.success) {
+    return result;
+  }
 
   // update relicRulesTemplateStore
   useRelicTemplateStore.setState({ relicRatingRulesTemplateStore: relicRulesTemplates });
 
-  return {
-    success: true,
-    message: '成功删除遗器模板',
-  };
+  return result;
 };
 
-const createRelicRatingRule = async (
+const createOrUpdateRelicRatingRule = async (
   templateId: string,
   ruleId: string,
   rule: RatingRule
@@ -86,7 +88,7 @@ const createRelicRatingRule = async (
   if (!relicRulesTemplates || !currentRelicRulesTemplate) {
     return {
       success: false,
-      message: '无法找到当前遗器模板，请向Github提交issue',
+      message: 'zustand创建或更新遗器规则时，无法找到当前遗器模板，请向Github提交issue',
     };
   }
 
@@ -95,17 +97,60 @@ const createRelicRatingRule = async (
   currentRelicRulesTemplate.rules[ruleId] = rule;
 
   // save relicRulesTemplates
-  await (window as any).ipcRenderer.storeSet(`data.ratingTemplates`, relicRulesTemplates);
+  const result = await (window as any).ipcRenderer.storeUpdateAddRatingRule(templateId, ruleId, rule);
+
+  if (!result.success) {
+    return result;
+  }
 
   useRelicTemplateStore.setState({
     relicRatingRulesTemplateStore: relicRulesTemplates,
     currentRelicRatingRulesTemplate: currentRelicRulesTemplate,
   });
 
-  return {
-    success: true,
-    message: '成功创建遗器规则',
-  };
+  return result;
 };
 
-export { getAllRelicRulesTemplates, createRelicRulesTemplate, removeRelicRulesTemplate, createRelicRatingRule };
+const removeRelicRatingRule = async (
+  templateId: string,
+  ruleId: string
+): Promise<{ success: boolean; message: string }> => {
+  // get all relicRulesTemplates
+  const relicRulesTemplates = useRelicTemplateStore.getState().relicRatingRulesTemplateStore;
+
+  // get current relicRulesTemplate
+  const currentRelicRulesTemplate = useRelicTemplateStore.getState().currentRelicRatingRulesTemplate;
+
+  if (!relicRulesTemplates || !currentRelicRulesTemplate) {
+    return {
+      success: false,
+      message: 'zustand移除遗器规则时，无法找到当前遗器模板，请向Github提交issue',
+    };
+  }
+
+  // remove relicRatingRule
+  delete relicRulesTemplates[templateId].rules[ruleId];
+  delete currentRelicRulesTemplate.rules[ruleId];
+
+  // save relicRulesTemplates
+  const result = await (window as any).ipcRenderer.storeDeleteRatingRule(templateId, ruleId);
+
+  if (!result.success) {
+    return result;
+  }
+
+  useRelicTemplateStore.setState({
+    relicRatingRulesTemplateStore: relicRulesTemplates,
+    currentRelicRatingRulesTemplate: currentRelicRulesTemplate,
+  });
+
+  return result;
+};
+
+export {
+  getAllRelicRulesTemplates,
+  createOrUpdateRelicRulesTemplate,
+  removeRelicRulesTemplate,
+  createOrUpdateRelicRatingRule,
+  removeRelicRatingRule,
+};
