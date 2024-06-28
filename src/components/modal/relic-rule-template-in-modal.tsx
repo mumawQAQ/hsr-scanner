@@ -1,13 +1,12 @@
 import { toast } from 'react-toastify';
 
-import { RelicRulesTemplate } from '../../types.ts';
-
 import { Button } from '@/components/ui/button.tsx';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicStore from '@/hooks/use-relic-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
+import { RatingTemplate } from '@/types.ts';
 import relicRatingUtils from '@/utils/relicRatingUtils.ts';
 
 const RelicRuleTemplateInModal = () => {
@@ -18,7 +17,7 @@ const RelicRuleTemplateInModal = () => {
 
   const isModalOpen = isOpen && type === 'import-relic-rules-template';
 
-  const handleImportRelicRulesTemplate = async (template: RelicRulesTemplate) => {
+  const handleImportRelicRulesTemplate = async (template: RatingTemplate) => {
     if (!relicTitle || !mainRelicStats) {
       toast('请先选择遗器', { type: 'error' });
       return;
@@ -99,7 +98,7 @@ const RelicRuleTemplateInModal = () => {
                   key={templateId}
                   className="my-2 flex flex-row items-center justify-between rounded border-2 p-2 hover:border-gray-700"
                 >
-                  <div className="font-black">{template.name}</div>
+                  <div className="font-black">{template.templateName}</div>
                   <div className="space-x-2">
                     <Button size="sm" onClick={() => handleImportRelicRulesTemplate(template)}>
                       导入
