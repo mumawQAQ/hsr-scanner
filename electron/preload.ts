@@ -32,4 +32,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   storeSet(key: string, value: any) {
     return ipcRenderer.invoke('store-set', key, value);
   },
+
+  changeWindowMode(mode: boolean) {
+    ipcRenderer.send('change-window-mode', mode);
+  }
 });

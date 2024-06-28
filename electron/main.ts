@@ -26,7 +26,6 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist');
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST;
 
 let win: BrowserWindow | null;
-let floatingWin: BrowserWindow | null;
 
 function createMainWindow() {
   win = new BrowserWindow({
@@ -71,11 +70,6 @@ function createMainWindow() {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
   });
 
-  win.on('closed', () => {
-    // make sure to close the floating window when the main window is closed
-    floatingWin?.close();
-  });
-
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
@@ -103,3 +97,12 @@ app.on('activate', () => {
 });
 
 app.whenReady().then(createMainWindow);
+
+// Change the window size when the user click a button in Scan Panel.
+ipcMain.on('change-window-mode', (_, isLightMode) => {
+  if (isLightMode) {
+    win?.setSize(600, 400); // 轻量模式尺寸
+  } else {
+    win?.setSize(1200, 1000); // 全尺寸模式
+  }
+});
