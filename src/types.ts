@@ -94,6 +94,7 @@ export type RatingRule = {
   partNames: {
     [partName: string]: {
       valuableMain: string[];
+      partType: string;
     };
   };
   valuableSub: string[];
