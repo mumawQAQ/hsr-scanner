@@ -43,20 +43,82 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
   const [subStats, setSubStats] = useState<string[]>([]);
   const [characters, setCharacters] = useState<string[]>([]);
 
-  const handleClearAll = () => {
-    setHeadMainStats([]);
-    setGloveMainStats([]);
-    setBodyMainStats([]);
-    setShoeMainStats([]);
-    setSphereMainStats([]);
-    setRopeMainStats([]);
-    setSubStats([]);
+  const handleClearAll = async () => {
+    const result = await createOrUpdateRelicRatingRule(templateId, ruleId, {
+      ...rule,
+      setNames: [],
+      partNames: {},
+      valuableSub: [],
+      fitCharacters: [],
+    });
+
+    if (result.success) {
+      setSetNames([]);
+      setHeadMainStats([]);
+      setGloveMainStats([]);
+      setBodyMainStats([]);
+      setShoeMainStats([]);
+      setSphereMainStats([]);
+      setRopeMainStats([]);
+      setSubStats([]);
+      setCharacters([]);
+    } else {
+      toast(result.message, { type: 'error' });
+    }
   };
 
   const handleSetNamesChange = async (setNames: string[]) => {
     // if the new setNames is empty, clear all main stats
     if (setNames.length === 0) {
-      handleClearAll();
+      await handleClearAll();
+      return;
+    }
+
+    // get the new setName's parts
+    const newHead = setNames.map(setName => RelicSets[setName].parts['Head']).filter(Boolean);
+    const newGlove = setNames.map(setName => RelicSets[setName].parts['Hand']).filter(Boolean);
+    const newBody = setNames.map(setName => RelicSets[setName].parts['Body']).filter(Boolean);
+    const newShoe = setNames.map(setName => RelicSets[setName].parts['Feet']).filter(Boolean);
+
+    const newSphere = setNames.map(setName => RelicSets[setName].parts['Sphere']).filter(Boolean);
+    const newRope = setNames.map(setName => RelicSets[setName].parts['Rope']).filter(Boolean);
+
+    // generate the new rules
+    const newPartNames: {
+      [partName: string]: {
+        valuableMain: string[];
+      };
+    } = {};
+
+    if (newHead.length > 0 && headMainStats.length > 0) {
+      for (const partName of newHead) {
+        newPartNames[partName] = { valuableMain: headMainStats };
+      }
+    }
+    if (newGlove.length > 0 && gloveMainStats.length > 0) {
+      for (const partName of newGlove) {
+        newPartNames[partName] = { valuableMain: gloveMainStats };
+      }
+    }
+    if (newBody.length > 0 && bodyMainStats.length > 0) {
+      for (const partName of newBody) {
+        newPartNames[partName] = { valuableMain: bodyMainStats };
+      }
+    }
+    if (newShoe.length > 0 && shoeMainStats.length > 0) {
+      for (const partName of newShoe) {
+        newPartNames[partName] = { valuableMain: shoeMainStats };
+      }
+    }
+    if (newSphere.length > 0 && sphereMainStats.length > 0) {
+      for (const partName of newSphere) {
+        newPartNames[partName] = { valuableMain: sphereMainStats };
+      }
+    }
+    if (newRope.length > 0 && ropeMainStats.length > 0) {
+      for (const partName of newRope) {
+        newPartNames[partName] = { valuableMain: ropeMainStats };
+      }
     }
 
     // if the new setNames don't any inner set, clear the sphere and rope main stats
@@ -72,8 +134,13 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
       setBodyMainStats([]);
       setShoeMainStats([]);
     }
+
     // update the rule
-    const result = await createOrUpdateRelicRatingRule(templateId, ruleId, { ...rule, setNames });
+    const result = await createOrUpdateRelicRatingRule(templateId, ruleId, {
+      ...rule,
+      setNames,
+      partNames: newPartNames,
+    });
 
     if (result.success) {
       setSetNames(setNames);
