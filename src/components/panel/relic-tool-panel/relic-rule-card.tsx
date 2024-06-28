@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import StatsBadgeList from '@/components/panel/relic-tool-panel/badge-list/stats-badge-list.tsx';
@@ -42,6 +42,47 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
   const [ropeMainStats, setRopeMainStats] = useState<string[]>([]);
   const [subStats, setSubStats] = useState<string[]>([]);
   const [characters, setCharacters] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSetNames(rule.setNames);
+
+    let headInited = false;
+    let gloveInited = false;
+    let bodyInited = false;
+    let shoeInited = false;
+    let sphereInited = false;
+    let ropeInited = false;
+
+    Object.values(rule.partNames).forEach(({ valuableMain, partType }) => {
+      if (partType === 'Head' && !headInited) {
+        setHeadMainStats(valuableMain);
+        headInited = true;
+      }
+      if (partType === 'Hand' && !gloveInited) {
+        setGloveMainStats(valuableMain);
+        gloveInited = true;
+      }
+      if (partType === 'Body' && !bodyInited) {
+        setBodyMainStats(valuableMain);
+        bodyInited = true;
+      }
+      if (partType === 'Feet' && !shoeInited) {
+        setShoeMainStats(valuableMain);
+        shoeInited = true;
+      }
+      if (partType === 'Sphere' && !sphereInited) {
+        setSphereMainStats(valuableMain);
+        sphereInited = true;
+      }
+      if (partType === 'Rope' && !ropeInited) {
+        setRopeMainStats(valuableMain);
+        ropeInited = true;
+      }
+    });
+
+    setSubStats(rule.valuableSub);
+    setCharacters(rule.fitCharacters);
+  }, []);
 
   const handleClearAll = async () => {
     const result = await createOrUpdateRelicRatingRule(templateId, ruleId, {
@@ -87,37 +128,38 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     const newPartNames: {
       [partName: string]: {
         valuableMain: string[];
+        partType: string;
       };
     } = {};
 
     if (newHead.length > 0 && headMainStats.length > 0) {
       for (const partName of newHead) {
-        newPartNames[partName] = { valuableMain: headMainStats };
+        newPartNames[partName] = { valuableMain: headMainStats, partType: 'Head' };
       }
     }
     if (newGlove.length > 0 && gloveMainStats.length > 0) {
       for (const partName of newGlove) {
-        newPartNames[partName] = { valuableMain: gloveMainStats };
+        newPartNames[partName] = { valuableMain: gloveMainStats, partType: 'Hand' };
       }
     }
     if (newBody.length > 0 && bodyMainStats.length > 0) {
       for (const partName of newBody) {
-        newPartNames[partName] = { valuableMain: bodyMainStats };
+        newPartNames[partName] = { valuableMain: bodyMainStats, partType: 'Body' };
       }
     }
     if (newShoe.length > 0 && shoeMainStats.length > 0) {
       for (const partName of newShoe) {
-        newPartNames[partName] = { valuableMain: shoeMainStats };
+        newPartNames[partName] = { valuableMain: shoeMainStats, partType: 'Feet' };
       }
     }
     if (newSphere.length > 0 && sphereMainStats.length > 0) {
       for (const partName of newSphere) {
-        newPartNames[partName] = { valuableMain: sphereMainStats };
+        newPartNames[partName] = { valuableMain: sphereMainStats, partType: 'Sphere' };
       }
     }
     if (newRope.length > 0 && ropeMainStats.length > 0) {
       for (const partName of newRope) {
-        newPartNames[partName] = { valuableMain: ropeMainStats };
+        newPartNames[partName] = { valuableMain: ropeMainStats, partType: 'Rope' };
       }
     }
 
@@ -150,7 +192,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
   };
 
   const handleMainStatsChange = async (
-    partName: string,
+    partType: string,
     mainStats: string[],
     callback: Dispatch<SetStateAction<string[]>>
   ) => {
@@ -158,8 +200,8 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     const partNames = [];
 
     for (const setName of setNames) {
-      if (RelicSets[setName].parts[partName]) {
-        partNames.push(RelicSets[setName].parts[partName]);
+      if (RelicSets[setName].parts[partType]) {
+        partNames.push(RelicSets[setName].parts[partType]);
       }
     }
 
@@ -169,7 +211,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     if (mainStats.length > 0) {
       for (const partName of partNames) {
         if (!newPartNames[partName]) {
-          newPartNames[partName] = { valuableMain: mainStats };
+          newPartNames[partName] = { valuableMain: mainStats, partType: partType };
         } else {
           newPartNames[partName].valuableMain = mainStats;
         }
