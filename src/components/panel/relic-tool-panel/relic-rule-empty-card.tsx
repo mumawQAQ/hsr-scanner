@@ -10,12 +10,12 @@ interface RelicRuleEmptyCardProps {
 }
 
 const RelicRuleEmptyCard = ({ templateId }: RelicRuleEmptyCardProps) => {
-  const { createRelicRatingRule } = useRelicTemplateStore();
+  const { createOrUpdateRelicRatingRule } = useRelicTemplateStore();
 
   const handleCreateNewRule = async () => {
     // generate a new rule id
     const ruleId = uuidv4();
-    const result = await createRelicRatingRule(templateId, ruleId, {
+    const result = await createOrUpdateRelicRatingRule(templateId, ruleId, {
       setNames: [],
       partNames: {},
       valuableSub: [],
