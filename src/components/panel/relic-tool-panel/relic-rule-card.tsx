@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import StatsBadgeList from '@/components/panel/relic-tool-panel/badge-list/stats-badge-list.tsx';
@@ -82,42 +82,69 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     }
   };
 
-  const handleSetHeadMainStats = async (headMainStats: string[]) => {
-    // get all the head of the sets
-    const headNames = [];
+  const handleMainStatsChange = async (
+    partName: string,
+    mainStats: string[],
+    callback: Dispatch<SetStateAction<string[]>>
+  ) => {
+    // get part of the sets
+    const partNames = [];
 
     for (const setName of setNames) {
-      if (RelicSets[setName].parts['Head']) {
-        headNames.push(RelicSets[setName].parts['Head']);
+      if (RelicSets[setName].parts[partName]) {
+        partNames.push(RelicSets[setName].parts[partName]);
       }
     }
 
     const newPartNames = rule.partNames;
 
     // generate the new rules
-    if (headMainStats.length > 0) {
-      for (const headName of headNames) {
-        if (!newPartNames[headName]) {
-          newPartNames[headName] = { valuableMain: headMainStats };
+    if (mainStats.length > 0) {
+      for (const partName of partNames) {
+        if (!newPartNames[partName]) {
+          newPartNames[partName] = { valuableMain: mainStats };
         } else {
-          newPartNames[headName].valuableMain = headMainStats;
+          newPartNames[partName].valuableMain = mainStats;
         }
       }
     } else {
-      for (const headName of headNames) {
-        delete newPartNames[headName];
+      for (const partName of partNames) {
+        delete newPartNames[partName];
       }
     }
-    console.log(newPartNames);
 
     // update the rule
     const result = await createOrUpdateRelicRatingRule(templateId, ruleId, { ...rule, partNames: newPartNames });
 
     if (result.success) {
-      setHeadMainStats(headMainStats);
+      callback(mainStats);
     } else {
       toast(result.message, { type: 'error' });
     }
+  };
+
+  const handleSetHeadMainStatsChange = async (headMainStats: string[]) => {
+    await handleMainStatsChange('Head', headMainStats, setHeadMainStats);
+  };
+
+  const handleSetGloveMainStatsChange = async (gloveMainStats: string[]) => {
+    await handleMainStatsChange('Hand', gloveMainStats, setGloveMainStats);
+  };
+
+  const handleSetBodyMainStatsChange = async (bodyMainStats: string[]) => {
+    await handleMainStatsChange('Body', bodyMainStats, setBodyMainStats);
+  };
+
+  const handleSetShoeMainStatsChange = async (shoeMainStats: string[]) => {
+    await handleMainStatsChange('Feet', shoeMainStats, setShoeMainStats);
+  };
+
+  const handleSetSphereMainStatsChange = async (sphereMainStats: string[]) => {
+    await handleMainStatsChange('Sphere', sphereMainStats, setSphereMainStats);
+  };
+
+  const handleSetRopeMainStatsChange = async (ropeMainStats: string[]) => {
+    await handleMainStatsChange('Rope', ropeMainStats, setRopeMainStats);
   };
 
   const handleDeleteRule = async () => {
@@ -165,28 +192,28 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
                     <RelicMainStatsSelector
                       partName="头"
                       selectedKeys={headMainStats}
-                      onSelectionChange={handleSetHeadMainStats}
+                      onSelectionChange={handleSetHeadMainStatsChange}
                       mainStats={Object.values(RelicHeadMainStatsType)}
                     />
                     {headMainStats.length > 0 && <StatsBadgeList stats={headMainStats} />}
                     <RelicMainStatsSelector
                       partName="手"
                       selectedKeys={gloveMainStats}
-                      onSelectionChange={setGloveMainStats}
+                      onSelectionChange={handleSetGloveMainStatsChange}
                       mainStats={Object.values(RelicGloveMainStatsType)}
                     />
                     {gloveMainStats.length > 0 && <StatsBadgeList stats={gloveMainStats} />}
                     <RelicMainStatsSelector
                       partName="衣"
                       selectedKeys={bodyMainStats}
-                      onSelectionChange={setBodyMainStats}
+                      onSelectionChange={handleSetBodyMainStatsChange}
                       mainStats={Object.values(RelicBodyMainStatsType)}
                     />
                     {bodyMainStats.length > 0 && <StatsBadgeList stats={bodyMainStats} />}
                     <RelicMainStatsSelector
                       partName="鞋"
                       selectedKeys={shoeMainStats}
-                      onSelectionChange={setShoeMainStats}
+                      onSelectionChange={handleSetShoeMainStatsChange}
                       mainStats={Object.values(RelicShoeMainStatsType)}
                     />
                     {shoeMainStats.length > 0 && <StatsBadgeList stats={shoeMainStats} />}
@@ -200,14 +227,14 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
                     <RelicMainStatsSelector
                       partName="球"
                       selectedKeys={sphereMainStats}
-                      onSelectionChange={setSphereMainStats}
+                      onSelectionChange={handleSetSphereMainStatsChange}
                       mainStats={Object.values(RelicSphereMainStatsType)}
                     />
                     {sphereMainStats.length > 0 && <StatsBadgeList stats={sphereMainStats} />}
                     <RelicMainStatsSelector
                       partName="绳"
                       selectedKeys={ropeMainStats}
-                      onSelectionChange={setRopeMainStats}
+                      onSelectionChange={handleSetRopeMainStatsChange}
                       mainStats={Object.values(RelicRopeMainStatsType)}
                     />
                     {ropeMainStats.length > 0 && <StatsBadgeList stats={ropeMainStats} />}
