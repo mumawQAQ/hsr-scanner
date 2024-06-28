@@ -8,9 +8,7 @@ import ScanPanel from '@/components/panel/scan-panel/scan-panel.tsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { ModalProvider } from '@/providers/modal-provider.tsx';
 
-
 const App = () => {
-
   const [isLightMode, setLightMode] = useState(false);
 
   return (
@@ -28,8 +26,11 @@ const App = () => {
             </div>
             <div className="ml-44 flex-1 p-6">
               <Routes>
-                <Route path="/" element={<ScanPanel  isLightMode={isLightMode} setLightMode={setLightMode} />} />
-                <Route path="/relic-tools" element={<RelicToolPanel />} />
+                <Route path="/" element={<ScanPanel isLightMode={isLightMode} setLightMode={setLightMode} />} />
+                <Route path="/relic-tools" element={<RelicToolPanel />}>
+                  <Route index element={<RelicToolPanel />} />
+                  <Route path="createEdit/:templateId" element={<RelicToolPanel />} />
+                </Route>
               </Routes>
             </div>
           </>
