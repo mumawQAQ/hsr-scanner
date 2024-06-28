@@ -147,6 +147,26 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     await handleMainStatsChange('Rope', ropeMainStats, setRopeMainStats);
   };
 
+  const handleSetSubStatsChange = async (subStats: string[]) => {
+    const result = await createOrUpdateRelicRatingRule(templateId, ruleId, { ...rule, valuableSub: subStats });
+
+    if (result.success) {
+      setSubStats(subStats);
+    } else {
+      toast(result.message, { type: 'error' });
+    }
+  };
+
+  const handleSetCharactersChange = async (characters: string[]) => {
+    const result = await createOrUpdateRelicRatingRule(templateId, ruleId, { ...rule, fitCharacters: characters });
+
+    if (result.success) {
+      setCharacters(characters);
+    } else {
+      toast(result.message, { type: 'error' });
+    }
+  };
+
   const handleDeleteRule = async () => {
     const result = await removeRelicRatingRule(templateId, ruleId);
 
@@ -247,7 +267,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
               <div className="font-semibold">遗器副属性:</div>
               <RelicSubStatsSelector
                 selectedKeys={subStats}
-                onSelectionChange={setSubStats}
+                onSelectionChange={handleSetSubStatsChange}
                 subStats={Object.values(RelicSubStatsType)}
               />
             </div>
@@ -255,7 +275,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
             <Separator className="my-2" />
             <div className="flex flex-row gap-2">
               <div className="font-semibold">适用角色:</div>
-              <CharacterSelector selectedKeys={characters} onSelectionChange={setCharacters} />
+              <CharacterSelector selectedKeys={characters} onSelectionChange={handleSetCharactersChange} />
             </div>
             <div className="mt-2">
               {characters &&
