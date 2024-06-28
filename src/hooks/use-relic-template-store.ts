@@ -3,8 +3,8 @@ import { create } from 'zustand';
 import { RatingRule, RatingTemplate, RatingTemplateStore } from '../types.ts';
 
 import {
-  createRelicRatingRule,
-  createRelicRulesTemplate,
+  createOrUpdateRelicRatingRule,
+  createOrUpdateRelicRulesTemplate,
   getAllRelicRulesTemplates,
   removeRelicRulesTemplate,
 } from '@/utils/relicRulesTemplateUtils.ts';
@@ -14,7 +14,7 @@ type RelicTemplateStore = {
 
   fetchRelicRatingRulesTemplateStore: () => Promise<void>;
 
-  createRelicRatingRulesTemplate: (
+  createOrUpdateRelicRatingRulesTemplate: (
     templateId: string,
     relicRulesTemplate: RatingTemplate
   ) => Promise<{
@@ -28,7 +28,7 @@ type RelicTemplateStore = {
 
   setCurrentRelicRatingRulesTemplate: (template: RatingTemplate) => void;
 
-  createRelicRatingRule: (
+  createOrUpdateRelicRatingRule: (
     templateId: string,
     ruleId: string,
     rule: RatingRule
@@ -45,8 +45,8 @@ export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
     await getAllRelicRulesTemplates();
   },
 
-  createRelicRatingRulesTemplate: async (templateId, relicRulesTemplate) => {
-    return await createRelicRulesTemplate(templateId, relicRulesTemplate);
+  createOrUpdateRelicRatingRulesTemplate: async (templateId, relicRulesTemplate) => {
+    return await createOrUpdateRelicRulesTemplate(templateId, relicRulesTemplate);
   },
 
   removeRelicRatingRulesTemplate: async templateId => {
@@ -59,8 +59,8 @@ export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
     set({ currentRelicRatingRulesTemplate: template });
   },
 
-  createRelicRatingRule: async (templateId, ruleId, rule) => {
-    return await createRelicRatingRule(templateId, ruleId, rule);
+  createOrUpdateRelicRatingRule: async (templateId, ruleId, rule) => {
+    return await createOrUpdateRelicRatingRule(templateId, ruleId, rule);
   },
 }));
 
