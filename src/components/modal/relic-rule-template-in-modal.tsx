@@ -1,64 +1,33 @@
+import QRCode from 'qrcode';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button.tsx';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
-import useRelicStore from '@/hooks/use-relic-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
-import { RatingTemplate } from '@/types.ts';
-import relicRatingUtils from '@/utils/relicRatingUtils.ts';
 
 const RelicRuleTemplateInModal = () => {
   const { isOpen, onClose, type, onOpen } = useModal();
-  const { removeRelicRatingRulesTemplate, relicRatingRulesTemplateStore } = useRelicTemplateStore();
-
-  const { relicTitle, mainRelicStats } = useRelicStore();
+  const { removeRelicRatingRulesTemplate, relicRatingRulesTemplateStore, currentRelicRatingRulesTemplate } =
+    useRelicTemplateStore();
 
   const isModalOpen = isOpen && type === 'import-relic-rules-template';
 
-  const handleImportRelicRulesTemplate = async (template: RatingTemplate) => {
-    if (!relicTitle || !mainRelicStats) {
-      toast('请先选择遗器', { type: 'error' });
-      return;
-    }
-    const result = await relicRatingUtils.checkRelicRatingValuableMainAndSet(relicTitle, mainRelicStats.name);
+  const handleImportRelicRulesTemplate = async () => {
+    const jsonTemplate = JSON.stringify(currentRelicRatingRulesTemplate);
 
-    if (!result.success) {
-      toast(result.message, { type: 'error' });
-      return;
-    }
-
-    // if the template have valuableSub, override the valuableSub
-    if (template.valuableSub) {
-      const result = await relicRatingUtils.updateRelicRatingValuableSub(
-        relicTitle,
-        mainRelicStats.name,
-        template.valuableSub
-      );
-
-      if (!result.success) {
-        toast(`导入失败, ${result.message}`, { type: 'error' });
-        return;
+    try {
+      // generate a qr code from jsonTemplate
+      const qrcode = await QRCode.toDataURL(jsonTemplate);
+      onOpen('export-relic-rules-template', { qrCode: qrcode });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast(`导出失败，${error.message}`, { type: 'error' });
+      } else {
+        toast('未知原因，导出失败', { type: 'error' });
       }
     }
-
-    // if the template have should lock, override the should lock
-    if (template.shouldLock) {
-      const result = await relicRatingUtils.updateRelicRatingShouldLock(
-        relicTitle,
-        mainRelicStats.name,
-        template.shouldLock
-      );
-
-      if (!result.success) {
-        toast(`导入失败, ${result.message}`, { type: 'error' });
-        return;
-      }
-    }
-
-    toast('导入成功', { type: 'success' });
-    onClose();
   };
 
   const handleDeleteRulesTemplate = async (templateId: string) => {
@@ -89,7 +58,6 @@ const RelicRuleTemplateInModal = () => {
           <DialogTitle className="text-center text-2xl font-bold">导入遗器筛选条件</DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-[500px] p-6">
-          <div className="mb-2 text-center font-semibold">储存的模板</div>
           {relicRatingRulesTemplateStore &&
             Object.keys(relicRatingRulesTemplateStore).map(templateId => {
               const template = relicRatingRulesTemplateStore[templateId];
@@ -100,7 +68,7 @@ const RelicRuleTemplateInModal = () => {
                 >
                   <div className="font-black">{template.templateName}</div>
                   <div className="space-x-2">
-                    <Button size="sm" onClick={() => handleImportRelicRulesTemplate(template)}>
+                    <Button size="sm" onClick={handleImportRelicRulesTemplate}>
                       导入
                     </Button>
                     <Button size="sm" variant="destructive" onClick={() => handleDeleteRulesTemplate(templateId)}>

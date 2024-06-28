@@ -4,17 +4,37 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import { cn } from '@/lib/utils.ts';
+import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
+import QRCode from 'qrcode';
+import { toast } from 'react-toastify';
 
 export function RelicToolNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { onOpen } = useModal();
+  const { currentRelicRatingRulesTemplate } = useRelicTemplateStore();
 
   const shouldShowBackButton = location.pathname !== '/relic-tools';
   const shouldShowExportButton = location.pathname.includes('/relic-tools/createEdit');
 
   const handleCreateTemplate = () => {
     onOpen('create-relic-rules-template');
+  };
+
+  const handleExport = async () => {
+    const jsonTemplate = JSON.stringify(currentRelicRatingRulesTemplate);
+
+    try {
+      // generate a qr code from jsonTemplate
+      const qrcode = await QRCode.toDataURL(jsonTemplate);
+      onOpen('export-relic-rules-template', { qrCode: qrcode });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast(`导出失败，${error.message}`, { type: 'error' });
+      } else {
+        toast('未知原因，导出失败', { type: 'error' });
+      }
+    }
   };
 
   return (
@@ -28,7 +48,7 @@ export function RelicToolNavbar() {
       />
       <div className="flex gap-5">
         {!shouldShowBackButton && <Button onClick={handleCreateTemplate}>创建新规则模板</Button>}
-        {shouldShowExportButton && <Button>导出</Button>}
+        {shouldShowExportButton && <Button onClick={handleExport}>导出</Button>}
         {!shouldShowBackButton && <Button>导入</Button>}
       </div>
     </div>
