@@ -50,6 +50,7 @@
     "electron-store": "^9.0.0",
     "framer-motion": "^11.2.10",
     "fuzzyset.js": "^1.0.7",
+    "jsqr": "^1.4.0",
     "lucide-react": "^0.396.0",
     "qrcode": "^1.5.3",
     "react": "^18.2.0",
