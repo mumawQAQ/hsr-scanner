@@ -50,4 +50,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   storeUpdateAddRatingRule(templateId: string, ruleId: string, rule: RatingRule) {
     return ipcRenderer.invoke('store-update-add-rating-rule', templateId, ruleId, rule);
   },
+  changeWindowMode(mode: boolean) {
+    ipcRenderer.send('change-window-mode', mode);
+  }
 });
