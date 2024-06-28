@@ -19,8 +19,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<ScanPanel />} />
             <Route path="/relic-tools" element={<RelicToolPanel />}>
-              <Route path="edit/:templateId" element={<RelicToolPanel />} />
-              <Route path="create/:templateId" element={<RelicToolPanel />} />
+              <Route path="createEdit/:templateId" element={<RelicToolPanel />} />
             </Route>
           </Routes>
         </div>

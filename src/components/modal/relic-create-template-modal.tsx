@@ -53,7 +53,7 @@ const RelicCreateTemplateModal = () => {
       toast(result.message, { type: 'error' });
     } else {
       toast('成功创建遗器模板', { type: 'success' });
-      navigate(`/relic-tools/create/${templateId}`);
+      navigate(`/relic-tools/createEdit/${templateId}`);
     }
     handleClose();
   };
