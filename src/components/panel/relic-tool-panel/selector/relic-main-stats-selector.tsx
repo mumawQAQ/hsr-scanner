@@ -18,7 +18,7 @@ import {
   RelicRopeMainStatsType,
   RelicShoeMainStatsType,
   RelicSphereMainStatsType,
-} from '@/types.ts';
+} from '@/type/types.ts';
 
 interface RelicMainStatsSelectorProps {
   partName: string;

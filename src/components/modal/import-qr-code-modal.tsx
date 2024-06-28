@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
-import { RatingTemplate } from '@/types.ts';
+import { RatingTemplate } from '@/type/types.ts';
 
 const ImportQRCodeModal = () => {
   const { createOrUpdateRelicRatingRulesTemplate } = useRelicTemplateStore();

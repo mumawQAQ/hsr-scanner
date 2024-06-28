@@ -1,4 +1,4 @@
-import { RatingRule, RatingTemplate, RatingTemplateStore } from '../types.ts';
+import { RatingRule, RatingTemplate, RatingTemplateStore } from '../type/types.ts';
 
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 

@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { Characters } from '@/types.ts';
+import { Characters } from '@/type/types.ts';
 
 type CharacterSelectorProps = {
   selectedKeys: string[];

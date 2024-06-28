@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { RelicSubStatsType } from '@/types.ts';
+import { RelicSubStatsType } from '@/type/types.ts';
 
 interface RelicMainStatsSelectorProps {
   selectedKeys: string[];

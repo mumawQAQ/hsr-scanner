@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { RatingRule, RatingTemplate } from '@/types.ts';
+import { RatingRule, RatingTemplate } from '@/type/types.ts';
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {

@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
-import { RatingTemplate } from '@/types.ts';
+import { RatingTemplate } from '@/type/types.ts';
 
 const RelicRuleTemplateInModal = () => {
   const { isOpen, onClose, type, onOpen } = useModal();

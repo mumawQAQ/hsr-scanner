@@ -22,7 +22,7 @@ import {
   RelicShoeMainStatsType,
   RelicSphereMainStatsType,
   RelicSubStatsType,
-} from '@/types.ts';
+} from '@/type/types.ts';
 
 type RelicRuleCardProps = {
   templateId: string;
