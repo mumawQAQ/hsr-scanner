@@ -1,5 +1,7 @@
 import { X } from 'lucide-react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
@@ -11,7 +13,8 @@ type RelicRuleTemplateCardProps = {
 };
 
 const RelicRuleTemplateCard = ({ name, description, templateID }: RelicRuleTemplateCardProps) => {
-  const { setCurrentRelicRatingRulesTemplate, relicRatingRulesTemplateStore } = useRelicTemplateStore();
+  const { setCurrentRelicRatingRulesTemplate, relicRatingRulesTemplateStore, removeRelicRatingRulesTemplate } =
+    useRelicTemplateStore();
   const navigate = useNavigate();
 
   if (!relicRatingRulesTemplateStore) {
@@ -21,6 +24,15 @@ const RelicRuleTemplateCard = ({ name, description, templateID }: RelicRuleTempl
   if (!relicRatingRulesTemplateStore[templateID]) {
     return null;
   }
+
+  const handleDeleteTemplate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const result = await removeRelicRatingRulesTemplate(templateID);
+
+    if (!result.success) {
+      toast(result.message, { type: 'error' });
+    }
+  };
 
   return (
     <Card
@@ -39,8 +51,7 @@ const RelicRuleTemplateCard = ({ name, description, templateID }: RelicRuleTempl
         <button
           className="absolute right-2 top-0 rounded-full bg-rose-500 p-0.5 text-white shadow-sm"
           onClick={e => {
-            e.stopPropagation();
-            console.log('X clicked');
+            handleDeleteTemplate(e);
           }}
         >
           <X className="h-4 w-4" />
