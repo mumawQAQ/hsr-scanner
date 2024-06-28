@@ -6,6 +6,7 @@ import {
   createOrUpdateRelicRatingRule,
   createOrUpdateRelicRulesTemplate,
   getAllRelicRulesTemplates,
+  removeRelicRatingRule,
   removeRelicRulesTemplate,
 } from '@/utils/relicRulesTemplateUtils.ts';
 
@@ -36,6 +37,14 @@ type RelicTemplateStore = {
     success: boolean;
     message: string;
   }>;
+
+  removeRelicRatingRule: (
+    templateId: string,
+    ruleId: string
+  ) => Promise<{
+    success: boolean;
+    message: string;
+  }>;
 };
 
 export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
@@ -61,6 +70,10 @@ export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
 
   createOrUpdateRelicRatingRule: async (templateId, ruleId, rule) => {
     return await createOrUpdateRelicRatingRule(templateId, ruleId, rule);
+  },
+
+  removeRelicRatingRule: async (templateId, ruleId) => {
+    return await removeRelicRatingRule(templateId, ruleId);
   },
 }));
 
