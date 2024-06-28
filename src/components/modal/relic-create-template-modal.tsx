@@ -27,7 +27,7 @@ const formSchema = z.object({
 const RelicCreateTemplateModal = () => {
   const navigate = useNavigate();
   const { isOpen, onClose, type } = useModal();
-  const { createRelicRatingRulesTemplate } = useRelicTemplateStore();
+  const { createOrUpdateRelicRatingRulesTemplate } = useRelicTemplateStore();
 
   const isModalOpen = isOpen && type === 'create-relic-rules-template';
 
@@ -43,7 +43,7 @@ const RelicCreateTemplateModal = () => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     // generate a new uuid for the template
     const templateId = uuidv4();
-    const result = await createRelicRatingRulesTemplate(templateId, {
+    const result = await createOrUpdateRelicRatingRulesTemplate(templateId, {
       templateName: data.name,
       templateDescription: data.description,
       author: data.author,
