@@ -4,7 +4,7 @@ import RelicRuleCard from '@/components/panel/relic-tool-panel/relic-rule-card.t
 import RelicRuleEmptyCard from '@/components/panel/relic-tool-panel/relic-rule-empty-card.tsx';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
-const RelicRuleCreate = () => {
+const RelicRuleCreateEdit = () => {
   const { templateId } = useParams();
   const { currentRelicRatingRulesTemplate } = useRelicTemplateStore();
 
@@ -23,4 +23,4 @@ const RelicRuleCreate = () => {
   );
 };
 
-export default RelicRuleCreate;
+export default RelicRuleCreateEdit;
