@@ -4,14 +4,16 @@ import ScanAction from '@/components/panel/scan-panel/scan-action.tsx';
 import ScanContent from '@/components/panel/scan-panel/scan-content.tsx';
 import ShouldLockRolesList from '@/components/panel/scan-panel/should-lock-roles-list.tsx';
 import ValuableSubList from '@/components/panel/scan-panel/valuable-sub-list.tsx';
+import { Button } from '@/components/ui/button.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
+import { Separator } from '@/components/ui/separator.tsx';
 
 interface SCanPanelProps {
   isLightMode: boolean;
-  setLightMode:  React.Dispatch<React.SetStateAction<boolean>>;
+  setLightMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ScanPanel:React.FC<SCanPanelProps> = ({isLightMode, setLightMode}) => {
+const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
   const titlePartRef = React.useRef<HTMLCanvasElement>(null);
   const mainStatsPartRef = React.useRef<HTMLCanvasElement>(null);
   const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
@@ -27,27 +29,27 @@ const ScanPanel:React.FC<SCanPanelProps> = ({isLightMode, setLightMode}) => {
 
   return (
     <div>
-      <ResizablePanelGroup direction="vertical" className={isLightMode ? "min-h-[310px]" : "min-h-[880px]"}>
-        <div className="flex justify-between items-center border-b h-6 px-1 text-sm">
-          {!isLightMode ? (
-              ""
-            ) : (
-            <p>当前使用模版：</p>
-          )}
+      <ResizablePanelGroup direction="vertical" className={isLightMode ? 'min-h-[310px]' : 'min-h-[880px]'}>
+        <div className="mb-2 flex items-center">
+          {!isLightMode ? '' : <p>当前使用模版：</p>}
           <div className="flex-grow"></div>
-          <button onClick={toggleWindowMode} className="mb-2 p-1 bg-blue-500 text-white">Toggle View</button>
+          <Button onClick={toggleWindowMode} size="sm" className="mr-2">
+            {isLightMode ? '正常模式' : '小窗模式'}
+          </Button>
         </div>
+        <Separator />
         <ResizablePanel defaultSize={50}>
           <div className="flex flex-row justify-start gap-10 p-6">
             {isLightMode ? (
-              ""
+              ''
             ) : (
               <ScanAction
-              scanningStatus={scanningStatus}
-              setScanningStatus={setScanningStatus}
-              scanInterval={scanInterval}
-              setScanInterval={setScanInterval}
-            />)}
+                scanningStatus={scanningStatus}
+                setScanningStatus={setScanningStatus}
+                scanInterval={scanInterval}
+                setScanInterval={setScanInterval}
+              />
+            )}
             <ScanContent
               scanningStatus={scanningStatus}
               scanInterval={scanInterval}
@@ -60,8 +62,8 @@ const ScanPanel:React.FC<SCanPanelProps> = ({isLightMode, setLightMode}) => {
           </div>
         </ResizablePanel>
         {isLightMode ? (
-          ""
-          ) : (
+          ''
+        ) : (
           <>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50}>
@@ -81,7 +83,8 @@ const ScanPanel:React.FC<SCanPanelProps> = ({isLightMode, setLightMode}) => {
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
-          </>)}
+          </>
+        )}
       </ResizablePanelGroup>
     </div>
   );
