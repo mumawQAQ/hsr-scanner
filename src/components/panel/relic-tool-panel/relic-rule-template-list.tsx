@@ -18,6 +18,15 @@ const RelicRuleTemplateList = () => {
           templateID={templateId}
         />
       ))}
+      {
+        // if the template store is empty
+        Object.keys(relicRatingRulesTemplateStore).length === 0 && (
+          <div className="col-span-4 mt-10 items-center text-center text-lg font-extrabold">
+            <div>暂无遗器模板</div>
+            <div>请点击右上角按钮创建或导入新模板</div>
+          </div>
+        )
+      }
     </div>
   );
 };
