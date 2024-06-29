@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
+import { cn } from '@/lib/utils.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
 interface SCanPanelProps {
@@ -55,8 +56,10 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
             )
           }
           <div className="flex-grow"></div>
-          {!isLightMode ? '' : (
-            <div className="flex items-center justify-center space-x-2 mr-2">
+          {!isLightMode ? (
+            ''
+          ) : (
+            <div className="mr-2 flex items-center justify-center space-x-2">
               <Label htmlFor="scan-mode" className="font-semibold">
                 开始扫描
               </Label>
@@ -69,8 +72,8 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
           </Button>
         </div>
         <Separator />
-        <ResizablePanel defaultSize={50}>
-          <div className="flex flex-row justify-start gap-10 p-6">
+        <ResizablePanel defaultSize={isLightMode ? 100 : 50}>
+          <div className="flex flex-row justify-start gap-10 pt-6">
             <div className={isLightMode ? 'hidden' : ''}>
               <ScanAction
                 scanningStatus={scanningStatus}
@@ -88,30 +91,24 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
             />
           </div>
         </ResizablePanel>
-        {isLightMode ? (
-          ''
-        ) : (
-          <>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50}>
-              <ResizablePanelGroup direction="horizontal" className="min-h-[200px]">
-                <ResizablePanel defaultSize={35}>
-                  <div className="flex h-full items-center justify-center p-6">
-                    <span className="font-semibold">Log Area</span>
-                  </div>
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel>
-                  <div className="flex h-full flex-col items-center justify-center p-6">
-                    <canvas ref={titlePartRef} />
-                    <canvas ref={mainStatsPartRef} />
-                    <canvas ref={subStatsPartRef} />
-                  </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
+        <ResizableHandle withHandle className={cn(isLightMode ? 'hidden' : '')} />
+        <ResizablePanel defaultSize={50} className={cn(isLightMode ? 'hidden' : '')}>
+          <ResizablePanelGroup direction="horizontal" className="min-h-[200px]">
+            <ResizablePanel defaultSize={35}>
+              <div className="flex h-full items-center justify-center p-6">
+                <span className="font-semibold">Log Area</span>
+              </div>
             </ResizablePanel>
-          </>
-        )}
+            <ResizableHandle withHandle />
+            <ResizablePanel>
+              <div className="flex h-full flex-col items-center justify-center p-6">
+                <canvas ref={titlePartRef} />
+                <canvas ref={mainStatsPartRef} />
+                <canvas ref={subStatsPartRef} />
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );

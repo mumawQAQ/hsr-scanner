@@ -42,6 +42,7 @@ const createOrUpdateRelicRulesTemplate = async (
   useRelicTemplateStore.setState({
     relicRatingRulesTemplateStore: relicRulesTemplates,
     currentRelicRatingRulesTemplate: relicRulesTemplate,
+    currentRelicRatingRulesTemplateId: templateId,
   });
 
   return result;
