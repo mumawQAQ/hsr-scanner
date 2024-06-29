@@ -11,6 +11,7 @@ import { CharacterBasePartRating, OCRResult, RelicMainStats, RelicSubStats } fro
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicRatingUtils.ts';
+import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 
 type ScanContentProps = {
   scanningStatus: boolean;
@@ -392,11 +393,13 @@ const ScanContent = ({
     console.log(characterBasePartRatingList);
 
     return (
-      <div className="flex flex-col gap-2">
-        {characterBasePartRatingList.map((rating, index) => (
-          <CharacterRatingBadge characterRating={rating} key={index} />
-        ))}
-      </div>
+      <ScrollArea className="h-[390px]">
+        <div className="flex flex-col gap-2">
+          {characterBasePartRatingList.map((rating, index) => (
+            <CharacterRatingBadge characterRating={rating} key={index} />
+          ))}
+        </div>
+      </ScrollArea>
     );
   };
 
