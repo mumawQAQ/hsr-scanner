@@ -26,8 +26,9 @@ type RelicTemplateStore = {
   removeRelicRatingRulesTemplate: (templateId: string) => Promise<{ success: boolean; message: string }>;
 
   currentRelicRatingRulesTemplate: RatingTemplate | null;
+  currentRelicRatingRulesTemplateId: string | null;
 
-  setCurrentRelicRatingRulesTemplate: (template: RatingTemplate) => void;
+  setCurrentRelicRatingRulesTemplate: (template: RatingTemplate, templateId: string) => void;
 
   createOrUpdateRelicRatingRule: (
     templateId: string,
@@ -63,9 +64,10 @@ export const useRelicTemplateStore = create<RelicTemplateStore>(set => ({
   },
 
   currentRelicRatingRulesTemplate: null,
+  currentRelicRatingRulesTemplateId: null,
 
-  setCurrentRelicRatingRulesTemplate: template => {
-    set({ currentRelicRatingRulesTemplate: template });
+  setCurrentRelicRatingRulesTemplate: (template, templateId) => {
+    set({ currentRelicRatingRulesTemplate: template, currentRelicRatingRulesTemplateId: templateId });
   },
 
   createOrUpdateRelicRatingRule: async (templateId, ruleId, rule) => {

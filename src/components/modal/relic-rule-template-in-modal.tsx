@@ -14,8 +14,8 @@ const RelicRuleTemplateInModal = () => {
 
   const isModalOpen = isOpen && type === 'import-relic-rules-template';
 
-  const handleUseTemplate = async (template: RatingTemplate) => {
-    setCurrentRelicRatingRulesTemplate(template);
+  const handleUseTemplate = async (template: RatingTemplate, templateId: string) => {
+    setCurrentRelicRatingRulesTemplate(template, templateId);
     toast('已成功使用模板', { type: 'success' });
   };
 
@@ -60,7 +60,7 @@ const RelicRuleTemplateInModal = () => {
                     <span className="text-sm text-gray-600"> by {template.author}</span>
                   </div>
                   <div className="space-x-2">
-                    <Button size="sm" onClick={() => handleUseTemplate(template)}>
+                    <Button size="sm" onClick={() => handleUseTemplate(template, templateId)}>
                       使用
                     </Button>
                     <Button size="sm" variant="destructive" onClick={() => handleDeleteRulesTemplate(templateId)}>

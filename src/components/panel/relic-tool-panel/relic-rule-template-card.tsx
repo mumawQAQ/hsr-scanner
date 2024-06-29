@@ -39,7 +39,7 @@ const RelicRuleTemplateCard = ({ name, description, templateID }: RelicRuleTempl
       className="h-fit cursor-pointer hover:ring hover:ring-offset-1"
       onClick={() => {
         // set the current template
-        setCurrentRelicRatingRulesTemplate(relicRatingRulesTemplateStore[templateID]);
+        setCurrentRelicRatingRulesTemplate(relicRatingRulesTemplateStore[templateID], templateID);
 
         navigate(`createEdit/${templateID}`);
       }}
