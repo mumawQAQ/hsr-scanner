@@ -10,6 +10,7 @@ import RelicSubStatsSelector from '@/components/panel/relic-tool-panel/selector/
 import { Badge } from '@/components/ui/badge.tsx';
 import { Card, CardContent } from '@/components/ui/card.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
+import { RelicSets } from '@/data/relic-sets.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import {
   Characters,
@@ -18,7 +19,6 @@ import {
   RelicGloveMainStatsType,
   RelicHeadMainStatsType,
   RelicRopeMainStatsType,
-  RelicSets,
   RelicShoeMainStatsType,
   RelicSphereMainStatsType,
   RelicSubStatsType,

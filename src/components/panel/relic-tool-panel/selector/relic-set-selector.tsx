@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { RelicSets } from '@/type/types.ts';
+import { RelicSets } from '@/data/relic-sets.ts';
 
 type RelicSetSelectorProps = {
   selectedKeys: string[];
