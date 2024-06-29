@@ -47,7 +47,6 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
-    "compress-json": "^3.1.0",
     "electron-store": "^9.0.0",
     "framer-motion": "^11.2.10",
     "fuzzyset.js": "^1.0.7",

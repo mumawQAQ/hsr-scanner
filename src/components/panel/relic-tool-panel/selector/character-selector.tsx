@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { Characters } from '@/type/types.ts';
+import { CharactersData } from '@/data/characters-data.ts';
 
 type CharacterSelectorProps = {
   selectedKeys: string[];
@@ -34,7 +34,7 @@ const CharacterSelector: React.FC<CharacterSelectorProps> = ({ selectedKeys, onS
           <CommandList>
             <CommandEmpty>没有找到对应角色</CommandEmpty>
             <CommandGroup>
-              {Object.entries(Characters).map(([key, value]) => (
+              {Object.entries(CharactersData).map(([key, value]) => (
                 <CommandItem key={key} value={value.name}>
                   <Checkbox
                     checked={selectedKeys ? selectedKeys.includes(key) : false}

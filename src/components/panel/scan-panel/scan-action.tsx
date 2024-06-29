@@ -40,7 +40,7 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         <Switch id="scan-mode" checked={scanningStatus} onCheckedChange={setScanningStatus} />
       </div>
       <Button size="sm" onClick={handleRelicRuleTemplateIn}>
-        导入模板
+        选择模板
       </Button>
     </div>
   );

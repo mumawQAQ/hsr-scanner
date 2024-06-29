@@ -3,11 +3,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { createWorker, Worker } from 'tesseract.js';
 
-import { OCRResult, RelicMainStats, RelicRatingInfo, RelicSubStats } from '../../../type/types.ts';
-
+import CharacterRatingBadge from '@/components/panel/scan-panel/character-rating-badge.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
+import { Separator } from '@/components/ui/separator.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';
-import { cn } from '@/lib/utils.ts';
+import { CharacterBasePartRating, OCRResult, RelicMainStats, RelicSubStats } from '@/type/types.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicRatingUtils.ts';
@@ -27,45 +27,22 @@ const ScanContent = ({
   mainStatsPartRef,
   subStatsPartRef,
 }: ScanContentProps) => {
-  const {
-    setRelicTitle,
-    setMainRelicStats,
-    setSubRelicStats,
-
-    relicRatingInfo,
-    fetchRelicRatingInfo,
-    setRelicRatingInfo,
-  } = useRelicStore(state => ({
+  const { setRelicTitle, setMainRelicStats, setSubRelicStats } = useRelicStore(state => ({
     setRelicTitle: state.setRelicTitle,
     setMainRelicStats: state.setMainRelicStats,
     setSubRelicStats: state.setSubRelicStats,
-
-    relicRatingInfo: state.relicRatingInfo,
-    fetchRelicRatingInfo: state.fetchRelicRatingInfo,
-    setRelicRatingInfo: state.setRelicRatingInfo,
   }));
 
   const [worker, setWorker] = useState<Worker | null>(null);
   const [workerInitialized, setWorkerInitialized] = useState(false);
   const currentImageRef = useRef<string | null>(null);
-
-  const [isValuableRelic, setIsValuableRelic] = useState(false);
-  const [isValuableMainStats, setIsValuableMainStats] = useState(false);
-  const [isMostValuableRelic, setIsMostValuableRelic] = useState(false);
-  const [isValuableSubStats, setIsValuableSubStats] = useState<{
-    [index: number]: boolean;
-  }>({
-    1: false,
-    2: false,
-    3: false,
-    4: false,
-  });
   const [relicGrowthRate, setRelicGrowthRate] = useState<{
     minGrowthScore: number;
     maxGrowthScore: number;
     maxScore: number;
   } | null>(null);
   const [OCRResult, setOCRResult] = useState<OCRResult | null>(null);
+  const [characterBasePartRatingList, setCharacterBasePartRatingList] = useState<CharacterBasePartRating[]>([]);
 
   useEffect(() => {
     // Initialize the worker
@@ -103,7 +80,7 @@ const ScanContent = ({
   }, [scanInterval, scanningStatus, workerInitialized]);
 
   useEffect(() => {
-    if (!OCRResult || !relicRatingInfo) {
+    if (!OCRResult) {
       return;
     }
 
@@ -126,73 +103,82 @@ const ScanContent = ({
       return;
     }
 
-    // Log the OCR results
-    console.log(relicRatingInfo);
-
+    const relicTitle = OCRResult.title.result;
     const mainRelicStats = OCRResult.mainStats.result;
     const subRelicStats = OCRResult.subStats.result;
 
-    calulateRelicGrowthRate(mainRelicStats, subRelicStats);
+    calculateRelicGrowthRate(mainRelicStats, subRelicStats);
 
-    evaluateRelic(subRelicStats, relicRatingInfo);
-  }, [OCRResult, relicRatingInfo]);
+    evaluateRelic(relicTitle, mainRelicStats, subRelicStats);
+  }, [OCRResult]);
 
   function resetAll() {
     setOCRResult(null);
     setRelicTitle('');
-    setRelicRatingInfo(null);
     setMainRelicStats(null);
     setSubRelicStats([]);
-    setIsValuableRelic(false);
-    setIsValuableMainStats(false);
-    setIsMostValuableRelic(false);
-    setIsValuableSubStats({
-      1: false,
-      2: false,
-      3: false,
-      4: false,
-    });
+    setCharacterBasePartRatingList([]);
     setRelicGrowthRate(null);
   }
 
   /**
    * Evaluate the relic
+   * @param relicTitle the relic title which is the part name
+   * @param mainRelicStat the main relic stats
    * @param subRelicStats the sub relic stats
-   * @param relicRatingInfo the relic rating info
    */
-  function evaluateRelic(subRelicStats: RelicSubStats[], relicRatingInfo: RelicRatingInfo) {
-    const configValuableSubStats = relicRatingInfo.valuableSub;
-    const configShouldLockStats = relicRatingInfo.shouldLock;
-    let isMostValuableRelic = false;
+  function evaluateRelic(relicTitle: string, mainRelicStat: RelicMainStats, subRelicStats: RelicSubStats[]) {
+    // get the relic rating rules
+    const ratingRules = relicUtils.getRelicRatingRules(relicTitle, mainRelicStat.name);
 
-    setIsValuableMainStats(true);
-
-    // extract the name from the subRelicStats
-    const subStatsList = subRelicStats.map(stat => stat.name);
-
-    // label the valuable sub stats
-    const labeledSubStats = relicUtils.labelValuableSubStats(configValuableSubStats, subStatsList);
-
-    // check if the relic is the most valuable relic
-    if (
-      relicUtils.isMostValuableRelic(
-        configShouldLockStats,
-        subStatsList,
-        Object.values(labeledSubStats).filter(val => val).length
-      )
-    ) {
-      isMostValuableRelic = true;
+    if (!ratingRules.success) {
+      toast(ratingRules.message, { type: 'error' });
+      return;
     }
 
-    setIsMostValuableRelic(isMostValuableRelic);
-    setIsValuableSubStats(labeledSubStats);
-
-    // if the valuable sub stats is more than 1, then the relic is valuable
-    if (Object.values(labeledSubStats).filter(val => val).length >= 1) {
-      setIsValuableRelic(true);
-    } else {
-      setIsValuableRelic(false);
+    // if the rating rules empty, return
+    if (ratingRules.rules.length === 0) {
+      return;
     }
+
+    // TODO: need to implement a priority queue to sort the characterBasePartRatingList
+    const characterBasePartRatingList: CharacterBasePartRating[] = [];
+    // iterate through the rules calculate the valuable stats, score for each character
+    ratingRules.rules.forEach(rule => {
+      const valuableSub = rule.valuableSub;
+      const character = rule.fitCharacters;
+      const newRating: CharacterBasePartRating = {
+        character,
+        valuableSub: {},
+        minTotalScore: 0,
+        maxTotalScore: 0,
+      };
+
+      subRelicStats.forEach(subStat => {
+        if (valuableSub.includes(subStat.name)) {
+          newRating.valuableSub[subStat.name] = {
+            valuable: true,
+          };
+
+          newRating.minTotalScore += subStat.score instanceof Array ? Math.min(...subStat.score) : subStat.score;
+          newRating.maxTotalScore += subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score;
+        } else {
+          newRating.valuableSub[subStat.name] = {
+            valuable: false,
+          };
+        }
+      });
+      if (Object.values(newRating.valuableSub).some(subStat => subStat.valuable)) {
+        newRating.maxTotalScore = parseFloat(newRating.maxTotalScore.toFixed(2));
+        newRating.minTotalScore = parseFloat(newRating.minTotalScore.toFixed(2));
+        characterBasePartRatingList.push(newRating);
+      }
+    });
+
+    // sort the characterBasePartRatingList
+    characterBasePartRatingList.sort((a, b) => b.maxTotalScore - a.maxTotalScore);
+
+    setCharacterBasePartRatingList(characterBasePartRatingList);
   }
 
   /**
@@ -200,7 +186,7 @@ const ScanContent = ({
    * @param mainRelicStats the main relic stats
    * @param subRelicStats the sub relic stats
    */
-  function calulateRelicGrowthRate(mainRelicStats: RelicMainStats, subRelicStats: RelicSubStats[]) {
+  function calculateRelicGrowthRate(mainRelicStats: RelicMainStats, subRelicStats: RelicSubStats[]) {
     const relicGrowthRate = {
       minGrowthScore: 0,
       maxGrowthScore: 0,
@@ -225,7 +211,9 @@ const ScanContent = ({
       }
     }
 
-    console.log(relicGrowthRate);
+    relicGrowthRate.maxGrowthScore = parseFloat(relicGrowthRate.maxGrowthScore.toFixed(2));
+    relicGrowthRate.minGrowthScore = parseFloat(relicGrowthRate.minGrowthScore.toFixed(2));
+
     setRelicGrowthRate(relicGrowthRate);
   }
 
@@ -327,10 +315,6 @@ const ScanContent = ({
         } else {
           console.error('OCR results are not available'); // TODO: log this to the
         }
-
-        // prefetch the relic rating info
-        const relicRatingInfo = await fetchRelicRatingInfo();
-        setRelicRatingInfo(relicRatingInfo);
       } else {
         console.log('Worker not initialized'); // TODO: log this to the log area
       }
@@ -342,159 +326,87 @@ const ScanContent = ({
     }
   };
 
-  function renderTitleOCRResult(OCRResult: OCRResult) {
-    if (OCRResult.title.error) {
-      return (
-        <div>
-          <div>{OCRResult.title.error}</div>
-        </div>
-      );
-    }
-
-    return <div className="text-lg font-bold text-indigo-600">{OCRResult.title.result}</div>;
-  }
-
-  function renderMainStatsOCRResult(OCRResult: OCRResult) {
-    if (OCRResult.mainStats.error) {
-      return <div className="my-2 text-red-600">{OCRResult.mainStats.error}</div>;
-    }
-
-    if (!OCRResult.mainStats.result) {
-      return (
-        <div className="my-2 text-red-600">主属性为空, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进</div>
-      );
+  const renderOCRResult = () => {
+    if (!OCRResult) {
+      return <div className="font-semibold">选择模板后,开始扫描，显示遗器扫描内容</div>;
     }
 
     return (
-      <div
-        className={cn('my-2 text-center font-semibold', {
-          'text-green-600': isValuableMainStats,
-          'text-red-600': !isValuableMainStats,
-        })}
-      >
-        {OCRResult.mainStats.result.name} {OCRResult.mainStats.result.number} +{OCRResult.mainStats.result.level}
-        <Badge
-          className={cn('ml-2', {
-            'bg-green-600': isValuableMainStats,
-            'bg-red-600': !isValuableMainStats,
-          })}
-          onClick={handleToggleMainStat}
-        >
-          {isValuableMainStats ? '有效' : '无效'}
+      <div className="mt-2 flex flex-col gap-2">
+        {OCRResult.title.error ? (
+          <div className="text-red-600">{OCRResult.title.error}</div>
+        ) : (
+          <div className="font-black text-indigo-700">{OCRResult.title.result}</div>
+        )}
+        {OCRResult.mainStats.error && <div className="text-red-600">{OCRResult.mainStats.error}</div>}
+        {!OCRResult.mainStats.error && OCRResult.mainStats.result && (
+          <div className="flex items-center justify-center gap-2 font-semibold">
+            {OCRResult.mainStats.result.name}: {OCRResult.mainStats.result.number}
+            <Badge>{OCRResult.mainStats.result.level}级</Badge>
+          </div>
+        )}
+        <Separator />
+        {OCRResult.subStats.error && <div className="text-red-600">{OCRResult.subStats.error}</div>}
+        {OCRResult.subStats.result ? (
+          <div className="flex flex-col gap-2">
+            {OCRResult.subStats.result.map(subStat => (
+              <div key={subStat.name} className="flex items-center justify-center gap-2 font-semibold">
+                {subStat.name}: {subStat.number}
+                <Badge>{subStat.score instanceof Array ? subStat.score.join(' | ') : subStat.score}</Badge>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>暂无</div>
+        )}
+      </div>
+    );
+  };
+
+  const renderRelicGrowthRate = () => {
+    if (!relicGrowthRate) {
+      return null;
+    }
+
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <span className="font-semibold">遗器成长率: </span>
+        <Badge className={'inline-flex flex-row gap-2'}>
+          <span>
+            {relicGrowthRate.maxGrowthScore === relicGrowthRate.minGrowthScore
+              ? relicGrowthRate.maxGrowthScore
+              : `${relicGrowthRate.minGrowthScore} - ${relicGrowthRate.maxGrowthScore}`}
+          </span>
+          <span> / </span>
+          <span>{relicGrowthRate.maxScore}</span>
         </Badge>
       </div>
     );
-  }
+  };
 
-  function renderSubStatsOCRResult(OCRResult: OCRResult) {
-    if (OCRResult.subStats.error) {
-      return <div className="my-2 text-red-600">{OCRResult.subStats.error}</div>;
+  const renderCharacterBasePartRatingList = () => {
+    if (characterBasePartRatingList.length === 0) {
+      return <div className="font-semibold">暂无适用角色评分</div>;
     }
 
-    if (!OCRResult.subStats.result) {
-      return (
-        <div className="my-2 text-red-600">副属性为空, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进</div>
-      );
-    }
+    console.log(characterBasePartRatingList);
 
     return (
-      <div className="my-2">
-        <div className="grid grid-cols-4 gap-2 font-semibold">
-          <div className="mb-1 mr-1">副属性</div>
-          <div className="mb-1 mr-1">数值</div>
-          <div className="mb-1 mr-1">分数</div>
-          <div className="mb-1 mr-1">有效性</div>
-        </div>
-        {OCRResult.subStats.result.map((subStat, index) => (
-          <div key={index} className="grid grid-cols-4 items-center gap-2">
-            <div className="mb-1 overflow-hidden whitespace-nowrap">{subStat.name}</div>
-            <div className="mb-1 overflow-hidden whitespace-nowrap">{subStat.number}</div>
-            <div className="mb-1 overflow-hidden whitespace-nowrap">
-              {Array.isArray(subStat.score) ? subStat.score.join(' | ') : subStat.score}
-            </div>
-            <div className="mb-1 text-center">
-              <Badge
-                className={cn({
-                  'bg-green-600': isValuableSubStats[index + 1],
-                  'bg-red-600': !isValuableSubStats[index + 1],
-                })}
-              >
-                {isValuableSubStats[index + 1] ? '有效' : '无效'}
-              </Badge>
-            </div>
-          </div>
+      <div className="flex flex-col gap-2">
+        {characterBasePartRatingList.map((rating, index) => (
+          <CharacterRatingBadge characterRating={rating} key={index} />
         ))}
       </div>
     );
-  }
-
-  /**
-   * Handle the toggle main stat
-   */
-  async function handleToggleMainStat() {
-    if (!OCRResult) {
-      toast('请先开始扫描遗器', { type: 'error' }); // TODO: log this to the log area
-      return;
-    }
-    const relicTitle = OCRResult.title.result;
-    const mainRelicStats = OCRResult.mainStats.result;
-
-    if (!mainRelicStats || !relicTitle) {
-      toast('无法获取遗器信息', { type: 'error' }); // TODO: log this to the log area
-      return;
-    }
-    if (isValuableMainStats) {
-      const result = await relicUtils.removeRelicRatingValuableMain(relicTitle, mainRelicStats.name);
-      if (result.success) {
-        setIsValuableMainStats(false);
-        toast(result.message, { type: 'success' });
-      } else {
-        toast(result.message, { type: 'error' }); // TODO: log this to the log area
-      }
-    } else {
-      const result = await relicUtils.addRelicRatingValuableMain(relicTitle, mainRelicStats.name);
-      if (result.success) {
-        setIsValuableMainStats(true);
-        toast(result.message, { type: 'success' });
-      } else {
-        toast(result.message, { type: 'error' }); // TODO: log this to the log area
-      }
-    }
-  }
+  };
 
   return (
-    <div className="flex flex-col text-center">
-      {OCRResult && (
-        <div className="text-lg font-semibold">
-          <Badge
-            className={cn({
-              'bg-yellow-600': isMostValuableRelic,
-              'bg-green-600': isValuableRelic && !isMostValuableRelic,
-              'bg-red-600': !isValuableRelic && !isMostValuableRelic,
-            })}
-          >
-            {isMostValuableRelic ? '建议锁定' : isValuableRelic ? '可以保留' : '建议分解'}
-          </Badge>
-        </div>
-      )}
-      {OCRResult && renderTitleOCRResult(OCRResult)}
-      <div className="my-2">
-        {relicGrowthRate &&
-          (relicGrowthRate.minGrowthScore === relicGrowthRate.maxGrowthScore ? (
-            <div className="font-semibold">
-              遗器成长值: {parseFloat(relicGrowthRate.minGrowthScore.toFixed(2))} /{' '}
-              {parseFloat(relicGrowthRate.maxScore.toFixed(2))}
-            </div>
-          ) : (
-            <div className="font-semibold">
-              遗器成长值: {parseFloat(relicGrowthRate.minGrowthScore.toFixed(2))} -{' '}
-              {parseFloat(relicGrowthRate.maxGrowthScore.toFixed(2))} /{' '}
-              {parseFloat(relicGrowthRate.maxScore.toFixed(2))}
-            </div>
-          ))}
+    <div className="flex w-full flex-row gap-2 text-center">
+      <div className="w-1/2">
+        {renderRelicGrowthRate()}
+        {renderOCRResult()}
       </div>
-      {OCRResult && renderMainStatsOCRResult(OCRResult)}
-      {OCRResult && renderSubStatsOCRResult(OCRResult)}
+      <div className="w-1/2">{renderCharacterBasePartRatingList()}</div>
     </div>
   );
 };

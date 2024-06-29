@@ -1,11 +1,16 @@
+import { unlink, writeFile } from 'fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'util';
 
-import { app, BrowserWindow, desktopCapturer, ipcMain } from 'electron';
+import { app, BrowserWindow, desktopCapturer, dialog, ipcMain } from 'electron';
 
 import store from './store.ts';
 
 import { RatingTemplate, RatingTemplateStore } from '@/type/types.ts';
+
+const writeFileAsync = promisify(writeFile);
+const unlinkAsync = promisify(unlink);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -170,5 +175,41 @@ ipcMain.on('change-window-mode', (_, isLightMode) => {
     win?.setSize(600, 400); // 轻量模式尺寸
   } else {
     win?.setSize(1200, 1000); // 全尺寸模式
+  }
+});
+
+ipcMain.on('export-relic-rules-template', async (_, data: RatingTemplate) => {
+  try {
+    // Serialize data to JSON
+    const jsonContent = JSON.stringify(data);
+
+    // Temporary file path
+    const tempPath = app.getPath('temp') + '/data.json';
+
+    // Write to a temporary file
+    await writeFileAsync(tempPath, jsonContent, 'utf-8');
+
+    win?.minimize(); // Minimize the window
+
+    // Show save dialog to the user
+    const { filePath } = await dialog.showSaveDialog({
+      title: '保存遗器规则模板',
+      defaultPath: 'relic_config.json',
+      buttonLabel: 'Save',
+      filters: [{ name: 'JSON Files', extensions: ['json'] }],
+    });
+
+    if (filePath) {
+      // Move temporary file to user-selected location
+      await writeFileAsync(filePath, jsonContent, 'utf-8');
+      return 'File saved successfully!';
+    } else {
+      // User cancelled the save
+      await unlinkAsync(tempPath); // Clean up temporary file
+      return 'File save cancelled.';
+    }
+  } catch (error) {
+    console.error('Failed to save the file:', error);
+    return 'Error saving file.';
   }
 });

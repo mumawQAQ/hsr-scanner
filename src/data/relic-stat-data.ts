@@ -1,6 +1,8 @@
 import { RelicType } from '@/type/types.ts';
 
-export const relicMainStatsLevel = {
+export const RelicMainStatsLevel: {
+  [key: string]: { step: number; base: number };
+} = {
   [RelicType.HP]: {
     base: 112.896,
     step: 39.5136,
@@ -79,7 +81,11 @@ export const relicMainStatsLevel = {
   },
 };
 
-export const relicSubStatsScore = {
+export const RelicSubStatsScore: {
+  [key: string]: {
+    [key: string]: number | number[];
+  };
+} = {
   [RelicType.HP]: {
     '33': 0.8,
     '38': 0.9,
