@@ -68,9 +68,14 @@ const RelicRuleTemplateInModal = () => {
                     <span className="text-sm text-gray-600"> by {template.author}</span>
                   </div>
                   <div className="space-x-2">
-                    <Button size="sm" onClick={() => handleUseTemplate(template, templateId)}>
-                      使用
-                    </Button>
+                    {
+                      // if the template isn't current template
+                      templateId !== currentRelicRatingRulesTemplateId && (
+                        <Button size="sm" onClick={() => handleUseTemplate(template, templateId)}>
+                          使用
+                        </Button>
+                      )
+                    }
                     <Button size="sm" variant="destructive" onClick={() => handleDeleteRulesTemplate(templateId)}>
                       删除
                     </Button>
