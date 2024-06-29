@@ -157,7 +157,6 @@ const ScanContent = ({
       subRelicStats.forEach(subStat => {
         if (valuableSub.includes(subStat.name)) {
           newRating.valuableSub[subStat.name] = {
-            score: subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score,
             valuable: true,
           };
 
@@ -165,7 +164,6 @@ const ScanContent = ({
           newRating.maxTotalScore += subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score;
         } else {
           newRating.valuableSub[subStat.name] = {
-            score: subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score,
             valuable: false,
           };
         }
@@ -396,7 +394,7 @@ const ScanContent = ({
     return (
       <div className="flex flex-col gap-2">
         {characterBasePartRatingList.map((rating, index) => (
-          <CharacterRatingBadge characterRating={rating} key={index} order={index} />
+          <CharacterRatingBadge characterRating={rating} key={index} />
         ))}
       </div>
     );

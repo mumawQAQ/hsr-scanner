@@ -6,15 +6,13 @@ import { CharacterBasePartRating } from '@/type/types.ts';
 
 interface CharacterRatingBadgeProps {
   characterRating: CharacterBasePartRating;
-  order: number;
 }
 
-const CharacterRatingBadge = ({ characterRating, order }: CharacterRatingBadgeProps) => {
+const CharacterRatingBadge = ({ characterRating }: CharacterRatingBadgeProps) => {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger className={'flex items-center gap-2 rounded-lg border-2 p-2'}>
-          <div className="text-sm font-black">{order}</div>
           <Badge
             className={'inline-flex flex-shrink-0 flex-row gap-2 overflow-hidden whitespace-nowrap text-sm font-black'}
             variant="secondary"
@@ -29,10 +27,7 @@ const CharacterRatingBadge = ({ characterRating, order }: CharacterRatingBadgePr
           <div className="flex flex-wrap">
             {characterRating.character.map((character, index) => (
               <div key={index}>
-                <Badge className="flex flex-row items-center">
-                  <img src={CharactersData[character].icon} alt="character" className="h-6 w-6 rounded-full" />
-                  {CharactersData[character].name}
-                </Badge>
+                <img src={CharactersData[character].icon} alt="character" className="h-7 w-7 rounded-full" />
               </div>
             ))}
           </div>
@@ -42,7 +37,7 @@ const CharacterRatingBadge = ({ characterRating, order }: CharacterRatingBadgePr
           <div className="flex flex-col gap-2">
             {Object.keys(characterRating.valuableSub).map(subStat => (
               <div key={subStat} className="flex items-center justify-center gap-2 font-semibold">
-                {subStat}: {characterRating.valuableSub[subStat].score}
+                {subStat}
                 <Badge
                   className={cn(
                     'inline-flex flex-row gap-2',
