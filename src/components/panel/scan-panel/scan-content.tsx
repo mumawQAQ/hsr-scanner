@@ -393,7 +393,7 @@ const ScanContent = ({
     console.log(characterBasePartRatingList);
 
     return (
-      <ScrollArea className="h-[390px]">
+      <ScrollArea className="h-[300px]">
         <div className="flex flex-col gap-2">
           {characterBasePartRatingList.map((rating, index) => (
             <CharacterRatingBadge characterRating={rating} key={index} />
