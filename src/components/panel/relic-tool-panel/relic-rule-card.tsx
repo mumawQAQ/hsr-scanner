@@ -10,10 +10,10 @@ import RelicSubStatsSelector from '@/components/panel/relic-tool-panel/selector/
 import { Badge } from '@/components/ui/badge.tsx';
 import { Card, CardContent } from '@/components/ui/card.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
+import { CharactersData } from '@/data/characters-data.ts';
 import { RelicSetsData } from '@/data/relic-sets-data.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import {
-  Characters,
   RatingRule,
   RelicBodyMainStatsType,
   RelicGloveMainStatsType,
@@ -390,8 +390,8 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
               {characters &&
                 characters.map((character, index) => (
                   <Badge key={index} className="mr-2 inline-flex flex-row items-center gap-1">
-                    <img src={Characters[character].icon} className="h-6 w-6" alt="relic icon" />
-                    {Characters[character].name}
+                    <img src={CharactersData[character].icon} className="h-6 w-6" alt="relic icon" />
+                    {CharactersData[character].name}
                   </Badge>
                 ))}
             </div>
