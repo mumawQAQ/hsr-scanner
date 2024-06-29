@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { RelicSets } from '@/data/relic-sets.ts';
+import { RelicSetsData } from '@/data/relic-sets-data.ts';
 
 type RelicSetSelectorProps = {
   selectedKeys: string[];
@@ -34,7 +34,7 @@ const RelicSetSelector: React.FC<RelicSetSelectorProps> = ({ selectedKeys, onSel
           <CommandList>
             <CommandEmpty>没有找到对应套装</CommandEmpty>
             <CommandGroup>
-              {Object.entries(RelicSets).map(([key, value]) => (
+              {Object.entries(RelicSetsData).map(([key, value]) => (
                 <CommandItem key={key} value={value.name}>
                   <Checkbox
                     checked={selectedKeys ? selectedKeys.includes(key) : false}

@@ -35,7 +35,7 @@ import image7 from '@/assets/icon/relic/7.png';
 import image8 from '@/assets/icon/relic/8.png';
 import image9 from '@/assets/icon/relic/9.png';
 
-export const RelicSets: {
+export const RelicSetsData: {
   [key: string]: {
     name: string;
     icon: string;

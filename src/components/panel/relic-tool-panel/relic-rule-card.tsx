@@ -10,7 +10,7 @@ import RelicSubStatsSelector from '@/components/panel/relic-tool-panel/selector/
 import { Badge } from '@/components/ui/badge.tsx';
 import { Card, CardContent } from '@/components/ui/card.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
-import { RelicSets } from '@/data/relic-sets.ts';
+import { RelicSetsData } from '@/data/relic-sets-data.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import {
   Characters,
@@ -116,13 +116,13 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     }
 
     // get the new setName's parts
-    const newHead = setNames.map(setName => RelicSets[setName].parts['Head']).filter(Boolean);
-    const newGlove = setNames.map(setName => RelicSets[setName].parts['Hand']).filter(Boolean);
-    const newBody = setNames.map(setName => RelicSets[setName].parts['Body']).filter(Boolean);
-    const newShoe = setNames.map(setName => RelicSets[setName].parts['Feet']).filter(Boolean);
+    const newHead = setNames.map(setName => RelicSetsData[setName].parts['Head']).filter(Boolean);
+    const newGlove = setNames.map(setName => RelicSetsData[setName].parts['Hand']).filter(Boolean);
+    const newBody = setNames.map(setName => RelicSetsData[setName].parts['Body']).filter(Boolean);
+    const newShoe = setNames.map(setName => RelicSetsData[setName].parts['Feet']).filter(Boolean);
 
-    const newSphere = setNames.map(setName => RelicSets[setName].parts['Sphere']).filter(Boolean);
-    const newRope = setNames.map(setName => RelicSets[setName].parts['Rope']).filter(Boolean);
+    const newSphere = setNames.map(setName => RelicSetsData[setName].parts['Sphere']).filter(Boolean);
+    const newRope = setNames.map(setName => RelicSetsData[setName].parts['Rope']).filter(Boolean);
 
     // generate the new rules
     const newPartNames: {
@@ -164,13 +164,13 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     }
 
     // if the new setNames don't any inner set, clear the sphere and rope main stats
-    if (!setNames.some(setName => RelicSets[setName].isInner)) {
+    if (!setNames.some(setName => RelicSetsData[setName].isInner)) {
       setSphereMainStats([]);
       setRopeMainStats([]);
     }
 
     // if the new setNames don't any outer set, clear the head, glove, body, shoe main stats
-    if (!setNames.some(setName => !RelicSets[setName].isInner)) {
+    if (!setNames.some(setName => !RelicSetsData[setName].isInner)) {
       setHeadMainStats([]);
       setGloveMainStats([]);
       setBodyMainStats([]);
@@ -200,8 +200,8 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     const partNames = [];
 
     for (const setName of setNames) {
-      if (RelicSets[setName].parts[partType]) {
-        partNames.push(RelicSets[setName].parts[partType]);
+      if (RelicSetsData[setName].parts[partType]) {
+        partNames.push(RelicSetsData[setName].parts[partType]);
       }
     }
 
@@ -304,8 +304,8 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
           {setNames &&
             setNames.map((setName, index) => (
               <Badge key={index} className="mr-2 inline-flex flex-row items-center gap-1">
-                <img src={RelicSets[setName].icon} className="h-6 w-6" alt="relic icon" />
-                {RelicSets[setName].name}
+                <img src={RelicSetsData[setName].icon} className="h-6 w-6" alt="relic icon" />
+                {RelicSetsData[setName].name}
               </Badge>
             ))}
         </div>
@@ -316,7 +316,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
             <div>
               {
                 // any setName is not inner to show the head, glove, body, shoe
-                setNames.some(setName => !RelicSets[setName].isInner) && (
+                setNames.some(setName => !RelicSetsData[setName].isInner) && (
                   <div>
                     <RelicMainStatsSelector
                       partName="头"
@@ -351,7 +351,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
               }
               {
                 // any setName is inner, show the sphere, rope
-                setNames.some(setName => RelicSets[setName].isInner) && (
+                setNames.some(setName => RelicSetsData[setName].isInner) && (
                   <div>
                     <RelicMainStatsSelector
                       partName="球"
