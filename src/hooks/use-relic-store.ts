@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 
-import { RelicMainStats, RelicRatingInfo, RelicSubStats } from '../type/types.ts';
-
-import RelicUtils from '@/utils/relicRatingUtils.ts';
+import { RelicMainStats, RelicSubStats } from '../type/types.ts';
 
 type UseRelicStore = {
   relicTitle: string;
@@ -16,10 +14,6 @@ type UseRelicStore = {
   subRelicStats: RelicSubStats[] | [];
   getSubRelicStats: () => RelicSubStats[] | [];
   setSubRelicStats: (subRelicStats: RelicSubStats[]) => void;
-
-  relicRatingInfo: RelicRatingInfo | null;
-  fetchRelicRatingInfo: () => Promise<any>;
-  setRelicRatingInfo: (relicRatingInfo: RelicRatingInfo | null) => void;
 };
 
 const useRelicStore = create<UseRelicStore>((set, get) => ({
@@ -45,19 +39,6 @@ const useRelicStore = create<UseRelicStore>((set, get) => ({
   },
   setSubRelicStats: subRelicStats => {
     set({ subRelicStats });
-  },
-
-  relicRatingInfo: null,
-  fetchRelicRatingInfo: async () => {
-    const relicTitle = get().relicTitle;
-    const relicMainStatName = get().mainRelicStats?.name;
-    if (!relicMainStatName || !relicTitle) {
-      return;
-    }
-    return await RelicUtils.getRelicRatingInfo(relicTitle, relicMainStatName);
-  },
-  setRelicRatingInfo: relicRatingInfo => {
-    set({ relicRatingInfo });
   },
 }));
 

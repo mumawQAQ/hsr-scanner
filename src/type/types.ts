@@ -1,3 +1,15 @@
+export type CharacterBasePartRating = {
+  character: string[];
+  valuableSub: {
+    [subStat: string]: {
+      score: number;
+      valuable: boolean;
+    };
+  };
+  minTotalScore: number;
+  maxTotalScore: number;
+};
+
 export type RatingRule = {
   setNames: string[];
   partNames: {

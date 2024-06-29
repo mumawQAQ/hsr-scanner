@@ -4,8 +4,9 @@ import { RelicType } from '../type/types.ts';
 
 import statsRegs from '@/data/regex.ts';
 import { FuzzyPartNames } from '@/data/relic-parts-data.ts';
+import { RelicMainStatsLevel, RelicSubStatsScore } from '@/data/relic-stat-data.ts';
 
-const fixRelicType = (number: string, srcType: RelicType) => {
+const fixRelicType = (number: string, srcType: RelicType): RelicType => {
   if (number.endsWith('%')) {
     if (srcType === RelicType.DEF) {
       return RelicType.DEFPercentage;
@@ -85,7 +86,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         const fixedType = fixRelicType(number, name);
 
         // calculate the level of the main stat
-        const { base, step } = await (window as any).ipcRenderer.storeGet(`data.relicMainStatsLevel.${fixedType}`);
+        const { base, step } = RelicMainStatsLevel[fixedType];
 
         // if number end with %, then get its value
         const actualNum = number.endsWith('%') ? parseFloat(number) / 100 : parseFloat(number);
@@ -138,8 +139,8 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
         }
         // fix the relic type if the number is a percentage
         const fixedType = fixRelicType(number, name);
-        // calculate the score of the sub stat'
-        const score = (await (window as any).ipcRenderer.storeGet(`data.relicSubStatsScore.${fixedType}`))[number];
+        // calculate the score of the sub stat
+        const score = RelicSubStatsScore[fixedType][number];
 
         // const score = relic.relicSubStatsScore[fixedType][number]
         matchedStats.push({ name: fixedType, number: number, score: score });
