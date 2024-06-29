@@ -328,7 +328,7 @@ const ScanContent = ({
 
   const renderOCRResult = () => {
     if (!OCRResult) {
-      return <div className="font-semibold">开始扫描后，显示遗器扫描内容</div>;
+      return <div className="font-semibold">选择模板后,开始扫描，显示遗器扫描内容</div>;
     }
 
     return (
