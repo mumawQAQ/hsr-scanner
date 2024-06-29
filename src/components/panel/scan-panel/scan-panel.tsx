@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
+import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
 interface SCanPanelProps {
   isLightMode: boolean;
@@ -17,6 +18,8 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
   const titlePartRef = React.useRef<HTMLCanvasElement>(null);
   const mainStatsPartRef = React.useRef<HTMLCanvasElement>(null);
   const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
+
+  const { currentRelicRatingRulesTemplate } = useRelicTemplateStore();
 
   const [scanningStatus, setScanningStatus] = useState(() => {
     const storedStatus = localStorage.getItem('scanningStatus');
@@ -46,7 +49,11 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
     <div>
       <ResizablePanelGroup direction="vertical" className={isLightMode ? 'min-h-[310px]' : 'min-h-[880px]'}>
         <div className="mb-2 flex items-center">
-          {!isLightMode ? '' : <p>当前使用模版：</p>}
+          {
+            isLightMode && (
+              <p className='max-w-xs truncate'>当前使用模版：{currentRelicRatingRulesTemplate ? currentRelicRatingRulesTemplate.templateName : '无'}</p>
+            )
+          }
           <div className="flex-grow"></div>
           {!isLightMode ? '' : (
             <div className="flex items-center justify-center space-x-2 mr-2">
