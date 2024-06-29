@@ -1,8 +1,9 @@
 import { Worker } from 'tesseract.js';
 
-import { FuzzyTitleSet, RelicType } from '../type/types.ts';
+import { RelicType } from '../type/types.ts';
 
 import statsRegs from '@/data/regex.ts';
+import { FuzzyPartNames } from '@/data/relic-parts-data.ts';
 
 const fixRelicType = (number: string, srcType: RelicType) => {
   if (number.endsWith('%')) {
@@ -43,7 +44,7 @@ const relicTitleExtractor = async (worker: Worker, image: string) => {
     // trim the text
     titleText = titleText.trim();
 
-    const fuzzyTitleResult = FuzzyTitleSet.get(titleText);
+    const fuzzyTitleResult = FuzzyPartNames.get(titleText);
 
     if (!fuzzyTitleResult || fuzzyTitleResult.length === 0) {
       return {
