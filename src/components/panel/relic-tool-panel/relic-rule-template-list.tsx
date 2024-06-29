@@ -2,7 +2,7 @@ import RelicRuleTemplateCard from '@/components/panel/relic-tool-panel/relic-rul
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 
 const RelicRuleTemplateList = () => {
-  const { relicRatingRulesTemplateStore } = useRelicTemplateStore();
+  const { relicRatingRulesTemplateStore, currentRelicRatingRulesTemplateId } = useRelicTemplateStore();
 
   if (!relicRatingRulesTemplateStore) {
     return null;
@@ -16,6 +16,7 @@ const RelicRuleTemplateList = () => {
           name={template.templateName}
           description={template.templateDescription}
           templateID={templateId}
+          currentTemplateID={currentRelicRatingRulesTemplateId}
         />
       ))}
       {

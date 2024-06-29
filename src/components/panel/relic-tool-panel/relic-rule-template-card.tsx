@@ -5,14 +5,16 @@ import { toast } from 'react-toastify';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
+import { cn } from '@/lib/utils.ts';
 
 type RelicRuleTemplateCardProps = {
   name: string;
   description: string;
   templateID: string;
+  currentTemplateID: string | null;
 };
 
-const RelicRuleTemplateCard = ({ name, description, templateID }: RelicRuleTemplateCardProps) => {
+const RelicRuleTemplateCard = ({ name, description, templateID, currentTemplateID }: RelicRuleTemplateCardProps) => {
   const { setCurrentRelicRatingRulesTemplate, relicRatingRulesTemplateStore, removeRelicRatingRulesTemplate } =
     useRelicTemplateStore();
   const navigate = useNavigate();
@@ -36,7 +38,10 @@ const RelicRuleTemplateCard = ({ name, description, templateID }: RelicRuleTempl
 
   return (
     <Card
-      className="h-fit cursor-pointer hover:ring hover:ring-offset-1"
+      className={cn(
+        'h-fit cursor-pointer transition-all duration-200 ease-in-out hover:shadow-lg hover:ring hover:ring-offset-1',
+        templateID === currentTemplateID ? 'border-2 border-green-700' : ''
+      )}
       onClick={() => {
         // set the current template
         setCurrentRelicRatingRulesTemplate(relicRatingRulesTemplateStore[templateID], templateID);

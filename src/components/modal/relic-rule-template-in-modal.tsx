@@ -6,11 +6,16 @@ import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import { RatingTemplate } from '@/type/types.ts';
+import { cn } from '@/lib/utils.ts';
 
 const RelicRuleTemplateInModal = () => {
   const { isOpen, onClose, type, onOpen } = useModal();
-  const { removeRelicRatingRulesTemplate, relicRatingRulesTemplateStore, setCurrentRelicRatingRulesTemplate } =
-    useRelicTemplateStore();
+  const {
+    removeRelicRatingRulesTemplate,
+    relicRatingRulesTemplateStore,
+    setCurrentRelicRatingRulesTemplate,
+    currentRelicRatingRulesTemplateId,
+  } = useRelicTemplateStore();
 
   const isModalOpen = isOpen && type === 'import-relic-rules-template';
 
@@ -53,7 +58,10 @@ const RelicRuleTemplateInModal = () => {
               return (
                 <div
                   key={templateId}
-                  className="my-2 flex flex-row items-center justify-between rounded border-2 p-2 hover:border-gray-700"
+                  className={cn(
+                    'mx-2 my-2 flex flex-row items-center justify-between rounded border-2 p-2 transition-all duration-200 ease-in-out hover:shadow-lg hover:ring hover:ring-offset-1',
+                    templateId === currentRelicRatingRulesTemplateId ? 'border-2 border-green-700' : ''
+                  )}
                 >
                   <div>
                     <span className="font-black">{template.templateName}</span>
