@@ -34,7 +34,7 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         />
       </div>
       <div className="flex items-center justify-center space-x-2">
-        <Label htmlFor="scan-mode" className="font-semibold">
+        <Label htmlFor="scan-mode" className="font-semibold text-nowrap">
           开始扫描
         </Label>
         <Switch id="scan-mode" checked={scanningStatus} onCheckedChange={setScanningStatus} />

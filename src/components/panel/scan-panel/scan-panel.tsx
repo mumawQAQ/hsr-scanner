@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import ScanAction from '@/components/panel/scan-panel/scan-action.tsx';
 import ScanContent from '@/components/panel/scan-panel/scan-content.tsx';
@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
-import { cn } from '@/lib/utils.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
+import useWindowStore from '@/hooks/use-window-store.ts';
+import { cn } from '@/lib/utils.ts';
 
 interface SCanPanelProps {
   isLightMode: boolean;
@@ -21,30 +22,13 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
   const subStatsPartRef = React.useRef<HTMLCanvasElement>(null);
 
   const { currentRelicRatingRulesTemplate } = useRelicTemplateStore();
-
-  const [scanningStatus, setScanningStatus] = useState(() => {
-    const storedStatus = localStorage.getItem('scanningStatus');
-    return storedStatus ? storedStatus === 'true' : false;
-  });
-
-  const [scanInterval, setScanInterval] = useState(() => {
-    const storedInterval = localStorage.getItem('scanInterval');
-    return storedInterval ? parseInt(storedInterval, 10) : 2000;
-  });
+  const { scanningStatus, setScanningStatus, scanInterval, setScanInterval } = useWindowStore();
 
   const toggleWindowMode = () => {
     const newMode = !isLightMode;
     setLightMode(newMode);
     (window as any).ipcRenderer.changeWindowMode(newMode);
   };
-
-  useEffect(() => {
-    localStorage.setItem('scanningStatus', String(scanningStatus));
-  }, [scanningStatus]);
-
-  useEffect(() => {
-    localStorage.setItem('scanInterval', scanInterval.toString());
-  }, [scanInterval]);
 
   return (
     <div>
