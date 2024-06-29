@@ -1,6 +1,4 @@
 import { ChevronLeft } from 'lucide-react';
-import { compress } from 'compress-json';
-import QRCode from 'qrcode';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -27,14 +25,9 @@ export function RelicToolNavbar() {
       toast('当前没有规则模板', { type: 'error' });
       return;
     }
-    const jsonTemplate = JSON.stringify(compress(currentRelicRatingRulesTemplate));
-
-    console.log(jsonTemplate);
 
     try {
-      // generate a qr code from jsonTemplate
-      const qrcode = await QRCode.toDataURL(jsonTemplate, { version: 40 });
-      onOpen('export-relic-rules-template', { qrCode: qrcode });
+      await (window as any).ipcRenderer.exportRelicRulesTemplate(currentRelicRatingRulesTemplate);
     } catch (error) {
       if (error instanceof Error) {
         toast(`导出失败，${error.message}`, { type: 'error' });

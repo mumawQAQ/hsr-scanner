@@ -52,5 +52,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   },
   changeWindowMode(mode: boolean) {
     ipcRenderer.send('change-window-mode', mode);
-  }
+  },
+  exportRelicRulesTemplate(template: RatingTemplate) {
+    ipcRenderer.send('export-relic-rules-template', template);
+  },
 });
