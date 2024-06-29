@@ -5,13 +5,13 @@ import { createWorker, Worker } from 'tesseract.js';
 
 import CharacterRatingBadge from '@/components/panel/scan-panel/character-rating-badge.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
+import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';
 import { CharacterBasePartRating, OCRResult, RelicMainStats, RelicSubStats } from '@/type/types.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicRatingUtils.ts';
-import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 
 type ScanContentProps = {
   scanningStatus: boolean;
