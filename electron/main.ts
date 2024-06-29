@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'util';
 
-import { app, BrowserWindow, desktopCapturer, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, desktopCapturer, dialog, ipcMain, Notification, shell } from 'electron';
 
 import store from './store.ts';
 
@@ -147,6 +147,9 @@ function createMainWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'));
   }
+
+  // 检查更新
+  checkForUpdates();
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -213,3 +216,37 @@ ipcMain.on('export-relic-rules-template', async (_, data: RatingTemplate) => {
     return 'Error saving file.';
   }
 });
+
+async function checkForUpdates() {
+  const url = "https://api.github.com/repos/mumawQAQ/hsr-scanner/releases/latest";
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const latestVersion = data.tag_name;
+    const currentVersion = app.getVersion();
+    // console.log(latestVersion)
+    // console.log(currentVersion)
+
+    if (latestVersion !== currentVersion) {
+      // win?.webContents.send('update_available', data.html_url);
+      showNotification('崩铁遗器筛选工具更新可用', `有新的版本 ${latestVersion} 可用。点击查看。`, data.html_url);
+    }
+  } catch (error) {
+    console.error('Failed to fetch latest release:', error);
+  }
+}
+
+function showNotification(title: string, message: string, url: string) {
+  const notification = new Notification({
+    title: title,
+    body: message,
+    silent: false // 设置为true以使通知无声
+  });
+
+  notification.on('click', () => {
+    shell.openExternal(url);
+  });
+
+  notification.show();
+}
