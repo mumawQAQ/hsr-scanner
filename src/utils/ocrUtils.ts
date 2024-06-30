@@ -6,7 +6,7 @@ import { RelicType } from '../type/types.ts';
 import statsRegs from '@/data/regex.ts';
 import fuzzyMatchNumberSet from '@/data/relic-fuzzy-stat-data.ts';
 import { FuzzyPartNames } from '@/data/relic-parts-data.ts';
-import { RelicMainStatsLevel, RelicSubStatsScore } from '@/data/relic-stat-data.ts';
+import { RelicMainStatsToLevel, RelicSubStatsScore } from '@/data/relic-stat-data.ts';
 
 
 const fixRelicType = (number: string, srcType: RelicType): RelicType => {
@@ -88,7 +88,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         // fix the relic type if the number is a percentage
         const fixedType = fixRelicType(number, name);
         
-        const numberMap = fuzzyMatchNumberSet(fixedType, RelicSubStatsScore);
+        const numberMap = fuzzyMatchNumberSet(fixedType, RelicMainStatsToLevel);
         if (numberMap) {
           if (!(number in numberMap)) {
             const allValues: string[] = [];
@@ -107,14 +107,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
           }
         }
 
-        // calculate the level of the main stat
-        const { base, step } = RelicMainStatsLevel[fixedType];
-
-        // if number end with %, then get its value
-        const actualNum = number.endsWith('%') ? parseFloat(number) / 100 : parseFloat(number);
-        const level = Math.ceil((actualNum - base) / step);
-
-        matchedStats.push({ name: fixedType, number: number, level: level });
+        matchedStats.push({ name: fixedType, number: number, level: RelicMainStatsToLevel[fixedType][number] });
       }
     }
 
