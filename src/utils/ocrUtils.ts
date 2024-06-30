@@ -1,10 +1,12 @@
 import { Worker } from 'tesseract.js';
 
-import { RelicType } from '../../types.ts';
+import { RelicType } from '../type/types.ts';
 
 import statsRegs from '@/data/regex.ts';
+import { FuzzyPartNames } from '@/data/relic-parts-data.ts';
+import { RelicMainStatsLevel, RelicSubStatsScore } from '@/data/relic-stat-data.ts';
 
-const fixRelicType = (number: string, srcType: RelicType) => {
+const fixRelicType = (number: string, srcType: RelicType): RelicType => {
   if (number.endsWith('%')) {
     if (srcType === RelicType.DEF) {
       return RelicType.DEFPercentage;
@@ -40,8 +42,20 @@ const relicTitleExtractor = async (worker: Worker, image: string) => {
     // remove any new line characters
     titleText = titleText.replace(/\n/g, ' ');
 
+    // trim the text
+    titleText = titleText.trim();
+
+    const fuzzyTitleResult = FuzzyPartNames.get(titleText);
+
+    if (!fuzzyTitleResult || fuzzyTitleResult.length === 0) {
+      return {
+        result: null,
+        error: '未能识别标题, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进',
+      };
+    }
+
     return {
-      result: titleText.trim(),
+      result: fuzzyTitleResult[0][1],
       error: null,
     };
   } catch (e) {
@@ -72,7 +86,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         const fixedType = fixRelicType(number, name);
 
         // calculate the level of the main stat
-        const { base, step } = await (window as any).ipcRenderer.storeGet(`data.relicMainStatsLevel.${fixedType}`);
+        const { base, step } = RelicMainStatsLevel[fixedType];
 
         // if number end with %, then get its value
         const actualNum = number.endsWith('%') ? parseFloat(number) / 100 : parseFloat(number);
@@ -125,8 +139,8 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
         }
         // fix the relic type if the number is a percentage
         const fixedType = fixRelicType(number, name);
-        // calculate the score of the sub stat'
-        const score = (await (window as any).ipcRenderer.storeGet(`data.relicSubStatsScore.${fixedType}`))[number];
+        // calculate the score of the sub stat
+        const score = RelicSubStatsScore[fixedType][number];
 
         // const score = relic.relicSubStatsScore[fixedType][number]
         matchedStats.push({ name: fixedType, number: number, score: score });

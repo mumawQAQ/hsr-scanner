@@ -1,7 +1,8 @@
+import { Button } from '@/components/ui/button.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
-import { useState } from 'react';
+import { useModal } from '@/hooks/use-modal-store.ts';
 
 type ScanActionProps = {
   scanningStatus: boolean;
@@ -11,17 +12,10 @@ type ScanActionProps = {
 };
 
 const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanInterval }: ScanActionProps) => {
-  const [floatingWindowShowed, setFloatingWindowShowed] = useState(false);
+  const { onOpen } = useModal();
 
-  const handleToggleFloatingWindow = async (state: boolean) => {
-    if (state === floatingWindowShowed) return;
-
-    if (floatingWindowShowed) {
-      await (window as any).ipcRenderer.closeFloatingWindow();
-    } else {
-      await (window as any).ipcRenderer.openFloatingWindow();
-    }
-    setFloatingWindowShowed(!floatingWindowShowed);
+  const handleRelicRuleTemplateIn = () => {
+    onOpen('import-relic-rules-template');
   };
 
   return (
@@ -40,17 +34,14 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         />
       </div>
       <div className="flex items-center justify-center space-x-2">
-        <Label htmlFor="scan-mode" className="font-semibold">
+        <Label htmlFor="scan-mode" className="font-semibold text-nowrap">
           开始扫描
         </Label>
         <Switch id="scan-mode" checked={scanningStatus} onCheckedChange={setScanningStatus} />
       </div>
-      <div className="flex items-center justify-center space-x-2">
-        <Label htmlFor="small-screen" className="font-semibold">
-          小窗显示
-        </Label>
-        <Switch id="small-screen" checked={floatingWindowShowed} onCheckedChange={handleToggleFloatingWindow} />
-      </div>
+      <Button size="sm" onClick={handleRelicRuleTemplateIn}>
+        选择模板
+      </Button>
     </div>
   );
 };
