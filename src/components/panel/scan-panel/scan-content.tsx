@@ -282,8 +282,8 @@ const ScanContent = ({
 
       // corp the image to the parts
       const maskedRelicTitle = ImageUtils.matCrop(maskedSourceImg, 0, 100, 445, 70);
-      const maskedRelicMainStats = ImageUtils.matCrop(maskedSourceImg, 0, 392, 445, 50);
-      const maskedRelicSubStats = ImageUtils.matCrop(maskedSourceImg, 0, 442, 445, 358);
+      const maskedRelicMainStats = ImageUtils.matCrop(maskedSourceImg, 35, 392, 445, 50);
+      const maskedRelicSubStats = ImageUtils.matCrop(maskedSourceImg, 34, 442, 445, 358);
 
       // Ensure the worker is initialized
       if (worker) {
@@ -389,8 +389,6 @@ const ScanContent = ({
     if (characterBasePartRatingList.length === 0) {
       return <div className="font-semibold">暂无适用角色评分</div>;
     }
-
-    console.log(characterBasePartRatingList);
 
     return (
       <ScrollArea className="h-[300px]">

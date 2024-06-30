@@ -8,7 +8,6 @@ import fuzzyMatchNumberSet from '@/data/relic-fuzzy-stat-data.ts';
 import { FuzzyPartNames } from '@/data/relic-parts-data.ts';
 import { RelicMainStatsToLevel, RelicSubStatsScore } from '@/data/relic-stat-data.ts';
 
-
 const fixRelicType = (number: string, srcType: RelicType): RelicType => {
   if (number.endsWith('%')) {
     if (srcType === RelicType.DEF) {
@@ -87,7 +86,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         }
         // fix the relic type if the number is a percentage
         const fixedType = fixRelicType(number, name);
-        
+
         const numberMap = fuzzyMatchNumberSet(fixedType, RelicMainStatsToLevel);
         if (numberMap) {
           if (!(number in numberMap)) {
@@ -173,7 +172,6 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
             number = fuzzyNumberResult[0][1];
           }
         }
-
 
         // calculate the score of the sub stat
         const score = RelicSubStatsScore[fixedType][number];

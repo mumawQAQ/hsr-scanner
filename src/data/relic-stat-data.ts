@@ -637,6 +637,7 @@ export function generateRelicMainStatsLevel() {
       mainStatsToLevel[key][currentValue.toString()] = i;
     }
   });
+  console.log(mainStatsToLevel);
 
   return mainStatsToLevel;
 }
