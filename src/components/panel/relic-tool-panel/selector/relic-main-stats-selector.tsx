@@ -59,6 +59,7 @@ const RelicMainStatsSelector: React.FC<RelicMainStatsSelectorProps> = ({
                 {mainStats.map(key => (
                   <CommandItem key={key} value={key}>
                     <Checkbox
+                      id={`sub-main-selector-${key}`}
                       checked={selectedKeys ? selectedKeys.includes(key) : false}
                       onCheckedChange={checked => {
                         if (checked) {
@@ -74,8 +75,8 @@ const RelicMainStatsSelector: React.FC<RelicMainStatsSelectorProps> = ({
                         }
                       }}
                     />
-                    <label className="ml-2 flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      {key}
+                    <label htmlFor={`sub-main-selector-${key}`} className="ml-2 flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <div className="w-64">{key}</div>
                     </label>
                   </CommandItem>
                 ))}
