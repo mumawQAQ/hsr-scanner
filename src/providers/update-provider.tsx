@@ -17,10 +17,6 @@ export const UpdateProvider = () => {
     };
 
     window.ipcRenderer.on('message', handleMessage);
-
-    return () => {
-      window.ipcRenderer.removeListener('message', handleMessage);
-    };
   }, []);
 
   return null;
