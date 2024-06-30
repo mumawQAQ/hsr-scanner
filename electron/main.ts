@@ -3,7 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'util';
 
-import { app, BrowserWindow, desktopCapturer, dialog, ipcMain, Notification, shell } from 'electron';
+import { app, BrowserWindow, desktopCapturer, dialog, ipcMain } from 'electron';
+import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
 
 import store from './store.ts';
 
@@ -31,6 +33,8 @@ export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron');
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist');
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST;
+autoUpdater.logger = log;
+autoUpdater.autoDownload = false;
 
 let win: BrowserWindow | null;
 
@@ -136,9 +140,46 @@ function createMainWindow() {
     }
   });
 
+  ipcMain.handle('update-now', async () => {
+    try {
+      autoUpdater.downloadUpdate();
+      return { success: true, message: '开始更新...' };
+    } catch (error) {
+      console.error('Error updating:', error);
+      return { success: false, message: error instanceof Error ? error.message : '更新错误，未知原因' };
+    }
+  });
+
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', new Date().toLocaleString());
+  });
+
+  win.once('ready-to-show', () => {
+    autoUpdater.checkForUpdates();
+  });
+
+  autoUpdater.on('checking-for-update', () => {
+    win?.webContents.send('message', '检测更新中...');
+  });
+
+  autoUpdater.on('update-available', info => {
+    win?.webContents.send('update-available', `有新版可以更新${info.version}`);
+  });
+
+  autoUpdater.on('update-not-available', info => {
+    win?.webContents.send('message', '没有新版本. 当前版本: ' + info.version);
+  });
+
+  autoUpdater.on('error', err => {
+    win?.webContents.send('message', '自动更新失败: ' + err);
+  });
+
+  autoUpdater.on('update-downloaded', info => {
+    win?.webContents.send('message', `${info.version} 版本已下载完成，将在5秒后重启并更新...`);
+    setTimeout(() => {
+      autoUpdater.quitAndInstall();
+    }, 5000);
   });
 
   if (VITE_DEV_SERVER_URL) {
@@ -147,9 +188,6 @@ function createMainWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'));
   }
-
-  // 检查更新
-  checkForUpdates();
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -216,37 +254,3 @@ ipcMain.on('export-relic-rules-template', async (_, data: RatingTemplate) => {
     return 'Error saving file.';
   }
 });
-
-async function checkForUpdates() {
-  const url = "https://api.github.com/repos/mumawQAQ/hsr-scanner/releases/latest";
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    const latestVersion = data.tag_name;
-    const currentVersion = app.getVersion();
-    // console.log(latestVersion)
-    // console.log(currentVersion)
-
-    if (latestVersion !== currentVersion) {
-      // win?.webContents.send('update_available', data.html_url);
-      showNotification('崩铁遗器筛选工具更新可用', `有新的版本 ${latestVersion} 可用。点击查看。`, data.html_url);
-    }
-  } catch (error) {
-    console.error('Failed to fetch latest release:', error);
-  }
-}
-
-function showNotification(title: string, message: string, url: string) {
-  const notification = new Notification({
-    title: title,
-    body: message,
-    silent: false // 设置为true以使通知无声
-  });
-
-  notification.on('click', () => {
-    shell.openExternal(url);
-  });
-
-  notification.show();
-}

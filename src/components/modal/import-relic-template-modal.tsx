@@ -1,17 +1,17 @@
 import { useRef } from 'react';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useModal } from '@/hooks/use-modal-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
-import { toast } from 'react-toastify';
 
 const ImportRelicTemplateModal = () => {
   const { createOrUpdateRelicRatingRulesTemplate } = useRelicTemplateStore();
   const { isOpen, onClose, type } = useModal();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isModalOpen = isOpen && type === 'import-qr-code-model';
+  const isModalOpen = isOpen && type === 'import-template-model';
 
   const handleClose = () => {
     onClose();
