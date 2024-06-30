@@ -24,6 +24,7 @@ const CharacterRatingBadge = ({ relicGrowthRate, characterRating }: CharacterRat
           >
             <span className="truncate">适配度:</span> {/* Use truncate class to truncate text */}
             <span className="truncate">
+              {/*TODO: the floating number should be formatted to 2 decimal places*/}
               {characterRating.minTotalScore === characterRating.maxTotalScore
                 ? `${parseFloat((characterRating.minTotalScore / (relicGrowthRate?.maxScore ?? 1)).toFixed(2)) * 100}%`
                 : `${parseFloat((characterRating.minTotalScore / (relicGrowthRate?.maxScore ?? 1)).toFixed(2)) * 100}% - ${parseFloat((characterRating.maxTotalScore / (relicGrowthRate?.maxScore ?? 1)).toFixed(2)) * 100}%`}
