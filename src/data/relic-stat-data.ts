@@ -608,3 +608,37 @@ export const RelicSubStatsScore: {
     '38.8%': 6.0,
   },
 };
+
+export function generateRelicMainStatsLevel() {
+  const mainStatsToLevel: {
+    [key: string]: {
+      [key: string]: number;
+    };
+  } = {};
+
+  Object.entries(RelicMainStatsLevel).forEach(([key, value]) => {
+    mainStatsToLevel[key] = {};
+    let currentValue: string;
+    for (let i = 0; i < 16; i++) {
+      if (key == RelicType.ATK || key == RelicType.HP || key == RelicType.DEF || key == RelicType.SPD) {
+        // Round to 0 decimal places
+        currentValue = Math.floor(value.base + value.step * i).toString();
+      } else {
+        currentValue = (Math.floor((value.base + value.step * i) * 1000) / 10).toString();
+
+        // add .0 to end if not contain .
+        if (!currentValue.includes('.')) {
+          currentValue += '.0';
+        }
+
+        currentValue += '%';
+      }
+
+      mainStatsToLevel[key][currentValue.toString()] = i;
+    }
+  });
+
+  return mainStatsToLevel;
+}
+
+export const RelicMainStatsToLevel = generateRelicMainStatsLevel();
