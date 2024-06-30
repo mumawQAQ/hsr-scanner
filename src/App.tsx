@@ -7,6 +7,7 @@ import RelicToolPanel from '@/components/panel/relic-tool-panel/relic-tool-panel
 import ScanPanel from '@/components/panel/scan-panel/scan-panel.tsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { ModalProvider } from '@/providers/modal-provider.tsx';
+import { UpdateProvider } from '@/providers/update-provider.tsx';
 
 const App = () => {
   const [isLightMode, setLightMode] = useState(false);
@@ -36,6 +37,7 @@ const App = () => {
           </>
         )}
         <ModalProvider />
+        <UpdateProvider />
         <ToastContainer position="top-left" pauseOnHover={false} autoClose={1500} closeOnClick />
       </div>
     </Router>

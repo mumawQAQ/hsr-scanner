@@ -1,7 +1,7 @@
 {
   "name": "hsr-scanner",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "description": "A simple relic scanner for HSR",
   "author": {
@@ -22,6 +22,7 @@
     "url": "https://github.com/mumawQAQ/hsr-scanner.git"
   },
   "scripts": {
+    "publish": "tsc && vite build && electron-builder -p always",
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -47,7 +48,9 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "electron-log": "^5.1.5",
     "electron-store": "^9.0.0",
+    "electron-updater": "^6.2.1",
     "framer-motion": "^11.2.10",
     "fuzzyset.js": "^1.0.7",
     "jsqr": "^1.4.0",

@@ -38,7 +38,7 @@ const RelicRuleTemplateInModal = () => {
   };
 
   const handleImportTemplate = () => {
-    onOpen('import-qr-code-model');
+    onOpen('import-template-model');
   };
 
   const handleClose = () => {

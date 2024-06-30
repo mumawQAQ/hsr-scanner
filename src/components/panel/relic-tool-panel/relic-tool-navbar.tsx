@@ -38,7 +38,7 @@ export function RelicToolNavbar() {
   };
 
   const handleImport = () => {
-    onOpen('import-qr-code-model');
+    onOpen('import-template-model');
   };
 
   return (
