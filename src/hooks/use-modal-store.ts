@@ -4,10 +4,11 @@ export type ModalType =
   | 'create-relic-rules-template'
   | 'import-relic-rules-template'
   | 'export-relic-rules-template'
-  | 'import-qr-code-model';
+  | 'import-template-model'
+  | 'update-modal';
 
 interface ModalData {
-  qrCode?: string;
+  updateMessage?: string;
 }
 
 interface ModalStore {
