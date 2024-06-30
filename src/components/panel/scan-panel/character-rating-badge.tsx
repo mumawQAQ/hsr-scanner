@@ -9,7 +9,7 @@ interface CharacterRatingBadgeProps {
     minGrowthScore: number;
     maxGrowthScore: number;
     maxScore: number;
-  };
+  } | null;
   characterRating: CharacterBasePartRating;
 }
 
