@@ -73,8 +73,6 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
     } = await worker.recognize(image);
     const matchedStats = [];
 
-    // TODO: When HP is 112 then it is recognized as 12, need to fix this
-
     // match the main stats from the reg expressions
     for (const { name, reg } of statsRegs.mainStatsRegs) {
       const match = mainStatsText.match(reg);
@@ -90,6 +88,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
         const numberMap = fuzzyMatchNumberSet(fixedType, RelicMainStatsToLevel);
         if (numberMap) {
           if (!(number in numberMap)) {
+            // TODO: this can be optimized
             const allValues: string[] = [];
             Object.keys(numberMap).forEach(val => {
               allValues.push(val);
@@ -157,6 +156,7 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
         const numberMap = fuzzyMatchNumberSet(fixedType, RelicSubStatsScore);
         if (numberMap) {
           if (!(number in numberMap)) {
+            // TODO: this can be optimized
             const allValues: string[] = [];
             Object.keys(numberMap).forEach(val => {
               allValues.push(val);
