@@ -1,10 +1,13 @@
+import FuzzySet from 'fuzzyset.js';
 import { Worker } from 'tesseract.js';
 
 import { RelicType } from '../type/types.ts';
 
 import statsRegs from '@/data/regex.ts';
+import fuzzyMatchNumberSet from '@/data/relic-fuzzy-stat-data.ts';
 import { FuzzyPartNames } from '@/data/relic-parts-data.ts';
 import { RelicMainStatsLevel, RelicSubStatsScore } from '@/data/relic-stat-data.ts';
+
 
 const fixRelicType = (number: string, srcType: RelicType): RelicType => {
   if (number.endsWith('%')) {
@@ -78,12 +81,31 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
       const match = mainStatsText.match(reg);
       if (match) {
         // extract the number from the matched text
-        const number = relicStatsNumberExtractor(match[0]);
+        let number = relicStatsNumberExtractor(match[0]);
         if (!number) {
           continue;
         }
         // fix the relic type if the number is a percentage
         const fixedType = fixRelicType(number, name);
+        
+        const numberMap = fuzzyMatchNumberSet(fixedType, RelicSubStatsScore);
+        if (numberMap) {
+          if (!(number in numberMap)) {
+            const allValues: string[] = [];
+            Object.keys(numberMap).forEach(val => {
+              allValues.push(val);
+            });
+            const fuzzyNumberList = FuzzySet(allValues);
+            const fuzzyNumberResult = fuzzyNumberList.get(number);
+            if (!fuzzyNumberResult || fuzzyNumberResult.length === 0) {
+              return {
+                result: null,
+                error: '未能识别主属性, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进',
+              };
+            }
+            number = fuzzyNumberResult[0][1];
+          }
+        }
 
         // calculate the level of the main stat
         const { base, step } = RelicMainStatsLevel[fixedType];
@@ -132,13 +154,34 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
       const match = subStatsText.match(reg);
       if (match) {
         // extract the number from the matched text
-        const number = relicStatsNumberExtractor(match[0]);
+        let number = relicStatsNumberExtractor(match[0]);
 
         if (!number) {
           continue;
         }
         // fix the relic type if the number is a percentage
         const fixedType = fixRelicType(number, name);
+
+        const numberMap = fuzzyMatchNumberSet(fixedType, RelicSubStatsScore);
+        if (numberMap) {
+          if (!(number in numberMap)) {
+            const allValues: string[] = [];
+            Object.keys(numberMap).forEach(val => {
+              allValues.push(val);
+            });
+            const fuzzyNumberList = FuzzySet(allValues);
+            const fuzzyNumberResult = fuzzyNumberList.get(number);
+            if (!fuzzyNumberResult || fuzzyNumberResult.length === 0) {
+              return {
+                result: null,
+                error: '未能识别副属性, 如果右侧图像捕获正确，请向GitHub提交Issue以帮助我们改进',
+              };
+            }
+            number = fuzzyNumberResult[0][1];
+          }
+        }
+
+
         // calculate the score of the sub stat
         const score = RelicSubStatsScore[fixedType][number];
 
