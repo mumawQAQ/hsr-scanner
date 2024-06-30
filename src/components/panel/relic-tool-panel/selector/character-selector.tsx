@@ -37,6 +37,7 @@ const CharacterSelector: React.FC<CharacterSelectorProps> = ({ selectedKeys, onS
               {Object.entries(CharactersData).map(([key, value]) => (
                 <CommandItem key={key} value={value.name}>
                   <Checkbox
+                    id={`sub-character-selector-${key}`}
                     checked={selectedKeys ? selectedKeys.includes(key) : false}
                     onCheckedChange={checked => {
                       if (checked) {
@@ -52,9 +53,13 @@ const CharacterSelector: React.FC<CharacterSelectorProps> = ({ selectedKeys, onS
                       }
                     }}
                   />
-                  <label className="ml-2 flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    <img src={value.icon} alt="relic icon" className="mr-2 h-4 w-4" />
-                    {value.name}
+                  <label
+                    htmlFor={`sub-character-selector-${key}`}
+                    className="ml-2 flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    <span className="flex items-center w-80">
+                      <img src={value.icon} alt="relic icon" className="mr-2 h-4 w-4" />
+                      {value.name}
+                    </span>
                   </label>
                 </CommandItem>
               ))}

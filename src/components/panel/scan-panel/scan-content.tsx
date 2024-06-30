@@ -282,8 +282,8 @@ const ScanContent = ({
 
       // corp the image to the parts
       const maskedRelicTitle = ImageUtils.matCrop(maskedSourceImg, 0, 100, 445, 70);
-      const maskedRelicMainStats = ImageUtils.matCrop(maskedSourceImg, 0, 392, 445, 50);
-      const maskedRelicSubStats = ImageUtils.matCrop(maskedSourceImg, 0, 442, 445, 358);
+      const maskedRelicMainStats = ImageUtils.matCrop(maskedSourceImg, 35, 392, 445, 50);
+      const maskedRelicSubStats = ImageUtils.matCrop(maskedSourceImg, 34, 442, 445, 358);
 
       // Ensure the worker is initialized
       if (worker) {
@@ -390,13 +390,11 @@ const ScanContent = ({
       return <div className="font-semibold">暂无适用角色评分</div>;
     }
 
-    console.log(characterBasePartRatingList);
-
     return (
       <ScrollArea className="h-[300px]">
         <div className="flex flex-col gap-2">
           {characterBasePartRatingList.map((rating, index) => (
-            <CharacterRatingBadge characterRating={rating} key={index} />
+            <CharacterRatingBadge relicGrowthRate={relicGrowthRate} characterRating={rating} key={index} />
           ))}
         </div>
       </ScrollArea>
