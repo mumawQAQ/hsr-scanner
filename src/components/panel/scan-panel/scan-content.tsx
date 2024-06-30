@@ -396,7 +396,7 @@ const ScanContent = ({
       <ScrollArea className="h-[300px]">
         <div className="flex flex-col gap-2">
           {characterBasePartRatingList.map((rating, index) => (
-            <CharacterRatingBadge characterRating={rating} key={index} />
+            <CharacterRatingBadge relicGrowthRate={relicGrowthRate} characterRating={rating} key={index} />
           ))}
         </div>
       </ScrollArea>
