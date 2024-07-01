@@ -16,7 +16,7 @@
 2. 默认提供的配置仅供参考，不保证其准确性。 如需使用，请自行修改配置。
 
 ## 安装
-
+  https://github.com/mumawQAQ/hsr-scanner/releases
 （安装步骤）
 
 ## 使用方法
