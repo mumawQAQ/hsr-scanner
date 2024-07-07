@@ -142,7 +142,6 @@ const ScanContent = ({
       return;
     }
 
-    // TODO: need to implement a priority queue to sort the characterBasePartRatingList
     const characterBasePartRatingList: CharacterBasePartRating[] = [];
     // iterate through the rules calculate the valuable stats, score for each character
     ratingRules.rules.forEach(rule => {
@@ -151,8 +150,8 @@ const ScanContent = ({
 
       // get the total possible enhance times
       // 5 means if the relic has 4 sub stats, maximum it can enhance 5 times
-      const totalPossibleEnhanceTimes = 5;
-      let totalPossibleScore = 0;
+      const totalPossibleEnhanceTimes = Math.floor(mainRelicStat.level / 3);
+      let totalPossibleScore;
 
       /**
        * when we have a relic with 4 sub stats, which is the best relic we can have
@@ -166,7 +165,7 @@ const ScanContent = ({
       // calculate the score initial, if the valuable sub stat is longer than 4, then we only take the top 4
       // if the valuable sub stat is less or equal to 4, then we take all
 
-      let top4ValuableSub: number[] = [];
+      let top4ValuableSub: number[];
 
       if (valuableSub.length > 0 && typeof valuableSub[0] === 'string') {
         // if the valuable sub stat is the old model, then we can fill with 1s
