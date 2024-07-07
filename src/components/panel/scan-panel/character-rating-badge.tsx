@@ -5,15 +5,10 @@ import { cn } from '@/lib/utils.ts';
 import { CharacterBasePartRating } from '@/type/types.ts';
 
 interface CharacterRatingBadgeProps {
-  relicGrowthRate: {
-    minGrowthScore: number;
-    maxGrowthScore: number;
-    maxScore: number;
-  } | null;
   characterRating: CharacterBasePartRating;
 }
 
-const CharacterRatingBadge = ({ relicGrowthRate, characterRating }: CharacterRatingBadgeProps) => {
+const CharacterRatingBadge = ({ characterRating }: CharacterRatingBadgeProps) => {
   return (
     <TooltipProvider>
       <Tooltip>
@@ -25,8 +20,8 @@ const CharacterRatingBadge = ({ relicGrowthRate, characterRating }: CharacterRat
             <span className="truncate">适配度:</span> {/* Use truncate class to truncate text */}
             <span className="truncate">
               {characterRating.minTotalScore === characterRating.maxTotalScore
-                ? `${parseFloat(((characterRating.minTotalScore / (relicGrowthRate?.maxScore ?? 1)) * 100).toFixed(2))}%`
-                : `${parseFloat(((characterRating.minTotalScore / (relicGrowthRate?.maxScore ?? 1)) * 100).toFixed(2))}% - ${parseFloat(((characterRating.maxTotalScore / (relicGrowthRate?.maxScore ?? 1)) * 100).toFixed(2))}%`}
+                ? `${parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2))}%`
+                : `${parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2))}% - ${parseFloat(((characterRating.maxTotalScore / characterRating.totalScore) * 100).toFixed(2))}%`}
             </span>
           </Badge>
           <div className="flex flex-wrap">
