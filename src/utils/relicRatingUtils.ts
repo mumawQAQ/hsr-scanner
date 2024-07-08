@@ -249,9 +249,7 @@ const getCharacterBasePartPotentialRating = (
       }
     });
 
-    if (valuableSubAcquireScale !== 0) {
-      firstAverageScore = valuableSubAcquireScale / remainTotalAcquireScale;
-    }
+    firstAverageScore = valuableSubAcquireScale / remainTotalAcquireScale;
 
     if (subRelicStats.length === 3) {
       restEnhanceTimes -= 1;
