@@ -76,7 +76,6 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
     // match the main stats from the reg expressions
     for (const { name, reg } of statsRegs.mainStatsRegs) {
       const match = mainStatsText.match(reg);
-      console.log('match', match);
       if (match) {
         // extract the number from the matched text
         let number = relicStatsNumberExtractor(match[0]);

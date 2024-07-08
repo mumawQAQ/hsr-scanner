@@ -8,7 +8,13 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';
-import { CharacterBasePartRating, OCRResult, RelicMainStats, RelicSubStats } from '@/type/types.ts';
+import {
+  CharacterBasePartPotentialRating,
+  CharacterBasePartRating,
+  OCRResult,
+  RelicMainStats,
+  RelicSubStats,
+} from '@/type/types.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicRatingUtils.ts';
@@ -44,6 +50,9 @@ const ScanContent = ({
   } | null>(null);
   const [OCRResult, setOCRResult] = useState<OCRResult | null>(null);
   const [characterBasePartRatingList, setCharacterBasePartRatingList] = useState<CharacterBasePartRating[]>([]);
+  const [characterBasePartPotentialRatings, setCharacterBasePartPotentialRatings] = useState<
+    CharacterBasePartPotentialRating[]
+  >([]);
 
   useEffect(() => {
     // Initialize the worker
@@ -119,6 +128,7 @@ const ScanContent = ({
     setMainRelicStats(null);
     setSubRelicStats([]);
     setCharacterBasePartRatingList([]);
+    setCharacterBasePartPotentialRatings([]);
     setRelicGrowthRate(null);
   }
 
@@ -142,31 +152,56 @@ const ScanContent = ({
       return;
     }
 
-    const characterBasePartRatingList: CharacterBasePartRating[] = [];
-    // iterate through the rules calculate the valuable stats, score for each character
-    ratingRules.rules.forEach(rule => {
-      const valuableSub = rule.valuableSub;
-      const character = rule.fitCharacters;
+    // check the relic level if the level isn't 15, calculate the growth rate, else calculate the potential rate
 
-      const top4ValuableSub = relicUtils.getTop4ValuableSubScore(valuableSub);
-      const totalPossibleScore = relicUtils.getTotalPossibleScore(mainRelicStat, top4ValuableSub);
+    if (mainRelicStat.level == 15) {
+      const characterBasePartRatingList: CharacterBasePartRating[] = [];
+      // iterate through the rules calculate the valuable stats, score for each character
+      ratingRules.rules.forEach(rule => {
+        const valuableSub = rule.valuableSub;
+        const character = rule.fitCharacters;
 
-      // calculate the rating with the new model
-      const newRating: CharacterBasePartRating = relicUtils.getCharacterBasePartRating(
-        character,
-        totalPossibleScore,
-        subRelicStats,
-        valuableSub
-      );
+        const top4ValuableSub = relicUtils.getTop4ValuableSubScale(valuableSub);
+        const totalPossibleScore = relicUtils.getTotalPossibleScore(mainRelicStat, top4ValuableSub);
 
-      if (Object.values(newRating.valuableSub).some(subStat => subStat.valuable)) {
-        characterBasePartRatingList.push(newRating);
-      }
-    });
+        // calculate the rating with the new model
+        const newRating: CharacterBasePartRating = relicUtils.getCharacterBasePartRating(
+          character,
+          totalPossibleScore,
+          subRelicStats,
+          valuableSub
+        );
 
-    // sort the characterBasePartRatingList
-    characterBasePartRatingList.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);
-    setCharacterBasePartRatingList(characterBasePartRatingList);
+        if (Object.values(newRating.valuableSub).some(subStat => subStat.valuable)) {
+          characterBasePartRatingList.push(newRating);
+        }
+      });
+
+      characterBasePartRatingList.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);
+      setCharacterBasePartRatingList(characterBasePartRatingList);
+    } else {
+      const characterBasePartPotentialRatings: CharacterBasePartPotentialRating[] = [];
+      // iterate through the rules calculate the valuable stats, score for each character
+      ratingRules.rules.forEach(rule => {
+        const valuableSub = rule.valuableSub;
+        const character = rule.fitCharacters;
+        const top4ValuableSub = relicUtils.getTop4ValuableSubScale(valuableSub);
+        const totalPossiblePotentialScore = relicUtils.getTotalPossiblePotentialScore(top4ValuableSub);
+
+        const newPotential = relicUtils.getCharacterBasePartPotentialRating(
+          character,
+          totalPossiblePotentialScore,
+          mainRelicStat,
+          subRelicStats,
+          valuableSub
+        );
+
+        characterBasePartPotentialRatings.push(newPotential);
+      });
+
+      characterBasePartPotentialRatings.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);
+      setCharacterBasePartPotentialRatings(characterBasePartPotentialRatings);
+    }
   }
 
   /**
@@ -372,17 +407,27 @@ const ScanContent = ({
   };
 
   const renderCharacterBasePartRatingList = () => {
-    if (characterBasePartRatingList.length === 0) {
-      return <div className="font-semibold">暂无适用角色评分</div>;
+    if (characterBasePartRatingList.length === 0 && characterBasePartPotentialRatings.length === 0) {
+      return <div className="font-semibold">暂无适用角色评分/潜力</div>;
     }
 
     return (
       <ScrollArea className="h-[300px]">
-        <div className="flex flex-col gap-2">
-          {characterBasePartRatingList.map((rating, index) => (
-            <CharacterRatingBadge characterRating={rating} key={index} />
-          ))}
-        </div>
+        {characterBasePartRatingList.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {characterBasePartRatingList.map((rating, index) => (
+              <CharacterRatingBadge characterRating={rating} type={'适配度'} key={index} />
+            ))}
+          </div>
+        )}
+
+        {characterBasePartPotentialRatings.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {characterBasePartPotentialRatings.map((rating, index) => (
+              <CharacterRatingBadge characterRating={rating} type={'潜力值'} key={index} />
+            ))}
+          </div>
+        )}
       </ScrollArea>
     );
   };

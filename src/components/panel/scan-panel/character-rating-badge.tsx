@@ -2,13 +2,14 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { CharactersData } from '@/data/characters-data.ts';
 import { cn } from '@/lib/utils.ts';
-import { CharacterBasePartRating } from '@/type/types.ts';
+import { CharacterBasePartPotentialRating, CharacterBasePartRating } from '@/type/types.ts';
 
 interface CharacterRatingBadgeProps {
-  characterRating: CharacterBasePartRating;
+  characterRating: CharacterBasePartRating | CharacterBasePartPotentialRating;
+  type: string;
 }
 
-const CharacterRatingBadge = ({ characterRating }: CharacterRatingBadgeProps) => {
+const CharacterRatingBadge = ({ characterRating, type }: CharacterRatingBadgeProps) => {
   return (
     <TooltipProvider>
       <Tooltip>
@@ -17,7 +18,7 @@ const CharacterRatingBadge = ({ characterRating }: CharacterRatingBadgeProps) =>
             className={'inline-flex flex-shrink-0 flex-row gap-2 overflow-hidden whitespace-nowrap text-sm font-black'}
             variant="secondary"
           >
-            <span className="truncate">适配度:</span> {/* Use truncate class to truncate text */}
+            <span className="truncate">{type}:</span> {/* Use truncate class to truncate text */}
             <span className="truncate">
               {characterRating.minTotalScore === characterRating.maxTotalScore
                 ? `${parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2))}%`
