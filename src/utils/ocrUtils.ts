@@ -22,7 +22,7 @@ const fixRelicType = (number: string, srcType: RelicType): RelicType => {
 };
 
 const relicStatsNumberExtractor = (statsText: string) => {
-  const match = RegExp(/(\d+(\.\d+)?%?)/).exec(statsText);
+  const match = statsText.match(/(\d+(\.\d+)?%?)/);
   return match ? match[0] : null;
 };
 
@@ -75,7 +75,8 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
 
     // match the main stats from the reg expressions
     for (const { name, reg } of statsRegs.mainStatsRegs) {
-      const match = RegExp(reg).exec(mainStatsText);
+      const match = mainStatsText.match(reg);
+      console.log('match', match);
       if (match) {
         // extract the number from the matched text
         let number = relicStatsNumberExtractor(match[0]);
@@ -147,7 +148,7 @@ const relicSubStatsExtractor = async (worker: Worker, image: string) => {
 
     // match the sub stats from the reg expressions
     for (const { name, reg } of statsRegs.subStatsRegs) {
-      const match = RegExp(reg).exec(subStatsText);
+      const match = subStatsText.match(reg);
       if (match) {
         // extract the number from the matched text
         let number = relicStatsNumberExtractor(match[0]);
