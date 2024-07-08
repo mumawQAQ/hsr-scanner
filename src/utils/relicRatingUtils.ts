@@ -1,4 +1,5 @@
 import { PartNameToSetNameMapping } from '@/data/relic-parts-data.ts';
+import { RelicSubStatsAcquireScale, RelicSubStatsTotalAcquireScale } from '@/data/relic-stat-data.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import {
   CharacterBasePartPotentialRating,
@@ -8,7 +9,6 @@ import {
   RelicSubStats,
   ValuableSubStatsV2,
 } from '@/type/types.ts';
-import { RelicSubStatsAcquireScale, RelicSubStatsTotalAcquireScale } from '@/data/relic-stat-data.ts';
 
 const MAX_ENHANCE_TIME = 5;
 const ENHANCE_POSSIBILITY = 0.25;
@@ -68,6 +68,7 @@ const getTop4ValuableSubScale = (valuableSub: (string | ValuableSubStatsV2)[]) =
       .sort((a, b) => b - a)
       .slice(0, 4);
   }
+  console.log('top4ValuableSub', top4ValuableSub);
 
   return top4ValuableSub;
 };
@@ -149,19 +150,31 @@ const getCharacterBasePartRating = (
  * if assume the valuable sub stats which max scale is enhanced five times,
  * then the totalPossibleScore is
  * max of top 4 valuable sub scale * 5 + sum of the top 4 valuable sub scale * max enhance time * enhance possibility
- * @param top4ValuableSub
+ * @param top4ValuableSub the top 4 valuable sub scale
+ * @param mainStats the relic main stats
  */
-const getTotalPossiblePotentialScore = (top4ValuableSub: number[]) => {
+const getTotalPossiblePotentialScore = (top4ValuableSub: number[], mainStats: RelicMainStats) => {
   if (top4ValuableSub.length > 0) {
+    const remainingEnhanceTime = MAX_ENHANCE_TIME - mainStats.enhanceLevel;
+
     return (
       top4ValuableSub.reduce((acc, cur) => acc + cur, 0) +
-      Math.max(...top4ValuableSub) * MAX_ENHANCE_TIME * ENHANCE_POSSIBILITY
+      +Math.max(...top4ValuableSub) * mainStats.enhanceLevel +
+      Math.max(...top4ValuableSub) * remainingEnhanceTime * ENHANCE_POSSIBILITY
     );
   }
 
   return 0;
 };
 
+/**
+ * get the character base part potential rating
+ * @param character the character name array
+ * @param totalPossiblePotentialScore the total possible potential score
+ * @param mainRelicStat the relic main stat
+ * @param subRelicStats the relic sub stats
+ * @param valuableSub the valuable sub stat array
+ */
 const getCharacterBasePartPotentialRating = (
   character: string[],
   totalPossiblePotentialScore: number,
@@ -177,6 +190,8 @@ const getCharacterBasePartPotentialRating = (
     totalScore: totalPossiblePotentialScore,
   };
 
+  let minValuableSubScore: number = 0;
+  let maxValuableSubScore: number = 0;
   const valuableSubScale: number[] = [];
 
   subRelicStats.forEach(subStat => {
@@ -191,11 +206,10 @@ const getCharacterBasePartPotentialRating = (
           newPotential.valuableSub[subStat.name] = {
             valuable: true,
           };
-
           valuableSubScale.push(1);
 
-          newPotential.minTotalScore += subStat.score instanceof Array ? Math.min(...subStat.score) : subStat.score;
-          newPotential.maxTotalScore += subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score;
+          minValuableSubScore += subStat.score instanceof Array ? Math.min(...subStat.score) : subStat.score;
+          maxValuableSubScore += subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score;
         }
       } else if (subStat.name === valuableSubStat.subStat) {
         newPotential.valuableSub[subStat.name] = {
@@ -204,11 +218,12 @@ const getCharacterBasePartPotentialRating = (
 
         valuableSubScale.push(valuableSubStat.ratingScale);
 
-        newPotential.minTotalScore +=
+        minValuableSubScore +=
           subStat.score instanceof Array
             ? Math.min(...subStat.score) * valuableSubStat.ratingScale
             : subStat.score * valuableSubStat.ratingScale;
-        newPotential.maxTotalScore +=
+
+        maxValuableSubScore +=
           subStat.score instanceof Array
             ? Math.max(...subStat.score) * valuableSubStat.ratingScale
             : subStat.score * valuableSubStat.ratingScale;
@@ -217,7 +232,6 @@ const getCharacterBasePartPotentialRating = (
   });
 
   let firstAverageScore = 0;
-  let restAverageScore = 0;
   let restEnhanceTimes = MAX_ENHANCE_TIME - mainRelicStat.enhanceLevel;
 
   // check whether the relic enhance level is 0
@@ -226,26 +240,32 @@ const getCharacterBasePartPotentialRating = (
     // then calculate the first average score and reduce the enhance times by 1
     let remainTotalAcquireScale = RelicSubStatsTotalAcquireScale;
     let valuableSubAcquireScale = 0;
+    const acquiredStats: string[] = [];
 
     // reduce the main relic stat acquire scale
-    if (Object.keys(remainTotalAcquireScale).includes(mainRelicStat.name)) {
+    if (Object.keys(RelicSubStatsAcquireScale).includes(mainRelicStat.name)) {
       remainTotalAcquireScale -= RelicSubStatsAcquireScale[mainRelicStat.name];
+      acquiredStats.push(mainRelicStat.name);
     }
 
     // reduce all the sub relic stats acquire scale
     subRelicStats.forEach(subStat => {
-      if (Object.keys(remainTotalAcquireScale).includes(subStat.name)) {
+      if (Object.keys(RelicSubStatsAcquireScale).includes(subStat.name)) {
         remainTotalAcquireScale -= RelicSubStatsAcquireScale[subStat.name];
+        acquiredStats.push(subStat.name);
       }
     });
 
     valuableSub.forEach(subStat => {
       if (typeof subStat === 'string') {
-        if (Object.keys(remainTotalAcquireScale).includes(subStat)) {
+        if (Object.keys(RelicSubStatsAcquireScale).includes(subStat) && !acquiredStats.includes(subStat)) {
           valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat];
         }
-      } else if (Object.keys(remainTotalAcquireScale).includes(subStat.subStat)) {
-        valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat.subStat];
+      } else if (
+        Object.keys(RelicSubStatsAcquireScale).includes(subStat.subStat) &&
+        !acquiredStats.includes(subStat.subStat)
+      ) {
+        valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat.subStat] * subStat.ratingScale;
       }
     });
 
@@ -256,13 +276,13 @@ const getCharacterBasePartPotentialRating = (
     }
   }
 
-  const sumOfValuableSubScale = valuableSubScale.reduce((acc, cur) => acc + cur, 0);
-  if (sumOfValuableSubScale !== 0) {
-    restAverageScore = ((sumOfValuableSubScale * ENHANCE_POSSIBILITY) / valuableSubScale.length) * restEnhanceTimes;
-  }
+  const sumOfValuableScale = valuableSubScale.reduce((acc, cur) => acc + cur, 0);
+  const restAverageScore = ((sumOfValuableScale * ENHANCE_POSSIBILITY) / valuableSubScale.length) * restEnhanceTimes;
 
-  newPotential.minTotalScore += firstAverageScore + restAverageScore;
-  newPotential.maxTotalScore += firstAverageScore + restAverageScore;
+  newPotential.minTotalScore += firstAverageScore + restAverageScore + minValuableSubScore;
+  newPotential.maxTotalScore += firstAverageScore + restAverageScore + maxValuableSubScore;
+
+  console.log('newPotential', newPotential);
 
   return newPotential;
 };

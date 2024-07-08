@@ -186,7 +186,7 @@ const ScanContent = ({
         const valuableSub = rule.valuableSub;
         const character = rule.fitCharacters;
         const top4ValuableSub = relicUtils.getTop4ValuableSubScale(valuableSub);
-        const totalPossiblePotentialScore = relicUtils.getTotalPossiblePotentialScore(top4ValuableSub);
+        const totalPossiblePotentialScore = relicUtils.getTotalPossiblePotentialScore(top4ValuableSub, mainRelicStat);
 
         const newPotential = relicUtils.getCharacterBasePartPotentialRating(
           character,
@@ -195,8 +195,9 @@ const ScanContent = ({
           subRelicStats,
           valuableSub
         );
-
-        characterBasePartPotentialRatings.push(newPotential);
+        if (newPotential.maxTotalScore > 0) {
+          characterBasePartPotentialRatings.push(newPotential);
+        }
       });
 
       characterBasePartPotentialRatings.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);

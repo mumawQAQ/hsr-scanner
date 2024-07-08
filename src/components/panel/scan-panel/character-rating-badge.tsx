@@ -10,6 +10,13 @@ interface CharacterRatingBadgeProps {
 }
 
 const CharacterRatingBadge = ({ characterRating, type }: CharacterRatingBadgeProps) => {
+  const minRating = parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2));
+  const maxRating = parseFloat(((characterRating.maxTotalScore / characterRating.totalScore) * 100).toFixed(2));
+
+  if (maxRating === 0) {
+    return null;
+  }
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -20,9 +27,7 @@ const CharacterRatingBadge = ({ characterRating, type }: CharacterRatingBadgePro
           >
             <span className="truncate">{type}:</span> {/* Use truncate class to truncate text */}
             <span className="truncate">
-              {characterRating.minTotalScore === characterRating.maxTotalScore
-                ? `${parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2))}%`
-                : `${parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2))}% - ${parseFloat(((characterRating.maxTotalScore / characterRating.totalScore) * 100).toFixed(2))}%`}
+              {minRating === maxRating ? `${minRating}%` : `${minRating}% - ${maxRating}%`}
             </span>
           </Badge>
           <div className="flex flex-wrap">
