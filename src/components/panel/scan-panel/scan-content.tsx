@@ -214,24 +214,19 @@ const ScanContent = ({
               newRating.minTotalScore += subStat.score instanceof Array ? Math.min(...subStat.score) : subStat.score;
               newRating.maxTotalScore += subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score;
             }
-            return;
-          } else {
-            const v2SubStat = valuableSubStat as ValuableSubStatsV2;
-            if (subStat.name === v2SubStat.subStat) {
-              newRating.valuableSub[subStat.name] = {
-                valuable: true,
-              };
+          } else if (subStat.name === valuableSubStat.subStat) {
+            newRating.valuableSub[subStat.name] = {
+              valuable: true,
+            };
 
-              newRating.minTotalScore +=
-                subStat.score instanceof Array
-                  ? Math.min(...subStat.score) * valuableSubStat.ratingScale
-                  : subStat.score * valuableSubStat.ratingScale;
-              newRating.maxTotalScore +=
-                subStat.score instanceof Array
-                  ? Math.max(...subStat.score) * valuableSubStat.ratingScale
-                  : subStat.score * valuableSubStat.ratingScale;
-            }
-            return;
+            newRating.minTotalScore +=
+              subStat.score instanceof Array
+                ? Math.min(...subStat.score) * valuableSubStat.ratingScale
+                : subStat.score * valuableSubStat.ratingScale;
+            newRating.maxTotalScore +=
+              subStat.score instanceof Array
+                ? Math.max(...subStat.score) * valuableSubStat.ratingScale
+                : subStat.score * valuableSubStat.ratingScale;
           }
         });
       });
@@ -264,8 +259,8 @@ const ScanContent = ({
     relicGrowthRate.maxScore = mainRelicStats.level == 0 ? 4 : Math.floor(mainRelicStats.level / 3) + 4;
 
     // Calculate the current relic score
-    for (let i = 0; i < subRelicStats.length; i++) {
-      const subStat = subRelicStats[i];
+    for (const element of subRelicStats) {
+      const subStat = element;
       // the spd can have multiple scores
       if (subStat.score instanceof Array) {
         const maxScore = Math.max(...subStat.score);
