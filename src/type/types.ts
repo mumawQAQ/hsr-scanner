@@ -53,6 +53,7 @@ export type RelicMainStats = {
   name: RelicType;
   number: string;
   level: number;
+  enhanceLevel: number;
 };
 
 export type OCRResult = {

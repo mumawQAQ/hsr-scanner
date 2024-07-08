@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';
-import { CharacterBasePartRating, OCRResult, RelicMainStats, RelicSubStats, ValuableSubStatsV2 } from '@/type/types.ts';
+import { CharacterBasePartRating, OCRResult, RelicMainStats, RelicSubStats } from '@/type/types.ts';
 import ImageUtils from '@/utils/imageUtils.ts';
 import OcrUtils from '@/utils/ocrUtils.ts';
 import relicUtils from '@/utils/relicRatingUtils.ts';
@@ -148,98 +148,24 @@ const ScanContent = ({
       const valuableSub = rule.valuableSub;
       const character = rule.fitCharacters;
 
-      // get the total possible enhance times
-      // 5 means if the relic has 4 sub stats, maximum it can enhance 5 times
-      const totalPossibleEnhanceTimes = Math.floor(mainRelicStat.level / 3);
-      let totalPossibleScore;
-
-      /**
-       * when we have a relic with 4 sub stats, which is the best relic we can have
-       * and the valuable sub stats will determine the initial score
-       * atk -> scale 0.5
-       * atk% -> scale 1
-       * def -> scale 1
-       * then we have initial score of 2.5
-       */
-
-      // calculate the score initial, if the valuable sub stat is longer than 4, then we only take the top 4
-      // if the valuable sub stat is less or equal to 4, then we take all
-
-      let top4ValuableSub: number[];
-
-      if (valuableSub.length > 0 && typeof valuableSub[0] === 'string') {
-        // if the valuable sub stat is the old model, then we can fill with 1s
-        top4ValuableSub = new Array(Math.min(valuableSub.length, 4)).fill(1);
-      } else {
-        // if the valuable sub stat is the new model, then we can fill with the rating scale
-        top4ValuableSub = valuableSub
-          .map(subStat => {
-            return (subStat as ValuableSubStatsV2).ratingScale;
-          })
-          .sort((a, b) => b - a)
-          .slice(0, 4);
-      }
-
-      // calculate the score initial
-      totalPossibleScore = top4ValuableSub.reduce((acc, cur) => acc + cur, 0);
-
-      /**
-       * if we assume the valuable sub stats which max scale is enhanced 5 times,
-       * then the totalPossibleScore will be max(scales of all valuable sub stats) * 5 + initial score
-       */
-      totalPossibleScore += totalPossibleEnhanceTimes * (top4ValuableSub.length > 0 ? Math.max(...top4ValuableSub) : 0);
+      const top4ValuableSub = relicUtils.getTop4ValuableSubScore(valuableSub);
+      const totalPossibleScore = relicUtils.getTotalPossibleScore(mainRelicStat, top4ValuableSub);
 
       // calculate the rating with the new model
-      const newRating: CharacterBasePartRating = {
+      const newRating: CharacterBasePartRating = relicUtils.getCharacterBasePartRating(
         character,
-        valuableSub: {},
-        minTotalScore: 0,
-        maxTotalScore: 0,
-        totalScore: totalPossibleScore,
-      };
+        totalPossibleScore,
+        subRelicStats,
+        valuableSub
+      );
 
-      subRelicStats.forEach(subStat => {
-        newRating.valuableSub[subStat.name] = {
-          valuable: false,
-        };
-
-        valuableSub.forEach(valuableSubStat => {
-          // backward compatible with the old model
-          if (typeof valuableSubStat === 'string') {
-            if (subStat.name === valuableSubStat) {
-              newRating.valuableSub[subStat.name] = {
-                valuable: true,
-              };
-
-              newRating.minTotalScore += subStat.score instanceof Array ? Math.min(...subStat.score) : subStat.score;
-              newRating.maxTotalScore += subStat.score instanceof Array ? Math.max(...subStat.score) : subStat.score;
-            }
-          } else if (subStat.name === valuableSubStat.subStat) {
-            newRating.valuableSub[subStat.name] = {
-              valuable: true,
-            };
-
-            newRating.minTotalScore +=
-              subStat.score instanceof Array
-                ? Math.min(...subStat.score) * valuableSubStat.ratingScale
-                : subStat.score * valuableSubStat.ratingScale;
-            newRating.maxTotalScore +=
-              subStat.score instanceof Array
-                ? Math.max(...subStat.score) * valuableSubStat.ratingScale
-                : subStat.score * valuableSubStat.ratingScale;
-          }
-        });
-      });
       if (Object.values(newRating.valuableSub).some(subStat => subStat.valuable)) {
         characterBasePartRatingList.push(newRating);
       }
-      console.log(newRating);
     });
 
     // sort the characterBasePartRatingList
     characterBasePartRatingList.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);
-
-    console.log(characterBasePartRatingList);
     setCharacterBasePartRatingList(characterBasePartRatingList);
   }
 
@@ -252,11 +178,10 @@ const ScanContent = ({
     const relicGrowthRate = {
       minGrowthScore: 0,
       maxGrowthScore: 0,
-      maxScore: 0,
+      // The relic can have 3-4 sub stats at level 0,
+      // each 3 levels increase the score by 1
+      maxScore: mainRelicStats.enhanceLevel + 4,
     };
-
-    // The relic can have 3-4 sub stats at level 0, each 3 levels will increase the score by 1
-    relicGrowthRate.maxScore = mainRelicStats.level == 0 ? 4 : Math.floor(mainRelicStats.level / 3) + 4;
 
     // Calculate the current relic score
     for (const element of subRelicStats) {
