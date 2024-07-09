@@ -256,28 +256,32 @@ const getCharacterBasePartPotentialRating = (
       }
     });
 
-    valuableSub.forEach(subStat => {
-      if (typeof subStat === 'string') {
-        if (Object.keys(RelicSubStatsAcquireScale).includes(subStat) && !acquiredStats.includes(subStat)) {
-          valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat];
-        }
-      } else if (
-        Object.keys(RelicSubStatsAcquireScale).includes(subStat.subStat) &&
-        !acquiredStats.includes(subStat.subStat)
-      ) {
-        valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat.subStat] * subStat.ratingScale;
-      }
-    });
-
-    firstAverageScore = valuableSubAcquireScale / remainTotalAcquireScale;
-
     if (subRelicStats.length === 3) {
+      valuableSub.forEach(subStat => {
+        if (typeof subStat === 'string') {
+          if (Object.keys(RelicSubStatsAcquireScale).includes(subStat) && !acquiredStats.includes(subStat)) {
+            valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat];
+          }
+        } else if (
+          Object.keys(RelicSubStatsAcquireScale).includes(subStat.subStat) &&
+          !acquiredStats.includes(subStat.subStat)
+        ) {
+          valuableSubAcquireScale += RelicSubStatsAcquireScale[subStat.subStat] * subStat.ratingScale;
+        }
+      });
+
+      firstAverageScore = valuableSubAcquireScale / remainTotalAcquireScale;
+
       restEnhanceTimes -= 1;
     }
   }
 
   const sumOfValuableScale = valuableSubScale.reduce((acc, cur) => acc + cur, 0);
-  const restAverageScore = ((sumOfValuableScale * ENHANCE_POSSIBILITY) / valuableSubScale.length) * restEnhanceTimes;
+
+  let restAverageScore = 0;
+  if (valuableSubScale.length > 0) {
+    restAverageScore = ((sumOfValuableScale * ENHANCE_POSSIBILITY) / valuableSubScale.length) * restEnhanceTimes;
+  }
 
   newPotential.minTotalScore += firstAverageScore + restAverageScore + minValuableSubScore;
   newPotential.maxTotalScore += firstAverageScore + restAverageScore + maxValuableSubScore;
