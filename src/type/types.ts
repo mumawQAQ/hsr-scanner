@@ -10,6 +10,18 @@ export type CharacterBasePartRating = {
   totalScore: number;
 };
 
+export type CharacterBasePartPotentialRating = {
+  character: string[];
+  valuableSub: {
+    [subStat: string]: {
+      valuable: boolean;
+    };
+  };
+  minTotalScore: number;
+  maxTotalScore: number;
+  totalScore: number;
+};
+
 // This is the new rating rule format
 export type ValuableSubStatsV2 = {
   subStat: string;
@@ -53,6 +65,7 @@ export type RelicMainStats = {
   name: RelicType;
   number: string;
   level: number;
+  enhanceLevel: number;
 };
 
 export type OCRResult = {
