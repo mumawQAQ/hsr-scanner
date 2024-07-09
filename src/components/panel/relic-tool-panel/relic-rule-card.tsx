@@ -22,6 +22,7 @@ import {
   RelicShoeMainStatsType,
   RelicSphereMainStatsType,
   RelicSubStatsType,
+  ValuableSubStatsV2,
 } from '@/type/types.ts';
 
 type RelicRuleCardProps = {
@@ -40,7 +41,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
   const [shoeMainStats, setShoeMainStats] = useState<string[]>([]);
   const [sphereMainStats, setSphereMainStats] = useState<string[]>([]);
   const [ropeMainStats, setRopeMainStats] = useState<string[]>([]);
-  const [subStats, setSubStats] = useState<string[]>([]);
+  const [subStats, setSubStats] = useState<ValuableSubStatsV2[]>([]);
   const [characters, setCharacters] = useState<string[]>([]);
 
   useEffect(() => {
@@ -80,7 +81,18 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
       }
     });
 
-    setSubStats(rule.valuableSub);
+    // compatible with v2 data structure
+    if (rule.valuableSub[0] && typeof rule.valuableSub[0] === 'string') {
+      // convert to v2 data structure
+      const valuableSub: ValuableSubStatsV2[] = rule.valuableSub.map(subStat => ({
+        subStat: subStat as string,
+        ratingScale: 1,
+      }));
+      setSubStats(valuableSub);
+    } else {
+      setSubStats(rule.valuableSub as ValuableSubStatsV2[]);
+    }
+
     setCharacters(rule.fitCharacters);
   }, []);
 
@@ -256,7 +268,7 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
     await handleMainStatsChange('Rope', ropeMainStats, setRopeMainStats);
   };
 
-  const handleSetSubStatsChange = async (subStats: string[]) => {
+  const handleSetSubStatsChange = async (subStats: ValuableSubStatsV2[]) => {
     const result = await createOrUpdateRelicRatingRule(templateId, ruleId, { ...rule, valuableSub: subStats });
 
     if (result.success) {
@@ -380,7 +392,21 @@ const RelicRuleCard = ({ templateId, ruleId, rule }: RelicRuleCardProps) => {
                 subStats={Object.values(RelicSubStatsType)}
               />
             </div>
-            <StatsBadgeList stats={subStats} />
+            <StatsBadgeList
+              stats={subStats}
+              handleSubScaleChange={(oldSubStats: ValuableSubStatsV2, newScale: number) => {
+                const newSubStats = subStats.map(subStat => {
+                  if (subStat.subStat === oldSubStats.subStat) {
+                    return {
+                      subStat: subStat.subStat,
+                      ratingScale: newScale,
+                    };
+                  }
+                  return subStat;
+                });
+                handleSetSubStatsChange(newSubStats);
+              }}
+            />
             <Separator className="my-2" />
             <div className="flex flex-row gap-2">
               <div className="font-semibold">适用角色:</div>

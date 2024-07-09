@@ -1,7 +1,7 @@
 import FuzzySet from 'fuzzyset.js';
 import { Worker } from 'tesseract.js';
 
-import { RelicType } from '../type/types.ts';
+import { RelicMainStats, RelicType } from '../type/types.ts';
 
 import statsRegs from '@/data/regex.ts';
 import fuzzyMatchNumberSet from '@/data/relic-fuzzy-stat-data.ts';
@@ -71,7 +71,7 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
     const {
       data: { text: mainStatsText },
     } = await worker.recognize(image);
-    const matchedStats = [];
+    const matchedStats: RelicMainStats[] = [];
 
     // match the main stats from the reg expressions
     for (const { name, reg } of statsRegs.mainStatsRegs) {
@@ -105,7 +105,12 @@ const relicMainStatsExtractor = async (worker: Worker, image: string) => {
           }
         }
 
-        matchedStats.push({ name: fixedType, number: number, level: RelicMainStatsToLevel[fixedType][number] });
+        matchedStats.push({
+          name: fixedType,
+          number: number,
+          level: RelicMainStatsToLevel[fixedType][number],
+          enhanceLevel: Math.floor(RelicMainStatsToLevel[fixedType][number] / 3),
+        });
       }
     }
 

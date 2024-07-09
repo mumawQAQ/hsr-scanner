@@ -11,11 +11,11 @@ import {
   CommandList,
 } from '@/components/ui/command.tsx';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
-import { RelicSubStatsType } from '@/type/types.ts';
+import { RelicSubStatsType, ValuableSubStatsV2 } from '@/type/types.ts';
 
 interface RelicMainStatsSelectorProps {
-  selectedKeys: string[];
-  onSelectionChange: (selectedKeys: string[]) => void;
+  selectedKeys: ValuableSubStatsV2[];
+  onSelectionChange: (selectedKeys: ValuableSubStatsV2[]) => void;
   subStats: RelicSubStatsType[];
 }
 
@@ -43,22 +43,29 @@ const RelicMainStatsSelector: React.FC<RelicMainStatsSelectorProps> = ({
                 <CommandItem key={key} value={key}>
                   <Checkbox
                     id={`sub-stats-selector-${key}`}
-                    checked={selectedKeys ? selectedKeys.includes(key) : false}
+                    checked={selectedKeys ? selectedKeys.some(selectedKey => selectedKey.subStat === key) : false}
                     onCheckedChange={checked => {
                       if (checked) {
+                        const newSelectedKey = {
+                          subStat: key,
+                          ratingScale: 1,
+                        };
                         // Add to the selectedKeys
-                        const newSelectedKeys = selectedKeys ? [...selectedKeys, key] : [key];
+                        const newSelectedKeys = selectedKeys ? [...selectedKeys, newSelectedKey] : [newSelectedKey];
                         onSelectionChange(newSelectedKeys);
                       } else {
                         // Remove from the selectedKeys
                         if (selectedKeys) {
-                          const newSelectedKeys = selectedKeys.filter(selectedKey => selectedKey !== key);
+                          const newSelectedKeys = selectedKeys.filter(selectedKey => selectedKey.subStat !== key);
                           onSelectionChange(newSelectedKeys);
                         }
                       }
                     }}
                   />
-                  <label htmlFor={`sub-stats-selector-${key}`} className="ml-2 flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <label
+                    htmlFor={`sub-stats-selector-${key}`}
+                    className="ml-2 flex text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
                     <div className="w-64">{key}</div>
                   </label>
                 </CommandItem>
