@@ -13,34 +13,33 @@ const CharacterRatingBadge = ({ characterRating, type }: CharacterRatingBadgePro
   const minRating = parseFloat(((characterRating.minTotalScore / characterRating.totalScore) * 100).toFixed(2));
   const maxRating = parseFloat(((characterRating.maxTotalScore / characterRating.totalScore) * 100).toFixed(2));
 
-  // TODO: fix this text
-  // const renderRatingText = () => {
-  //   if (type == '适配度') {
-  //     if (maxRating >= 0 && maxRating < 20) {
-  //       return '依托答辩';
-  //     } else if (maxRating >= 20 && maxRating < 40) {
-  //       return '初级答辩';
-  //     } else if (maxRating >= 40 && maxRating < 60) {
-  //       return '中级答辩';
-  //     } else if (maxRating >= 60 && maxRating < 80) {
-  //       return '高级答辩';
-  //     } else if (maxRating >= 80) {
-  //       return '顶级答辩';
-  //     }
-  //   } else if (type == '潜力值') {
-  //     if (maxRating >= 0 && maxRating < 20) {
-  //       return '低潜力';
-  //     } else if (maxRating >= 20 && maxRating < 40) {
-  //       return '中潜力';
-  //     } else if (maxRating >= 40 && maxRating < 60) {
-  //       return '高潜力';
-  //     } else if (maxRating >= 60 && maxRating < 80) {
-  //       return '极高潜力';
-  //     } else if (maxRating >= 80) {
-  //       return '超高潜力';
-  //     }
-  //   }
-  // };
+  const renderRatingText = () => {
+    if (type == '适配度') {
+      if (maxRating >= 0 && maxRating < 20) {
+        return 'C';
+      } else if (maxRating >= 20 && maxRating < 40) {
+        return 'B';
+      } else if (maxRating >= 40 && maxRating < 60) {
+        return 'A';
+      } else if (maxRating >= 60 && maxRating < 80) {
+        return 'S';
+      } else if (maxRating >= 80) {
+        return 'ACE';
+      }
+    } else if (type == '潜力值') {
+      if (maxRating >= 0 && maxRating < 20) {
+        return '不建议强化';
+      } else if (maxRating >= 20 && maxRating < 40) {
+        return '赌狗强化';
+      } else if (maxRating >= 40 && maxRating < 60) {
+        return '强化试试';
+      } else if (maxRating >= 60 && maxRating < 80) {
+        return '优先强化';
+      } else if (maxRating >= 80) {
+        return '必须强化';
+      }
+    }
+  };
 
   if (maxRating === 0) {
     return null;
@@ -63,6 +62,7 @@ const CharacterRatingBadge = ({ characterRating, type }: CharacterRatingBadgePro
             )}
             variant="secondary"
           >
+            <span>{renderRatingText()}</span>
             <span className="truncate">{type}:</span>
             <span className="truncate">
               {minRating === maxRating ? `${minRating}%` : `${minRating}% - ${maxRating}%`}
