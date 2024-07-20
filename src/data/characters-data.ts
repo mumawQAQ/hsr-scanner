@@ -46,6 +46,7 @@ import char50 from '@/assets/icon/character/img_49.png';
 import char6 from '@/assets/icon/character/img_5.png';
 import char51 from '@/assets/icon/character/img_50.png';
 import char52 from '@/assets/icon/character/img_51.png';
+import char53 from '@/assets/icon/character/img_52.png';
 import char7 from '@/assets/icon/character/img_6.png';
 import char8 from '@/assets/icon/character/img_7.png';
 import char9 from '@/assets/icon/character/img_8.png';
@@ -264,5 +265,9 @@ export const CharactersData: {
   Yukong: {
     name: '驭空',
     icon: char52,
+  },
+  Jade: {
+    name: '翡翠',
+    icon: char53,
   },
 };
