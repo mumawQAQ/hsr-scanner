@@ -50,6 +50,7 @@ import char7 from '@/assets/icon/character/img_6.png';
 import char8 from '@/assets/icon/character/img_7.png';
 import char9 from '@/assets/icon/character/img_8.png';
 import char10 from '@/assets/icon/character/img_9.png';
+import char53 from '@/assets/icon/character/img_52.png';
 
 export const CharactersData: {
   [key: string]: {
@@ -264,5 +265,9 @@ export const CharactersData: {
   Yukong: {
     name: '驭空',
     icon: char52,
+  },
+  Jade: {
+    name: '翡翠',
+    icon: char53,
   },
 };
