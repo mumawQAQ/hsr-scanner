@@ -2,7 +2,12 @@ import uvicorn
 from fastapi import FastAPI
 from uvicorn import Server
 
+from app.routers import websocket
+
 app = FastAPI()
+
+# include all the routers here
+app.include_router(websocket.router)
 
 
 def server_started(server):
