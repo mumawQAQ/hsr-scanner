@@ -2,12 +2,14 @@ import uvicorn
 from fastapi import FastAPI
 from uvicorn import Server
 
-from app.routers import websocket
+from app.life_span import life_span
+from app.routers import websocket, state
 
-app = FastAPI()
+app = FastAPI(lifespan=life_span)
 
 # include all the routers here
 app.include_router(websocket.router)
+app.include_router(state.router)
 
 
 def server_started(server):

@@ -1,3 +1,4 @@
+import { spawn } from 'child_process';
 import { unlink, writeFile } from 'fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,6 +38,7 @@ autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
 
 let win: BrowserWindow | null;
+let backendProcess = null;
 
 function createMainWindow() {
   win = new BrowserWindow({
@@ -189,6 +191,23 @@ function createMainWindow() {
     win.loadFile(path.join(RENDERER_DIST, 'index.html'));
   }
 }
+
+app.on('ready', () => {
+  // start the backend server
+  backendProcess = spawn('python', ['backend/main.py']);
+
+  backendProcess.stdout.on('data', data => {
+    console.log(`stdout: ${data}`);
+  });
+
+  backendProcess.stderr.on('data', data => {
+    console.error(`stderr: ${data}`);
+  });
+
+  backendProcess.on('close', code => {
+    console.log(`Backend process exited with code ${code}`);
+  });
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
