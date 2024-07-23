@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, WebSocket, Depends, WebSocketDisconnect
 
 from app.dependencies.connection_manager import ConnectionManager, get_connection_manager
@@ -8,8 +10,8 @@ router = APIRouter()
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket,
-                             manager: ConnectionManager = Depends(get_connection_manager),
-                             global_state: GlobalState = Depends(get_global_state)):
+                             manager: Annotated[ConnectionManager, Depends(get_connection_manager)],
+                             global_state: Annotated[GlobalState, Depends(get_global_state)]):
     await manager.connect(websocket)
 
     try:

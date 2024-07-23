@@ -1,3 +1,6 @@
+from app.models.yolo_box import YoloBox
+
+
 class GlobalState:
     def __init__(self):
         self.interval = 2000
@@ -8,16 +11,8 @@ class GlobalState:
             'width': 0,
             'height': 0
         }
-
-    def clear_window(self):
-        self.window = {
-            'left': 0,
-            'top': 0,
-            'width': 0,
-            'height': 0
-        }
-
-        self.screen = None
+        self.screen_rgb = None
+        self.yolo_boxes: list[YoloBox] = []
 
 
 global_state = GlobalState()
