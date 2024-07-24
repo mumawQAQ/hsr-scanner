@@ -7,7 +7,7 @@ import torch
 from ultralytics import YOLO
 
 from app.dependencies.global_state import GlobalState
-from app.logging_config import logging
+from app.logging_config import logger
 from app.models.yolo_box import YoloBox, get_yolo_cls
 
 # path to the yolo model, should be in the parent directory
@@ -18,7 +18,7 @@ class Detection:
     def __init__(self, global_state: GlobalState):
         # check whether the model file exists
         if not os.path.exists(MODEL_PATH):
-            logging.error("yolo模型文件不存在")
+            logger.error("yolo模型文件不存在")
             raise FileNotFoundError("yolo模型文件不存在")
 
         # Load the YOLO model
@@ -33,7 +33,7 @@ class Detection:
         self.model.close()
 
     async def detect_objects(self):
-        logging.info("开始检测匹配模型")
+        logger.info("开始检测匹配模型")
         while True:
             # wait for the screen to be captured
             if self.global_state.screen_rgb is None:
@@ -70,6 +70,6 @@ class Detection:
                 self.global_state.yolo_boxes.append(cur_yolo_box)
 
             if self.global_state.yolo_boxes:
-                logging.info(f"检测到[{[str(box) for box in self.global_state.yolo_boxes]}]")
+                logger.info(f"检测到[{[str(box) for box in self.global_state.yolo_boxes]}]")
 
             await asyncio.sleep(0)

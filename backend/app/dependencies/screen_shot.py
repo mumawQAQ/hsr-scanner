@@ -6,7 +6,7 @@ import pyautogui as pg
 import pygetwindow as gw
 
 from app.dependencies.global_state import GlobalState
-from app.logging_config import logging
+from app.logging_config import logger
 
 possible_titles = ['崩坏：星穹铁道']
 
@@ -22,7 +22,7 @@ async def get_screen_shot(global_state: GlobalState):
                 break
 
         if not game_window:
-            logging.error("未检测到游戏窗口")
+            logger.error("未检测到游戏窗口")
             await asyncio.sleep(global_state.interval / 1000)
             continue
 
@@ -37,6 +37,6 @@ async def get_screen_shot(global_state: GlobalState):
             'height': game_window.height
         }
 
-        logging.info(f"截图成功: {global_state.window}")
+        logger.info(f"截图成功: {global_state.window}")
 
         await asyncio.sleep(global_state.interval / 1000)
