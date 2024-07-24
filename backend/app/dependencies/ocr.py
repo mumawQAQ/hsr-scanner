@@ -4,6 +4,7 @@ from typing import Optional
 import easyocr
 
 from app.dependencies.global_state import GlobalState
+from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logging
 from app.models.relic_info import RelicTitle
 from app.models.yolo_box import YoloCls
@@ -11,19 +12,27 @@ from app.models.yolo_box import YoloCls
 
 class OCR:
     def __init__(self, global_state: GlobalState):
-        self.reader = easyocr.Reader(['en'])
+        self.reader = easyocr.Reader(['ch_sim'])
         self.global_state = global_state
+        self.relic_match = RelicMatch()
 
     def __match_relic_title__(self, relic_title_region) -> Optional[RelicTitle]:
         # match the relic title
         result = self.reader.readtext(relic_title_region, detail=0)
-        print(result)
         if len(result) == 0:
             logging.error("未能识别遗器标题")
             return None
 
         logging.info(f"识别到遗器标题: {result[0]}")
-        return RelicTitle(title=result[0])
+
+        matching_result = self.relic_match.match_relic_part(result[0])
+
+        if matching_result is None:
+            return None
+
+        logging.info(f"匹配到遗器部位: {result[0]}: {matching_result}")
+
+        return RelicTitle(title=result[0], set_name=matching_result['set_name'], part=matching_result['part'])
 
     def __match_relic_main_stat__(self, relic_main_stat_region):
         result = self.reader.readtext(relic_main_stat_region, detail=0)

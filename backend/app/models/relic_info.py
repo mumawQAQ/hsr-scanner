@@ -29,6 +29,8 @@ class RelicType(Enum):
 
 class RelicTitle(BaseModel):
     title: str
+    set_name: str
+    part: str
 
 
 class RelicMainStat(BaseModel):
