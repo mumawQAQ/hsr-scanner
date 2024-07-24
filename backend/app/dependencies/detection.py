@@ -33,7 +33,7 @@ class Detection:
         self.model.close()
 
     async def detect_objects(self):
-        logging.info("开始检测物体")
+        logging.info("开始检测匹配模型")
         while True:
             # wait for the screen to be captured
             if self.global_state.screen_rgb is None:
@@ -71,3 +71,5 @@ class Detection:
 
             if self.global_state.yolo_boxes:
                 logging.info(f"检测到[{[str(box) for box in self.global_state.yolo_boxes]}]")
+
+            await asyncio.sleep(0)

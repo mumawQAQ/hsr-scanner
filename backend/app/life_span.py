@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 from app.dependencies.detection import Detection
 from app.dependencies.global_state import global_state
+from app.dependencies.ocr import OCR
 from app.dependencies.screen_shot import get_screen_shot
 
 
@@ -17,7 +18,11 @@ async def life_span(app: FastAPI):
     # start the object detection thread here
     detection_task = asyncio.create_task(detection.detect_objects())
     # load the ocr model here
+    ocr = OCR(global_state)
+    # start the ocr thread here
+    ocr_task = asyncio.create_task(ocr.read_relic_info())
+
     yield
     screen_shot_task.cancel()
     detection_task.cancel()
-    detection.destroy()
+    ocr_task.cancel()
