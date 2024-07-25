@@ -1,77 +1,77 @@
 {
-  "生命值": {
+  "HP": {
     "base": 112.896,
     "step": 39.5136
   },
-  "攻击力": {
+  "ATK": {
     "base": 56,
     "step": 19.7568
   },
-  "生命值百分比": {
+  "HPPercentage": {
     "base": 0.06912,
     "step": 0.024192
   },
-  "攻击力百分比": {
+  "ATKPercentage": {
     "base": 0.06912,
     "step": 0.024192
   },
-  "防御力百分比": {
+  "DEFPercentage": {
     "base": 0.0864,
     "step": 0.030240001
   },
-  "速度": {
+  "SPD": {
     "base": 4.032,
     "step": 1.4
   },
-  "暴击率": {
+  "CRIT Rate": {
     "base": 0.05184,
     "step": 0.018144
   },
-  "暴击伤害": {
+  "CRIT DMG": {
     "base": 0.10368,
     "step": 0.036288
   },
-  "击破特攻": {
+  "Break Effect": {
     "base": 0.10368,
     "step": 0.036288
   },
-  "治疗量加成": {
+  "Outgoing Healing Boost": {
     "base": 0.055296,
     "step": 0.019354
   },
-  "能量恢复效率": {
+  "Energy Regeneration Rate": {
     "base": 0.031104,
     "step": 0.010886001
   },
-  "效果命中": {
+  "Effect Hit Rate": {
     "base": 0.06912,
     "step": 0.024192
   },
-  "物理属性伤害提高": {
+  "Physical DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "火属性伤害提高": {
+  "Fire DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "冰属性伤害提高": {
+  "Ice DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "雷属性伤害提高": {
+  "Lightning DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "风属性伤害提高": {
+  "Wind DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "量子属性伤害提高": {
+  "Quantum DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "虚数属性伤害提高": {
+  "Imaginary DMG Boost": {
     "base": 0.062208,
     "step": 0.021773001
   }

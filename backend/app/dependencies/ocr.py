@@ -1,83 +1,54 @@
 import asyncio
+import re
 
-from paddleocr import PaddleOCR
+import cv2
+import easyocr
 
 from app.dependencies.global_state import GlobalState
 from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logger
 from app.models.yolo_box import YoloCls
 
-COMMON_RELIC_TITLES_ERROR = {
-    '铁骑的素敌战盔': '铁骑的索敌战盔'
-}
-
 
 class OCR:
     def __init__(self, global_state: GlobalState):
-        self.reader = PaddleOCR(use_angle_cls=True, lang='ch', show_log=False)
+        self.reader = easyocr.Reader(['en'])
         self.global_state = global_state
         self.relic_match = RelicMatch()
 
     @staticmethod
-    def __extract_text_from_main_sub_ocr_result__(ocr_result: list):
-        extracted_texts = []
-        # Loop through the outer list
-        for item in ocr_result:
-            # Each 'item' is a list containing sublist where the text is in a tuple as the last element
-            for inner_item in item:
-                # The text is the first element of the last tuple
-                text = inner_item[-1][0]
-                extracted_texts.append(text.replace(' ', '').strip())
-
-        return extracted_texts
-
-    @staticmethod
-    def __extract_text_from_title_ocr_result__(ocr_result: list):
-        extracted_texts = []
-        # Iterate over the nested list
-        for item in ocr_result:
-            # Extract the text from the nested list
-            text = item[0][0].replace(' ', '').strip()
-            # fix the common error
-            if text in COMMON_RELIC_TITLES_ERROR:
-                text = COMMON_RELIC_TITLES_ERROR[text]
-            extracted_texts.append(text)
-
-        return extracted_texts
-
-    @staticmethod
     def __format_relic_title__(self, relic_title_ocr_result: list):
         # format the relic title
-        # example: [[('铁骑的摧坚铁腕', 0.9655791521072388)]]
-        extracted_texts = self.__extract_text_from_title_ocr_result__(relic_title_ocr_result)
+        # example: ['1', "Musketeer's", 'Rivets Riding Boots']
+
+        extracted_texts = ''.join(relic_title_ocr_result)
+        extracted_texts = re.sub(r"[^a-zA-Z- ']", "", extracted_texts)
 
         if len(extracted_texts) == 0:
             logger.error(f"未能正确识别遗器标题, 当前OCR结果{relic_title_ocr_result}")
             return None
 
-        return extracted_texts[0]
+        return extracted_texts
 
     @staticmethod
     def __format_relic_main_stat__(self, relic_main_stat_ocr_result: list):
 
         # format the relic main stat
-        # example: [[[[[4.0, 4.0], [72.0, 7.0], [71.0, 37.0], [3.0, 34.0]], ('攻击力', 0.9776865839958191)],
-        # [[[304.0, 6.0], [333.0, 6.0], [333.0, 37.0], [304.0, 37.0]], ('56', 0.8175584077835083)]]]
-        extracted_texts = self.__extract_text_from_main_sub_ocr_result__(relic_main_stat_ocr_result)
+        # example: ['SPD', '4']
 
-        if len(extracted_texts) != 2:
+        if len(relic_main_stat_ocr_result) != 2:
             logger.error(f"未能正确识别遗器主属性, 当前OCR结果{relic_main_stat_ocr_result}")
             return None
 
-        relic_main_stat = extracted_texts[0]
-        relic_main_stat_val = extracted_texts[1]
+        relic_main_stat = relic_main_stat_ocr_result[0]
+        relic_main_stat_val = relic_main_stat_ocr_result[1]
 
         # trim all the spaces
         relic_main_stat_val = relic_main_stat_val.strip().replace(' ', '')
 
         # value can be a number or percentage % in the end
-        if relic_main_stat in ['生命值', '攻击力', '防御力'] and relic_main_stat_val.endswith('%'):
-            relic_main_stat += '百分比'
+        if relic_main_stat in ['HP', 'ATK', 'DEF'] and relic_main_stat_val.endswith('%'):
+            relic_main_stat += 'Percentage'
 
         if relic_main_stat_val.endswith('%'):
             relic_main_stat_val_num = float(relic_main_stat_val[:-1]) / 100
@@ -89,43 +60,39 @@ class OCR:
     @staticmethod
     def __format_relic_sub_stat__(self, relic_sub_stat_ocr_result: list):
         # format the relic sub stat
-        # example: [[[[[5.0, 3.0], [58.0, 3.0], [58.0, 24.0], [5.0, 24.0]], ('防御力', 0.9971581101417542)],
-        # [[[307.0, 4.0], [332.0, 4.0], [332.0, 24.0], [307.0, 24.0]], ('21', 0.9996477365493774)],
-        # [[[3.0, 36.0], [77.0, 38.0], [76.0, 56.0], [3.0, 54.0]], ('效果抵抗', 0.9983899593353271)],
-        # [[[283.0, 36.0], [333.0, 36.0], [333.0, 57.0], [283.0, 57.0]], ('4.3%', 0.9653499722480774)],
-        # [[[5.0, 70.0], [76.0, 70.0], [76.0, 86.0], [5.0, 86.0]], ('击破特攻', 0.9561224579811096)],
-        # [[[283.0, 68.0], [333.0, 68.0], [333.0, 89.0], [283.0, 89.0]], ('5.1%', 0.9625118374824524)]]]
-
-        extracted_texts = self.__extract_text_from_main_sub_ocr_result__(relic_sub_stat_ocr_result)
+        # example: ['DEF', '21', 'CRIT Rate', '3.2%', 'CRIT DMG', '5.8%']
 
         min_result_count = 3 * 2
         max_result_count = 4 * 2
 
-        if len(extracted_texts) < min_result_count or len(
-                extracted_texts) > max_result_count or len(extracted_texts) % 2 != 0:
+        if len(relic_sub_stat_ocr_result) < min_result_count or len(
+                relic_sub_stat_ocr_result) > max_result_count or len(relic_sub_stat_ocr_result) % 2 != 0:
             logger.error(f"未能正确识别遗器副属性, 当前OCR结果{relic_sub_stat_ocr_result}")
             return None
 
         format_result = {}
-        for i in range(0, len(extracted_texts), 2):
-            key = extracted_texts[i]
-            if key in ['生命值', '攻击力', '防御力'] and extracted_texts[i + 1].endswith('%'):
-                key += '百分比'
+        for i in range(0, len(relic_sub_stat_ocr_result), 2):
+            key = relic_sub_stat_ocr_result[i]
+            if key in ['HP', 'ATK', 'DEF'] and relic_sub_stat_ocr_result[i + 1].endswith('%'):
+                key += 'Percentage'
 
-            value = extracted_texts[i + 1].strip().replace(' ', '')
+            value = relic_sub_stat_ocr_result[i + 1].strip().replace(' ', '')
             format_result[key] = value
 
         return format_result
 
     def __match_relic_title__(self, relic_title_region):
+        # resize the region to 10 times to get a better OCR result
+        relic_title_region = cv2.resize(relic_title_region, None, fx=10, fy=10, interpolation=cv2.INTER_CUBIC)
+
         # match the relic title
-        result = self.reader.ocr(relic_title_region, det=False)
+        result = self.reader.readtext(relic_title_region, detail=0)
 
         format_result = self.__format_relic_title__(self, result)
         if format_result is None:
             return None
 
-        logger.info(f"识别到遗器标题: {format_result}")
+        logger.error(f"识别到遗器标题: {format_result}")
 
         matching_result = self.relic_match.match_relic_part(format_result)
 
@@ -135,7 +102,10 @@ class OCR:
         return matching_result
 
     def __match_relic_main_stat__(self, relic_main_stat_region):
-        result = self.reader.ocr(relic_main_stat_region)
+        # resize the region to 10 times to get a better OCR result
+        relic_main_stat_region = cv2.resize(relic_main_stat_region, None, fx=10, fy=10, interpolation=cv2.INTER_CUBIC)
+
+        result = self.reader.readtext(relic_main_stat_region, detail=0)
 
         format_result = self.__format_relic_main_stat__(self, result)
         if format_result is None:
@@ -151,7 +121,10 @@ class OCR:
         return matching_result
 
     def __match_relic_sub_stat__(self, relic_sub_stat_region):
-        result = self.reader.ocr(relic_sub_stat_region)
+        # resize the region to 10 times to get a better OCR result
+        # relic_sub_stat_region = cv2.resize(relic_sub_stat_region, None, fx=5, fy=5, interpolation=cv2.INTER_CUBIC)
+
+        result = self.reader.readtext(relic_sub_stat_region, detail=0)
 
         format_result = self.__format_relic_sub_stat__(self, result)
         if format_result is None:

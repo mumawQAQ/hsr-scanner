@@ -8,7 +8,7 @@ import pygetwindow as gw
 from app.dependencies.global_state import GlobalState
 from app.logging_config import logger
 
-possible_titles = ['崩坏：星穹铁道']
+possible_titles = ['Honkai: Star Rail']
 
 
 async def get_screen_shot(global_state: GlobalState):

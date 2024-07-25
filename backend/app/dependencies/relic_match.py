@@ -2,6 +2,8 @@ import json
 import os
 from typing import Optional
 
+from rapidfuzz import process
+
 from app.logging_config import logger
 from app.models.relic_info import RelicSubStat, RelicMainStat, RelicTitle
 
@@ -9,7 +11,8 @@ RELIC_DATA_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'as
 RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
 RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
 RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
-RELIC_INNER_PARTS = ['head', 'hand', 'body', 'feet']
+RELIC_INNER_PARTS = ['sphere', 'rope']
+RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 
 
 class RelicMatch:
@@ -21,17 +24,19 @@ class RelicMatch:
             # init the relic parts
             with open(RELIC_SETS_FILE, 'r', encoding='utf-8') as f:
                 relic_sets = json.load(f)
-                for relic_set_name in relic_sets:
-                    # an outer relic set should contain head, hand, body, feet
-                    if not relic_sets[relic_set_name]['isInner']:
-                        parts = relic_sets[relic_set_name]['parts']
-                        for part in RELIC_INNER_PARTS:
-                            part_model = {
-                                'set_name': relic_set_name,
-                                'part': part
-                            }
 
-                            self.relic_parts[parts[part]] = part_model
+                for relic_set_name, details in relic_sets.items():
+                    # Choose the correct parts list based on whether the set is inner or outer.
+                    parts_to_use = RELIC_INNER_PARTS if details['isInner'] else RELIC_OUTER_PARTS
+
+                    # Process the parts based on the selected list.
+                    for part in parts_to_use:
+                        part_model = {
+                            'set_name': relic_set_name,
+                            'part': part
+                        }
+                        self.relic_parts[details['parts'][part]] = part_model
+
         except Exception as e:
             logger.error(f"读取遗器部位数据失败: {e}")
             raise e
@@ -53,11 +58,21 @@ class RelicMatch:
             raise e
 
     def match_relic_part(self, relic_title: str) -> Optional[RelicTitle]:
+
+        # fuzz match the relic title
+        fuzz_result = process.extractOne(relic_title, self.relic_parts.keys())
+
+        if fuzz_result is None or fuzz_result[1] < 80:
+            logger.error(f"模糊匹配未找到对应遗器部位名称: {relic_title}")
+            return None
+
+        relic_title = fuzz_result[0]
+
         if relic_title in self.relic_parts:
             matching_result = RelicTitle(title=relic_title, set_name=self.relic_parts[relic_title]['set_name'],
                                          part=self.relic_parts[relic_title]['part'])
 
-            logger.info(f"匹配到遗器部位: {matching_result}")
+            logger.error(f"匹配到遗器部位: {matching_result}")
 
             return matching_result
         else:

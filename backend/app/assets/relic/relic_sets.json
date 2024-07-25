@@ -1,294 +1,330 @@
 {
-  "荡除蠹灾的铁骑": {
+  "Iron Cavalry Against the Scourge": {
+    "name": "荡除蠹灾的铁骑",
     "isInner": false,
     "parts": {
-      "head": "铁骑的索敌战盔",
-      "hand": "铁骑的摧坚铁腕",
-      "body": "铁骑的银影装甲",
-      "feet": "铁骑的行空护胫"
+      "head": "Iron Cavalry's Homing Helm",
+      "hand": "Iron Cavalry's Crushing Wristguard",
+      "body": "Iron Cavalry's Silvery Armor",
+      "feet": "Iron Cavalry's Skywalk Greaves"
     }
   },
-  "风举云飞的勇烈": {
+  "Band of Sizzling Thunder": {
+    "name": "激奏雷电的乐队",
     "isInner": false,
     "parts": {
-      "head": "勇烈的玄枵面甲",
-      "hand": "勇烈的钩爪腕甲",
-      "body": "勇烈的飞翎瓷甲",
-      "feet": "勇烈的逐猎腿甲"
+      "head": "Band's Polarized Sunglasses",
+      "hand": "Band's Touring Bracelet",
+      "body": "Band's Leather Jacket With Studs",
+      "feet": "Band's Ankle Boots With Rivets"
     }
   },
-  "机心戏梦的钟表匠": {
+  "Champion of Streetwise Boxing": {
+    "name": "街头出身的拳王",
     "isInner": false,
     "parts": {
-      "head": "钟表匠的极目透镜",
-      "hand": "钟表匠的交运腕表",
-      "body": "钟表匠的空幻礼服",
-      "feet": "钟表匠的隐梦革履"
+      "head": "Champion's Headgear",
+      "hand": "Champion's Heavy Gloves",
+      "body": "Champion's Chest Guard",
+      "feet": "Champion's Fleetfoot Boots"
     }
   },
-  "死水深潜的先驱": {
+  "Eagle of Twilight Line": {
+    "name": "晨昏交界的翔鹰",
     "isInner": false,
     "parts": {
-      "head": "先驱的绝热围壳",
-      "hand": "先驱的虚极罗盘",
-      "body": "先驱的密合铅衣",
-      "feet": "先驱的泊星桩锚"
+      "head": "Eagle's Beaked Helmet",
+      "hand": "Eagle's Soaring Ring",
+      "body": "Eagle's Winged Suit Harness",
+      "feet": "Eagle's Quilted Puttees"
     }
   },
-  "幽锁深牢的系囚": {
+  "Firesmith of Lava-Forging": {
+    "name": "熔岩锻铸的火匠",
     "isInner": false,
     "parts": {
-      "head": "系囚的合啮拘笼",
-      "hand": "系囚的铅石梏铐",
-      "body": "系囚的幽闭缚束",
-      "feet": "系囚的绝足锁桎"
+      "head": "Firesmith's Obsidian Goggles",
+      "hand": "Firesmith's Ring of Flame-Mastery",
+      "body": "Firesmith's Fireproof Apron",
+      "feet": "Firesmith's Alloy Leg"
     }
   },
-  "毁烬焚骨的大公": {
+  "Genius of Brilliant Stars": {
+    "name": "繁星璀璨的天才",
     "isInner": false,
     "parts": {
-      "head": "大公的冥焰冠冕",
-      "hand": "大公的绒火指套",
-      "body": "大公的蒙恩长袍",
-      "feet": "大公的绅雅礼靴"
+      "head": "Genius's Ultraremote Sensing Visor",
+      "hand": "Genius's Frequency Catcher",
+      "body": "Genius's Metafield Suit",
+      "feet": "Genius's Gravity Walker"
     }
   },
-  "宝命长存的莳者": {
+  "Guard of Wuthering Snow": {
+    "name": "戍卫风雪的铁卫",
     "isInner": false,
     "parts": {
-      "head": "莳者的复明义眼",
-      "hand": "莳者的机巧木手",
-      "body": "莳者的承露羽衣",
-      "feet": "莳者的天人丝履"
+      "head": "Guard's Cast Iron Helmet",
+      "hand": "Guard's Shining Gauntlets",
+      "body": "Guard's Uniform of Old",
+      "feet": "Guard's Silver Greaves"
     }
   },
-  "骇域漫游的信使": {
+  "Hunter of Glacial Forest": {
+    "name": "密林卧雪的猎人",
     "isInner": false,
     "parts": {
-      "head": "信使的全息目镜",
-      "hand": "信使的百变义手",
-      "body": "信使的密信挎包",
-      "feet": "信使的酷跑板鞋"
+      "head": "Hunter's Artaius Hood",
+      "hand": "Hunter's Lizard Gloves",
+      "body": "Hunter's Ice Dragon Cloak",
+      "feet": "Hunter's Soft Elkskin Boots"
     }
   },
-  "云无留迹的过客": {
+  "Knight of Purity Palace": {
+    "name": "净庭教宗的圣骑士",
     "isInner": false,
     "parts": {
-      "head": "过客的逢春木簪",
-      "hand": "过客的游龙臂鞲",
-      "body": "过客的残绣风衣",
-      "feet": "过客的冥途游履"
+      "head": "Knight's Forgiving Casque",
+      "hand": "Knight's Silent Oath Ring",
+      "body": "Knight's Solemn Breastplate",
+      "feet": "Knight's Iron Boots of Order"
     }
   },
-  "净庭教宗的圣骑士": {
+  "Longevous Disciple": {
+    "name": "宝命长存的莳者",
     "isInner": false,
     "parts": {
-      "head": "圣骑的宽恕盔面",
-      "hand": "圣骑的沉默誓环",
-      "body": "圣骑的肃穆胸甲",
-      "feet": "圣骑的秩序铁靴"
+      "head": "Disciple's Prosthetic Eye",
+      "hand": "Disciple's Ingenium Hand",
+      "body": "Disciple's Dewy Feather Garb",
+      "feet": "Disciple's Celestial Silk Sandals"
     }
   },
-  "密林卧雪的猎人": {
+  "Messenger Traversing Hackerspace": {
+    "name": "骇域漫游的信使",
     "isInner": false,
     "parts": {
-      "head": "雪猎的荒神兜帽",
-      "hand": "雪猎的巨蜥手套",
-      "body": "雪猎的冰龙披风",
-      "feet": "雪猎的鹿皮软靴"
+      "head": "Messenger's Holovisor",
+      "hand": "Messenger's Transformative Arm",
+      "body": "Messenger's Secret Satchel",
+      "feet": "Messenger's Par-kool Sneakers"
     }
   },
-  "戍卫风雪的铁卫": {
+  "Musketeer of Wild Wheat": {
+    "name": "野穗伴行的快枪手",
     "isInner": false,
     "parts": {
-      "head": "铁卫的铸铁面盔",
-      "hand": "铁卫的银鳞手甲",
-      "body": "铁卫的旧制军服",
-      "feet": "铁卫的白银护胫"
+      "head": "Musketeer's Wild Wheat Felt Hat",
+      "hand": "Musketeer's Coarse Leather Gloves",
+      "body": "Musketeer's Wind-Hunting Shawl",
+      "feet": "Musketeer's Rivets Riding Boots"
     }
   },
-  "晨昏交界的翔鹰": {
+  "Passerby of Wandering Cloud": {
+    "name": "云无留迹的过客",
     "isInner": false,
     "parts": {
-      "head": "翔鹰的长喙头盔",
-      "hand": "翔鹰的鹰击指环",
-      "body": "翔鹰的翼装束带",
-      "feet": "翔鹰的绒羽绑带"
+      "head": "Passerby's Rejuvenated Wooden Hairstick",
+      "hand": "Passerby's Roaming Dragon Bracer",
+      "body": "Passerby's Ragged Embroided Coat",
+      "feet": "Passerby's Stygian Hiking Boots"
     }
   },
-  "流星追迹的怪盗": {
+  "Pioneer Diver of Dead Waters": {
+    "name": "死水深潜的先驱",
     "isInner": false,
     "parts": {
-      "head": "怪盗的千人假面",
-      "hand": "怪盗的绘纹手套",
-      "body": "怪盗的纤钢爪钩",
-      "feet": "怪盗的流星快靴"
+      "head": "Pioneer's Heatproof Shell",
+      "hand": "Pioneer's Lacuna Compass",
+      "body": "Pioneer's Sealed Lead Apron",
+      "feet": "Pioneer's Starfaring Anchor"
     }
   },
-  "激奏雷电的乐队": {
+  "Prisoner in Deep Confinement": {
+    "name": "幽锁深牢的系囚",
     "isInner": false,
     "parts": {
-      "head": "乐队的偏光墨镜",
-      "hand": "乐队的巡演手绳",
-      "body": "乐队的钉刺皮衣",
-      "feet": "乐队的铆钉短靴"
+      "head": "Prisoner's Sealed Muzzle",
+      "hand": "Prisoner's Leadstone Shackles",
+      "body": "Prisoner's Repressive Straitjacket",
+      "feet": "Prisoner's Restrictive Fetters"
     }
   },
-  "熔岩锻铸的火匠": {
+  "The Ashblazing Grand Duke": {
+    "name": "毁烬焚骨的大公",
     "isInner": false,
     "parts": {
-      "head": "火匠的黑耀目镜",
-      "hand": "火匠的御火戒指",
-      "body": "火匠的阻燃围裙",
-      "feet": "火匠的合金义肢"
+      "head": "Grand Duke's Crown of Netherflame",
+      "hand": "Grand Duke's Gloves of Fieryfur",
+      "body": "Grand Duke's Robe of Grace",
+      "feet": "Grand Duke's Ceremonial Boots"
     }
   },
-  "盗匪荒漠的废土客": {
+  "The Wind-Soaring Valorous": {
+    "name": "风举云飞的勇烈",
     "isInner": false,
     "parts": {
-      "head": "废土客的呼吸面罩",
-      "hand": "废土客的荒漠终端",
-      "body": "废土客的修士长袍",
-      "feet": "废土客的动力腿甲"
+      "head": "Valorous Mask of Northern Skies",
+      "hand": "Valorous Bracelet of Grappling Hooks",
+      "body": "Valorous Plate of Soaring Flight",
+      "feet": "Valorous Greaves of Pursuing Hunt"
     }
   },
-  "繁星璀璨的天才": {
+  "Thief of Shooting Meteor": {
+    "name": "流星追迹的怪盗",
     "isInner": false,
     "parts": {
-      "head": "天才的超距遥感",
-      "hand": "天才的频变捕手",
-      "body": "天才的元域深潜",
-      "feet": "天才的引力漫步"
+      "head": "Thief's Myriad-Faced Mask",
+      "hand": "Thief's Gloves With Prints",
+      "body": "Thief's Steel Grappling Hook",
+      "feet": "Thief's Meteor Boots"
     }
   },
-  "街头出身的拳王": {
+  "Wastelander of Banditry Desert": {
+    "name": "盗匪荒漠的废土客",
     "isInner": false,
     "parts": {
-      "head": "拳王的冠军护头",
-      "hand": "拳王的重炮拳套",
-      "body": "拳王的贴身护胸",
-      "feet": "拳王的弧步战靴"
+      "head": "Wastelander's Breathing Mask",
+      "hand": "Wastelander's Desert Terminal",
+      "body": "Wastelander's Friar Robe",
+      "feet": "Wastelander's Powered Greaves"
     }
   },
-  "野穗伴行的快枪手": {
+  "Watchmaker, Master of Dream Machinations": {
+    "name": "机心戏梦的钟表匠",
     "isInner": false,
     "parts": {
-      "head": "快枪手的野穗毡帽",
-      "hand": "快枪手的粗革手套",
-      "body": "快枪手的猎风披肩",
-      "feet": "快枪手的铆钉马靴"
+      "head": "Watchmaker's Telescoping Lens",
+      "hand": "Watchmaker's Fortuitous Wristwatch",
+      "body": "Watchmaker's Illusory Formal Suit",
+      "feet": "Watchmaker's Dream-Concealing Dress Shoes"
     }
   },
-  "劫火莲灯铸炼宫": {
+  "Belobog of the Architects": {
+    "name": "筑城者的贝洛伯格",
     "isInner": true,
     "parts": {
-      "sphere": "铸炼宫的莲华灯芯",
-      "rope": "铸炼宫的焰轮天绸"
+      "sphere": "Belobog's Fortress of Preservation",
+      "rope": "Belobog's Iron Defense"
     }
   },
-  "奔狼的都蓝王朝": {
+  "Broken Keel": {
+    "name": "折断的龙骨",
     "isInner": true,
     "parts": {
-      "sphere": "都蓝的穹窿金帐",
-      "rope": "都蓝的器兽缰辔"
+      "sphere": "Insumousu's Whalefall Ship",
+      "rope": "Insumousu's Frayed Hawser"
     }
   },
-  "出云显世与高天神国": {
+  "Celestial Differentiator": {
+    "name": "星体差分机",
     "isInner": true,
     "parts": {
-      "sphere": "出云的祸津众神",
-      "rope": "出云的终始一刀"
+      "sphere": "Planet Screwllum's Mechanical Sun",
+      "rope": "Planet Screwllum's Ring System"
     }
   },
-  "无主荒星茨冈尼亚": {
+  "Duran, Dynasty of Running Wolves": {
+    "name": "奔狼的都蓝王朝",
     "isInner": true,
     "parts": {
-      "sphere": "茨冈尼亚的母神卧榻",
-      "rope": "茨冈尼亚的轮回纽结"
+      "sphere": "Duran's Tent of Golden Sky",
+      "rope": "Duran's Mechabeast Bridle"
     }
   },
-  "梦想之地匹诺康尼": {
+  "Firmament Frontline: Glamoth": {
+    "name": "苍穹战线格拉默",
     "isInner": true,
     "parts": {
-      "sphere": "匹诺康尼的堂皇酒店",
-      "rope": "匹诺康尼的逐梦轨道"
+      "sphere": "Glamoth's Iron Cavalry Regiment",
+      "rope": "Glamoth's Silent Tombstone"
     }
   },
-  "苍穹战线格拉默": {
+  "Fleet of the Ageless": {
+    "name": "不老者的仙舟",
     "isInner": true,
     "parts": {
-      "sphere": "格拉默的铁骑兵团",
-      "rope": "格拉默的寂静坟碑"
+      "sphere": "The Xianzhou Luofu's Celestial Ark",
+      "rope": "The Xianzhou Luofu's Ambrosial Arbor Vines"
     }
   },
-  "折断的龙骨": {
+  "Forge of the Kalpagni Lantern": {
+    "name": "劫火莲灯铸炼宫",
     "isInner": true,
     "parts": {
-      "sphere": "伊须磨洲的残船鲸落",
-      "rope": "伊须磨洲的坼裂缆索"
+      "sphere": "Forge's Lotus Lantern Wick",
+      "rope": "Forge's Heavenly Flamewheel Silk"
     }
   },
-  "繁星竞技场": {
+  "Inert Salsotto": {
+    "name": "停转的萨尔索图",
     "isInner": true,
     "parts": {
-      "sphere": "泰科铵的镭射球场",
-      "rope": "泰科铵的弧光赛道"
+      "sphere": "Salsotto's Moving City",
+      "rope": "Salsotto's Terminator Line"
     }
   },
-  "不老者的仙舟": {
+  "Izumo Gensei and Takama Divine Realm": {
+    "name": "出云显世与高天神国",
     "isInner": true,
     "parts": {
-      "sphere": "罗浮仙舟的天外楼船",
-      "rope": "罗浮仙舟的建木枝蔓"
+      "sphere": "lzumo's Magatsu no Morokami",
+      "rope": "lzumo's Blades of Origin and End"
     }
   },
-  "停转的萨尔索图": {
+  "Pan-Cosmic Commercial Enterprise": {
+    "name": "泛银河商业公司",
     "isInner": true,
     "parts": {
-      "sphere": "萨尔索图的移动城市",
-      "rope": "萨尔索图的晨昏界线"
+      "sphere": "The IPC's Mega HQ",
+      "rope": "The IPC's Trade Route"
     }
   },
-  "太空封印站": {
+  "Penacony, Land of the Dreams": {
+    "name": "梦想之地匹诺康尼",
     "isInner": true,
     "parts": {
-      "sphere": "「黑塔」的空间站点",
-      "rope": "「黑塔」的漫历轨迹"
+      "sphere": "Penacony's Grand Hotel",
+      "rope": "Penacony's Dream-Seeking Tracks"
     }
   },
-  "星体差分机": {
+  "Rutilant Arena": {
+    "name": "繁星竞技场",
     "isInner": true,
     "parts": {
-      "sphere": "螺丝星的机械烈阳",
-      "rope": "螺丝星的环星孔带"
+      "sphere": "Taikiyan Laser Stadium",
+      "rope": "Taikiyan's Arclight Race Track"
     }
   },
-  "泛银河商业公司": {
+  "Sigonia, the Unclaimed Desolation": {
+    "name": "无主荒星茨冈尼亚",
     "isInner": true,
     "parts": {
-      "sphere": "公司的巨构总部",
-      "rope": "公司的贸易航道"
+      "sphere": "Sigonia's Gaiathra Berth",
+      "rope": "Sigonia's Knot of Cyclicality"
     }
   },
-  "生命的翁瓦克": {
+  "Space Sealing Station": {
+    "name": "太空封印站",
     "isInner": true,
     "parts": {
-      "sphere": "翁瓦克的诞生之岛",
-      "rope": "翁瓦克的环岛海岸"
+      "sphere": "Herta's Space Station",
+      "rope": "Herta's Wandering Trek"
     }
   },
-  "盗贼公国塔利亚": {
+  "Sprightly Vonwacq": {
+    "name": "生命的翁瓦克",
     "isInner": true,
     "parts": {
-      "sphere": "塔利亚的钉壳小镇",
-      "rope": "塔利亚的裸皮电线"
+      "sphere": "Vonwacq's Island of Birth",
+      "rope": "Vonwacq's Islandic Coast"
     }
   },
-  "筑城者的贝洛伯格": {
+  "Talia: Kingdom of Banditry": {
+    "name": "盗贼公国塔利亚",
     "isInner": true,
     "parts": {
-      "sphere": "贝洛伯格的存护堡垒",
-      "rope": "贝洛伯格的铁卫防线"
+      "sphere": "Talia's Nailscrap Town",
+      "rope": "Talia's Exposed Electric Wire"
     }
   }
 }
