@@ -36,6 +36,4 @@ logging_config = dict({
     }
 })
 
-# Apply the logging configuration
-logging.config.dictConfig(logging_config)
 logger = logging.getLogger(__name__)

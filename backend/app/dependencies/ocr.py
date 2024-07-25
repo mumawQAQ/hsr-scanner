@@ -1,12 +1,15 @@
 import asyncio
 
-import cv2
 from paddleocr import PaddleOCR
 
 from app.dependencies.global_state import GlobalState
 from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logger
 from app.models.yolo_box import YoloCls
+
+COMMON_RELIC_TITLES_ERROR = {
+    '铁骑的素敌战盔': '铁骑的索敌战盔'
+}
 
 
 class OCR:
@@ -34,7 +37,11 @@ class OCR:
         # Iterate over the nested list
         for item in ocr_result:
             # Extract the text from the nested list
-            extracted_texts.append(item[0][0].replace(' ', '').strip())
+            text = item[0][0].replace(' ', '').strip()
+            # fix the common error
+            if text in COMMON_RELIC_TITLES_ERROR:
+                text = COMMON_RELIC_TITLES_ERROR[text]
+            extracted_texts.append(text)
 
         return extracted_texts
 
@@ -169,14 +176,6 @@ class OCR:
                     continue
 
                 yolo_boxes = self.global_state.yolo_boxes
-
-                cv2.imwrite('test.jpg', self.global_state.screen_rgb)
-                cv2.imwrite('test2.jpg', self.global_state.screen_rgb[yolo_boxes[0].y1:yolo_boxes[0].y2,
-                                         yolo_boxes[0].x1:yolo_boxes[0].x2])
-                cv2.imwrite('test3.jpg', self.global_state.screen_rgb[yolo_boxes[1].y1:yolo_boxes[1].y2,
-                                         yolo_boxes[1].x1:yolo_boxes[1].x2])
-                cv2.imwrite('test4.jpg', self.global_state.screen_rgb[yolo_boxes[2].y1:yolo_boxes[2].y2,
-                                         yolo_boxes[2].x1:yolo_boxes[2].x2])
 
                 for yolo_box in yolo_boxes:
                     if yolo_box.cls == YoloCls.RELIC_TITLE:

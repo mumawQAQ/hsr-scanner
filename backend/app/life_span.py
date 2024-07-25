@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
+from logging.config import dictConfig
 
 from fastapi import FastAPI
 
@@ -7,10 +8,13 @@ from app.dependencies.detection import Detection
 from app.dependencies.global_state import global_state
 from app.dependencies.ocr import OCR
 from app.dependencies.screen_shot import get_screen_shot
+from app.logging_config import logging_config
 
 
 @asynccontextmanager
 async def life_span(app: FastAPI):
+    # Apply the logging configuration
+    dictConfig(logging_config)
     # start the screen capture thread here
     screen_shot_task = asyncio.create_task(get_screen_shot(global_state))
     # load the ml model here
