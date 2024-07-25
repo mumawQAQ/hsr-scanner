@@ -12,7 +12,7 @@ logging_config = dict({
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'level': 'WARNING',
+            'level': 'DEBUG',
             'formatter': 'detailed',
             'stream': 'ext://sys.stdout',
         },

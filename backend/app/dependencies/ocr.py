@@ -1,26 +1,69 @@
 import asyncio
-from typing import Optional
 
 import cv2
-import easyocr
+from paddleocr import PaddleOCR
 
 from app.dependencies.global_state import GlobalState
 from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logger
-from app.models.relic_info import RelicTitle
 from app.models.yolo_box import YoloCls
 
 
 class OCR:
     def __init__(self, global_state: GlobalState):
-        self.reader = easyocr.Reader(['ch_sim', 'en'])
+        self.reader = PaddleOCR(use_angle_cls=True, lang='ch', show_log=False)
         self.global_state = global_state
         self.relic_match = RelicMatch()
 
     @staticmethod
-    def __format_relic_main_stat__(relic_main_stat_ocr_result: list):
-        relic_main_stat = relic_main_stat_ocr_result[0]
-        relic_main_stat_val = relic_main_stat_ocr_result[1]
+    def __extract_text_from_main_sub_ocr_result__(ocr_result: list):
+        extracted_texts = []
+        # Loop through the outer list
+        for item in ocr_result:
+            # Each 'item' is a list containing sublist where the text is in a tuple as the last element
+            for inner_item in item:
+                # The text is the first element of the last tuple
+                text = inner_item[-1][0]
+                extracted_texts.append(text.replace(' ', '').strip())
+
+        return extracted_texts
+
+    @staticmethod
+    def __extract_text_from_title_ocr_result__(ocr_result: list):
+        extracted_texts = []
+        # Iterate over the nested list
+        for item in ocr_result:
+            # Extract the text from the nested list
+            extracted_texts.append(item[0][0].replace(' ', '').strip())
+
+        return extracted_texts
+
+    @staticmethod
+    def __format_relic_title__(self, relic_title_ocr_result: list):
+        # format the relic title
+        # example: [[('铁骑的摧坚铁腕', 0.9655791521072388)]]
+        extracted_texts = self.__extract_text_from_title_ocr_result__(relic_title_ocr_result)
+
+        if len(extracted_texts) == 0:
+            logger.error(f"未能正确识别遗器标题, 当前OCR结果{relic_title_ocr_result}")
+            return None
+
+        return extracted_texts[0]
+
+    @staticmethod
+    def __format_relic_main_stat__(self, relic_main_stat_ocr_result: list):
+
+        # format the relic main stat
+        # example: [[[[[4.0, 4.0], [72.0, 7.0], [71.0, 37.0], [3.0, 34.0]], ('攻击力', 0.9776865839958191)],
+        # [[[304.0, 6.0], [333.0, 6.0], [333.0, 37.0], [304.0, 37.0]], ('56', 0.8175584077835083)]]]
+        extracted_texts = self.__extract_text_from_main_sub_ocr_result__(relic_main_stat_ocr_result)
+
+        if len(extracted_texts) != 2:
+            logger.error(f"未能正确识别遗器主属性, 当前OCR结果{relic_main_stat_ocr_result}")
+            return None
+
+        relic_main_stat = extracted_texts[0]
+        relic_main_stat_val = extracted_texts[1]
 
         # trim all the spaces
         relic_main_stat_val = relic_main_stat_val.strip().replace(' ', '')
@@ -37,28 +80,47 @@ class OCR:
         return [relic_main_stat, relic_main_stat_val, relic_main_stat_val_num]
 
     @staticmethod
-    def __format_relic_sub_stat__(relic_sub_stat_ocr_result: list):
+    def __format_relic_sub_stat__(self, relic_sub_stat_ocr_result: list):
+        # format the relic sub stat
+        # example: [[[[[5.0, 3.0], [58.0, 3.0], [58.0, 24.0], [5.0, 24.0]], ('防御力', 0.9971581101417542)],
+        # [[[307.0, 4.0], [332.0, 4.0], [332.0, 24.0], [307.0, 24.0]], ('21', 0.9996477365493774)],
+        # [[[3.0, 36.0], [77.0, 38.0], [76.0, 56.0], [3.0, 54.0]], ('效果抵抗', 0.9983899593353271)],
+        # [[[283.0, 36.0], [333.0, 36.0], [333.0, 57.0], [283.0, 57.0]], ('4.3%', 0.9653499722480774)],
+        # [[[5.0, 70.0], [76.0, 70.0], [76.0, 86.0], [5.0, 86.0]], ('击破特攻', 0.9561224579811096)],
+        # [[[283.0, 68.0], [333.0, 68.0], [333.0, 89.0], [283.0, 89.0]], ('5.1%', 0.9625118374824524)]]]
+
+        extracted_texts = self.__extract_text_from_main_sub_ocr_result__(relic_sub_stat_ocr_result)
+
+        min_result_count = 3 * 2
+        max_result_count = 4 * 2
+
+        if len(extracted_texts) < min_result_count or len(
+                extracted_texts) > max_result_count or len(extracted_texts) % 2 != 0:
+            logger.error(f"未能正确识别遗器副属性, 当前OCR结果{relic_sub_stat_ocr_result}")
+            return None
+
         format_result = {}
-        for i in range(0, len(relic_sub_stat_ocr_result), 2):
-            key = relic_sub_stat_ocr_result[i]
-            if key in ['生命值', '攻击力', '防御力'] and relic_sub_stat_ocr_result[i + 1].endswith('%'):
+        for i in range(0, len(extracted_texts), 2):
+            key = extracted_texts[i]
+            if key in ['生命值', '攻击力', '防御力'] and extracted_texts[i + 1].endswith('%'):
                 key += '百分比'
 
-            value = relic_sub_stat_ocr_result[i + 1].strip().replace(' ', '')
+            value = extracted_texts[i + 1].strip().replace(' ', '')
             format_result[key] = value
 
         return format_result
 
-    def __match_relic_title__(self, relic_title_region) -> Optional[RelicTitle]:
+    def __match_relic_title__(self, relic_title_region):
         # match the relic title
-        result = self.reader.readtext(relic_title_region, detail=0)
-        if len(result) == 0:
-            logger.error("未能正确识别遗器标题")
+        result = self.reader.ocr(relic_title_region, det=False)
+
+        format_result = self.__format_relic_title__(self, result)
+        if format_result is None:
             return None
 
-        logger.info(f"识别到遗器标题: {result[0]}")
+        logger.info(f"识别到遗器标题: {format_result}")
 
-        matching_result = self.relic_match.match_relic_part(result[0])
+        matching_result = self.relic_match.match_relic_part(format_result)
 
         if matching_result is None:
             return None
@@ -66,14 +128,13 @@ class OCR:
         return matching_result
 
     def __match_relic_main_stat__(self, relic_main_stat_region):
-        result = self.reader.readtext(relic_main_stat_region, detail=0)
-        if len(result) != 2:
-            logger.error("未能正确识别遗器主属性")
+        result = self.reader.ocr(relic_main_stat_region)
+
+        format_result = self.__format_relic_main_stat__(self, result)
+        if format_result is None:
             return None
 
-        logger.info(f"识别到遗器主属性: [{str(result)}]")
-
-        format_result = self.__format_relic_main_stat__(result)
+        logger.info(f"识别到遗器主属性: [{format_result}]")
 
         matching_result = self.relic_match.match_relic_main_stat(format_result[0], format_result[1], format_result[2])
 
@@ -83,17 +144,13 @@ class OCR:
         return matching_result
 
     def __match_relic_sub_stat__(self, relic_sub_stat_region):
-        result = self.reader.readtext(relic_sub_stat_region, detail=0)
-        min_result_count = 3 * 2
-        max_result_count = 4 * 2
+        result = self.reader.ocr(relic_sub_stat_region)
 
-        if len(result) < min_result_count or len(result) > max_result_count or len(result) % 2 != 0:
-            logger.error("未能正确识别遗器副属性")
+        format_result = self.__format_relic_sub_stat__(self, result)
+        if format_result is None:
             return None
 
-        logger.info(f"识别到遗器副属性: [{str(result)}]")
-
-        format_result = self.__format_relic_sub_stat__(result)
+        logger.info(f"识别到遗器副属性: [{format_result}]")
 
         matching_result = self.relic_match.match_relic_sub_stat(format_result)
 
@@ -113,20 +170,26 @@ class OCR:
 
                 yolo_boxes = self.global_state.yolo_boxes
 
-                screen_grey = cv2.cvtColor(self.global_state.screen_rgb, cv2.COLOR_RGB2GRAY)
+                cv2.imwrite('test.jpg', self.global_state.screen_rgb)
+                cv2.imwrite('test2.jpg', self.global_state.screen_rgb[yolo_boxes[0].y1:yolo_boxes[0].y2,
+                                         yolo_boxes[0].x1:yolo_boxes[0].x2])
+                cv2.imwrite('test3.jpg', self.global_state.screen_rgb[yolo_boxes[1].y1:yolo_boxes[1].y2,
+                                         yolo_boxes[1].x1:yolo_boxes[1].x2])
+                cv2.imwrite('test4.jpg', self.global_state.screen_rgb[yolo_boxes[2].y1:yolo_boxes[2].y2,
+                                         yolo_boxes[2].x1:yolo_boxes[2].x2])
 
                 for yolo_box in yolo_boxes:
                     if yolo_box.cls == YoloCls.RELIC_TITLE:
                         self.__match_relic_title__(
-                            screen_grey[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
+                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
                     elif yolo_box.cls == YoloCls.RELIC_MAIN_STAT:
                         self.__match_relic_main_stat__(
-                            screen_grey[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
+                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
                     elif yolo_box.cls == YoloCls.RELIC_SUB_STAT:
                         self.__match_relic_sub_stat__(
-                            screen_grey[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
+                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
 
                 await asyncio.sleep(0.05)
