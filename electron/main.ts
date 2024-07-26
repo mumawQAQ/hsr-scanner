@@ -198,14 +198,25 @@ app.on('ready', () => {
 
   backendProcess.stdout.on('data', data => {
     console.log(`stdout: ${data}`);
+    // send the data to the renderer process
+    win?.webContents.send('backend-log', data.toString());
   });
 
   backendProcess.stderr.on('data', data => {
     console.error(`stderr: ${data}`);
+
+    // extract the port number from the output
+    const port = data.toString().match(/Uvicorn running on http:\/\/\S+:(\d+)/);
+    if (port) {
+      store.set('backendPort', port[1]);
+      createMainWindow();
+    }
   });
 
   backendProcess.on('close', code => {
     console.log(`Backend process exited with code ${code}`);
+    // exit the app if the backend process exits
+    app.quit();
   });
 });
 
@@ -226,8 +237,6 @@ app.on('activate', () => {
     createMainWindow();
   }
 });
-
-app.whenReady().then(createMainWindow);
 
 // Change the window size when the user click a button in Scan Panel.
 ipcMain.on('change-window-mode', (_, isLightMode) => {
