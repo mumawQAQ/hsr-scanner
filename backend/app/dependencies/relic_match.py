@@ -99,8 +99,7 @@ class RelicMatch:
 
         return matching_result
 
-    def match_relic_main_stat(self, relic_main_stat: str, relic_main_stat_val: str) -> \
-            Optional[RelicMainStat]:
+    def match_relic_main_stat(self, relic_main_stat: str, relic_main_stat_val: str) -> Optional[RelicMainStat]:
 
         # fuzz match the relic main stat
         fuzz_main_stat_result = process.extractOne(relic_main_stat, self.relic_main_stats.keys())
@@ -132,21 +131,25 @@ class RelicMatch:
 
         matching_result: list[RelicSubStat] = []
 
-        # format the relic sub stats
+        # fuzz match the relic sub stats name and value
         for key, value in relic_sub_stats.items():
-            if key in self.relic_sub_stats:
-                matching_scores = self.relic_sub_stats[key]
-                if value in matching_scores:
-                    scores = matching_scores[value]
-                    if type(scores) is not list:
-                        scores = [scores]
+            fuzz_sub_stat_result = process.extractOne(key, self.relic_sub_stats.keys())
+            if fuzz_sub_stat_result is None or fuzz_sub_stat_result[1] < 80:
+                logger.error(f"模糊匹配未找到对应遗器副属性名称: {key}")
+                return []
 
-                    chinese_relic_sub_stat = RELIC_STATS_MAPPING[key]
-                    matching_result.append(RelicSubStat(name=chinese_relic_sub_stat, number=value, scores=scores))
+            sub_stat_score_map = self.relic_sub_stats[fuzz_sub_stat_result[0]]
+            fuzz_sub_stat_val_result = process.extractOne(value, sub_stat_score_map.keys())
+            if fuzz_sub_stat_val_result is None or fuzz_sub_stat_val_result[1] < 80:
+                logger.error(f"模糊匹配未找到对应遗器副属性值: {value}")
+                return []
 
-        if len(matching_result) == 0:
-            logger.error(f"未找到对应遗器副属性名称: {relic_sub_stats}")
-        else:
-            logger.info(f"匹配到遗器副属性: {matching_result}")
+            scores = sub_stat_score_map[fuzz_sub_stat_val_result[0]]
+
+            if type(scores) is not list:
+                scores = [scores]
+
+            chinese_relic_sub_stat = RELIC_STATS_MAPPING[fuzz_sub_stat_result[0]]
+            matching_result.append(RelicSubStat(name=chinese_relic_sub_stat, number=value, scores=scores))
 
         return matching_result
