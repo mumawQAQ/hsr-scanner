@@ -153,4 +153,6 @@ class RelicMatch:
             chinese_relic_sub_stat = RELIC_STATS_MAPPING[fuzz_sub_stat_result[0]]
             matching_result.append(RelicSubStat(name=chinese_relic_sub_stat, number=value, scores=scores))
 
+        logger.info(f"匹配到遗器副属性: {matching_result}")
+
         return matching_result
