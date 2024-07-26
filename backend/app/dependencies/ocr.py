@@ -133,8 +133,6 @@ class OCR:
         return matching_result
 
     def __match_relic_sub_stat__(self, relic_sub_stat_region):
-        # resize the region to 10 times to get a better OCR result
-        # relic_sub_stat_region = cv2.resize(relic_sub_stat_region, None, fx=5, fy=5, interpolation=cv2.INTER_CUBIC)
 
         # crop the image to two parts, one for the main stat name and one for the main stat value
         relic_sub_stat_region_names = relic_sub_stat_region[:, : int(relic_sub_stat_region.shape[1] * 0.8)]
