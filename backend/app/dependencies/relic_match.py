@@ -26,7 +26,7 @@ RELIC_STATS_MAPPING = {
     "CRITDMG": "暴击伤害",
     "BreakEffect": "击破特攻",
     "EffectHitRate": "效果命中",
-    "EffectRes": "效果抵抗",
+    "EffectRES": "效果抵抗",
     "OutgoingHealingBoost": "治疗量加成",
     "EnergyRegenerationRate": "能量回复效率",
     "PhysicalDMGBoost": "物理属性伤害提高",
@@ -86,8 +86,8 @@ class RelicMatch:
         # fuzz match the relic title
         fuzz_result = process.extractOne(relic_title, self.relic_parts.keys())
 
-        if fuzz_result is None or fuzz_result[1] < 80:
-            logger.error(f"模糊匹配未找到对应遗器部位名称: {relic_title}")
+        if fuzz_result is None or fuzz_result[1] < 50:
+            logger.error(f"模糊匹配未找到对应遗器部位名称: {relic_title}, 匹配结果: {fuzz_result}")
             return None
 
         relic_title = fuzz_result[0]
@@ -103,15 +103,16 @@ class RelicMatch:
 
         # fuzz match the relic main stat
         fuzz_main_stat_result = process.extractOne(relic_main_stat, self.relic_main_stats.keys())
-        if fuzz_main_stat_result is None or fuzz_main_stat_result[1] < 80:
-            logger.error(f"模糊匹配未找到对应遗器主属性名称: {relic_main_stat}")
+        if fuzz_main_stat_result is None or fuzz_main_stat_result[1] < 50:
+            logger.error(f"模糊匹配未找到对应遗器主属性名称: {relic_main_stat}， 匹配结果: {fuzz_main_stat_result}")
             return None
 
         main_stat_level_map = self.relic_main_stats[fuzz_main_stat_result[0]]
         # fuzz match the relic main stat value
         fuzz_main_stat_val_result = process.extractOne(relic_main_stat_val, main_stat_level_map.keys())
-        if fuzz_main_stat_val_result is None or fuzz_main_stat_val_result[1] < 80:
-            logger.error(f"模糊匹配未找到对应遗器主属性值: {relic_main_stat_val}")
+        if fuzz_main_stat_val_result is None or fuzz_main_stat_val_result[1] < 50:
+            logger.error(
+                f"模糊匹配未找到对应遗器主属性值: {relic_main_stat_val}， 匹配结果: {fuzz_main_stat_val_result}")
             return None
 
         # calculate the level and enhance level
@@ -134,14 +135,14 @@ class RelicMatch:
         # fuzz match the relic sub stats name and value
         for key, value in relic_sub_stats.items():
             fuzz_sub_stat_result = process.extractOne(key, self.relic_sub_stats.keys())
-            if fuzz_sub_stat_result is None or fuzz_sub_stat_result[1] < 80:
-                logger.error(f"模糊匹配未找到对应遗器副属性名称: {key}")
+            if fuzz_sub_stat_result is None or fuzz_sub_stat_result[1] < 50:
+                logger.error(f"模糊匹配未找到对应遗器副属性名称: {key}，匹配结果: {fuzz_sub_stat_result}")
                 return []
 
             sub_stat_score_map = self.relic_sub_stats[fuzz_sub_stat_result[0]]
             fuzz_sub_stat_val_result = process.extractOne(value, sub_stat_score_map.keys())
-            if fuzz_sub_stat_val_result is None or fuzz_sub_stat_val_result[1] < 80:
-                logger.error(f"模糊匹配未找到对应遗器副属性值: {value}")
+            if fuzz_sub_stat_val_result is None or fuzz_sub_stat_val_result[1] < 50:
+                logger.error(f"模糊匹配未找到对应遗器副属性值: {value}，匹配结果: {fuzz_sub_stat_val_result}")
                 return []
 
             scores = sub_stat_score_map[fuzz_sub_stat_val_result[0]]
