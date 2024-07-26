@@ -7,6 +7,7 @@ import easyocr
 from app.dependencies.global_state import GlobalState
 from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logger
+from app.models.relic_info import RelicInfo
 from app.models.yolo_box import YoloCls
 
 
@@ -102,9 +103,6 @@ class OCR:
 
         matching_result = self.relic_match.match_relic_part(format_result)
 
-        if matching_result is None:
-            return None
-
         return matching_result
 
     def __match_relic_main_stat__(self, relic_main_stat_region):
@@ -127,9 +125,6 @@ class OCR:
 
         matching_result = self.relic_match.match_relic_main_stat(format_result[0], format_result[1])
 
-        if matching_result is None:
-            return None
-
         return matching_result
 
     def __match_relic_sub_stat__(self, relic_sub_stat_region):
@@ -150,10 +145,16 @@ class OCR:
 
         matching_result = self.relic_match.match_relic_sub_stat(format_result)
 
-        if matching_result is None:
-            return None
+        return matching_result
 
-        logger.info(f"匹配到遗器副属性: {matching_result}")
+    def __build_relic_info__(self, relic_title, relic_main_stat, relic_sub_stats):
+        if relic_title is not None and relic_main_stat is not None and len(relic_sub_stats) > 0:
+            self.global_state.relic_info = RelicInfo(title=relic_title,
+                                                     main_stat=relic_main_stat,
+                                                     sub_stats=relic_sub_stats)
+        else:
+            logger.error(f"未能识别到完整遗器信息: {relic_title}, {relic_main_stat}, {relic_sub_stats}")
+            self.global_state.relic_info = None
 
     async def read_relic_info(self):
         logger.info("开始识别遗器信息")
@@ -166,19 +167,25 @@ class OCR:
 
                 yolo_boxes = self.global_state.yolo_boxes
 
+                relic_title = None
+                relic_main_stat = None
+                relic_sub_stats = []
+
                 for yolo_box in yolo_boxes:
                     if yolo_box.cls == YoloCls.RELIC_TITLE:
-                        self.__match_relic_title__(
+                        relic_title = self.__match_relic_title__(
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
                     elif yolo_box.cls == YoloCls.RELIC_MAIN_STAT:
-                        self.__match_relic_main_stat__(
+                        relic_main_stat = self.__match_relic_main_stat__(
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
                     elif yolo_box.cls == YoloCls.RELIC_SUB_STAT:
-                        self.__match_relic_sub_stat__(
+                        relic_sub_stats = self.__match_relic_sub_stat__(
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
+
+                self.__build_relic_info__(relic_title, relic_main_stat, relic_sub_stats)
 
                 await asyncio.sleep(0)
             except Exception as e:
