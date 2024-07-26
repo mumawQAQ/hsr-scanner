@@ -1,3 +1,6 @@
+from typing import Optional
+
+from app.models.relic_info import RelicInfo
 from app.models.yolo_box import YoloBox
 
 
@@ -13,6 +16,7 @@ class GlobalState:
         }
         self.screen_rgb = None
         self.yolo_boxes: list[YoloBox] = []
+        self.relic_info: Optional[RelicInfo] = None
 
 
 global_state = GlobalState()
