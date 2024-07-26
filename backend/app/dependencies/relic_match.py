@@ -72,7 +72,7 @@ class RelicMatch:
             matching_result = RelicTitle(title=relic_title, set_name=self.relic_parts[relic_title]['set_name'],
                                          part=self.relic_parts[relic_title]['part'])
 
-            logger.error(f"匹配到遗器部位: {matching_result}")
+            logger.info(f"匹配到遗器部位: {matching_result}")
 
             return matching_result
         else:

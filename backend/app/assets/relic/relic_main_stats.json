@@ -23,55 +23,55 @@
     "base": 4.032,
     "step": 1.4
   },
-  "CRIT Rate": {
+  "CRITRate": {
     "base": 0.05184,
     "step": 0.018144
   },
-  "CRIT DMG": {
+  "CRITDMG": {
     "base": 0.10368,
     "step": 0.036288
   },
-  "Break Effect": {
+  "BreakEffect": {
     "base": 0.10368,
     "step": 0.036288
   },
-  "Outgoing Healing Boost": {
+  "OutgoingHealingBoost": {
     "base": 0.055296,
     "step": 0.019354
   },
-  "Energy Regeneration Rate": {
+  "EnergyRegenerationRate": {
     "base": 0.031104,
     "step": 0.010886001
   },
-  "Effect Hit Rate": {
+  "EffectHitRate": {
     "base": 0.06912,
     "step": 0.024192
   },
-  "Physical DMG Boost": {
+  "PhysicalDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "Fire DMG Boost": {
+  "FireDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "Ice DMG Boost": {
+  "IceDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "Lightning DMG Boost": {
+  "LightningDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "Wind DMG Boost": {
+  "WindDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "Quantum DMG Boost": {
+  "QuantumDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   },
-  "Imaginary DMG Boost": {
+  "ImaginaryDMGBoost": {
     "base": 0.062208,
     "step": 0.021773001
   }

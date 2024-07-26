@@ -31,19 +31,23 @@ class OCR:
         return extracted_texts
 
     @staticmethod
-    def __format_relic_main_stat__(self, relic_main_stat_ocr_result: list):
+    def __format_relic_main_stat__(self, relic_main_stat_name_ocr_result: list,
+                                   relic_main_stat_val_ocr_result: list) -> [str, str, float]:
 
         # format the relic main stat
-        # example: ['SPD', '4']
-
-        if len(relic_main_stat_ocr_result) != 2:
-            logger.error(f"未能正确识别遗器主属性, 当前OCR结果{relic_main_stat_ocr_result}")
+        if len(relic_main_stat_name_ocr_result) < 1:
+            logger.error(f"未能正确识别遗器主属性名称, 当前OCR结果{relic_main_stat_name_ocr_result}")
             return None
 
-        relic_main_stat = relic_main_stat_ocr_result[0]
-        relic_main_stat_val = relic_main_stat_ocr_result[1]
+        if len(relic_main_stat_val_ocr_result) < 1:
+            logger.error(f"未能正确识别遗器主属性数值, 当前OCR结果{relic_main_stat_val_ocr_result}")
+            return None
+
+        relic_main_stat = ''.join(relic_main_stat_name_ocr_result)
+        relic_main_stat_val = ''.join(relic_main_stat_val_ocr_result)
 
         # trim all the spaces
+        relic_main_stat = relic_main_stat.strip().replace(' ', '')
         relic_main_stat_val = relic_main_stat_val.strip().replace(' ', '')
 
         # value can be a number or percentage % in the end
@@ -58,26 +62,33 @@ class OCR:
         return [relic_main_stat, relic_main_stat_val, relic_main_stat_val_num]
 
     @staticmethod
-    def __format_relic_sub_stat__(self, relic_sub_stat_ocr_result: list):
+    def __format_relic_sub_stat__(self, relic_sub_stat_name_ocr_result: list, relic_sub_stat_val_ocr_result: list):
         # format the relic sub stat
-        # example: ['DEF', '21', 'CRIT Rate', '3.2%', 'CRIT DMG', '5.8%']
+        min_result_count = 3
+        max_result_count = 4
 
-        min_result_count = 3 * 2
-        max_result_count = 4 * 2
+        if len(relic_sub_stat_name_ocr_result) < min_result_count or len(
+                relic_sub_stat_name_ocr_result) > max_result_count:
+            logger.error(f"未能正确识别遗器副属性名称, 当前OCR结果{relic_sub_stat_name_ocr_result}")
+            return None
 
-        if len(relic_sub_stat_ocr_result) < min_result_count or len(
-                relic_sub_stat_ocr_result) > max_result_count or len(relic_sub_stat_ocr_result) % 2 != 0:
-            logger.error(f"未能正确识别遗器副属性, 当前OCR结果{relic_sub_stat_ocr_result}")
+        if len(relic_sub_stat_val_ocr_result) < min_result_count or len(
+                relic_sub_stat_val_ocr_result) > max_result_count:
+            logger.error(f"未能正确识别遗器副属性数值, 当前OCR结果{relic_sub_stat_val_ocr_result}")
+            return None
+
+        if len(relic_sub_stat_name_ocr_result) != len(relic_sub_stat_val_ocr_result):
+            logger.error(
+                f"遗器副属性名称和数值数量不匹配, 当前OCR结果{relic_sub_stat_name_ocr_result}, {relic_sub_stat_val_ocr_result}")
             return None
 
         format_result = {}
-        for i in range(0, len(relic_sub_stat_ocr_result), 2):
-            key = relic_sub_stat_ocr_result[i]
-            if key in ['HP', 'ATK', 'DEF'] and relic_sub_stat_ocr_result[i + 1].endswith('%'):
-                key += 'Percentage'
-
-            value = relic_sub_stat_ocr_result[i + 1].strip().replace(' ', '')
-            format_result[key] = value
+        for name, val in zip(relic_sub_stat_name_ocr_result, relic_sub_stat_val_ocr_result):
+            format_name = name.strip().replace(' ', '')
+            format_val = val.strip().replace(' ', '')
+            if format_name in ['HP', 'ATK', 'DEF'] and format_val.endswith('%'):
+                format_name += 'Percentage'
+            format_result[format_name] = format_val
 
         return format_result
 
@@ -92,7 +103,7 @@ class OCR:
         if format_result is None:
             return None
 
-        logger.error(f"识别到遗器标题: {format_result}")
+        logger.info(f"识别到遗器标题: {format_result}")
 
         matching_result = self.relic_match.match_relic_part(format_result)
 
@@ -105,9 +116,15 @@ class OCR:
         # resize the region to 10 times to get a better OCR result
         relic_main_stat_region = cv2.resize(relic_main_stat_region, None, fx=10, fy=10, interpolation=cv2.INTER_CUBIC)
 
-        result = self.reader.readtext(relic_main_stat_region, detail=0)
+        # crop the image to two parts, one for the main stat name and one for the main stat value
+        relic_main_stat_region_name = relic_main_stat_region[:, : int(relic_main_stat_region.shape[1] * 0.8)]
+        relic_main_stat_region_val = relic_main_stat_region[:, int(relic_main_stat_region.shape[1] * 0.8):]
 
-        format_result = self.__format_relic_main_stat__(self, result)
+        relic_main_stat_region_name_result = self.reader.readtext(relic_main_stat_region_name, detail=0)
+        relic_main_stat_region_val_result = self.reader.readtext(relic_main_stat_region_val, detail=0)
+
+        format_result = self.__format_relic_main_stat__(self, relic_main_stat_region_name_result,
+                                                        relic_main_stat_region_val_result)
         if format_result is None:
             return None
 
@@ -124,9 +141,15 @@ class OCR:
         # resize the region to 10 times to get a better OCR result
         # relic_sub_stat_region = cv2.resize(relic_sub_stat_region, None, fx=5, fy=5, interpolation=cv2.INTER_CUBIC)
 
-        result = self.reader.readtext(relic_sub_stat_region, detail=0)
+        # crop the image to two parts, one for the main stat name and one for the main stat value
+        relic_sub_stat_region_names = relic_sub_stat_region[:, : int(relic_sub_stat_region.shape[1] * 0.8)]
+        relic_sub_stat_region_vals = relic_sub_stat_region[:, int(relic_sub_stat_region.shape[1] * 0.8):]
 
-        format_result = self.__format_relic_sub_stat__(self, result)
+        relic_sub_stat_region_names_result = self.reader.readtext(relic_sub_stat_region_names, detail=0)
+        relic_sub_stat_region_vals_result = self.reader.readtext(relic_sub_stat_region_vals, detail=0)
+
+        format_result = self.__format_relic_sub_stat__(self, relic_sub_stat_region_names_result,
+                                                       relic_sub_stat_region_vals_result)
         if format_result is None:
             return None
 
@@ -164,7 +187,7 @@ class OCR:
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
                         )
 
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(0)
             except Exception as e:
                 logger.error(f"识别遗器信息失败: {e}")
-                await asyncio.sleep(0.05)
+                await asyncio.sleep(0)
