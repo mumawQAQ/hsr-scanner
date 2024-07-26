@@ -92,41 +92,41 @@ class RelicMatch:
 
         relic_title = fuzz_result[0]
 
-        if relic_title in self.relic_parts:
-            matching_result = RelicTitle(title=relic_title, set_name=self.relic_parts[relic_title]['set_name'],
-                                         part=self.relic_parts[relic_title]['part'])
+        matching_result = RelicTitle(title=relic_title, set_name=self.relic_parts[relic_title]['set_name'],
+                                     part=self.relic_parts[relic_title]['part'])
 
-            logger.info(f"匹配到遗器部位: {matching_result}")
+        logger.info(f"匹配到遗器部位: {matching_result}")
 
-            return matching_result
-        else:
-            logger.error(f"未找到对应遗器部位名称: {relic_title}")
-            return None
+        return matching_result
 
-    def match_relic_main_stat(self, relic_main_stat: str, relic_main_stat_val: str, relic_main_stat_val_num: float) -> \
+    def match_relic_main_stat(self, relic_main_stat: str, relic_main_stat_val: str) -> \
             Optional[RelicMainStat]:
 
-        if relic_main_stat in self.relic_main_stats:
-
-            base = self.relic_main_stats[relic_main_stat]['base']
-            step = self.relic_main_stats[relic_main_stat]['step']
-
-            # calculate the level and enhance level
-            level = round((relic_main_stat_val_num - base) / step)
-            enhance_level = level // 3
-
-            chinese_relic_main_stat = RELIC_STATS_MAPPING[relic_main_stat]
-
-            matching_result = RelicMainStat(name=chinese_relic_main_stat, number=relic_main_stat_val, level=level,
-                                            enhance_level=enhance_level)
-
-            logger.info(f"匹配到遗器主属性: {matching_result}")
-
-            return matching_result
-
-        else:
-            logger.error(f"未找到对应遗器主属性名称: {relic_main_stat}")
+        # fuzz match the relic main stat
+        fuzz_main_stat_result = process.extractOne(relic_main_stat, self.relic_main_stats.keys())
+        if fuzz_main_stat_result is None or fuzz_main_stat_result[1] < 80:
+            logger.error(f"模糊匹配未找到对应遗器主属性名称: {relic_main_stat}")
             return None
+
+        main_stat_level_map = self.relic_main_stats[fuzz_main_stat_result[0]]
+        # fuzz match the relic main stat value
+        fuzz_main_stat_val_result = process.extractOne(relic_main_stat_val, main_stat_level_map.keys())
+        if fuzz_main_stat_val_result is None or fuzz_main_stat_val_result[1] < 80:
+            logger.error(f"模糊匹配未找到对应遗器主属性值: {relic_main_stat_val}")
+            return None
+
+        # calculate the level and enhance level
+        level = main_stat_level_map[fuzz_main_stat_val_result[0]]
+        enhance_level = level // 3
+
+        chinese_relic_main_stat = RELIC_STATS_MAPPING[fuzz_main_stat_result[0]]
+
+        matching_result = RelicMainStat(name=chinese_relic_main_stat, number=relic_main_stat_val, level=level,
+                                        enhance_level=enhance_level)
+
+        logger.info(f"匹配到遗器主属性: {matching_result}")
+
+        return matching_result
 
     def match_relic_sub_stat(self, relic_sub_stats: dict) -> list[RelicSubStat]:
 

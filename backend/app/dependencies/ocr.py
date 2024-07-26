@@ -32,7 +32,7 @@ class OCR:
 
     @staticmethod
     def __format_relic_main_stat__(self, relic_main_stat_name_ocr_result: list,
-                                   relic_main_stat_val_ocr_result: list) -> [str, str, float]:
+                                   relic_main_stat_val_ocr_result: list) -> [str, str]:
 
         # format the relic main stat
         if len(relic_main_stat_name_ocr_result) < 1:
@@ -54,12 +54,7 @@ class OCR:
         if relic_main_stat in ['HP', 'ATK', 'DEF'] and relic_main_stat_val.endswith('%'):
             relic_main_stat += 'Percentage'
 
-        if relic_main_stat_val.endswith('%'):
-            relic_main_stat_val_num = float(relic_main_stat_val[:-1]) / 100
-        else:
-            relic_main_stat_val_num = float(relic_main_stat_val)
-
-        return [relic_main_stat, relic_main_stat_val, relic_main_stat_val_num]
+        return [relic_main_stat, relic_main_stat_val]
 
     @staticmethod
     def __format_relic_sub_stat__(self, relic_sub_stat_name_ocr_result: list, relic_sub_stat_val_ocr_result: list):
@@ -130,7 +125,7 @@ class OCR:
 
         logger.info(f"识别到遗器主属性: [{format_result}]")
 
-        matching_result = self.relic_match.match_relic_main_stat(format_result[0], format_result[1], format_result[2])
+        matching_result = self.relic_match.match_relic_main_stat(format_result[0], format_result[1])
 
         if matching_result is None:
             return None
