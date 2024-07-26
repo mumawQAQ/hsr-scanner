@@ -14,6 +14,30 @@ RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 
+RELIC_STATS_MAPPING = {
+    "DEF": "防御",
+    "HP": "生命",
+    "HPPercentage": "生命百分比",
+    "ATK": "攻击",
+    "ATKPercentage": "攻击百分比",
+    "DEFPercentage": "防御百分比",
+    "SPD": "速度",
+    "CRITRate": "暴击率",
+    "CRITDMG": "暴击伤害",
+    "BreakEffect": "击破特攻",
+    "EffectHitRate": "效果命中",
+    "EffectRes": "效果抵抗",
+    "OutgoingHealingBoost": "治疗量加成",
+    "EnergyRegenerationRate": "能量回复效率",
+    "PhysicalDMGBoost": "物理属性伤害提高",
+    "FireDMGBoost": "火属性伤害提高",
+    "IceDMGBoost": "冰属性伤害提高",
+    "LightningDMGBoost": "雷属性伤害提高",
+    "WindDMGBoost": "风属性伤害提高",
+    "QuantumDMGBoost": "量子属性伤害提高",
+    "ImaginaryDMGBoost": "虚数属性伤害提高",
+}
+
 
 class RelicMatch:
     def __init__(self):
@@ -91,7 +115,9 @@ class RelicMatch:
             level = round((relic_main_stat_val_num - base) / step)
             enhance_level = level // 3
 
-            matching_result = RelicMainStat(name=relic_main_stat, number=relic_main_stat_val, level=level,
+            chinese_relic_main_stat = RELIC_STATS_MAPPING[relic_main_stat]
+
+            matching_result = RelicMainStat(name=chinese_relic_main_stat, number=relic_main_stat_val, level=level,
                                             enhance_level=enhance_level)
 
             logger.info(f"匹配到遗器主属性: {matching_result}")
@@ -114,7 +140,9 @@ class RelicMatch:
                     scores = matching_scores[value]
                     if type(scores) is not list:
                         scores = [scores]
-                    matching_result.append(RelicSubStat(name=key, number=value, scores=scores))
+
+                    chinese_relic_sub_stat = RELIC_STATS_MAPPING[key]
+                    matching_result.append(RelicSubStat(name=chinese_relic_sub_stat, number=value, scores=scores))
 
         if len(matching_result) == 0:
             logger.error(f"未找到对应遗器副属性名称: {relic_sub_stats}")
