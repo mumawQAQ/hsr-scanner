@@ -41,7 +41,7 @@ const LogViewer = () => {
   };
 
   return (
-    <div className="flex h-full flex-row items-center justify-center p-6">
+    <div className="flex h-full w-full flex-row items-center justify-around p-6">
       <div className="mr-2 flex flex-col items-center gap-4">
         <div className="flex items-center justify-center space-x-2">
           <Label htmlFor="log-level" className="text-nowrap font-semibold">
@@ -56,14 +56,8 @@ const LogViewer = () => {
           <Switch id="pause" checked={isPaused} onCheckedChange={setIsPaused} />
         </div>
       </div>
-      <div className={'h-full'}>
-        <PrettyLogViewer
-          innerRef={logViewerRef}
-          data={logQueue}
-          hasLineNumbers={false}
-          isTextWrapped={true}
-          width={600}
-        />
+      <div className={'h-full w-[600px]'}>
+        <PrettyLogViewer innerRef={logViewerRef} data={logQueue} hasLineNumbers={false} isTextWrapped={true} />
       </div>
     </div>
   );
