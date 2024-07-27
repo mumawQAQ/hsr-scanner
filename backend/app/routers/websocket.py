@@ -29,7 +29,10 @@ async def websocket_endpoint(websocket: WebSocket,
             current_message = global_state.relic_info.model_dump_json()
             if manager.relic_info_last_sent_message != current_message:
                 manager.relic_info_last_sent_message = current_message
-                await manager.send_message(current_message)
+                await manager.send_message(json.dumps({
+                    'status': 'success',
+                    'message': current_message
+                }))
             await asyncio.sleep(0.1)
 
     except WebSocketDisconnect:
