@@ -18,8 +18,17 @@ async def websocket_endpoint(websocket: WebSocket,
 
     try:
         while True:
+            if global_state.relic_img:
+                current_img = global_state.relic_img.model_dump_json()
+                if manager.relic_img_last_sent_message != current_img:
+                    manager.relic_img_last_sent_message = current_img
+                    await manager.send_message(json.dumps({
+                        'type': 'img',
+                        'message': current_img
+                    }))
+
             if not global_state.relic_info:
-                error_message = json.dumps({'status': 'error', 'message': 'No relic info found'})
+                error_message = json.dumps({'type': 'error', 'message': 'No relic info found'})
                 if manager.relic_info_last_sent_message != error_message:
                     manager.relic_info_last_sent_message = error_message
                     await manager.send_message(error_message)
@@ -30,9 +39,10 @@ async def websocket_endpoint(websocket: WebSocket,
             if manager.relic_info_last_sent_message != current_message:
                 manager.relic_info_last_sent_message = current_message
                 await manager.send_message(json.dumps({
-                    'status': 'success',
+                    'type': 'info',
                     'message': current_message
                 }))
+
             await asyncio.sleep(0.1)
 
     except WebSocketDisconnect:

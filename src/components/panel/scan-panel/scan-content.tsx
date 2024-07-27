@@ -75,7 +75,7 @@ const ScanContent = () => {
     }
 
     if (relicError) {
-      return <div className="text-red-600">遗器扫描失败，请检测下面log区域</div>;
+      return <div className="text-red-600">遗器扫描失败，请在正常模式下，检查下面日志/图片区域</div>;
     }
 
     return (

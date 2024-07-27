@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { create } from 'zustand';
+
 import useRelicStore from '@/hooks/use-relic-store.ts';
 
 type UseWebclientStore = {
@@ -28,10 +29,10 @@ const useWebclientStore = create<UseWebclientStore>((set, get) => ({
       const data = JSON.parse(event.data);
 
       // check if the data is error
-      if (data.status == 'error') {
+      if (data.type == 'error') {
         useRelicStore.setState({ relicError: data.message });
         useRelicStore.setState({ relicInfo: null });
-      } else {
+      } else if (data.type == 'info') {
         const message = JSON.parse(data.message);
         const relicInfo = {
           title: {
@@ -51,6 +52,14 @@ const useWebclientStore = create<UseWebclientStore>((set, get) => ({
         };
         useRelicStore.setState({ relicInfo: relicInfo });
         useRelicStore.setState({ relicError: null });
+      } else if (data.type == 'img') {
+        const message = JSON.parse(data.message);
+        const relicImage = {
+          titleImage: message.title_img,
+          mainStatImage: message.main_stat_img,
+          subStatImages: message.sub_stat_img,
+        };
+        useRelicStore.setState({ relicImage: relicImage });
       }
     };
 

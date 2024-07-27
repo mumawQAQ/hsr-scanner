@@ -19,7 +19,7 @@ const LogViewer = () => {
             uuid: Math.random().toString(36).substring(7),
           },
         ];
-        return newLogs.length > 7 ? newLogs.slice(1) : newLogs;
+        return newLogs.length > 5 ? newLogs.slice(1) : newLogs;
       });
     }, 1000); // Update at most once per second
 
@@ -38,7 +38,9 @@ const LogViewer = () => {
       <div className="font-semibold">Log Area</div>
       <div>
         {logQueue.map(log => (
-          <div key={log.uuid}>{log.data}</div> // Ensure to render `log.data` instead of `log`
+          <div key={log.uuid} className="text-sm">
+            {log.data}
+          </div>
         ))}
       </div>
     </div>

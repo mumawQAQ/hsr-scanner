@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import re
 
 import cv2
@@ -7,7 +8,7 @@ import easyocr
 from app.dependencies.global_state import GlobalState
 from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logger
-from app.models.relic_info import RelicInfo
+from app.models.relic_info import RelicInfo, RelicImg
 from app.models.yolo_box import YoloCls
 
 
@@ -89,9 +90,6 @@ class OCR:
         return format_result
 
     def __match_relic_title__(self, relic_title_region):
-        # resize the region to 10 times to get a better OCR result
-        relic_title_region = cv2.resize(relic_title_region, None, fx=10, fy=10, interpolation=cv2.INTER_CUBIC)
-
         # match the relic title
         result = self.reader.readtext(relic_title_region, detail=0)
 
@@ -106,9 +104,6 @@ class OCR:
         return matching_result
 
     def __match_relic_main_stat__(self, relic_main_stat_region):
-        # resize the region to 10 times to get a better OCR result
-        relic_main_stat_region = cv2.resize(relic_main_stat_region, None, fx=10, fy=10, interpolation=cv2.INTER_CUBIC)
-
         # crop the image to two parts, one for the main stat name and one for the main stat value
         relic_main_stat_region_name = relic_main_stat_region[:, : int(relic_main_stat_region.shape[1] * 0.8)]
         relic_main_stat_region_val = relic_main_stat_region[:, int(relic_main_stat_region.shape[1] * 0.8):]
@@ -128,9 +123,6 @@ class OCR:
         return matching_result
 
     def __match_relic_sub_stat__(self, relic_sub_stat_region):
-        # resize the region to 1.5 times to get a better OCR result
-        relic_sub_stat_region = cv2.resize(relic_sub_stat_region, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
-
         # crop the image to two parts, one for the main stat name and one for the main stat value
         relic_sub_stat_region_names = relic_sub_stat_region[:, : int(relic_sub_stat_region.shape[1] * 0.8)]
         relic_sub_stat_region_vals = relic_sub_stat_region[:, int(relic_sub_stat_region.shape[1] * 0.8):]
@@ -158,6 +150,30 @@ class OCR:
             logger.error(f"未能识别到完整遗器信息: {relic_title}, {relic_main_stat}, {relic_sub_stats}")
             self.global_state.relic_info = None
 
+    def __array_to_data_url__(self, image_array):
+        if image_array is None:
+            return ''
+        # Convert the image array to a byte array
+        _, buffer = cv2.imencode('.png', image_array)
+        byte_array = buffer.tobytes()
+
+        # Encode the byte array to Base64
+        base64_string = base64.b64encode(byte_array).decode('utf-8')
+
+        # Create the data URL
+        data_url = f"data:image/png;base64,{base64_string}"
+
+        return data_url
+
+    def __build_relic_img__(self, relic_title_array, relic_main_stat_array, relic_sub_stats_array):
+        relic_title_img = self.__array_to_data_url__(relic_title_array)
+        relic_main_stat_img = self.__array_to_data_url__(relic_main_stat_array)
+        relic_sub_stat_img = self.__array_to_data_url__(relic_sub_stats_array)
+
+        self.global_state.relic_img = RelicImg(title_img=relic_title_img,
+                                               main_stat_img=relic_main_stat_img,
+                                               sub_stat_img=relic_sub_stat_img)
+
     async def read_relic_info(self):
         logger.info("开始识别遗器信息")
         while True:
@@ -177,21 +193,43 @@ class OCR:
                 relic_main_stat = None
                 relic_sub_stats = []
 
+                relic_title_region = None
+                relic_main_stat_region = None
+                relic_sub_stat_region = None
+
                 for yolo_box in yolo_boxes:
                     if yolo_box.cls == YoloCls.RELIC_TITLE:
+                        # resize the region to 10 times to get a better OCR result
+                        relic_title_region = cv2.resize(
+                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2],
+                            None,
+                            fx=10, fy=10,
+                            interpolation=cv2.INTER_CUBIC)
                         relic_title = self.__match_relic_title__(
-                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
+                            relic_title_region
                         )
                     elif yolo_box.cls == YoloCls.RELIC_MAIN_STAT:
+                        # resize the region to 10 times to get a better OCR result
+                        relic_main_stat_region = cv2.resize(
+                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2],
+                            None,
+                            fx=10, fy=10,
+                            interpolation=cv2.INTER_CUBIC)
                         relic_main_stat = self.__match_relic_main_stat__(
-                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
+                            relic_main_stat_region
                         )
                     elif yolo_box.cls == YoloCls.RELIC_SUB_STAT:
+                        # resize the region to 1.5 times to get a better OCR result
+                        relic_sub_stat_region = cv2.resize(
+                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2], None,
+                            fx=1.5, fy=1.5,
+                            interpolation=cv2.INTER_CUBIC)
                         relic_sub_stats = self.__match_relic_sub_stat__(
-                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2]
+                            relic_sub_stat_region
                         )
 
                 self.__build_relic_info__(relic_title, relic_main_stat, relic_sub_stats)
+                self.__build_relic_img__(relic_title_region, relic_main_stat_region, relic_sub_stat_region)
 
                 await asyncio.sleep(0.1)
             except Exception as e:

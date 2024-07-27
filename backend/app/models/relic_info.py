@@ -24,3 +24,9 @@ class RelicInfo(BaseModel):
     title: RelicTitle
     main_stat: RelicMainStat
     sub_stats: list[RelicSubStat]
+
+
+class RelicImg(BaseModel):
+    title_img: str
+    main_stat_img: str
+    sub_stat_img: str

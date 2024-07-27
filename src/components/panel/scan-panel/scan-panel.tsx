@@ -1,5 +1,6 @@
 import React from 'react';
 
+import LogViewer from '@/components/panel/scan-panel/log-viewer.tsx';
 import ScanAction from '@/components/panel/scan-panel/scan-action.tsx';
 import ScanContent from '@/components/panel/scan-panel/scan-content.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -7,11 +8,11 @@ import { Label } from '@/components/ui/label.tsx';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
+import useRelicStore from '@/hooks/use-relic-store.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import useWebclientStore from '@/hooks/use-webclient-store.ts';
 import useWindowStore from '@/hooks/use-window-store.ts';
 import { cn } from '@/lib/utils.ts';
-import LogViewer from '@/components/panel/scan-panel/log-viewer.tsx';
 
 interface SCanPanelProps {
   isLightMode: boolean;
@@ -20,7 +21,8 @@ interface SCanPanelProps {
 
 const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
   const { currentRelicRatingRulesTemplate } = useRelicTemplateStore();
-  const { scanningStatus, setScanningStatus, scanInterval, setScanInterval } = useWindowStore();
+  const { scanningStatus, setScanningStatus, scanInterval, setScanInterval, imgShow, setImageShow } = useWindowStore();
+  const { relicImage } = useRelicStore();
   const { patch } = useWebclientStore();
 
   const toggleWindowMode = () => {
@@ -68,6 +70,8 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
                 setScanningStatus={handleScanModeChange}
                 scanInterval={scanInterval}
                 setScanInterval={setScanInterval}
+                imgShow={imgShow}
+                setImageShow={setImageShow}
               />
             </div>
             <ScanContent />
@@ -75,9 +79,38 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
         </ResizablePanel>
         <ResizableHandle withHandle className={cn(isLightMode ? 'hidden' : '')} />
         <ResizablePanel defaultSize={50} className={cn(isLightMode ? 'hidden' : '')}>
-          <ResizablePanel>
+          {imgShow ? (
+            <ResizablePanelGroup direction="horizontal" className="min-h-[200px]">
+              <ResizablePanel defaultSize={60}>
+                <LogViewer />
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+              <ResizablePanel>
+                <div className="flex h-full flex-col items-center justify-center p-6">
+                  <div className="font-semibold text-red-600">
+                    如果开启了显示图片，请不要将窗口放置在游戏窗口上方，否则会影响识别！
+                  </div>
+                  {relicImage?.titleImage ? (
+                    <img src={relicImage.titleImage} alt="title_img" />
+                  ) : (
+                    <div className="font-semibold">暂无遗器名称图片</div>
+                  )}
+                  {relicImage?.mainStatImage ? (
+                    <img src={relicImage.mainStatImage} alt="main_stats_img" />
+                  ) : (
+                    <div className="font-semibold">暂无主属性图片</div>
+                  )}
+                  {relicImage?.subStatImages ? (
+                    <img src={relicImage.subStatImages} alt="sub_stats_img" />
+                  ) : (
+                    <div className="font-semibold">暂无副属性图片</div>
+                  )}
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          ) : (
             <LogViewer />
-          </ResizablePanel>
+          )}
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

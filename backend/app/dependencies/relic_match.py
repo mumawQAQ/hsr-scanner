@@ -121,7 +121,7 @@ class RelicMatch:
 
         chinese_relic_main_stat = RELIC_STATS_MAPPING[fuzz_main_stat_result[0]]
 
-        matching_result = RelicMainStat(name=chinese_relic_main_stat, number=relic_main_stat_val, level=level,
+        matching_result = RelicMainStat(name=chinese_relic_main_stat, number=fuzz_main_stat_val_result[0], level=level,
                                         enhance_level=enhance_level)
 
         logger.info(f"匹配到遗器主属性: {matching_result}")

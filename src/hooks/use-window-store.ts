@@ -7,6 +7,8 @@ type WindowStore = {
   setScanInterval: (interval: number) => void;
   isLightMode: boolean;
   toggleWindowMode: () => void;
+  imgShow: boolean;
+  setImageShow: (show: boolean) => void;
 };
 
 const useWindowStore = create<WindowStore>((set, get) => ({
@@ -25,6 +27,9 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     set({ isLightMode: newMode });
     (window as any).ipcRenderer?.changeWindowMode(newMode);
   },
+
+  imgShow: false, // Default image show
+  setImageShow: show => set({ imgShow: show }),
 }));
 
 export default useWindowStore;

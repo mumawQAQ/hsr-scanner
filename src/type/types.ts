@@ -61,6 +61,12 @@ export type RelicInfo = {
   subStats: RelicSubStats[];
 };
 
+export type RelicImage = {
+  titleImage: string;
+  mainStatImage: string;
+  subStatImages: string;
+};
+
 export type RelicTitle = {
   title: string;
 };
