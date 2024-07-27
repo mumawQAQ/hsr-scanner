@@ -200,6 +200,7 @@ class OCR:
                 for yolo_box in yolo_boxes:
                     if yolo_box.cls == YoloCls.RELIC_TITLE:
                         # resize the region to 10 times to get a better OCR result
+                        # TODO: need to match different resolutions for fx and fy
                         relic_title_region = cv2.resize(
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2],
                             None,
@@ -210,6 +211,7 @@ class OCR:
                         )
                     elif yolo_box.cls == YoloCls.RELIC_MAIN_STAT:
                         # resize the region to 10 times to get a better OCR result
+                        # TODO: need to match different resolutions for fx and fy
                         relic_main_stat_region = cv2.resize(
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2],
                             None,
@@ -220,6 +222,7 @@ class OCR:
                         )
                     elif yolo_box.cls == YoloCls.RELIC_SUB_STAT:
                         # resize the region to 1.5 times to get a better OCR result
+                        # TODO: need to match different resolutions for fx and fy
                         relic_sub_stat_region = cv2.resize(
                             self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2], None,
                             fx=1.5, fy=1.5,
