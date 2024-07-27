@@ -226,10 +226,10 @@ export const RelicSetsData: {
     icon: image17,
     isInner: false,
     parts: {
-      Head: "Champion's Headgear",
-      Hand: "Champion's Heavy Gloves",
-      Body: "Champion's Chest Guard",
-      Feet: "Champion's Fleetfoot Boots",
+      Head: 'Valorous Mask of Northern Skies',
+      Hand: 'Valorous Bracelet of Grappling Hooks',
+      Body: 'Valorous Plate of Soaring Flight',
+      Feet: 'Valorous Greaves of Pursuing Hunt',
     },
   },
   'Thief of Shooting Meteor': {

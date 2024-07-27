@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import CharacterRatingBadge from '@/components/panel/scan-panel/character-rating-badge.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
@@ -6,12 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';
 import useWindowStore from '@/hooks/use-window-store.ts';
-import {
-  CharacterBasePartPotentialRating,
-  CharacterBasePartRating,
-  RelicMainStats,
-  RelicSubStats,
-} from '@/type/types.ts';
+import { CharacterBasePartPotentialRating, CharacterBasePartRating, RelicInfo } from '@/type/types.ts';
 
 const ScanContent = () => {
   const { relicInfo, relicError } = useRelicStore();
@@ -27,40 +22,32 @@ const ScanContent = () => {
     CharacterBasePartPotentialRating[]
   >([]);
 
-  /**
-   * Evaluate the relic
-   * @param relicTitle the relic title which is the part name
-   * @param mainRelicStat the main relic stats
-   * @param subRelicStats the sub relic stats
-   */
+  useEffect(() => {
+    if (relicInfo) {
+      calculateRelicGrowthRate(relicInfo);
+    }
+  }, [relicInfo]);
 
   /**
    * Calculate the relic growth rate
-   * @param mainRelicStats the main relic stats
-   * @param subRelicStats the sub relic stats
+   * @param relicInfo The relic information
    */
-  function calculateRelicGrowthRate(mainRelicStats: RelicMainStats, subRelicStats: RelicSubStats[]) {
+  function calculateRelicGrowthRate(relicInfo: RelicInfo) {
     const relicGrowthRate = {
       minGrowthScore: 0,
       maxGrowthScore: 0,
       // The relic can have 3-4 sub stats at level 0,
       // each 3 levels increase the score by 1
-      maxScore: mainRelicStats.enhanceLevel + 4,
+      maxScore: relicInfo.mainStats.enhanceLevel + 4,
     };
 
     // Calculate the current relic score
-    for (const element of subRelicStats) {
+    for (const element of relicInfo.subStats) {
       const subStat = element;
-      // the spd can have multiple scores
-      if (subStat.score instanceof Array) {
-        const maxScore = Math.max(...subStat.score);
-        const minScore = Math.min(...subStat.score);
-        relicGrowthRate.maxGrowthScore += maxScore;
-        relicGrowthRate.minGrowthScore += minScore;
-      } else {
-        relicGrowthRate.maxGrowthScore += Number(subStat.score);
-        relicGrowthRate.minGrowthScore += Number(subStat.score);
-      }
+      const maxScore = Math.max(...subStat.score);
+      const minScore = Math.min(...subStat.score);
+      relicGrowthRate.maxGrowthScore += maxScore;
+      relicGrowthRate.minGrowthScore += minScore;
     }
 
     relicGrowthRate.maxGrowthScore = parseFloat(relicGrowthRate.maxGrowthScore.toFixed(2));
