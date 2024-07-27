@@ -23,7 +23,7 @@ async def get_screen_shot(global_state: GlobalState):
 
         if not game_window:
             logger.error("未检测到游戏窗口")
-            await asyncio.sleep(global_state.interval / 1000)
+            await asyncio.sleep(0.1)
             continue
 
         screen = pg.screenshot(region=(game_window.left, game_window.top, game_window.width, game_window.height))
@@ -39,4 +39,4 @@ async def get_screen_shot(global_state: GlobalState):
 
         logger.info(f"截图成功: {global_state.window}")
 
-        await asyncio.sleep(global_state.interval / 1000)
+        await asyncio.sleep(0.1)
