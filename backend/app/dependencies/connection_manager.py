@@ -6,6 +6,7 @@ from fastapi.websockets import WebSocket
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
+        self.relic_info_last_sent_message = ''
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
