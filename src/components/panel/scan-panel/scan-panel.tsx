@@ -11,6 +11,7 @@ import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import useWebclientStore from '@/hooks/use-webclient-store.ts';
 import useWindowStore from '@/hooks/use-window-store.ts';
 import { cn } from '@/lib/utils.ts';
+import LogViewer from '@/components/panel/scan-panel/log-viewer.tsx';
 
 interface SCanPanelProps {
   isLightMode: boolean;
@@ -75,9 +76,7 @@ const ScanPanel: React.FC<SCanPanelProps> = ({ isLightMode, setLightMode }) => {
         <ResizableHandle withHandle className={cn(isLightMode ? 'hidden' : '')} />
         <ResizablePanel defaultSize={50} className={cn(isLightMode ? 'hidden' : '')}>
           <ResizablePanel>
-            <div className="flex h-full items-center justify-center p-6">
-              <span className="font-semibold">Log Area</span>
-            </div>
+            <LogViewer />
           </ResizablePanel>
         </ResizablePanel>
       </ResizablePanelGroup>

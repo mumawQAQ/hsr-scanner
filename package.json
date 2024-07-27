@@ -43,6 +43,7 @@
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.1",
     "@techstark/opencv-js": "^4.9.0-release.3",
+    "@types/lodash": "^4.17.7",
     "@types/qrcode": "^1.5.5",
     "@types/uuid": "^10.0.0",
     "axios": "^1.7.2",

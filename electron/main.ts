@@ -197,7 +197,6 @@ app.on('ready', () => {
   backendProcess = spawn('python', ['backend/main.py']);
 
   backendProcess.stdout.on('data', data => {
-    console.log(`stdout: ${data}`);
     // send the data to the renderer process
     win?.webContents.send('backend-log', data.toString());
   });
