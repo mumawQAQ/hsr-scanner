@@ -72,4 +72,4 @@ class Detection:
             if self.global_state.yolo_boxes:
                 logger.info(f"检测到[{[str(box) for box in self.global_state.yolo_boxes]}]")
 
-            await asyncio.sleep(0)
+            await asyncio.sleep(0.1)

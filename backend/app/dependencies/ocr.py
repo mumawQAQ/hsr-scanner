@@ -128,6 +128,8 @@ class OCR:
         return matching_result
 
     def __match_relic_sub_stat__(self, relic_sub_stat_region):
+        # resize the region to 1.5 times to get a better OCR result
+        relic_sub_stat_region = cv2.resize(relic_sub_stat_region, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
 
         # crop the image to two parts, one for the main stat name and one for the main stat value
         relic_sub_stat_region_names = relic_sub_stat_region[:, : int(relic_sub_stat_region.shape[1] * 0.8)]
@@ -139,7 +141,7 @@ class OCR:
         format_result = self.__format_relic_sub_stat__(self, relic_sub_stat_region_names_result,
                                                        relic_sub_stat_region_vals_result)
         if format_result is None:
-            return None
+            return []
 
         logger.info(f"识别到遗器副属性: [{format_result}]")
 
@@ -187,7 +189,7 @@ class OCR:
 
                 self.__build_relic_info__(relic_title, relic_main_stat, relic_sub_stats)
 
-                await asyncio.sleep(0)
+                await asyncio.sleep(0.1)
             except Exception as e:
                 logger.error(f"识别遗器信息失败: {e}")
-                await asyncio.sleep(0)
+                await asyncio.sleep(0.1)
