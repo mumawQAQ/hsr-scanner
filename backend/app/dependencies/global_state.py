@@ -7,6 +7,7 @@ from app.models.yolo_box import YoloBox
 class GlobalState:
     def __init__(self):
         self.interval = 2000
+        self.scan_state = False
         self.screen = None
         self.window = {
             'left': 0,

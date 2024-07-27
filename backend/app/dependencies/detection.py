@@ -35,6 +35,10 @@ class Detection:
     async def detect_objects(self):
         logger.info("开始检测匹配模型")
         while True:
+            if not self.global_state.scan_state:
+                await asyncio.sleep(0.1)
+                continue
+
             # wait for the screen to be captured
             if self.global_state.screen_rgb is None:
                 await asyncio.sleep(0.1)

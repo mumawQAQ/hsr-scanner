@@ -12,3 +12,10 @@ def change_scan_interval(interval: int,
                          global_state: Annotated[GlobalState, Depends(get_global_state)]):
     global_state.interval = interval
     return {'status': 'success'}
+
+
+@router.patch("/scan-state/{state}")
+def change_scan_state(state: bool,
+                      global_state: Annotated[GlobalState, Depends(get_global_state)]):
+    global_state.scan_state = state
+    return {'status': 'success'}

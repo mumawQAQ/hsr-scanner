@@ -161,6 +161,10 @@ class OCR:
     async def read_relic_info(self):
         logger.info("开始识别遗器信息")
         while True:
+            if not self.global_state.scan_state:
+                await asyncio.sleep(0.1)
+                continue
+
             try:
                 # wait for the object to be detected
                 if self.global_state.yolo_boxes is None or len(self.global_state.yolo_boxes) == 0:

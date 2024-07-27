@@ -13,6 +13,10 @@ possible_titles = ['Honkai: Star Rail']
 
 async def get_screen_shot(global_state: GlobalState):
     while True:
+        if not global_state.scan_state:
+            await asyncio.sleep(0.1)
+            continue
+
         game_window = None
 
         for title in possible_titles:
