@@ -45,6 +45,7 @@
     "@techstark/opencv-js": "^4.9.0-release.3",
     "@types/qrcode": "^1.5.5",
     "@types/uuid": "^10.0.0",
+    "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",

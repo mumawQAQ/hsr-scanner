@@ -11,17 +11,20 @@ type WindowStore = {
 
 const useWindowStore = create<WindowStore>((set, get) => ({
   scanningStatus: false, // Default status
-  setScanningStatus: (status) => set({ scanningStatus: status }),
+  setScanningStatus: status => {
+    // set request to backend
+    set({ scanningStatus: status });
+  },
 
   scanInterval: 2000, // Default interval in ms
-  setScanInterval: (interval) => set({ scanInterval: interval }),
+  setScanInterval: interval => set({ scanInterval: interval }),
 
   isLightMode: false, // Default light mode
   toggleWindowMode: () => {
     const newMode = !get().isLightMode;
     set({ isLightMode: newMode });
     (window as any).ipcRenderer?.changeWindowMode(newMode);
-  }
+  },
 }));
 
 export default useWindowStore;
