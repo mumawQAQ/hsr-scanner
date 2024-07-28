@@ -1,4 +1,3 @@
-import { PartNameToSetNameMapping } from '@/data/relic-parts-data.ts';
 import { RelicSubStatsAcquireScale, RelicSubStatsTotalAcquireScale } from '@/data/relic-stat-data.ts';
 import useRelicTemplateStore from '@/hooks/use-relic-template-store.ts';
 import {
@@ -7,13 +6,14 @@ import {
   RatingRule,
   RelicMainStats,
   RelicSubStats,
+  RelicTitle,
   ValuableSubStatsV2,
 } from '@/type/types.ts';
 
 const MAX_ENHANCE_TIME = 5;
 const ENHANCE_POSSIBILITY = 0.25;
 
-const getRelicRatingRules = (relicTitle: string, relicMainStat: string) => {
+const getRelicRatingRules = (relicTitle: RelicTitle, relicMainStat: RelicMainStats) => {
   // get the current rating template
   const relicRulesTemplates = useRelicTemplateStore.getState().currentRelicRatingRulesTemplate;
 
@@ -26,7 +26,7 @@ const getRelicRatingRules = (relicTitle: string, relicMainStat: string) => {
   }
 
   // get the set name base on the relic title
-  const setName = PartNameToSetNameMapping[relicTitle];
+  const setName = relicTitle.setName;
 
   const validRules: RatingRule[] = [];
 
@@ -35,7 +35,7 @@ const getRelicRatingRules = (relicTitle: string, relicMainStat: string) => {
     // first need to make sure the rule is valid for the current relic set
     if (rule.setNames.includes(setName)) {
       // check if the relic main stat and relic part name match the rule
-      if (rule.partNames[relicTitle]?.valuableMain.includes(relicMainStat)) {
+      if (rule.partNames[relicTitle.title]?.valuableMain.includes(relicMainStat.name)) {
         validRules.push(rule);
       }
     }

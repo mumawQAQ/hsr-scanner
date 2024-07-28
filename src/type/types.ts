@@ -69,6 +69,7 @@ export type RelicImage = {
 
 export type RelicTitle = {
   title: string;
+  setName: string;
 };
 
 export type RelicSubStats = {

@@ -37,6 +37,7 @@ const useWebclientStore = create<UseWebclientStore>((set, get) => ({
         const relicInfo = {
           title: {
             title: message.title.title,
+            setName: message.title.set_name,
           },
           mainStats: {
             name: message.main_stat.name,

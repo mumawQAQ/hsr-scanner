@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import CharacterRatingBadge from '@/components/panel/scan-panel/character-rating-badge.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
@@ -6,12 +7,13 @@ import { ScrollArea } from '@/components/ui/scroll-area.tsx';
 import { Separator } from '@/components/ui/separator.tsx';
 import useRelicStore from '@/hooks/use-relic-store.ts';
 import useWindowStore from '@/hooks/use-window-store.ts';
-import { CharacterBasePartPotentialRating, CharacterBasePartRating, RelicInfo } from '@/type/types.ts';
+import { CharacterBasePartPotentialRating, CharacterBasePartRating, RatingRule, RelicInfo } from '@/type/types.ts';
+import relicUtils from '@/utils/relicRatingUtils.ts';
 
 const ScanContent = () => {
   const { relicInfo, relicError } = useRelicStore();
   const { scanningStatus } = useWindowStore();
-
+  
   const [relicGrowthRate, setRelicGrowthRate] = useState<{
     minGrowthScore: number;
     maxGrowthScore: number;
@@ -24,9 +26,86 @@ const ScanContent = () => {
 
   useEffect(() => {
     if (relicInfo) {
+      setCharacterBasePartPotentialRatings([]);
+      setCharacterBasePartRatingList([]);
       calculateRelicGrowthRate(relicInfo);
+      evaluateRelic(relicInfo);
     }
   }, [relicInfo]);
+
+  /**
+   * Evaluate the relic
+   * @param relicInfo The relic information
+   */
+  function evaluateRelic(relicInfo: RelicInfo) {
+    const relicTitle = relicInfo.title;
+    const mainRelicStat = relicInfo.mainStats;
+    const subRelicStats = relicInfo.subStats;
+    // get the relic rating rules
+    const ratingRules = relicUtils.getRelicRatingRules(relicTitle, mainRelicStat);
+
+    if (!ratingRules.success) {
+      toast(ratingRules.message, { type: 'error' });
+      return;
+    }
+
+    // if the rating rules empty, return
+    if (ratingRules.rules.length === 0) {
+      return;
+    }
+
+    // check the relic level if the level isn't 15, calculate the growth rate, else calculate the potential rate
+
+    if (mainRelicStat.level == 15) {
+      const characterBasePartRatingList: CharacterBasePartRating[] = [];
+      // iterate through the rules calculate the valuable stats, score for each character
+      ratingRules.rules.forEach((rule: RatingRule) => {
+        const valuableSub = rule.valuableSub;
+        const character = rule.fitCharacters;
+
+        const top4ValuableSub = relicUtils.getTop4ValuableSubScale(valuableSub);
+        const totalPossibleScore = relicUtils.getTotalPossibleScore(mainRelicStat, top4ValuableSub);
+
+        // calculate the rating with the new model
+        const newRating: CharacterBasePartRating = relicUtils.getCharacterBasePartRating(
+          character,
+          totalPossibleScore,
+          subRelicStats,
+          valuableSub
+        );
+
+        if (Object.values(newRating.valuableSub).some(subStat => subStat.valuable)) {
+          characterBasePartRatingList.push(newRating);
+        }
+      });
+
+      characterBasePartRatingList.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);
+      setCharacterBasePartRatingList(characterBasePartRatingList);
+    } else {
+      const characterBasePartPotentialRatings: CharacterBasePartPotentialRating[] = [];
+      // iterate through the rules calculate the valuable stats, score for each character
+      ratingRules.rules.forEach((rule: RatingRule) => {
+        const valuableSub = rule.valuableSub;
+        const character = rule.fitCharacters;
+        const top4ValuableSub = relicUtils.getTop4ValuableSubScale(valuableSub);
+        const totalPossiblePotentialScore = relicUtils.getTotalPossiblePotentialScore(top4ValuableSub, mainRelicStat);
+
+        const newPotential = relicUtils.getCharacterBasePartPotentialRating(
+          character,
+          totalPossiblePotentialScore,
+          mainRelicStat,
+          subRelicStats,
+          valuableSub
+        );
+        if (newPotential.maxTotalScore > 0) {
+          characterBasePartPotentialRatings.push(newPotential);
+        }
+      });
+
+      characterBasePartPotentialRatings.sort((a, b) => a.totalScore / a.maxTotalScore - b.totalScore / b.maxTotalScore);
+      setCharacterBasePartPotentialRatings(characterBasePartPotentialRatings);
+    }
+  }
 
   /**
    * Calculate the relic growth rate
@@ -89,7 +168,7 @@ const ScanContent = () => {
   };
 
   const renderRelicGrowthRate = () => {
-    if (!relicGrowthRate) {
+    if (!relicGrowthRate || !scanningStatus) {
       return null;
     }
 
@@ -110,6 +189,10 @@ const ScanContent = () => {
   };
 
   const renderCharacterBasePartRatingList = () => {
+    if (loading) {
+      return <div className="font-semibold">计算中...</div>;
+    }
+
     if (characterBasePartRatingList.length === 0 && characterBasePartPotentialRatings.length === 0) {
       return <div className="font-semibold">暂无适用角色评分/潜力</div>;
     }
