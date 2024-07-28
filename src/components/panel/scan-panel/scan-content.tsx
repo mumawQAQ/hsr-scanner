@@ -13,7 +13,7 @@ import relicUtils from '@/utils/relicRatingUtils.ts';
 const ScanContent = () => {
   const { relicInfo, relicError } = useRelicStore();
   const { scanningStatus } = useWindowStore();
-  
+
   const [relicGrowthRate, setRelicGrowthRate] = useState<{
     minGrowthScore: number;
     maxGrowthScore: number;
@@ -189,10 +189,6 @@ const ScanContent = () => {
   };
 
   const renderCharacterBasePartRatingList = () => {
-    if (loading) {
-      return <div className="font-semibold">计算中...</div>;
-    }
-
     if (characterBasePartRatingList.length === 0 && characterBasePartPotentialRatings.length === 0) {
       return <div className="font-semibold">暂无适用角色评分/潜力</div>;
     }
