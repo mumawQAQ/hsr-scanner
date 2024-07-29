@@ -73,9 +73,4 @@ const useWebclientStore = create<UseWebclientStore>((set, get) => ({
   },
 }));
 
-// fetch the backend port
-(window as any).ipcRenderer.invoke('store-get', 'backendPort').then((port: number) => {
-  useWebclientStore.getState().setBackendPort(port);
-});
-
 export default useWebclientStore;

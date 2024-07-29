@@ -1,9 +1,11 @@
 import asyncio
 import base64
+import os
 import re
 
 import cv2
 import easyocr
+import torch
 
 from app.dependencies.global_state import GlobalState
 from app.dependencies.relic_match import RelicMatch
@@ -11,10 +13,12 @@ from app.logging_config import logger
 from app.models.relic_info import RelicInfo, RelicImg
 from app.models.yolo_box import YoloCls
 
+EASYOCR_MODEL = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'easy_ocr_model')
+
 
 class OCR:
     def __init__(self, global_state: GlobalState):
-        self.reader = easyocr.Reader(['en'])
+        self.reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available(), model_storage_directory=EASYOCR_MODEL)
         self.global_state = global_state
         self.relic_match = RelicMatch()
 

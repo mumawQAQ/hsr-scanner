@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
@@ -8,9 +8,16 @@ import ScanPanel from '@/components/panel/scan-panel/scan-panel.tsx';
 import 'react-toastify/dist/ReactToastify.css';
 import { ModalProvider } from '@/providers/modal-provider.tsx';
 import { UpdateProvider } from '@/providers/update-provider.tsx';
+import { BackendProvider } from '@/providers/backend-provider.tsx';
 
 const App = () => {
   const [isLightMode, setLightMode] = useState(false);
+
+  useEffect(() => {
+    window.ipcRenderer.on('main-process-message', (_event, message) => {
+      console.log(message);
+    });
+  }, []);
 
   return (
     <Router>
@@ -36,6 +43,7 @@ const App = () => {
             </div>
           </>
         )}
+        <BackendProvider />
         <ModalProvider />
         <UpdateProvider />
         <ToastContainer position="top-left" pauseOnHover={false} autoClose={1500} closeOnClick />

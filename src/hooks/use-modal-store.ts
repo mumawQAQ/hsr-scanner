@@ -5,7 +5,8 @@ export type ModalType =
   | 'import-relic-rules-template'
   | 'export-relic-rules-template'
   | 'import-template-model'
-  | 'update-modal';
+  | 'update-modal'
+  | 'install-requirement';
 
 interface ModalData {
   updateMessage?: string;

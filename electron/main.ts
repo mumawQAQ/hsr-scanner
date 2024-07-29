@@ -1,16 +1,18 @@
 import { spawn } from 'child_process';
 import { unlink, writeFile } from 'fs';
 import path from 'node:path';
+import * as process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'util';
 
-import { app, BrowserWindow, desktopCapturer, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 
 import store from './store.ts';
 
 import { RatingTemplate, RatingTemplateStore } from '@/type/types.ts';
+import { PythonShell } from 'python-shell';
 
 const writeFileAsync = promisify(writeFile);
 const unlinkAsync = promisify(unlink);
@@ -38,7 +40,6 @@ autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
 
 let win: BrowserWindow | null;
-let backendProcess = null;
 
 function createMainWindow() {
   win = new BrowserWindow({
@@ -53,22 +54,6 @@ function createMainWindow() {
   });
 
   win.setAlwaysOnTop(true, 'screen-saver', 1);
-
-  ipcMain.handle('capture-screen', async () => {
-    const sources = await desktopCapturer.getSources({
-      types: ['window'],
-      thumbnailSize: { width: 1920, height: 1080 },
-    });
-
-    // Filter to find a specific window, e.g., by its name
-    const specificWindow = sources.find(source => source.name.includes('Honkai: Star Rail'));
-
-    if (specificWindow) {
-      return specificWindow.thumbnail;
-    } else {
-      return null; // Handle case where no matching window is found
-    }
-  });
 
   ipcMain.handle('store-get', async (_, key) => {
     return store.get(key);
@@ -111,7 +96,7 @@ function createMainWindow() {
         return { success: false, message: '没有找到遗器模板' };
       }
 
-      const currentTemplate = templates[templateId] as RatingTemplate;
+      const currentTemplate = templates[templateId];
 
       if (!currentTemplate.rules[ruleId]) {
         return { success: false, message: '没有找到规则' };
@@ -152,9 +137,122 @@ function createMainWindow() {
     }
   });
 
-  // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', new Date().toLocaleString());
+    if (!VITE_DEV_SERVER_URL) {
+      // run install bat to install backend dependencies
+      const batPath = path.join(process.resourcesPath, 'tools', 'install.bat');
+      const quotedBatPath = `"${batPath}"`; // Ensure the path is quoted
+
+      const install = spawn('cmd.exe', ['/c', quotedBatPath], { shell: true });
+      win?.webContents.send('start-install-requirement-message', '[Installing requirements...]');
+
+      install.stdout.on('data', data => {
+        win?.webContents.send('install-requirement-message', data.toString('utf8'));
+      });
+
+      install.stderr.on('data', data => {
+        win?.webContents.send('install-requirement-message', `Error: ${data.toString('utf8')}`);
+      });
+
+      install.on('close', code => {
+        if (code === 0) {
+          win?.webContents.send('finish-install-requirement-message', true);
+
+          // run the python script as admin
+          // If the batch script runs successfully, run the Python script
+          const pythonPath = path.join(process.resourcesPath, 'tools', 'python', 'python.exe');
+          const scriptFile = path.join(process.resourcesPath, 'backend', 'main.py');
+
+          const options = {
+            pythonPath: pythonPath,
+            scriptPath: path.dirname(scriptFile),
+            args: [],
+          };
+          const backendShell = new PythonShell(path.basename(scriptFile), options);
+
+          backendShell.on('message', message => {
+            win?.webContents.send('backend-log', 'message' + message.toString());
+          });
+
+          backendShell.on('stderr', stderr => {
+            const strStderr = stderr.toString();
+            const port = strStderr.match(/Uvicorn running on http:\/\/\S+:(\d+)/);
+            if (port) {
+              win?.webContents.send('backend-port', port[1]);
+            }
+          });
+
+          backendShell.end(function (err, code, signal) {
+            if (err) {
+              win?.webContents.send('backend-log', code.toString());
+              win?.webContents.send('backend-log', signal.toString());
+            }
+          });
+        } else {
+          win?.webContents.send('finish-install-requirement-message', false);
+        }
+      });
+    } else {
+      const IS_TEST_BACKEND_SUCCESS = false;
+      win?.webContents.send('start-install-requirement-message', '[Installing requirements...]');
+
+      win?.webContents.send('install-requirement-message', 'Pipeline: Installing requirements...');
+      win?.webContents.send('install-requirement-message', 'Requirement: torch');
+      win?.webContents.send('install-requirement-message', 'Requirement: numpy');
+      win?.webContents.send('install-requirement-message', 'Requirement: pandas');
+      win?.webContents.send('install-requirement-message', 'Requirement: fastapi');
+      win?.webContents.send('install-requirement-message', 'Requirement: uvicorn');
+      win?.webContents.send('install-requirement-message', 'Requirement: pydantic');
+      win?.webContents.send('install-requirement-message', 'Requirement: starlette');
+      win?.webContents.send('install-requirement-message', 'Requirement: scikit-learn');
+      win?.webContents.send('install-requirement-message', 'Requirement: fastapi');
+      win?.webContents.send('install-requirement-message', 'Requirement: uvicorn');
+      win?.webContents.send('install-requirement-message', 'Requirement: pydantic');
+      win?.webContents.send('install-requirement-message', 'Requirement: starlette');
+      win?.webContents.send('install-requirement-message', 'Requirement: scikit-learn');
+      win?.webContents.send('install-requirement-message', 'Requirement: fastapi');
+      win?.webContents.send('install-requirement-message', 'Requirement: uvicorn');
+      win?.webContents.send('install-requirement-message', 'Requirement: pydantic');
+      win?.webContents.send('install-requirement-message', 'Requirement: starlette');
+      win?.webContents.send('install-requirement-message', 'Requirement: scikit-learn');
+      win?.webContents.send('install-requirement-message', 'Requirement: fastapi');
+      win?.webContents.send('install-requirement-message', 'Requirement: uvicorn');
+      win?.webContents.send('install-requirement-message', 'Requirement: pydantic');
+      win?.webContents.send('install-requirement-message', 'Requirement: starlette');
+      win?.webContents.send('install-requirement-message', 'Requirement: scikit-learn');
+
+      setTimeout(() => {
+        win?.webContents.send('finish-install-requirement-message', IS_TEST_BACKEND_SUCCESS);
+      }, 20000);
+
+      if (IS_TEST_BACKEND_SUCCESS) {
+        setTimeout(() => {
+          const backendProcess = spawn('python', ['backend/main.py']);
+          win?.webContents.send('start-backend-message');
+
+          backendProcess.stdout.on('data', data => {
+            // send the data to the renderer process
+            win?.webContents.send('backend-log', data.toString());
+          });
+
+          backendProcess.stderr.on('data', data => {
+            console.error(`stderr: ${data}`);
+
+            // extract the port number from the output
+            const port = data.toString().match(/Uvicorn running on http:\/\/\S+:(\d+)/);
+            if (port) {
+              win?.webContents.send('backend-port', port[1]);
+            }
+          });
+
+          backendProcess.on('close', code => {
+            console.log(`Backend process exited with code ${code}`);
+            // exit the app if the backend process exits
+            app.quit();
+          });
+        }, 22000);
+      }
+    }
   });
 
   win.once('ready-to-show', () => {
@@ -192,33 +290,6 @@ function createMainWindow() {
   }
 }
 
-app.on('ready', () => {
-  // start the backend server
-  backendProcess = spawn('python', ['backend/main.py']);
-
-  backendProcess.stdout.on('data', data => {
-    // send the data to the renderer process
-    win?.webContents.send('backend-log', data.toString());
-  });
-
-  backendProcess.stderr.on('data', data => {
-    console.error(`stderr: ${data}`);
-
-    // extract the port number from the output
-    const port = data.toString().match(/Uvicorn running on http:\/\/\S+:(\d+)/);
-    if (port) {
-      store.set('backendPort', port[1]);
-      createMainWindow();
-    }
-  });
-
-  backendProcess.on('close', code => {
-    console.log(`Backend process exited with code ${code}`);
-    // exit the app if the backend process exits
-    app.quit();
-  });
-});
-
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
@@ -236,6 +307,8 @@ app.on('activate', () => {
     createMainWindow();
   }
 });
+
+app.whenReady().then(createMainWindow);
 
 // Change the window size when the user click a button in Scan Panel.
 ipcMain.on('change-window-mode', (_, isLightMode) => {

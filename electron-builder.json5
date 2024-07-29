@@ -9,7 +9,23 @@
   },
   "files": [
     "dist",
-    "dist-electron"
+    "dist-electron",
+  ],
+  "extraResources": [
+    {
+      "from": "tools",
+      "to": "tools",
+      "filter": [
+        "**/*"
+      ]
+    },
+    {
+      "from": "backend",
+      "to": "backend",
+      "filter": [
+        "**/*"
+      ]
+    }
   ],
   "win": {
     "target": [
