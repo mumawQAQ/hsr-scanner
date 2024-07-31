@@ -6,9 +6,9 @@ import { NavigationItem } from '@/components/navigation/navigation-item.tsx';
 import RelicToolPanel from '@/components/panel/relic-tool-panel/relic-tool-panel.tsx';
 import ScanPanel from '@/components/panel/scan-panel/scan-panel.tsx';
 import 'react-toastify/dist/ReactToastify.css';
+import { BackendProvider } from '@/providers/backend-provider.tsx';
 import { ModalProvider } from '@/providers/modal-provider.tsx';
 import { UpdateProvider } from '@/providers/update-provider.tsx';
-import { BackendProvider } from '@/providers/backend-provider.tsx';
 
 const App = () => {
   const [isLightMode, setLightMode] = useState(false);

@@ -8,11 +8,11 @@ import { promisify } from 'util';
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
+import { PythonShell } from 'python-shell';
 
 import store from './store.ts';
 
 import { RatingTemplate, RatingTemplateStore } from '@/type/types.ts';
-import { PythonShell } from 'python-shell';
 
 const writeFileAsync = promisify(writeFile);
 const unlinkAsync = promisify(unlink);
@@ -171,7 +171,7 @@ function createMainWindow() {
           const backendShell = new PythonShell(path.basename(scriptFile), options);
 
           backendShell.on('message', message => {
-            win?.webContents.send('backend-log', 'message' + message.toString());
+            win?.webContents.send('backend-log', message.toString());
           });
 
           backendShell.on('stderr', stderr => {
@@ -193,7 +193,7 @@ function createMainWindow() {
         }
       });
     } else {
-      const IS_TEST_BACKEND_SUCCESS = false;
+      const IS_TEST_BACKEND_SUCCESS = true;
       win?.webContents.send('start-install-requirement-message', '[Installing requirements...]');
 
       win?.webContents.send('install-requirement-message', 'Pipeline: Installing requirements...');

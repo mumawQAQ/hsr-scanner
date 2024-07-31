@@ -8,7 +8,12 @@ set "PYTHON_DIR=%TOOLS_DIR%\python"
 set "PYTHON_EXE=%PYTHON_DIR%\python.exe"
 set "SCRIPT_DIR=%PYTHON_DIR%\Scripts"
 set "REQUIREMENTS_FILE=%TOOLS_DIR%\requirements.txt"
-set "PYPI_MIRROR=https://pypi.tuna.tsinghua.edu.cn/simple"
+set "PYTORCH_VERSION=2.3.1"
+set "TORCHVISION_VERSION=0.18.1"
+set "PYPI_TSINGHUA_MIRROR=https://pypi.tuna.tsinghua.edu.cn/simple"
+set "PYPI_SJTU_MIRROR=https://mirror.sjtu.edu.cn/pypi/web/simple"
+set "CUDA_VERSION=cu118"
+set "CUDA_DETECTED=0"
 
 
 REM Check if Visual C++ Redistributable is installed (using a general check, adjust according to specific needs)
@@ -54,22 +59,65 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+REM Check cuda is installed
+echo Checking cuda...
+nvcc --version >nul 2>&1
+if %errorlevel% == 0 (
+    echo CUDA is installed.
+    set "CUDA_DETECTED=1"
+) else (
+    echo CUDA is not installed or nvcc is not in your PATH.
+)
+
+
 REM Check connectivity to the default PyPI CDN
-echo Checking connectivity to the default PyPI CDN...
-"%PYTHON_EXE%" -m pip install --no-deps pip==23.0.1
+echo Pinging Google to check internet connectivity...
+ping -n 1 google.com -w 20000 >nul
 if %errorlevel% neq 0 (
-    echo Could not connect to the default PyPI CDN. Falling back to mirror.
+    echo Connect to the default PyPI CDN in China can be really slow. Falling back to mirror.
     set USE_MIRROR=1
 ) else (
     echo Connected to the default PyPI CDN successfully.
     set USE_MIRROR=0
 )
 
+REM Install cuda based on the detection
+if %CUDA_DETECTED%==1 (
+    echo Installing PyTorch and torchvision with CUDA support...
+    if %USE_MIRROR%==1 (
+        "%PYTHON_EXE%" -m pip install torch==%PYTORCH_VERSION%+%CUDA_VERSION% torchvision==%TORCHVISION_VERSION%+%CUDA_VERSION% -f https://mirror.sjtu.edu.cn/pytorch-wheels/%CUDA_VERSION%/torch_stable.html -i "%PYPI_SJTU_MIRROR%" --no-warn-script-location
+    ) else (
+        "%PYTHON_EXE%" -m pip install torch==%PYTORCH_VERSION%+%CUDA_VERSION% torchvision==%TORCHVISION_VERSION%+%CUDA_VERSION% -f https://download.pytorch.org/whl/torch_stable.html --no-warn-script-location
+    )
+
+    REM Check if the pip install command was successful
+    if %errorlevel% neq 0 (
+        echo Failed to install PyTorch and torchvision with CUDA support.
+        endlocal
+        exit /b 1
+    )
+) else (
+    echo Installing PyTorch and torchvision without CUDA support...
+    if %USE_MIRROR%==1 (
+        "%PYTHON_EXE%" -m pip install torch==%PYTORCH_VERSION% torchvision==%TORCHVISION_VERSION% -i "%PYPI_SJTU_MIRROR%" --no-warn-script-location
+    ) else (
+        "%PYTHON_EXE%" -m pip install torch==%PYTORCH_VERSION% torchvision==%TORCHVISION_VERSION% --no-warn-script-location
+    )
+
+    REM Check if the pip install command was successful
+    if %errorlevel% neq 0 (
+        echo Failed to install PyTorch and torchvision without CUDA support.
+        endlocal
+        exit /b 1
+    )
+)
+
+
 REM Install required packages
 if exist "%REQUIREMENTS_FILE%" (
     echo Installing required Python packages from %REQUIREMENTS_FILE%...
     if %USE_MIRROR%==1 (
-        "%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_MIRROR%" --no-warn-script-location
+        "%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_SJTU_MIRROR%" --no-warn-script-location
     ) else (
         "%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" --no-warn-script-location
     )
