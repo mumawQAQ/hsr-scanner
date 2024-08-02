@@ -27,7 +27,6 @@ def change_scan_state(state: bool,
 def change_log_level(level: str):
     console_handler = None
     for handler in logging.getLogger().handlers:
-        print(handler.get_name())
         if handler.get_name() == 'console':
             console_handler = handler
 

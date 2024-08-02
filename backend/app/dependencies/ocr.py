@@ -4,29 +4,28 @@ import os
 import re
 
 import cv2
-import easyocr
-import torch
+import numpy as np
+import pytesseract
 
 from app.dependencies.global_state import GlobalState
+from app.dependencies.img_preprocess import pp_relic_title_img, pp_relic_main_img, pp_relic_sub_img
 from app.dependencies.relic_match import RelicMatch
 from app.logging_config import logger
 from app.models.relic_info import RelicInfo, RelicImg
 from app.models.yolo_box import YoloCls
 
 EASYOCR_MODEL = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'easy_ocr_model')
+CUSTOM_CONFIG = r'--oem 3 --psm 6'
 
 
 class OCR:
     def __init__(self, global_state: GlobalState):
-        self.reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available(), model_storage_directory=EASYOCR_MODEL)
         self.global_state = global_state
         self.relic_match = RelicMatch()
 
     @staticmethod
-    def __format_relic_title__(self, relic_title_ocr_result: list):
+    def __format_relic_title__(self, relic_title_ocr_result: str):
         # format the relic title
-        # example: ['1', "Musketeer's", 'Rivets Riding Boots']
-
         extracted_texts = ''.join(relic_title_ocr_result)
         extracted_texts = re.sub(r"[^a-zA-Z- ']", "", extracted_texts)
 
@@ -37,8 +36,8 @@ class OCR:
         return extracted_texts
 
     @staticmethod
-    def __format_relic_main_stat__(self, relic_main_stat_name_ocr_result: list,
-                                   relic_main_stat_val_ocr_result: list) -> [str, str]:
+    def __format_relic_main_stat__(self, relic_main_stat_name_ocr_result: str,
+                                   relic_main_stat_val_ocr_result: str) -> [str, str]:
 
         # format the relic main stat
         if len(relic_main_stat_name_ocr_result) < 1:
@@ -49,12 +48,9 @@ class OCR:
             logger.error(f"未能正确识别遗器主属性数值, 当前OCR结果{relic_main_stat_val_ocr_result}")
             return None
 
-        relic_main_stat = ''.join(relic_main_stat_name_ocr_result)
-        relic_main_stat_val = ''.join(relic_main_stat_val_ocr_result)
-
         # trim all the spaces
-        relic_main_stat = relic_main_stat.strip().replace(' ', '')
-        relic_main_stat_val = relic_main_stat_val.strip().replace(' ', '')
+        relic_main_stat = relic_main_stat_name_ocr_result.strip().replace(' ', '')
+        relic_main_stat_val = relic_main_stat_val_ocr_result.strip().replace(' ', '')
 
         # value can be a number or percentage % in the end
         if relic_main_stat in ['HP', 'ATK', 'DEF'] and relic_main_stat_val.endswith('%'):
@@ -63,28 +59,31 @@ class OCR:
         return [relic_main_stat, relic_main_stat_val]
 
     @staticmethod
-    def __format_relic_sub_stat__(self, relic_sub_stat_name_ocr_result: list, relic_sub_stat_val_ocr_result: list):
+    def __format_relic_sub_stat__(self, relic_sub_stat_name_ocr_result: str, relic_sub_stat_val_ocr_result: str):
+        relic_sub_stat_name_ocr_result_list = re.split(r'\n+', relic_sub_stat_name_ocr_result.strip())
+        relic_sub_stat_val_ocr_result_list = re.split(r'\n+', relic_sub_stat_val_ocr_result.strip())
+
         # format the relic sub stat
         min_result_count = 3
         max_result_count = 4
 
-        if len(relic_sub_stat_name_ocr_result) < min_result_count or len(
-                relic_sub_stat_name_ocr_result) > max_result_count:
-            logger.error(f"未能正确识别遗器副属性名称, 当前OCR结果{relic_sub_stat_name_ocr_result}")
+        if len(relic_sub_stat_name_ocr_result_list) < min_result_count or len(
+                relic_sub_stat_name_ocr_result_list) > max_result_count:
+            logger.error(f"未能正确识别遗器副属性名称, 当前OCR结果{relic_sub_stat_name_ocr_result_list}")
             return None
 
-        if len(relic_sub_stat_val_ocr_result) < min_result_count or len(
-                relic_sub_stat_val_ocr_result) > max_result_count:
-            logger.error(f"未能正确识别遗器副属性数值, 当前OCR结果{relic_sub_stat_val_ocr_result}")
+        if len(relic_sub_stat_val_ocr_result_list) < min_result_count or len(
+                relic_sub_stat_val_ocr_result_list) > max_result_count:
+            logger.error(f"未能正确识别遗器副属性数值, 当前OCR结果{relic_sub_stat_val_ocr_result_list}")
             return None
 
-        if len(relic_sub_stat_name_ocr_result) != len(relic_sub_stat_val_ocr_result):
+        if len(relic_sub_stat_name_ocr_result_list) != len(relic_sub_stat_val_ocr_result_list):
             logger.error(
-                f"遗器副属性名称和数值数量不匹配, 当前OCR结果{relic_sub_stat_name_ocr_result}, {relic_sub_stat_val_ocr_result}")
+                f"遗器副属性名称和数值数量不匹配, 当前OCR结果{relic_sub_stat_name_ocr_result_list}, {relic_sub_stat_val_ocr_result_list}")
             return None
 
         format_result = {}
-        for name, val in zip(relic_sub_stat_name_ocr_result, relic_sub_stat_val_ocr_result):
+        for name, val in zip(relic_sub_stat_name_ocr_result_list, relic_sub_stat_val_ocr_result_list):
             format_name = name.strip().replace(' ', '')
             format_val = val.strip().replace(' ', '')
             if format_name in ['HP', 'ATK', 'DEF'] and format_val.endswith('%'):
@@ -95,7 +94,7 @@ class OCR:
 
     def __match_relic_title__(self, relic_title_region):
         # match the relic title
-        result = self.reader.readtext(relic_title_region, detail=0)
+        result = pytesseract.image_to_string(relic_title_region, lang='eng', config=CUSTOM_CONFIG)
 
         format_result = self.__format_relic_title__(self, result)
         if format_result is None:
@@ -107,13 +106,11 @@ class OCR:
 
         return matching_result
 
-    def __match_relic_main_stat__(self, relic_main_stat_region):
-        # crop the image to two parts, one for the main stat name and one for the main stat value
-        relic_main_stat_region_name = relic_main_stat_region[:, : int(relic_main_stat_region.shape[1] * 0.8)]
-        relic_main_stat_region_val = relic_main_stat_region[:, int(relic_main_stat_region.shape[1] * 0.8):]
-
-        relic_main_stat_region_name_result = self.reader.readtext(relic_main_stat_region_name, detail=0)
-        relic_main_stat_region_val_result = self.reader.readtext(relic_main_stat_region_val, detail=0)
+    def __match_relic_main_stat__(self, relic_main_stat_name_region, relic_main_stat_val_region):
+        relic_main_stat_region_name_result = pytesseract.image_to_string(relic_main_stat_name_region, lang='eng',
+                                                                         config=CUSTOM_CONFIG)
+        relic_main_stat_region_val_result = pytesseract.image_to_string(relic_main_stat_val_region, lang='eng',
+                                                                        config=CUSTOM_CONFIG)
 
         format_result = self.__format_relic_main_stat__(self, relic_main_stat_region_name_result,
                                                         relic_main_stat_region_val_result)
@@ -126,13 +123,11 @@ class OCR:
 
         return matching_result
 
-    def __match_relic_sub_stat__(self, relic_sub_stat_region):
-        # crop the image to two parts, one for the main stat name and one for the main stat value
-        relic_sub_stat_region_names = relic_sub_stat_region[:, : int(relic_sub_stat_region.shape[1] * 0.8)]
-        relic_sub_stat_region_vals = relic_sub_stat_region[:, int(relic_sub_stat_region.shape[1] * 0.8):]
-
-        relic_sub_stat_region_names_result = self.reader.readtext(relic_sub_stat_region_names, detail=0)
-        relic_sub_stat_region_vals_result = self.reader.readtext(relic_sub_stat_region_vals, detail=0)
+    def __match_relic_sub_stat__(self, relic_sub_stat_names_region, relic_sub_stat_vals_region):
+        relic_sub_stat_region_names_result = pytesseract.image_to_string(relic_sub_stat_names_region, lang='eng',
+                                                                         config=CUSTOM_CONFIG)
+        relic_sub_stat_region_vals_result = pytesseract.image_to_string(relic_sub_stat_vals_region, lang='eng',
+                                                                        config=CUSTOM_CONFIG)
 
         format_result = self.__format_relic_sub_stat__(self, relic_sub_stat_region_names_result,
                                                        relic_sub_stat_region_vals_result)
@@ -169,7 +164,14 @@ class OCR:
 
         return data_url
 
-    def __build_relic_img__(self, relic_title_array, relic_main_stat_array, relic_sub_stats_array):
+    def __build_relic_img__(self, relic_title_array, relic_main_stat_name_region, relic_main_stat_val_region,
+                            relic_sub_stats_name_region, relic_sub_stats_val_region):
+
+        # join the relic main stat image
+        relic_main_stat_array = np.hstack((relic_main_stat_name_region, relic_main_stat_val_region))
+        # join the relic sub stat image
+        relic_sub_stats_array = np.hstack((relic_sub_stats_name_region, relic_sub_stats_val_region))
+
         relic_title_img = self.__array_to_data_url__(relic_title_array)
         relic_main_stat_img = self.__array_to_data_url__(relic_main_stat_array)
         relic_sub_stat_img = self.__array_to_data_url__(relic_sub_stats_array)
@@ -198,45 +200,39 @@ class OCR:
                 relic_sub_stats = []
 
                 relic_title_region = None
-                relic_main_stat_region = None
-                relic_sub_stat_region = None
+                relic_main_stat_name_region = None
+                relic_main_stat_val_region = None
+                relic_sub_stats_name_region = None
+                relic_sub_stats_val_region = None
 
                 for yolo_box in yolo_boxes:
                     if yolo_box.cls == YoloCls.RELIC_TITLE:
-                        # resize the region to 10 times to get a better OCR result
-                        # TODO: need to match different resolutions for fx and fy
-                        relic_title_region = cv2.resize(
-                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2],
-                            None,
-                            fx=10, fy=10,
-                            interpolation=cv2.INTER_CUBIC)
+                        # pre-process the relic title region
+                        relic_title_region = pp_relic_title_img(self.global_state.screen_rgb,
+                                                                yolo_box.x1, yolo_box.y1, yolo_box.x2, yolo_box.y2)
+
                         relic_title = self.__match_relic_title__(
                             relic_title_region
                         )
                     elif yolo_box.cls == YoloCls.RELIC_MAIN_STAT:
-                        # resize the region to 10 times to get a better OCR result
-                        # TODO: need to match different resolutions for fx and fy
-                        relic_main_stat_region = cv2.resize(
-                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2],
-                            None,
-                            fx=10, fy=10,
-                            interpolation=cv2.INTER_CUBIC)
+                        # pre-process the relic main stat region
+                        relic_main_stat_name_region, relic_main_stat_val_region = pp_relic_main_img(
+                            self.global_state.screen_rgb, yolo_box.x1, yolo_box.y1, yolo_box.x2, yolo_box.y2)
                         relic_main_stat = self.__match_relic_main_stat__(
-                            relic_main_stat_region
+                            relic_main_stat_name_region, relic_main_stat_val_region
                         )
                     elif yolo_box.cls == YoloCls.RELIC_SUB_STAT:
-                        # resize the region to 1.5 times to get a better OCR result
-                        # TODO: need to match different resolutions for fx and fy
-                        relic_sub_stat_region = cv2.resize(
-                            self.global_state.screen_rgb[yolo_box.y1:yolo_box.y2, yolo_box.x1:yolo_box.x2], None,
-                            fx=1.5, fy=1.5,
-                            interpolation=cv2.INTER_CUBIC)
+                        # pre-process the relic sub stat region
+                        relic_sub_stats_name_region, relic_sub_stats_val_region = pp_relic_sub_img(
+                            self.global_state.screen_rgb, yolo_box.x1, yolo_box.y1, yolo_box.x2, yolo_box.y2
+                        )
                         relic_sub_stats = self.__match_relic_sub_stat__(
-                            relic_sub_stat_region
+                            relic_sub_stats_name_region, relic_sub_stats_val_region
                         )
 
                 self.__build_relic_info__(relic_title, relic_main_stat, relic_sub_stats)
-                self.__build_relic_img__(relic_title_region, relic_main_stat_region, relic_sub_stat_region)
+                self.__build_relic_img__(relic_title_region, relic_main_stat_name_region, relic_main_stat_val_region,
+                                         relic_sub_stats_name_region, relic_sub_stats_val_region)
 
                 await asyncio.sleep(0.1)
             except Exception as e:
