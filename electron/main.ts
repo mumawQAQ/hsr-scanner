@@ -182,10 +182,10 @@ function createMainWindow() {
             }
           });
 
-          backendShell.end(function (err, code, signal) {
+          backendShell.end(function (err, code) {
             if (err) {
-              win?.webContents.send('backend-log', code.toString());
-              win?.webContents.send('backend-log', signal.toString());
+              win?.webContents.send('backend-log', '后端程序错误退出code: ' + code.toString());
+              win?.webContents.send('backend-log', '错误信息: ' + err.message);
             }
           });
         } else {
