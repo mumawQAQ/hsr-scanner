@@ -14,7 +14,7 @@ from app.logging_config import logger
 from app.models.relic_info import RelicInfo, RelicImg
 from app.models.yolo_box import YoloCls
 
-EASYOCR_MODEL = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'easy_ocr_model')
+TESSERACT_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'tesseract', 'tesseract.exe')
 CUSTOM_CONFIG = r'--oem 3 --psm 6'
 
 
@@ -22,6 +22,7 @@ class OCR:
     def __init__(self, global_state: GlobalState):
         self.global_state = global_state
         self.relic_match = RelicMatch()
+        pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
     @staticmethod
     def __format_relic_title__(self, relic_title_ocr_result: str):
