@@ -5,6 +5,7 @@ from logging.config import dictConfig
 
 from fastapi import FastAPI
 
+from app.dependencies.database import Base, engine
 from app.dependencies.detection import Detection
 from app.dependencies.global_state import global_state
 from app.dependencies.ocr import OCR
@@ -21,6 +22,9 @@ async def life_span(app: FastAPI):
     # TODO: since all of them rely on the global state, we should refactor this to a single coroutine
     # Apply the logging configuration
     dictConfig(logging_config)
+
+    # Init all the tables
+    Base.metadata.create_all(engine)
 
     # Start the screen capture coroutine in a separate thread
     screen_shot_thread = threading.Thread(target=run_async, args=(get_screen_shot(global_state),))

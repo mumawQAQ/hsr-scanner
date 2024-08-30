@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import Server
 
 from app.life_span import life_span
+from app.routers import rating_template
 from app.routers import state
 from app.routers import websocket
 
@@ -19,6 +20,7 @@ app.add_middleware(
 
 app.include_router(state.router)
 app.include_router(websocket.router)
+app.include_router(rating_template.router)
 
 if __name__ == '__main__':
     config = uvicorn.Config(app, port=0)
