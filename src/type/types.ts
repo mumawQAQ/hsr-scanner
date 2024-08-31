@@ -55,38 +55,34 @@ export type RatingTemplateStore = {
   [key: string]: RatingTemplate;
 };
 
+export type RelicInfo = {
+  title: RelicTitle;
+  mainStats: RelicMainStats;
+  subStats: RelicSubStats[];
+};
+
+export type RelicImage = {
+  titleImage: string;
+  mainStatImage: string;
+  subStatImages: string;
+};
+
+export type RelicTitle = {
+  title: string;
+  setName: string;
+};
+
 export type RelicSubStats = {
-  name: RelicType;
+  name: string;
   number: string;
-  score: [number] | number;
+  score: [number];
 };
 
 export type RelicMainStats = {
-  name: RelicType;
+  name: string;
   number: string;
   level: number;
   enhanceLevel: number;
-};
-
-export type OCRResult = {
-  title: OCRTitleResult;
-  mainStats: OCRMainStatsResult;
-  subStats: OCRSubStatsResult;
-};
-
-export type OCRTitleResult = {
-  result: string | null;
-  error: string | null;
-};
-
-export type OCRMainStatsResult = {
-  result: RelicMainStats | null;
-  error: string | null;
-};
-
-export type OCRSubStatsResult = {
-  result: RelicSubStats[] | null;
-  error: string | null;
 };
 
 export enum RelicHeadMainStatsType {

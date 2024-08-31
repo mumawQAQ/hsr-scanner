@@ -9,9 +9,18 @@ type ScanActionProps = {
   setScanningStatus: (status: boolean) => void;
   scanInterval: number;
   setScanInterval: (interval: number) => void;
+  imgShow: boolean;
+  setImageShow: (show: boolean) => void;
 };
 
-const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanInterval }: ScanActionProps) => {
+const ScanAction = ({
+  scanningStatus,
+  setScanningStatus,
+  scanInterval,
+  setScanInterval,
+  imgShow,
+  setImageShow,
+}: ScanActionProps) => {
   const { onOpen } = useModal();
 
   const handleRelicRuleTemplateIn = () => {
@@ -34,10 +43,16 @@ const ScanAction = ({ scanningStatus, setScanningStatus, scanInterval, setScanIn
         />
       </div>
       <div className="flex items-center justify-center space-x-2">
-        <Label htmlFor="scan-mode" className="font-semibold text-nowrap">
+        <Label htmlFor="scan-mode" className="text-nowrap font-semibold">
           开始扫描
         </Label>
         <Switch id="scan-mode" checked={scanningStatus} onCheckedChange={setScanningStatus} />
+      </div>
+      <div className="flex items-center justify-center space-x-2">
+        <Label htmlFor="img_show" className="font-semibold">
+          显示图片
+        </Label>
+        <Switch id="img_show" checked={imgShow} onCheckedChange={setImageShow} />
       </div>
       <Button size="sm" onClick={handleRelicRuleTemplateIn}>
         选择模板
