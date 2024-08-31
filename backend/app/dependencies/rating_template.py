@@ -1,5 +1,6 @@
 from app.dependencies import database
-from app.models.database.rating_template import RatingTemplate as RatingTemplateModel
+from app.logging_config import logger
+from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
 
 
 class RatingTemplate:
@@ -9,8 +10,8 @@ class RatingTemplate:
 
     def use_template(self, template_id: str):
         # Find any template that is currently in use
-        current_template = self.db.query(RatingTemplateModel).filter(
-            RatingTemplateModel.in_use == True).first()
+        current_template = self.db.query(RatingTemplateDBModel).filter(
+            RatingTemplateDBModel.in_use == True).first()
 
         if current_template:
             if current_template.id == template_id:
@@ -20,17 +21,28 @@ class RatingTemplate:
             current_template.in_use = False
 
         # Set the requested template to in use
-        matched_rows = self.db.query(RatingTemplateModel).filter(
-            RatingTemplateModel.id == template_id).update({"in_use": True})
+        matched_rows = self.db.query(RatingTemplateDBModel).filter(
+            RatingTemplateDBModel.id == template_id).update({"in_use": True})
 
         if matched_rows:
             self.db.commit()
             # Query again to return the newly updated template
-            new_template = self.db.query(RatingTemplateModel).filter(
-                RatingTemplateModel.id == template_id).first()
+            new_template = self.db.query(RatingTemplateDBModel).filter(
+                RatingTemplateDBModel.id == template_id).first()
             return new_template
         else:
             self.db.rollback()  # Rollback if no rows are matched
+            return None
+
+    def create_template(self, new_template: RatingTemplateDBModel):
+        try:
+            self.db.add(new_template)
+            self.db.commit()
+            self.db.refresh(new_template)
+            return new_template
+        except Exception as e:
+            logger.error(f"Failed to create template: {e}")
+            self.db.rollback()
             return None
 
 
