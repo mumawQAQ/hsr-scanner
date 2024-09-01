@@ -9,6 +9,7 @@ set "PYTHON_EXE=%PYTHON_DIR%\python.exe"
 set "SCRIPT_DIR=%PYTHON_DIR%\Scripts"
 set "REQUIREMENTS_FILE=%TOOLS_DIR%\requirements.txt"
 set "PYPI_TSINGHUA_MIRROR=https://pypi.tuna.tsinghua.edu.cn/simple"
+set "PYPI_SJTU_MIRROR=https://mirror.sjtu.edu.cn/pypi/web/simple"
 
 echo toolkit dir is %TOOLS_DIR%
 
@@ -60,9 +61,14 @@ echo Using PyPI mirror for installation.
 
 REM Check if the pip install command was successful
 if %errorlevel% neq 0 (
-    echo Failed to install required Python packages.
-    endlocal
-    exit /b 1
+    echo Failed to install required Python packages from tsinghua mirror
+    echo Trying sjtu mirror...
+    "%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_SJTU_MIRROR%" --no-warn-script-location
+    if %errorlevel% neq 0 (
+        echo Failed to install required Python packages from sjtu mirror.
+        endlocal
+        exit /b 1
+    )
 )
 
 echo Python and required packages installed successfully.
