@@ -34,6 +34,9 @@ class RatingTemplate:
             self.db.rollback()  # Rollback if no rows are matched
             return None
 
+    def get_template_list(self):
+        return self.db.query(RatingTemplateDBModel).all()
+
     def create_template(self, new_template: RatingTemplateDBModel):
         try:
             self.db.add(new_template)

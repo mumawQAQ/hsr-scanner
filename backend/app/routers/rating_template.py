@@ -27,6 +27,25 @@ def use_rating_template(template_id: str,
     }
 
 
+@router.get("/rating-template/list")
+def get_rating_template_list(
+        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
+    db_templates = rating_template_dependency.get_template_list()
+
+    if not db_templates:
+        return {
+            'status': 'failed',
+            'message': 'No templates found'
+        }
+
+    results = [RatingTemplateResponse.model_validate(template) for template in db_templates]
+
+    return {
+        'status': 'success',
+        'data': results
+    }
+
+
 @router.put("/rating-template/create")
 def create_rating_template(new_template: CreateRatingTemplate,
                            rating_template_dependency: Annotated[
