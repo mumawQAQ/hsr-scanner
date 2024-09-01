@@ -10,7 +10,6 @@ class CreateRatingRule(BaseModel):
 
 class UpdateRatingRule(BaseModel):
     id: str
-    template_id: str
     set_names: list[str]
     part_names: dict[str, RatingRulePart]
     valuable_subs: list[RatingRuleSubStats]

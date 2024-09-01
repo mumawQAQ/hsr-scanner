@@ -91,6 +91,27 @@ class RatingTemplate:
             self.db.rollback()
             return False
 
+    def update_template_rule(self, update_rule: RatingRule):
+        try:
+            old_rule = self.db.query(RatingRule).filter(
+                RatingRule.id == update_rule.id
+            ).first()
+
+            if not old_rule:
+                return False
+
+            old_rule.set_names = update_rule.set_names
+            old_rule.part_names = update_rule.part_names
+            old_rule.valuable_subs = update_rule.valuable_subs
+            old_rule.fit_characters = update_rule.fit_characters
+
+            self.db.commit()
+            return True
+        except Exception as e:
+            logger.error(f"Failed to update rule: {e}")
+            self.db.rollback()
+            return False
+
 
 rating_template = RatingTemplate()
 
