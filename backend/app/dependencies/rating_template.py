@@ -69,6 +69,17 @@ class RatingTemplate:
             self.db.rollback()
             return False
 
+    def create_template_rule(self, new_rule: RatingRule):
+        try:
+            self.db.add(new_rule)
+            self.db.commit()
+            self.db.refresh(new_rule)
+            return new_rule
+        except Exception as e:
+            logger.error(f"Failed to create rule: {e}")
+            self.db.rollback()
+            return None
+
 
 rating_template = RatingTemplate()
 
