@@ -71,3 +71,21 @@ def create_rating_template(new_template: CreateRatingTemplate,
         'status': 'success',
         'data': result
     }
+
+
+@router.delete("/rating-template/delete/{template_id}")
+def delete_rating_template(template_id: str,
+                           rating_template_dependency: Annotated[
+                               RatingTemplateDependency, Depends(get_rating_template)]):
+    result = rating_template_dependency.delete_template(template_id)
+
+    if not result:
+        return {
+            'status': 'failed',
+            'message': 'Failed to delete template'
+        }
+
+    return {
+        'status': 'success',
+        'message': 'Template deleted'
+    }

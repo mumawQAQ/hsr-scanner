@@ -1,5 +1,6 @@
 from app.dependencies import database
 from app.logging_config import logger
+from app.models.database.rating_rule import RatingRule
 from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
 
 
@@ -47,6 +48,26 @@ class RatingTemplate:
             logger.error(f"Failed to create template: {e}")
             self.db.rollback()
             return None
+
+    def delete_template(self, template_id: str):
+
+        try:
+            # delete the template with the given id
+            self.db.query(RatingTemplateDBModel).filter(
+                RatingTemplateDBModel.id == template_id).delete()
+
+            # delete the rules associated with the template
+            self.db.query(RatingRule).filter(
+                RatingRule.template_id == template_id).delete()
+
+            self.db.commit()
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to delete template: {e}")
+            self.db.rollback()
+            return False
 
 
 rating_template = RatingTemplate()
