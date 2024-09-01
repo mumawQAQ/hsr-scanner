@@ -117,3 +117,21 @@ def create_rating_template_rule(new_rule: CreateRatingRule,
         'status': 'success',
         'data': result
     }
+
+
+@router.delete("/rating-template/rule/delete/{rule_id}")
+def delete_rating_template_rule(rule_id: str,
+                                rating_template_dependency: Annotated[
+                                    RatingTemplateDependency, Depends(get_rating_template)]):
+    result = rating_template_dependency.delete_template_rule(rule_id)
+
+    if not result:
+        return {
+            'status': 'failed',
+            'message': 'Failed to delete rule'
+        }
+
+    return {
+        'status': 'success',
+        'message': 'Rule deleted'
+    }

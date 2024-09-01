@@ -80,6 +80,17 @@ class RatingTemplate:
             self.db.rollback()
             return None
 
+    def delete_template_rule(self, rule_id: str):
+        try:
+            self.db.query(RatingRule).filter(
+                RatingRule.id == rule_id).delete()
+            self.db.commit()
+            return True
+        except Exception as e:
+            logger.error(f"Failed to delete rule: {e}")
+            self.db.rollback()
+            return False
+
 
 rating_template = RatingTemplate()
 
