@@ -1,4 +1,5 @@
 # HSR-Scanner
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mumawQAQ_hsr-scanner&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mumawQAQ_hsr-scanner)
 
 本项目旨在提供一个简单易用的崩铁遗器强化/丢弃方案，帮助大家更方便的整理遗器。
 
