@@ -154,14 +154,14 @@ fn install_python_requirements(app: AppHandle) {
                 let status = child.wait().expect("Failed to wait on child");
 
                 if status.success() {
-                    app.emit_all("requirements-status-success", "Python requirements installed successfully.")
+                    app.emit_all("requirements-status-success", "success")
                         .expect("Failed to send success notification");
                 } else {
-                    app.emit_all("requirements-status-failure", "Python requirements installation failed.")
+                    app.emit_all("requirements-status-failure", "failure")
                         .expect("Failed to send failure notification");
                 }
             } else {
-                app.emit_all("requirements-status-log", "Python requirements are already installed.")
+                app.emit_all("requirements-status-success", "redundant")
                     .expect("Failed to send already installed notification");
             }
         }
