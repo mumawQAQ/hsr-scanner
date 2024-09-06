@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import React from 'react';
 import { MyNextUIProvider } from '@/app/providers/nextui-provider';
+import { Toaster } from 'react-hot-toast';
+import { ModalProvider } from '@/app/providers/modal-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <MyNextUIProvider>{children}</MyNextUIProvider>
+        <MyNextUIProvider>
+          {children}
+          <Toaster />
+          <ModalProvider />
+        </MyNextUIProvider>
       </body>
     </html>
   );
