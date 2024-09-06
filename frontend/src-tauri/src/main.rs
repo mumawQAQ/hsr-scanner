@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+use std::os::windows::process::CommandExt;
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
 use tauri::{AppHandle, Manager};
@@ -26,135 +27,145 @@ fn resolve_path(app: AppHandle, path: &str) -> Result<String, String> {
     }
 }
 
-
 #[tauri::command]
 fn start_backend(app: AppHandle) {
-    let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
+    std::thread::spawn({
+        let app = app.clone();
+        move || {
+            let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
 
-    if handle.is_none() {
-        let python_path = resolve_path(app.clone(), "../../tools/python/python")
-            .expect("failed to resolve python path");
-        let main_script_path = resolve_path(app.clone(), "../../backend/main.py")
-            .expect("failed to resolve main script path");
+            if handle.is_none() {
+                let python_path = resolve_path(app.clone(), "../../tools/python/python").expect("Failed to resolve python path");
+                let main_script_path = resolve_path(app.clone(), "../../backend/main.py").expect("Failed to resolve main script path");
 
-        println!("Starting backend process...");
-        // Start the Python process if not already running
-        let mut child = Command::new(python_path)
-            .arg(main_script_path)
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("failed to start python process");
+                let mut child = Command::new(python_path)
+                    .arg(main_script_path)
+                    .creation_flags(0x08000000) // This prevents the creation of a console window on Windows.
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped())
+                    .spawn()
+                    .expect("Failed to start python process");
 
-        println!("Python process started.");
+                let stdout = child.stdout.take().unwrap();
+                let stderr = child.stderr.take().unwrap();
 
-        // Clone stdout and stderr to capture output
-        let stdout = child.stdout.take().unwrap();
-        let stderr = child.stderr.take().unwrap();
-
-        // Handle stdout
-        let stdout_reader = std::io::BufReader::new(stdout);
-        // copy app handle to move into closure
-        let stdout_app = app.clone();
-        std::thread::spawn(move || {
-            use std::io::{BufRead, BufReader};
-            let reader = BufReader::new(stdout_reader);
-            for line in reader.lines() {
-                if let Ok(line) = line {
-                    stdout_app.emit_all("backend-log", line).expect("failed to send stdout");
-                }
-            }
-        });
-
-        let stderr_reader = std::io::BufReader::new(stderr);
-        // copy app handle to move into closure
-        let stderr_app = app.clone();
-        let match_port = regex::Regex::new(r"Uvicorn running on http://\S+:(\d+)").unwrap();
-        std::thread::spawn(move || {
-            use std::io::{BufRead, BufReader};
-            let reader = BufReader::new(stderr_reader);
-            for line in reader.lines() {
-                if let Ok(line) = line {
-                    if let Some(captures) = match_port.captures(&line) {
-                        let port = captures.get(1).unwrap().as_str();
-                        stderr_app.emit_all("backend-port", port).expect("failed to send stderr");
+                // Handle stdout
+                let stdout_reader = std::io::BufReader::new(stdout);
+                // copy app handle to move into closure
+                let stdout_app = app.clone();
+                std::thread::spawn(move || {
+                    use std::io::{BufRead, BufReader};
+                    let reader = BufReader::new(stdout_reader);
+                    for line in reader.lines() {
+                        if let Ok(line) = line {
+                            stdout_app.emit_all("backend-log", line).expect("failed to send stdout");
+                        }
                     }
-                }
-            }
-        });
+                });
 
-        *handle = Some(child);
-    } else {
-        println!("Python process is already running.");
-    }
+                let stderr_reader = std::io::BufReader::new(stderr);
+                // copy app handle to move into closure
+                let stderr_app = app.clone();
+                let match_port = regex::Regex::new(r"Uvicorn running on http://\S+:(\d+)").unwrap();
+                std::thread::spawn(move || {
+                    use std::io::{BufRead, BufReader};
+                    let reader = BufReader::new(stderr_reader);
+                    for line in reader.lines() {
+                        if let Ok(line) = line {
+                            if let Some(captures) = match_port.captures(&line) {
+                                let port = captures.get(1).unwrap().as_str();
+                                stderr_app.emit_all("backend-port", port).expect("failed to send stderr");
+                            }
+                        }
+                    }
+                });
+
+                *handle = Some(child);
+                println!("Python process started.");
+            } else {
+                println!("Python process is already running.");
+            }
+        }
+    });
 }
+
 
 #[tauri::command]
 fn install_python_requirements(app: AppHandle) {
-    let mut installed = REQUIREMENTS_INSTALLED.lock().unwrap();
+    std::thread::spawn({
+        let app = app.clone();
+        move || {
+            let mut installed = REQUIREMENTS_INSTALLED.lock().unwrap();
 
-    if !*installed {
-        app.emit_all("requirements-status-log", "Installing Python requirements...").expect("failed to send stdout");
+            if !*installed {
+                app.emit_all("requirements-status-log", "Installing Python requirements...")
+                    .expect("Failed to send install start notification");
 
-        let bat_dir = resolve_path(app.clone(), "../../tools")
-            .expect("failed to resolve bat dir");
-        let bat_path = resolve_path(app.clone(), "../../tools/install.bat")
-            .expect("failed to resolve bat path");
+                let bat_dir = resolve_path(app.clone(), "../../tools")
+                    .expect("Failed to resolve batch file directory");
+                let bat_path = resolve_path(app.clone(), "../../tools/install.bat")
+                    .expect("Failed to resolve batch file path");
 
-        let mut child = Command::new("cmd")
-            .args(&["/C", &*bat_path])
-            .current_dir(bat_dir)
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("failed to start install script");
+                let mut child = Command::new("cmd")
+                    .args(&["/C", &*bat_path])
+                    .current_dir(bat_dir)
+                    .creation_flags(0x08000000) // This prevents the creation of a console window on Windows.
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped())
+                    .spawn()
+                    .expect("Failed to start install script");
 
-        app.emit_all("requirements-status-log", "Python requirements installation started.").expect("failed to send stdout");
+                app.emit_all("requirements-status-log", "Python requirements installation started.")
+                    .expect("Failed to send installation started notification");
 
-        // Clone stdout and stderr to capture output
-        let stdout = child.stdout.take().unwrap();
-        let stderr = child.stderr.take().unwrap();
+                let stdout = child.stdout.take().unwrap();
+                let stderr = child.stderr.take().unwrap();
 
-        // Handle stdout
-        let stdout_reader = std::io::BufReader::new(stdout);
-        // copy app handle to move into closure
-        let stdout_app = app.clone();
-        std::thread::spawn(move || {
-            use std::io::{BufRead, BufReader};
-            let reader = BufReader::new(stdout_reader);
-            for line in reader.lines() {
-                if let Ok(line) = line {
-                    stdout_app.emit_all("requirements-install-log", line).expect("failed to send stdout");
+                // Handle stdout
+                let stdout_reader = std::io::BufReader::new(stdout);
+                // copy app handle to move into closure
+                let stdout_app = app.clone();
+                std::thread::spawn(move || {
+                    use std::io::{BufRead, BufReader};
+                    let reader = BufReader::new(stdout_reader);
+                    for line in reader.lines() {
+                        if let Ok(line) = line {
+                            stdout_app.emit_all("requirements-install-log", line).expect("failed to send stdout");
+                        }
+                    }
+                });
+
+                // copy app handle to move into closure
+                let stderr_app = app.clone();
+                let stderr_reader = std::io::BufReader::new(stderr);
+                std::thread::spawn(move || {
+                    use std::io::{BufRead, BufReader};
+                    let reader = BufReader::new(stderr_reader);
+                    for line in reader.lines() {
+                        if let Ok(line) = line {
+                            stderr_app.emit_all("requirements-install-error", line).expect("failed to send stderr");
+                        }
+                    }
+                });
+
+                *installed = true;
+
+                // Wait for the child process to finish in the background thread
+                let status = child.wait().expect("Failed to wait on child");
+
+                if status.success() {
+                    app.emit_all("requirements-status-success", "Python requirements installed successfully.")
+                        .expect("Failed to send success notification");
+                } else {
+                    app.emit_all("requirements-status-failure", "Python requirements installation failed.")
+                        .expect("Failed to send failure notification");
                 }
+            } else {
+                app.emit_all("requirements-status-log", "Python requirements are already installed.")
+                    .expect("Failed to send already installed notification");
             }
-        });
-
-        let stderr_reader = std::io::BufReader::new(stderr);
-        // copy app handle to move into closure
-        let stderr_app = app.clone();
-        std::thread::spawn(move || {
-            use std::io::{BufRead, BufReader};
-            let reader = BufReader::new(stderr_reader);
-            for line in reader.lines() {
-                if let Ok(line) = line {
-                    stderr_app.emit_all("requirements-install-error", line).expect("failed to send stderr");
-                }
-            }
-        });
-
-        *installed = true;
-
-        // Wait for the child process to finish
-        let status = child.wait().expect("failed to wait on child");
-
-        if status.success() {
-            app.emit_all("requirements-status-log", "Python requirements installed successfully.").expect("failed to send stdout");
-        } else {
-            app.emit_all("requirements-status-log", "Python requirements installation failed.").expect("failed to send stdout");
         }
-    } else {
-        app.emit_all("requirements-status-log", "Python requirements are already installed.").expect("failed to send stdout");
-    }
+    });
 }
 
 
