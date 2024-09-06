@@ -171,8 +171,7 @@ fn install_python_requirements(app: AppHandle) {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![start_backend])
-        .invoke_handler(tauri::generate_handler![install_python_requirements])
+        .invoke_handler(tauri::generate_handler![install_python_requirements, start_backend])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

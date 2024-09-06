@@ -1,52 +1,72 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useModal } from '@/app/hooks/use-modal-store';
+import { Spinner } from '@nextui-org/react';
+import useBackendClientStore from '@/app/hooks/use-backend-client-store';
+import { useRouter } from 'next/navigation';
 import { invoke } from '@tauri-apps/api/tauri';
 import { listen } from '@tauri-apps/api/event';
-import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export default function Home() {
+  const { onOpen } = useModal();
+  const { requirementFulfilled, setBackendPort } = useBackendClientStore();
+  const router = useRouter();
+
+  const { backendPort } = useBackendClientStore();
+
   useEffect(() => {
-    // Start the backend and set up listeners
-    const startAndListen = async () => {
-      try {
-        const statusUnlistener = await listen('requirements-status-log', event => {
-          console.log('requirement install status:', event.payload);
-        });
-
-        // Listen for 'backend-log' events
-        const logUnlistener = await listen('requirements-install-log', event => {
-          console.log('requirement log:', event.payload);
-        });
-
-        // Listen for 'backend-error' events
-        const errorUnlistener = await listen('requirements-install-error', event => {
-          console.error('requirement error:', event.payload);
-        });
-
-        await invoke('install_python_requirements'); // Start the backend process
-
-        // Return cleanup function to remove event listeners
-        return () => {
-          statusUnlistener();
-          logUnlistener();
-          errorUnlistener();
-        };
-      } catch (e) {
-        console.error('Error install requirement:', e);
-      }
-    };
-
-    // Call the async function and handle cleanup
-    let cleanupFunc = () => {}; // Initialize cleanup function
-    startAndListen().then(cleanup => {
-      if (cleanup) cleanupFunc = cleanup;
-    });
-
-    // Cleanup listeners when component unmounts
-    return () => {
-      cleanupFunc();
-    };
+    onOpen('install-requirement');
   }, []);
+
+  useEffect(() => {
+    if (requirementFulfilled) {
+      // Start the backend and set up listeners
+      const startAndListen = async () => {
+        try {
+          console.log('Starting backend and setting up listeners...');
+          // Listen for 'backend-log' events
+          const logUnlistener = await listen('backend-log', event => {
+            console.log('Log from backend:', event.payload);
+          });
+
+          // Listen for 'backend-error' events
+          const errorUnlistener = await listen<string>('backend-port', event => {
+            setBackendPort(parseInt(event.payload));
+          });
+
+          await invoke('start_backend'); // Start the backend process
+
+          // Return cleanup function to remove event listeners
+          return () => {
+            logUnlistener();
+            errorUnlistener();
+          };
+        } catch (e) {
+          console.error('Error starting backend or setting up listeners:', e);
+          toast.error('启动后端服务时出错，请向作者反馈此问题');
+        }
+      };
+
+      // Call the async function and handle cleanup
+      let cleanupFunc = () => {}; // Initialize cleanup function
+      startAndListen().then(cleanup => {
+        if (cleanup) cleanupFunc = cleanup;
+      });
+
+      // Cleanup listeners when component unmounts
+      return () => {
+        cleanupFunc();
+      };
+    }
+  }, [requirementFulfilled]);
+
+  useEffect(() => {
+    if (backendPort) {
+      router.push('/dashboard');
+    }
+  }, [backendPort]);
 
   // useEffect(() => {
   //   // Start the backend and set up listeners
@@ -86,5 +106,14 @@ export default function Home() {
   //     cleanupFunc();
   //   };
   // }, []);
-  return <div></div>;
+  return (
+    <div className="flex h-screen items-center justify-center">
+      {!backendPort && (
+        <div className="flex flex-col">
+          <Spinner size="lg" className="my-4" />
+          <div>正在启动后端服务，请稍等....</div>
+        </div>
+      )}
+    </div>
+  );
 }

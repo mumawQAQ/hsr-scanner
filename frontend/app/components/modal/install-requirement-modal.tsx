@@ -6,9 +6,11 @@ import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/modal';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
 import toast from 'react-hot-toast';
+import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 
 const InstallRequirementModal = () => {
   const { isOpen, onClose, type } = useModal();
+  const { setRequirementFulfilled } = useBackendClientStore();
   const [logQueue, setLogQueue] = useState<string[]>([]);
 
   const isModalOpen = isOpen && type === 'install-requirement';
@@ -20,6 +22,7 @@ const InstallRequirementModal = () => {
         const successUnlistener = await listen<string>('requirements-status-success', event => {
           if (event.payload === 'success') {
             toast.success('必要依赖安装成功');
+            setRequirementFulfilled(true);
           }
           onClose();
         });

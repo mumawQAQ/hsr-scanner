@@ -4,6 +4,9 @@ import useRelicStore from '@/app/hooks/use-relic-store';
 import { RelicSubStats } from '../../../src/type/types';
 
 type UseBackendClientStore = {
+  requirementFulfilled: boolean;
+  setRequirementFulfilled: (fulfilled: boolean) => void;
+
   backendPort: number | null;
   setBackendPort: (port: number) => void;
   ws: WebSocket | null;
@@ -11,12 +14,17 @@ type UseBackendClientStore = {
 };
 
 const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
+  requirementFulfilled: false,
+  setRequirementFulfilled: fulfilled => {
+    set({ requirementFulfilled: fulfilled });
+  },
+
   backendPort: null,
   setBackendPort: port => {
-    if (port !== null) {
+    if (useBackendClientStore.getState().backendPort !== null) {
+      console.log('Backend port already set:', port);
       return;
     }
-
     set({ backendPort: port });
     // initialize the websocket
     const ws = new WebSocket(`ws://localhost:${port}/relic-info`);
