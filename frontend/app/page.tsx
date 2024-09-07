@@ -8,9 +8,11 @@ import { useRouter } from 'next/navigation';
 import { invoke } from '@tauri-apps/api/tauri';
 import { listen } from '@tauri-apps/api/event';
 import toast from 'react-hot-toast';
+import { usePath } from '@/app/hooks/use-path-store';
 
 export default function Home() {
   const { onOpen } = useModal();
+  const { setPath } = usePath();
   const { requirementFulfilled, setBackendPort } = useBackendClientStore();
   const router = useRouter();
 
@@ -64,48 +66,11 @@ export default function Home() {
 
   useEffect(() => {
     if (backendPort) {
-      router.push('/dashboard');
+      router.push('/dashboard/relic-panel');
+      setPath('/dashboard/relic-panel');
     }
   }, [backendPort]);
 
-  // useEffect(() => {
-  //   // Start the backend and set up listeners
-  //   const startAndListen = async () => {
-  //     try {
-  //       await invoke('start_backend'); // Start the backend process
-  //       console.log('Backend started successfully.');
-  //
-  //       // Listen for 'backend-log' events
-  //       const logUnlistener = await listen('backend-log', event => {
-  //         console.log('Log from backend:', event.payload);
-  //       });
-  //
-  //       // Listen for 'backend-error' events
-  //       const errorUnlistener = await listen('backend-port', event => {
-  //         console.error('backend port is:', event.payload);
-  //       });
-  //
-  //       // Return cleanup function to remove event listeners
-  //       return () => {
-  //         logUnlistener();
-  //         errorUnlistener();
-  //       };
-  //     } catch (e) {
-  //       console.error('Error starting backend or setting up listeners:', e);
-  //     }
-  //   };
-  //
-  //   // Call the async function and handle cleanup
-  //   let cleanupFunc = () => {}; // Initialize cleanup function
-  //   startAndListen().then(cleanup => {
-  //     if (cleanup) cleanupFunc = cleanup;
-  //   });
-  //
-  //   // Cleanup listeners when component unmounts
-  //   return () => {
-  //     cleanupFunc();
-  //   };
-  // }, []);
   return (
     <div className="flex h-screen items-center justify-center">
       {!backendPort && (
