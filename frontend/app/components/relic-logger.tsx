@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { LogViewer as PrettyLogViewer } from '@patternfly/react-log-viewer/dist/js/LogViewer/LogViewer';
@@ -48,7 +49,7 @@ export default function RelicLogger() {
     };
   }, []);
   return (
-    <div className="h-[200px] w-[200px]">
+    <div className="h-[200px] w-[400px]">
       <PrettyLogViewer innerRef={logViewerRef} data={logQueue} hasLineNumbers={false} isTextWrapped={true} />
     </div>
   );
