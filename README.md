@@ -8,7 +8,7 @@
 2. 默认提供的配置仅供参考，不保证其准确性。 如需使用，请自行修改配置。
 
 ## 安装
-1. 从https://github.com/mumawQAQ/hsr-scanner/releases中下载最新版本的安装包
+1. 从https://github.com/mumawQAQ/hsr-scanner/releases 中下载最新版本的安装包
 2. 加入我们的qq群, 1群（582660430）已满，2群（536662213）
 
 ## 使用方法
