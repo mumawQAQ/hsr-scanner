@@ -10,6 +10,7 @@
 - [使用方法](#使用方法)
 - [贡献](#贡献)
 - [强化概率统计过程](#强化概率统计过程)
+- 
 
 ## 使用须知
 
@@ -34,3 +35,10 @@
 ## 强化概率统计过程
 
 详细的强化概率统计过程文档请参见 [Statistics.md](Statistics.md)。
+
+## 适配度计算逻辑
+![ab3d1d99-9eea-4b9f-a4ec-3fc10b0b3997](https://github.com/user-attachments/assets/6438cec1-989d-4a99-802e-feed8a64398e)
+
+## 潜力值计算逻辑
+![f661dfb1-3944-4038-8610-c081021724bc](https://github.com/user-attachments/assets/0f46e4cd-517a-499e-a273-553f2acf872a)
+
