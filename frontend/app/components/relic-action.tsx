@@ -6,12 +6,18 @@ import useWindowStore from '@/app/hooks/use-window-store';
 import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 
 export default function RelicAction() {
-  const { setScanningStatus, scanningStatus, imgShow, setImageShow, logPause, setLogPause } = useWindowStore();
+  const { setScanningStatus, scanningStatus, imgShow, setImageShow, logPause, setLogPause, fullLog, setFullLog } =
+    useWindowStore();
   const { patch } = useBackendClientStore();
 
   const handleScanStateChange = async (status: boolean) => {
     await patch('scan-state', status.toString());
     setScanningStatus(status);
+  };
+
+  const handleFullLogChange = async (status: boolean) => {
+    await patch('full-log', status.toString());
+    setFullLog(status);
   };
 
   return (
@@ -22,7 +28,7 @@ export default function RelicAction() {
       <Switch color="success" thumbIcon={<Image />} isSelected={imgShow} onValueChange={setImageShow}>
         显示图片
       </Switch>
-      <Switch color="success" thumbIcon={<FileLock />}>
+      <Switch color="success" thumbIcon={<FileLock />} isSelected={fullLog} onValueChange={handleFullLogChange}>
         全部日志
       </Switch>
       <Switch color="success" thumbIcon={<ListEnd />} isSelected={logPause} onValueChange={setLogPause}>

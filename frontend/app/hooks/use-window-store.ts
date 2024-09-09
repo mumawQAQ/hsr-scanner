@@ -11,6 +11,9 @@ type WindowStore = {
 
   logPause: boolean;
   setLogPause: (pause: boolean) => void;
+
+  fullLog: boolean;
+  setFullLog: (full: boolean) => void;
 };
 
 const useWindowStore = create<WindowStore>(set => ({
@@ -27,6 +30,9 @@ const useWindowStore = create<WindowStore>(set => ({
 
   logPause: false,
   setLogPause: pause => set({ logPause: pause }),
+
+  fullLog: false,
+  setFullLog: full => set({ fullLog: full }),
 }));
 
 export default useWindowStore;

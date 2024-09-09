@@ -23,8 +23,8 @@ def change_scan_state(state: bool,
     return {'status': 'success'}
 
 
-@router.patch("/log-level/{level}")
-def change_log_level(level: str):
+@router.patch("/full-log/{state}")
+def change_log_level(state: bool):
     console_handler = None
     for handler in logging.getLogger().handlers:
         if handler.get_name() == 'console':
@@ -34,9 +34,9 @@ def change_log_level(level: str):
         logger.error("无法找到控制台日志处理器")
         return {'status': 'failed'}
 
-    if level == 'DEBUG':
+    if state:
         console_handler.setLevel(logging.DEBUG)
-    elif level == 'ERROR':
+    else:
         console_handler.setLevel(logging.ERROR)
 
     return {'status': 'success'}
