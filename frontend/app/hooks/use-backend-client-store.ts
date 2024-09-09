@@ -25,6 +25,7 @@ const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
       console.log('Backend port already set:', port);
       return;
     }
+    console.log(`Visited http://localhost:${port}/docs to check the API documentation`);
     set({ backendPort: port });
     // initialize the websocket
     const ws = new WebSocket(`ws://localhost:${port}/relic-info`);
