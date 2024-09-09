@@ -6,7 +6,7 @@
 use std::os::windows::process::CommandExt;
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, WindowEvent};
 
 // Use a mutex to manage singleton behavior
 static BACKEND_PROCESS_HANDLE: Mutex<Option<Child>> = Mutex::new(None);
@@ -171,6 +171,24 @@ fn install_python_requirements(app: AppHandle) {
 
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            window.on_window_event(|event| match event {
+                WindowEvent::CloseRequested { .. } => {
+                    println!("Application is closing...");
+
+                    // Terminate any running backend process
+                    let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
+                    if let Some(child) = handle.as_mut() {
+                        child.kill().expect("Failed to kill the backend process");
+                        child.wait().expect("Failed to wait on the backend process");
+                    }
+                }
+                _ => {}
+            });
+
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![install_python_requirements, start_backend])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
