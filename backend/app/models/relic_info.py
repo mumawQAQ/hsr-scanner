@@ -17,7 +17,7 @@ class RelicMainStat(BaseModel):
 class RelicSubStat(BaseModel):
     name: str
     number: str
-    scores: list[float]
+    score: list[float]
 
 
 class RelicInfo(BaseModel):
