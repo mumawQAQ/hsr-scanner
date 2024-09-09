@@ -1,3 +1,4 @@
+'use client';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import { Divider } from '@nextui-org/divider';
 import useWindowStore from '@/app/hooks/use-window-store';
