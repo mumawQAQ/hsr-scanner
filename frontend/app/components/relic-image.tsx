@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import Image from 'next/image';
@@ -12,17 +13,17 @@ export default function RelicImage() {
         <CircleAlert className="mb-2 text-red-700" />
       </Tooltip>
       {relicImage?.titleImage ? (
-        <Image src={relicImage.titleImage} alt="title_img" />
+        <Image src={relicImage.titleImage} alt="title_img" width={300} height={100} />
       ) : (
         <div className="font-semibold">暂无遗器名称图片</div>
       )}
       {relicImage?.mainStatImage ? (
-        <Image src={relicImage.mainStatImage} alt="main_stats_img" />
+        <Image src={relicImage.mainStatImage} alt="main_stats_img" width={300} height={100} />
       ) : (
         <div className="font-semibold">暂无主属性图片</div>
       )}
       {relicImage?.subStatImages ? (
-        <Image src={relicImage.subStatImages} alt="sub_stats_img" />
+        <Image src={relicImage.subStatImages} alt="sub_stats_img" width={300} height={100} />
       ) : (
         <div className="font-semibold">暂无副属性图片</div>
       )}
