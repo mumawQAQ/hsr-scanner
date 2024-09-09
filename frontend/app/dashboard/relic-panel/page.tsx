@@ -10,7 +10,7 @@ import useWindowStore from '@/app/hooks/use-window-store';
 export default function RelicPanel() {
   const { imgShow } = useWindowStore();
   return (
-    <div className="grid grid-cols-4 gap-4 pt-2">
+    <div className="grid grid-cols-4 gap-4 p-2">
       <div className="flex justify-center">
         <RelicAction />
       </div>
@@ -18,7 +18,7 @@ export default function RelicPanel() {
         <div className="flex justify-center">
           <RelicInfo />
         </div>
-        <div className="flex justify-center gap-10">
+        <div className="mt-2 flex justify-center gap-2">
           <RelicLogger />
           {imgShow && <Divider orientation="vertical" />}
           {imgShow && <RelicImage />}
