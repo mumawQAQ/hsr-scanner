@@ -4,6 +4,7 @@ import React from 'react';
 import { MyNextUIProvider } from '@/app/providers/nextui-provider';
 import { Toaster } from 'react-hot-toast';
 import { ModalProvider } from '@/app/providers/modal-provider';
+import QueryClientProvider from '@/app/providers/query-client-provider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -19,9 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <MyNextUIProvider>
-          {children}
-          <Toaster />
-          <ModalProvider />
+          <QueryClientProvider>
+            {children}
+            <Toaster />
+            <ModalProvider />
+          </QueryClientProvider>
         </MyNextUIProvider>
       </body>
     </html>
