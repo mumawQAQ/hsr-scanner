@@ -112,6 +112,10 @@ class RatingTemplate:
             self.db.rollback()
             return False
 
+    def get_template_rule_list(self, template_id: str):
+        return self.db.query(RatingRule).filter(
+            RatingRule.template_id == template_id).all()
+
 
 rating_template = RatingTemplate()
 

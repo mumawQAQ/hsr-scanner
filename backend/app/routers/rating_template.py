@@ -161,3 +161,23 @@ def update_rating_template_rule(updated_rule: UpdateRatingRule,
         'status': 'success',
         'message': 'Rule updated'
     }
+
+
+@router.get("/rating-template/rule/list/{template_id}")
+def get_rating_template_rule_list(
+        template_id: str,
+        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
+    db_rules = rating_template_dependency.get_template_rule_list(template_id)
+
+    if not db_rules:
+        return {
+            'status': 'failed',
+            'message': 'No rules found'
+        }
+
+    results = [RatingRuleResponse.model_validate(rule) for rule in db_rules]
+
+    return {
+        'status': 'success',
+        'data': results
+    }
