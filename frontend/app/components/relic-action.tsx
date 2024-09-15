@@ -3,21 +3,34 @@ import { Switch } from '@nextui-org/switch';
 import { FileLock, Image, ListEnd, ScanEye } from 'lucide-react';
 import { Button } from '@nextui-org/button';
 import useWindowStore from '@/app/hooks/use-window-store';
-import useBackendClientStore from '@/app/hooks/use-backend-client-store';
+import { useModal } from '@/app/hooks/use-modal-store';
+import { useUpdateFullLogState, useUpdateScanState } from '@/app/apis/state';
 
 export default function RelicAction() {
   const { setScanningStatus, scanningStatus, imgShow, setImageShow, logPause, setLogPause, fullLog, setFullLog } =
     useWindowStore();
-  const { patch } = useBackendClientStore();
+  const { onOpen } = useModal();
+  const { mutate: updateFullLogState } = useUpdateFullLogState();
+  const { mutate: updateScanState } = useUpdateScanState();
 
   const handleScanStateChange = async (status: boolean) => {
-    await patch('scan-state', status.toString());
-    setScanningStatus(status);
+    updateScanState(status, {
+      onSuccess: () => {
+        setScanningStatus(status);
+      },
+    });
   };
 
   const handleFullLogChange = async (status: boolean) => {
-    await patch('full-log', status.toString());
-    setFullLog(status);
+    updateFullLogState(status, {
+      onSuccess: () => {
+        setFullLog(status);
+      },
+    });
+  };
+
+  const handleSelectTemplate = () => {
+    onOpen('select-template');
   };
 
   return (
@@ -34,7 +47,7 @@ export default function RelicAction() {
       <Switch color="success" thumbIcon={<ListEnd />} isSelected={logPause} onValueChange={setLogPause}>
         跟随底部
       </Switch>
-      <Button size="sm" variant="bordered" className="mt-5">
+      <Button size="sm" variant="bordered" className="mt-5" onPress={handleSelectTemplate}>
         选择模板
       </Button>
     </div>
