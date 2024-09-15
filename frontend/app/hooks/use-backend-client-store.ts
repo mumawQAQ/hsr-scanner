@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import { RelicSubStats } from '../../../src/type/types';
@@ -10,6 +10,7 @@ type UseBackendClientStore = {
   backendPort: number | null;
   setBackendPort: (port: number) => void;
   ws: WebSocket | null;
+  api: AxiosInstance | null;
   patch: (path: string, data: string) => Promise<void>;
 };
 
@@ -27,6 +28,12 @@ const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
     }
     console.log(`Visited http://localhost:${port}/docs to check the API documentation`);
     set({ backendPort: port });
+    // init the axios instance
+    const api = axios.create({
+      baseURL: `http://localhost:${port}`,
+    });
+    set({ api });
+
     // initialize the websocket
     const ws = new WebSocket(`ws://localhost:${port}/relic-info`);
     ws.onopen = () => {};
@@ -80,6 +87,7 @@ const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
     set({ ws });
   },
   ws: null,
+  api: null,
 
   patch: async (path, data) => {
     await axios.patch(`http://localhost:${get().backendPort}/${path}/${data}`);
