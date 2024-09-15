@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 
-export type ModalType =
-  | 'create-relic-rules-template'
-  | 'import-relic-rules-template'
-  | 'export-relic-rules-template'
-  | 'import-template-model'
-  | 'update-modal'
-  | 'install-requirement';
+export type ModalType = 'install-requirement' | 'select-template';
 
 interface ModalData {
   updateMessage?: string;
