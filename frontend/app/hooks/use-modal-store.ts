@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type ModalType = 'install-requirement' | 'select-template';
+export type ModalType = 'install-requirement' | 'select-template' | 'create-template';
 
 interface ModalData {
   updateMessage?: string;
