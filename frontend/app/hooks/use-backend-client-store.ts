@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import { RelicSubStats } from '../../../src/type/types';
+import camelcaseKeys from 'camelcase-keys';
 
 type UseBackendClientStore = {
   requirementFulfilled: boolean;
@@ -32,6 +33,20 @@ const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
     const api = axios.create({
       baseURL: `http://localhost:${port}`,
     });
+
+    // add interceptor to transform all keys to camelCase
+    api.interceptors.response.use(
+      response => {
+        if (response.data && response.data.data) {
+          // Recursively transform all keys to camelCase
+          response.data.data = camelcaseKeys(response.data.data, { deep: true });
+        }
+        return response;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
     set({ api });
 
     // initialize the websocket
