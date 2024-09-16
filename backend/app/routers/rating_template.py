@@ -37,8 +37,8 @@ def get_rating_template_list(
 
     if not db_templates:
         return {
-            'status': 'failed',
-            'message': 'No templates found'
+            'status': 'success',
+            'data': []
         }
 
     results = [RatingTemplateResponse.model_validate(template) for template in db_templates]
