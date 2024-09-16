@@ -1,7 +1,59 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import useBackendClientStore from '@/app/hooks/use-backend-client-store';
-import { ApiResponse } from '@/app/types/api-types';
+import { ApiResponse, CreateRelicTemplateRequest } from '@/app/types/api-types';
 import { RelicTemplate } from '@/app/types/relic-template-types';
+
+export const useCreateTemplate = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (template: CreateRelicTemplateRequest) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/create`;
+        const { data } = await api.put<ApiResponse<RelicTemplate>>(url, template);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Failed to create relic template:', error);
+        throw error;
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['relic-template-list'] });
+    },
+  });
+};
+
+export const useDeleteTemplate = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (templateId: string) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/delete/${templateId}`;
+        const { data } = await api.delete<ApiResponse<null>>(url);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Failed to delete relic template:', error);
+        throw error;
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['relic-template-list'] });
+    },
+  });
+};
 
 export const useSelectTemplate = () => {
   const { api } = useBackendClientStore();
