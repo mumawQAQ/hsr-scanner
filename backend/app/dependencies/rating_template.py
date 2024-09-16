@@ -17,7 +17,7 @@ class RatingTemplate:
         if current_template:
             if current_template.id == template_id:
                 # The requested template is already in use
-                return None
+                return current_template
             # Set the current template to not in use
             current_template.in_use = False
 

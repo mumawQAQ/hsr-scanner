@@ -3,13 +3,19 @@ import { useModal } from '@/app/hooks/use-modal-store';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';
 import { Spinner, Tooltip } from '@nextui-org/react';
-import { useRelicTemplateList } from '@/app/apis/relic-template';
+import { useRelicTemplateList, useSelectTemplate } from '@/app/apis/relic-template';
 import { RelicTemplate } from '@/app/types/relic-template-types';
 import { cn } from '@/app/utils/tailwind-utils';
 
 const SelectTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTemplate }) => {
+  const { mutate: selectTemplate } = useSelectTemplate();
+
+  const handleSelectTemplate = () => {
+    selectTemplate(relicTemplate.id);
+  };
   return (
     <Tooltip
+      placement="left"
       showArrow
       content={
         <div>
@@ -27,7 +33,7 @@ const SelectTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTempla
     >
       <div
         className={cn(
-          'hover:border-1 flex cursor-pointer flex-row items-center justify-between rounded p-2 hover:border-gray-700 hover:shadow-md',
+          'my-2 flex cursor-pointer flex-row items-center justify-between rounded p-2',
           relicTemplate.inUse && 'border-1 border-gray-700/50 shadow-md'
         )}
         onClick={() => {
@@ -36,9 +42,11 @@ const SelectTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTempla
       >
         <div>{relicTemplate.name}</div>
         <div className="flex flex-row gap-2">
-          <Button size="sm" variant="bordered" color="default">
-            选择
-          </Button>
+          {!relicTemplate.inUse && (
+            <Button size="sm" variant="bordered" color="default" onPress={handleSelectTemplate}>
+              选择
+            </Button>
+          )}
           <Button size="sm" variant="bordered" color="danger">
             删除
           </Button>
