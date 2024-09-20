@@ -33,6 +33,9 @@
 2. 进入frontend文件夹，运行npm install
 3. 在frontend文件夹中，运行npm run tauri dev
 
+### 开发常见问题
+1. 尽量使用软件的关闭按钮关闭，以确保backend进程被正确关闭，如果遇到npm run tauri dev无法启动的情况，请确保后台所有占用软件文件的python进程关闭
+
 ## 本项目使用到的技术
 1. tauri用于桌面端的开发以及打包(https://tauri.app/)
 2. nextjs用于界面的渲染以及展示(https://nextjs.org/)
