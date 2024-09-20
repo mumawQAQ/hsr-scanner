@@ -1,7 +1,6 @@
 import asyncio
 import threading
 from contextlib import asynccontextmanager
-from logging.config import dictConfig
 
 from fastapi import FastAPI
 
@@ -10,7 +9,6 @@ from app.dependencies.detection import Detection
 from app.dependencies.global_state import global_state
 from app.dependencies.ocr import OCR
 from app.dependencies.screen_shot import get_screen_shot
-from app.logging_config import logging_config
 
 
 def run_async(coroutine):
@@ -20,8 +18,6 @@ def run_async(coroutine):
 @asynccontextmanager
 async def life_span(app: FastAPI):
     # TODO: since all of them rely on the global state, we should refactor this to a single coroutine
-    # Apply the logging configuration
-    dictConfig(logging_config)
 
     # Init all the tables
     Base.metadata.create_all(engine)
