@@ -80,7 +80,7 @@ const SelectTemplateModal = () => {
     }
 
     return (
-      <div>
+      <div className="max-h-64 overflow-auto">
         {relicTemplates.map(relicTemplate => (
           <RatingTemplateActionRow key={relicTemplate.id} relicTemplate={relicTemplate} />
         ))}
