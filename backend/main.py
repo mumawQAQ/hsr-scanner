@@ -60,7 +60,10 @@ def check_asserts_update():
                         # download the updated asserts
                         response = requests.get(f'{ASSETS_ENDPOINT}{file}')
                         if response.status_code == 200:
-                            with open(os.path.join(ASSETS_FOLDER, file), 'wb') as assert_f:
+                            current_path = os.path.join(ASSETS_FOLDER, file)
+                            # make sure the dir exists
+                            os.makedirs(os.path.dirname(current_path), exist_ok=True)
+                            with open(current_path, 'wb') as assert_f:
                                 assert_f.write(response.content)
                             logger.info(f"Updated {file}")
                         else:
