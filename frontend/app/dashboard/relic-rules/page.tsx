@@ -1,12 +1,12 @@
 'use client';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@nextui-org/button';
+import { usePath } from '@/app/hooks/use-path-store';
 
 export default function RelicRules() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const templateId = searchParams.get('templateId');
+  const { viewTemplateId: templateId } = usePath();
 
   if (!templateId) {
     return <div>Invalid Template ID</div>;

@@ -2,10 +2,12 @@
 import React from 'react';
 import RelicInfo from '@/app/components/relic-info';
 import RelicAction from '@/app/components/relic-action';
-import RelicLogger from '@/app/components/relic-logger';
 import RelicImage from '@/app/components/relic-image';
 import { Divider } from '@nextui-org/divider';
 import useWindowStore from '@/app/hooks/use-window-store';
+import dynamic from 'next/dynamic';
+
+const RelicLogger = dynamic(() => import('@/app/components/relic-logger'), { ssr: false });
 
 export default function RelicPanel() {
   const { imgShow } = useWindowStore();

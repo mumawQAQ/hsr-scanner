@@ -3,6 +3,7 @@ import { Card, CardBody, CardFooter } from '@nextui-org/card';
 import { RelicTemplate } from '@/app/types/relic-template-types';
 import { cn } from '@/app/utils/tailwind-utils';
 import { useRouter } from 'next/navigation';
+import { usePath } from '@/app/hooks/use-path-store';
 
 type RelicTemplateCardProps = {
   template: RelicTemplate;
@@ -10,8 +11,10 @@ type RelicTemplateCardProps = {
 
 export default function RelicTemplateCard({ template }: RelicTemplateCardProps) {
   const router = useRouter();
+  const { setViewTemplateId } = usePath();
   const handleSelectTemplate = () => {
-    router.push(`/dashboard/relic-rules?templateId=${template.id}`);
+    setViewTemplateId(template.id);
+    router.push('/dashboard/relic-rules');
   };
   return (
     <Card

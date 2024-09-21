@@ -1,3 +1,4 @@
+'use client';
 import { useModal } from '@/app/hooks/use-modal-store';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import { Button } from '@nextui-org/button';

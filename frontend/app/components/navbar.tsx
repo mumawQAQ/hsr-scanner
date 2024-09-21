@@ -1,22 +1,12 @@
 'use client';
-import {
-  Link,
-  Navbar as NextUINavbar,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle,
-} from '@nextui-org/react';
-import React, { useState } from 'react';
+import { Navbar as NextUINavbar, NavbarContent, NavbarItem } from '@nextui-org/react';
+import React from 'react';
 import { PathType, usePath } from '@/app/hooks/use-path-store';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const router = useRouter();
   const { path, setPath } = usePath();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuItems = ['扫描器', '模板管理'];
 
   const handlePathChange = (type: PathType) => {
     router.push(type);
@@ -24,11 +14,8 @@ export default function Navbar() {
   };
 
   return (
-    <NextUINavbar onMenuOpenChange={setIsMenuOpen}>
-      <NavbarContent>
-        <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="sm:hidden" />
-      </NavbarContent>
-
+    <NextUINavbar>
+      <NavbarContent justify="start"></NavbarContent>
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
         <NavbarItem isActive={path === '/dashboard/relic-panel'}>
           <div
@@ -52,20 +39,6 @@ export default function Navbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end"></NavbarContent>
-      <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              color={index === 2 ? 'primary' : index === menuItems.length - 1 ? 'danger' : 'foreground'}
-              className="w-full"
-              href="#"
-              size="lg"
-            >
-              {item}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
     </NextUINavbar>
   );
 }

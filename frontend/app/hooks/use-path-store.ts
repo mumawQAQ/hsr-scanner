@@ -5,6 +5,9 @@ export type PathType = '/dashboard/relic-panel' | '/dashboard/relic-templates';
 type UsePathStore = {
   path: PathType | null;
   setPath: (type: PathType) => void;
+
+  viewTemplateId: string | null;
+  setViewTemplateId: (id: string) => void;
 };
 
 export const usePath = create<UsePathStore>(set => ({
@@ -12,5 +15,11 @@ export const usePath = create<UsePathStore>(set => ({
   setPath: type =>
     set({
       path: type,
+    }),
+
+  viewTemplateId: null,
+  setViewTemplateId: id =>
+    set({
+      viewTemplateId: id,
     }),
 }));
