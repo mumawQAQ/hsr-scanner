@@ -171,8 +171,8 @@ def get_rating_template_rule_list(
 
     if not db_rules:
         return {
-            'status': 'failed',
-            'message': 'No rules found'
+            'status': 'success',
+            'data': []
         }
 
     results = [RatingRuleResponse.model_validate(rule) for rule in db_rules]
