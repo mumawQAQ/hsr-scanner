@@ -12,10 +12,9 @@ type UseBackendClientStore = {
   setBackendPort: (port: number) => void;
   ws: WebSocket | null;
   api: AxiosInstance | null;
-  patch: (path: string, data: string) => Promise<void>;
 };
 
-const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
+const useBackendClientStore = create<UseBackendClientStore>(set => ({
   requirementFulfilled: false,
   setRequirementFulfilled: fulfilled => {
     set({ requirementFulfilled: fulfilled });
@@ -103,10 +102,6 @@ const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
   },
   ws: null,
   api: null,
-
-  patch: async (path, data) => {
-    await axios.patch(`http://localhost:${get().backendPort}/${path}/${data}`);
-  },
 }));
 
 export default useBackendClientStore;
