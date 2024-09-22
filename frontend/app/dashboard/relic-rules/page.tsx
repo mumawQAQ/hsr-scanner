@@ -3,33 +3,62 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@nextui-org/button';
 import { usePath } from '@/app/hooks/use-path-store';
+import RelicRuleCreateCard from '@/app/components/relic-rule-create-card';
+import { useRelicRuleList, useSelectTemplate } from '@/app/apis/relic-template';
+import { Spinner } from '@nextui-org/react';
+import RelicRuleCard from '@/app/components/relic-rule-card';
+import { useEffect } from 'react';
+import { useNavbarStore } from '@/app/hooks/use-navbar-store';
 
 export default function RelicRules() {
   const router = useRouter();
   const { viewTemplateId: templateId } = usePath();
+  const { setRightNavbar, setLeftNavbar, clearCustomNavbar } = useNavbarStore();
+  const { data: rules, error, isLoading } = useRelicRuleList(templateId);
+  const { mutate: selectTemplate } = useSelectTemplate();
+
+  useEffect(() => {
+    const handleBack = () => {
+      router.back();
+      clearCustomNavbar();
+    };
+    const handleSelectTemplate = () => {
+      selectTemplate(templateId ?? '');
+      router.back();
+      clearCustomNavbar();
+    };
+    const leftNavBar = <ChevronLeft size={32} className="cursor-pointer" onClick={handleBack} />;
+    const rightNavBar = (
+      <Button size="md" variant="bordered" color="default" onPress={handleSelectTemplate}>
+        选择
+      </Button>
+    );
+
+    setRightNavbar(rightNavBar);
+    setLeftNavbar(leftNavBar);
+  }, [templateId]);
 
   if (!templateId) {
     return <div>Invalid Template ID</div>;
   }
 
-  const handleBack = () => {
-    router.back();
-  };
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (error || !rules) {
+    return <div>Error loading rules</div>;
+  }
 
   return (
     <div>
-      <h1>Relic Rules</h1>
-      <p>Template ID: {templateId}</p>
+      <div className="flex flex-col gap-2">
+        {rules.map(rule => (
+          <RelicRuleCard key={rule.id} ruleId={rule.id} characters={rule.fitCharacters} />
+        ))}
 
-      <div className="absolute bottom-4 right-10 space-x-2">
-        <Button size="md" variant="bordered" color="default">
-          选择
-        </Button>
-        <Button size="md" variant="bordered" color="default">
-          保存
-        </Button>
+        <RelicRuleCreateCard templateId={templateId} />
       </div>
-      <ChevronLeft size={32} className="absolute bottom-4 left-4 cursor-pointer" onClick={handleBack} />
     </div>
   );
 }

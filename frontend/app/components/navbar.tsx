@@ -3,10 +3,12 @@ import { Navbar as NextUINavbar, NavbarContent, NavbarItem } from '@nextui-org/r
 import React from 'react';
 import { PathType, usePath } from '@/app/hooks/use-path-store';
 import { useRouter } from 'next/navigation';
+import { useNavbarStore } from '@/app/hooks/use-navbar-store';
 
 export default function Navbar() {
   const router = useRouter();
   const { path, setPath } = usePath();
+  const { leftNavbar, rightNavbar } = useNavbarStore();
 
   const handlePathChange = (type: PathType) => {
     router.push(type);
@@ -15,7 +17,7 @@ export default function Navbar() {
 
   return (
     <NextUINavbar>
-      <NavbarContent justify="start"></NavbarContent>
+      <NavbarContent justify="start">{leftNavbar}</NavbarContent>
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
         <NavbarItem isActive={path === '/dashboard/relic-panel'}>
           <div
@@ -38,7 +40,7 @@ export default function Navbar() {
           </div>
         </NavbarItem>
       </NavbarContent>
-      <NavbarContent justify="end"></NavbarContent>
+      <NavbarContent justify="end">{rightNavbar}</NavbarContent>
     </NextUINavbar>
   );
 }
