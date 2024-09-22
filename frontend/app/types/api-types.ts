@@ -15,3 +15,8 @@ export type CreateRelicRuleRequest = {
   template_id: string;
   rule_id: string;
 };
+
+export type DeleteRelicRuleRequest = {
+  template_id: string;
+  rule_id: string;
+};
