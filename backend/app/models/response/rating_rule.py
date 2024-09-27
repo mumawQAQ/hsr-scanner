@@ -1,6 +1,12 @@
 from pydantic import BaseModel, ConfigDict
 
-from app.models.common.rating_rule import RatingRulePart, RatingRuleSubStats
+from app.models.common.rating_rule import RatingRuleSubStats
+
+
+class RatingRuleIds(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str
+    template_id: str
 
 
 class RatingRule(BaseModel):
@@ -9,6 +15,6 @@ class RatingRule(BaseModel):
     id: str
     template_id: str
     set_names: list[str]
-    part_names: dict[str, RatingRulePart]
+    valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
     fit_characters: list[str]

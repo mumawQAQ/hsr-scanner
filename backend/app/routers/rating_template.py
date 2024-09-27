@@ -7,7 +7,7 @@ from app.models.database.rating_rule import RatingRule as RatingRuleDBModel
 from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
 from app.models.requests.rating_rule import CreateRatingRule, UpdateRatingRule
 from app.models.requests.rating_template import CreateRatingTemplate
-from app.models.response.rating_rule import RatingRule as RatingRuleResponse
+from app.models.response.rating_rule import RatingRule as RatingRuleResponse, RatingRuleIds as RatingRuleIdsResponse
 from app.models.response.rating_template import RatingTemplate as RatingTemplateResponse
 
 router = APIRouter()
@@ -144,7 +144,7 @@ def update_rating_template_rule(updated_rule: UpdateRatingRule,
     db_rule = RatingRuleDBModel(
         id=updated_rule.id,
         set_names=updated_rule.set_names,
-        part_names={key: value.model_dump() for key, value in updated_rule.part_names.items()},
+        valuable_mains=updated_rule.valuable_mains,
         valuable_subs=[value.model_dump() for value in updated_rule.valuable_subs],
         fit_characters=updated_rule.fit_characters
     )
@@ -175,9 +175,29 @@ def get_rating_template_rule_list(
             'data': []
         }
 
-    results = [RatingRuleResponse.model_validate(rule) for rule in db_rules]
+    results = [RatingRuleIdsResponse.model_validate(rule) for rule in db_rules]
 
     return {
         'status': 'success',
         'data': results
+    }
+
+
+@router.get("/rating-template/rule/{rule_id}")
+def get_rating_template_rule(
+        rule_id: str,
+        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
+    db_rule = rating_template_dependency.get_template_rule(rule_id)
+
+    if db_rule is None:
+        return {
+            'status': 'failed',
+            'message': 'Rule not found'
+        }
+
+    result = RatingRuleResponse.model_validate(db_rule)
+
+    return {
+        'status': 'success',
+        'data': result
     }

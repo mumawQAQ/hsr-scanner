@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.models.common.rating_rule import RatingRulePart, RatingRuleSubStats
+from app.models.common.rating_rule import RatingRuleSubStats
 
 
 class CreateRatingRule(BaseModel):
@@ -11,6 +11,6 @@ class CreateRatingRule(BaseModel):
 class UpdateRatingRule(BaseModel):
     id: str
     set_names: list[str]
-    part_names: dict[str, RatingRulePart]
+    valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
     fit_characters: list[str]

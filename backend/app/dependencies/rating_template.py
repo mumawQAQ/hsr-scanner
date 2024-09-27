@@ -101,7 +101,7 @@ class RatingTemplate:
                 return False
 
             old_rule.set_names = update_rule.set_names
-            old_rule.part_names = update_rule.part_names
+            old_rule.valuable_mains = update_rule.valuable_mains
             old_rule.valuable_subs = update_rule.valuable_subs
             old_rule.fit_characters = update_rule.fit_characters
 
@@ -113,8 +113,13 @@ class RatingTemplate:
             return False
 
     def get_template_rule_list(self, template_id: str):
-        return self.db.query(RatingRule).filter(
+        # only get the ids
+        return self.db.query(RatingRule.id, RatingRule.template_id).filter(
             RatingRule.template_id == template_id).all()
+
+    def get_template_rule(self, rule_id: str):
+        return self.db.query(RatingRule).filter(
+            RatingRule.id == rule_id).first()
 
 
 rating_template = RatingTemplate()
