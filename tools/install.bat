@@ -57,13 +57,13 @@ set "PATH=%PYTHON_DIR%;%SCRIPT_DIR%;%PATH%"
 
 REM Install required packages
 echo Using PyPI mirror for installation.
-"%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_TSINGHUA_MIRROR%" --no-warn-script-location
+"%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_TSINGHUA_MIRROR%" --no-warn-script-location --no-cache-dir
 
 REM Check if the pip install command was successful
 if %errorlevel% neq 0 (
     echo Failed to install required Python packages from tsinghua mirror
     echo Trying sjtu mirror...
-    "%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_SJTU_MIRROR%" --no-warn-script-location
+    "%PYTHON_EXE%" -m pip install -r "%REQUIREMENTS_FILE%" -i "%PYPI_SJTU_MIRROR%" --no-warn-script-location --no-cache-dir
     if %errorlevel% neq 0 (
         echo Failed to install required Python packages from sjtu mirror.
         endlocal
