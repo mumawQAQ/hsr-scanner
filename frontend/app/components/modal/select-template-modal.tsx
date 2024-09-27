@@ -39,7 +39,7 @@ const RatingTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTempla
       <div
         className={cn(
           'my-2 flex cursor-pointer flex-row items-center justify-between rounded p-2',
-          relicTemplate.inUse && 'border-1 border-gray-700/50 shadow-md'
+          relicTemplate.in_use && 'border-1 border-gray-700/50 shadow-md'
         )}
         onClick={() => {
           console.log('click');
@@ -47,7 +47,7 @@ const RatingTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTempla
       >
         <div>{relicTemplate.name}</div>
         <div className="flex flex-row gap-2">
-          {!relicTemplate.inUse && (
+          {!relicTemplate.in_use && (
             <Button size="sm" variant="bordered" color="default" onPress={handleSelectTemplate}>
               选择
             </Button>
