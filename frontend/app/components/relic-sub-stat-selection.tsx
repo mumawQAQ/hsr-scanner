@@ -42,29 +42,46 @@ export default function RelicSubStatSelection({ selectedSubStats, onSelectionCha
         ))}
       </Autocomplete>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-2">
         {selectedSubStats?.map((subStat, index) => (
-          <div key={index}>
-            <X size={16} onClick={() => onSelectionChange(subStat, 'remove')} />
-            <span>{selectionItems[subStat.sub_stat]}</span>
-            <Slider
-              label="评分占比"
-              minValue={0.05}
-              maxValue={1}
-              step={0.05}
-              value={subStat.rating_scale}
-              onChange={value => {
-                if (typeof value !== 'number') return;
-                const newValue = value as number;
-                onSelectionChange(
-                  {
-                    ...subStat,
-                    rating_scale: newValue,
-                  },
-                  'update'
-                );
-              }}
-            />
+          <div key={index} className="mb-2 flex items-start rounded bg-white p-4 shadow">
+            <div className="flex-1">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-gray-800">{selectionItems[subStat.sub_stat]}</span>
+                <X
+                  size={20}
+                  className="cursor-pointer text-gray-500 hover:text-gray-700"
+                  onClick={() => onSelectionChange(subStat, 'remove')}
+                  aria-label="Remove selection"
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                <label htmlFor={`slider-${index}`} className="text-sm text-gray-600">
+                  评分占比
+                </label>
+                <Slider
+                  size="sm"
+                  id={`slider-${index}`}
+                  minValue={0.05}
+                  maxValue={1}
+                  step={0.05}
+                  value={subStat.rating_scale}
+                  onChange={value => {
+                    if (typeof value !== 'number') return;
+                    const newValue = value as number;
+                    onSelectionChange(
+                      {
+                        ...subStat,
+                        rating_scale: newValue,
+                      },
+                      'update'
+                    );
+                  }}
+                  className="min-w-20 flex-1"
+                />
+                <span className="w-12 text-right text-gray-700">{(subStat.rating_scale * 100).toFixed(0)}%</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
