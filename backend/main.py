@@ -11,6 +11,7 @@ from uvicorn import Server
 from app.life_span import life_span
 from app.logging_config import logger
 from app.logging_config import logging_config
+from app.routers import files
 from app.routers import rating_template
 from app.routers import state
 from app.routers import websocket
@@ -33,13 +34,32 @@ app.add_middleware(
 app.include_router(state.router)
 app.include_router(websocket.router)
 app.include_router(rating_template.router)
+app.include_router(files.router)
 
 
-def map_checksum_file_dict(checksum_file) -> dict:
-    return {file['file']: file['checksum'] for file in checksum_file}
+def download_file(file: str):
+    # download the updated asserts
+    response = requests.get(f'{ASSETS_ENDPOINT}{file}')
+    current_path = os.path.join(ASSETS_FOLDER, file)
+    if response.status_code == 200:
+        # make sure the dir exists
+        os.makedirs(os.path.dirname(current_path), exist_ok=True)
+        with open(current_path, 'wb') as assert_f:
+            assert_f.write(response.content)
+        logger.info(f"Updated {file}")
+    else:
+        logger.error(f"Failed to download {file}: {response.text}")
+
+    # check if the file path contain img_meta
+    if 'img_meta' in file:
+        # read all the image from the file
+        with open(current_path, 'r') as f:
+            for line in f:
+                img_path = line.strip()
+                download_file(img_path)
 
 
-def map_checksum_file_json(checksum_file_dict) -> list:
+def map_checksum_file_json(checksum_file_dict: dict) -> list:
     return [{'file': file, 'checksum': checksum} for file, checksum in checksum_file_dict.items()]
 
 
@@ -57,17 +77,7 @@ def check_asserts_update():
                 if data:
                     for file, checksum in data.items():
                         checksum_file_map[file] = checksum
-                        # download the updated asserts
-                        response = requests.get(f'{ASSETS_ENDPOINT}{file}')
-                        if response.status_code == 200:
-                            current_path = os.path.join(ASSETS_FOLDER, file)
-                            # make sure the dir exists
-                            os.makedirs(os.path.dirname(current_path), exist_ok=True)
-                            with open(current_path, 'wb') as assert_f:
-                                assert_f.write(response.content)
-                            logger.info(f"Updated {file}")
-                        else:
-                            logger.error(f"Failed to download {file}: {response.text}")
+                        download_file(file)
 
                     # clear the file
                     f.seek(0)
