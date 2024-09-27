@@ -45,7 +45,7 @@ export default function RelicMainStatSelection({
   if (selectionKeys.length === 1) {
     return (
       <div>
-        {selectedMainStat ? (
+        {selectedMainStat && selectedMainStat.length > 0 ? (
           <Chip
             onClose={() => {
               console.log('remove');
