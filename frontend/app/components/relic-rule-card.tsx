@@ -5,9 +5,10 @@ import { useDeleteRelicRule, useRelicRule, useUpdateRelicRule } from '@/app/apis
 import CharacterSelection from '@/app/components/character-selection';
 import RelicSetSelector from '@/app/components/relic-set-selection';
 import { useEffect, useState } from 'react';
-import { RelicRuleLocal } from '@/app/types/relic-rule-type';
+import { RelicRuleLocal, RelicRuleSubStats } from '@/app/types/relic-rule-type';
 import RelicMainStatSelection from '@/app/components/relic-main-stat-selection';
 import { RelicMainStatsType } from '@/app/types/relic-stat-types';
+import RelicSubStatSelection from '@/app/components/relic-sub-stat-selection';
 
 type RelicRuleCardProps = {
   templateId: string;
@@ -74,6 +75,15 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
         onSuccess: async () => {
           //refresh the relic rule
           await refetchRelicRule();
+          setCurRule(prev => {
+            if (!prev) {
+              return null;
+            }
+            return {
+              ...prev,
+              is_saved: true,
+            };
+          });
         },
       }
     );
@@ -144,6 +154,37 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
     setCurRule(newRule);
   };
 
+  const handleSelectedSubStatChange = (subStat: RelicRuleSubStats | null, type: 'add' | 'remove' | 'update') => {
+    if (!subStat || !curRule) {
+      return;
+    }
+
+    const newRule = {
+      ...curRule,
+    };
+
+    if (type === 'add') {
+      const index = newRule.valuable_subs.findIndex(stat => stat.sub_stat === subStat.sub_stat);
+      if (index !== -1) {
+        return;
+      }
+      newRule.valuable_subs.push(subStat);
+    } else if (type === 'remove') {
+      newRule.valuable_subs = newRule.valuable_subs.filter(stat => stat !== subStat);
+    } else {
+      const index = newRule.valuable_subs.findIndex(stat => stat.sub_stat === subStat.sub_stat);
+      if (index === -1) {
+        return;
+      }
+
+      newRule.valuable_subs[index] = subStat;
+    }
+
+    newRule.is_saved = false;
+
+    setCurRule(newRule);
+  };
+
   return (
     <Card className="min-h-[15rem] w-full">
       <CardBody className="flex items-center justify-center text-center">
@@ -172,16 +213,20 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
           selectedMainStat={curRule?.valuable_mains?.feet}
           onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'feet', type)}
         />
-        {/*<RelicMainStatSelection*/}
-        {/*  type="rope"*/}
-        {/*  selectedMainStat={curRule?.valuable_mains['rope']}*/}
-        {/*  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}*/}
-        {/*/>*/}
-        {/*<RelicMainStatSelection*/}
-        {/*  type="sphere"*/}
-        {/*  selectedMainStat={curRule?.valuable_mains['sphere']}*/}
-        {/*  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}*/}
-        {/*/>*/}
+        <RelicMainStatSelection
+          type="rope"
+          selectedMainStat={curRule?.valuable_mains['rope']}
+          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}
+        />
+        <RelicMainStatSelection
+          type="sphere"
+          selectedMainStat={curRule?.valuable_mains['sphere']}
+          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}
+        />
+        <RelicSubStatSelection
+          selectedSubStats={curRule?.valuable_subs}
+          onSelectionChange={handleSelectedSubStatChange}
+        />
       </CardBody>
       <CardFooter className="flex justify-end gap-2">
         <Button size="sm" variant="bordered" color={!curRule?.is_saved ? 'danger' : 'default'} onPress={handleSave}>
