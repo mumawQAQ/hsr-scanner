@@ -54,7 +54,7 @@ export default function RelicRules() {
     <div>
       <div className="flex flex-col gap-2">
         {rules.map(rule => (
-          <RelicRuleCard key={rule.id} ruleId={rule.id} characters={rule.fitCharacters} />
+          <RelicRuleCard key={rule.id} templateId={templateId} ruleId={rule.id} />
         ))}
 
         <RelicRuleCreateCard templateId={templateId} />

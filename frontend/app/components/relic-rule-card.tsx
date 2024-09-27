@@ -1,26 +1,193 @@
 'use client';
 import { Card, CardBody, CardFooter } from '@nextui-org/card';
 import { Button } from '@nextui-org/button';
+import { useDeleteRelicRule, useRelicRule, useUpdateRelicRule } from '@/app/apis/relic-template';
+import CharacterSelection from '@/app/components/character-selection';
+import RelicSetSelector from '@/app/components/relic-set-selection';
+import { useEffect, useState } from 'react';
+import { RelicRuleLocal } from '@/app/types/relic-rule-type';
+import RelicMainStatSelection from '@/app/components/relic-main-stat-selection';
+import { RelicMainStatsType } from '@/app/types/relic-stat-types';
 
 type RelicRuleCardProps = {
+  templateId: string;
   ruleId: string;
-  characters: string[];
 };
 
-export default function RelicRuleCard({ ruleId, characters }: RelicRuleCardProps) {
+export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps) {
+  const { data: relicRule, error, isLoading, refetch: refetchRelicRule } = useRelicRule(ruleId);
+  const { mutate: deleteRule } = useDeleteRelicRule();
+  const { mutate: updateRule } = useUpdateRelicRule();
+
+  const [curRule, setCurRule] = useState<RelicRuleLocal | null>(null);
+
+  useEffect(() => {
+    if (relicRule) {
+      setCurRule({
+        id: relicRule.id,
+        set_names: relicRule.set_names,
+        valuable_mains: relicRule.valuable_mains,
+        valuable_subs: relicRule.valuable_subs,
+        fit_characters: relicRule.fit_characters,
+        is_saved: true,
+      });
+    }
+  }, [relicRule]);
+
+  const handleDelete = async () => {
+    deleteRule({ template_id: templateId, rule_id: ruleId });
+  };
+
+  if (error || !relicRule) {
+    return (
+      <Card className="min-h-[15rem] w-full">
+        <CardBody className="flex items-center justify-center text-center">
+          Error: {error ? error.message : '无法加载'}
+        </CardBody>
+      </Card>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Card className="min-h-[15rem] w-full">
+        <CardBody className="flex items-center justify-center text-center">Loading...</CardBody>
+      </Card>
+    );
+  }
+
+  const handleSave = () => {
+    if (!curRule) {
+      return;
+    }
+
+    updateRule(
+      {
+        id: curRule.id,
+        template_id: templateId,
+        set_names: curRule.set_names,
+        valuable_mains: curRule.valuable_mains,
+        valuable_subs: curRule.valuable_subs,
+        fit_characters: curRule.fit_characters,
+      },
+      {
+        onSuccess: async () => {
+          //refresh the relic rule
+          await refetchRelicRule();
+        },
+      }
+    );
+  };
+
+  const handleSelectedCharacterChange = (character: string | null) => {
+    setCurRule(prev => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        fit_characters: character ? [character] : [],
+        is_saved: false,
+      };
+    });
+  };
+
+  const handleSelectedRelicSetChange = (relicSet: string | null, type: 'add' | 'remove') => {
+    if (!relicSet) {
+      return;
+    }
+
+    if (type == 'add' && curRule?.set_names.includes(relicSet)) {
+      return;
+    }
+
+    setCurRule(prev => {
+      if (!prev) {
+        return null;
+      }
+      return {
+        ...prev,
+        set_names: type === 'add' ? [...prev.set_names, relicSet] : prev.set_names.filter(set => set !== relicSet),
+        is_saved: false,
+      };
+    });
+  };
+
+  const handleSelectedMainStatChange = (
+    mainStat: string | null,
+    mainStatType: RelicMainStatsType,
+    type: 'add' | 'remove'
+  ) => {
+    if (!mainStat || !curRule) {
+      return;
+    }
+
+    const newRule = {
+      ...curRule,
+    };
+
+    if (!Object.keys(newRule.valuable_mains).includes(mainStatType)) {
+      newRule.valuable_mains[mainStatType] = [];
+    }
+
+    if (type === 'add') {
+      if (newRule.valuable_mains[mainStatType].includes(mainStat)) {
+        return;
+      }
+      newRule.valuable_mains[mainStatType].push(mainStat);
+    } else {
+      newRule.valuable_mains[mainStatType] = newRule.valuable_mains[mainStatType].filter(stat => stat !== mainStat);
+    }
+
+    newRule.is_saved = false;
+
+    setCurRule(newRule);
+  };
+
   return (
     <Card className="min-h-[15rem] w-full">
       <CardBody className="flex items-center justify-center text-center">
-        <div className="flex flex-col gap-3">
-          <div className="line-clamp-1 font-semibold">{ruleId}</div>
-          <div className="text-tiny line-clamp-2 font-light">{characters.join(', ')}</div>
-        </div>
+        <CharacterSelection
+          selectedCharacter={curRule?.fit_characters[0]}
+          onSelectionChange={handleSelectedCharacterChange}
+        />
+        <RelicSetSelector selectedRelicSets={curRule?.set_names} onSelectionChange={handleSelectedRelicSetChange} />
+        <RelicMainStatSelection
+          type="head"
+          selectedMainStat={curRule?.valuable_mains?.head}
+          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'head', type)}
+        />
+        <RelicMainStatSelection
+          type="hand"
+          selectedMainStat={curRule?.valuable_mains?.hand}
+          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'hand', type)}
+        />
+        <RelicMainStatSelection
+          type="body"
+          selectedMainStat={curRule?.valuable_mains?.body}
+          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'body', type)}
+        />
+        <RelicMainStatSelection
+          type="feet"
+          selectedMainStat={curRule?.valuable_mains?.feet}
+          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'feet', type)}
+        />
+        {/*<RelicMainStatSelection*/}
+        {/*  type="rope"*/}
+        {/*  selectedMainStat={curRule?.valuable_mains['rope']}*/}
+        {/*  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}*/}
+        {/*/>*/}
+        {/*<RelicMainStatSelection*/}
+        {/*  type="sphere"*/}
+        {/*  selectedMainStat={curRule?.valuable_mains['sphere']}*/}
+        {/*  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}*/}
+        {/*/>*/}
       </CardBody>
       <CardFooter className="flex justify-end gap-2">
-        <Button size="sm" variant="bordered" color="default">
-          保存
+        <Button size="sm" variant="bordered" color={!curRule?.is_saved ? 'danger' : 'default'} onPress={handleSave}>
+          {!curRule?.is_saved ? '未保存' : '已保存'}
         </Button>
-        <Button size="sm" variant="bordered" color="danger">
+        <Button size="sm" variant="bordered" color="danger" onPress={handleDelete}>
           删除
         </Button>
       </CardFooter>
