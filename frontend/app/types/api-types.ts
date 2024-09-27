@@ -1,3 +1,5 @@
+import { RelicRuleMainStats, RelicRuleSubStats } from '@/app/types/relic-rule-type';
+
 export type ApiResponse<T> = {
   status: 'success' | 'failed';
   message: string; // this only exists when status is 'error'
@@ -19,4 +21,13 @@ export type CreateRelicRuleRequest = {
 export type DeleteRelicRuleRequest = {
   template_id: string;
   rule_id: string;
+};
+
+export type UpdateRelicRuleRequest = {
+  id: string;
+  template_id: string;
+  set_names: string[];
+  valuable_mains: RelicRuleMainStats;
+  valuable_subs: RelicRuleSubStats[];
+  fit_characters: string[];
 };

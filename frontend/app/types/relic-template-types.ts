@@ -3,5 +3,5 @@ export type RelicTemplate = {
   name: string;
   description: string;
   author: string;
-  inUse: boolean;
+  in_use: boolean;
 };
