@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import { RelicSubStats } from '../../../src/type/types';
-import camelcaseKeys from 'camelcase-keys';
 
 type UseBackendClientStore = {
   requirementFulfilled: boolean;
@@ -33,19 +32,6 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
       baseURL: `http://localhost:${port}`,
     });
 
-    // add interceptor to transform all keys to camelCase
-    api.interceptors.response.use(
-      response => {
-        if (response.data && response.data.data) {
-          // Recursively transform all keys to camelCase
-          response.data.data = camelcaseKeys(response.data.data, { deep: true });
-        }
-        return response;
-      },
-      error => {
-        return Promise.reject(error);
-      }
-    );
     set({ api });
 
     // initialize the websocket
@@ -71,15 +57,15 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
         const relicInfo = {
           title: {
             title: message.title.title,
-            setName: message.title.set_name,
+            set_name: message.title.set_name,
           },
-          mainStats: {
+          main_stats: {
             name: message.main_stat.name,
             number: message.main_stat.number,
             level: message.main_stat.level,
-            enhanceLevel: message.main_stat.enhance_level,
+            enhance_level: message.main_stat.enhance_level,
           },
-          subStats: message.sub_stats.map((subStat: RelicSubStats) => ({
+          sub_stats: message.sub_stats.map((subStat: RelicSubStats) => ({
             name: subStat.name,
             number: subStat.number,
             score: subStat.score,
@@ -90,9 +76,9 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
       } else if (data.type == 'img') {
         const message = JSON.parse(data.message);
         const relicImage = {
-          titleImage: message.title_img,
-          mainStatImage: message.main_stat_img,
-          subStatImages: message.sub_stat_img,
+          title_img: message.title_img,
+          main_stat_img: message.main_stat_img,
+          sub_stat_img: message.sub_stat_img,
         };
         useRelicStore.setState({ relicImage: relicImage });
       }
