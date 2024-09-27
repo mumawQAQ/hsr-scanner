@@ -5,9 +5,10 @@ import {
   CreateRelicRuleRequest,
   CreateRelicTemplateRequest,
   DeleteRelicRuleRequest,
+  UpdateRelicRuleRequest,
 } from '@/app/types/api-types';
 import { RelicTemplate } from '@/app/types/relic-template-types';
-import { RelicRule } from '@/app/types/relic-rule-type';
+import { RelicRule, RelicRuleIds } from '@/app/types/relic-rule-type';
 
 export const useCreateTemplate = () => {
   const { api } = useBackendClientStore();
@@ -164,6 +165,30 @@ export const useDeleteRelicRule = () => {
   });
 };
 
+export const useRelicRule = (ruleId: string) => {
+  const { api } = useBackendClientStore();
+  return useQuery({
+    queryKey: ['relic-rule', ruleId],
+    queryFn: async () => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/rule/${ruleId}`;
+        const { data } = await api.get<ApiResponse<RelicRule>>(url);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+        return data.data;
+      } catch (error) {
+        console.error('Failed to fetch relic rule:', error);
+        throw error;
+      }
+    },
+  });
+};
+
 export const useRelicRuleList = (templateId: string | null) => {
   const { api } = useBackendClientStore();
   return useQuery({
@@ -175,7 +200,7 @@ export const useRelicRuleList = (templateId: string | null) => {
 
       try {
         const url = `/rating-template/rule/list/${templateId}`;
-        const { data } = await api.get<ApiResponse<RelicRule[]>>(url);
+        const { data } = await api.get<ApiResponse<RelicRuleIds[]>>(url);
         if (data.status !== 'success') {
           throw new Error(data.message);
         }
@@ -186,5 +211,31 @@ export const useRelicRuleList = (templateId: string | null) => {
       }
     },
     enabled: !!templateId,
+  });
+};
+
+export const useUpdateRelicRule = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (rule: UpdateRelicRuleRequest) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/rule/update`;
+        const { data } = await api.post<ApiResponse<RelicRule>>(url, rule);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Failed to update relic rule:', error);
+        throw error;
+      }
+    },
+    onSuccess: async (_, data) => {
+      await queryClient.invalidateQueries({ queryKey: ['relic-rule-list', data.template_id] });
+    },
   });
 };
