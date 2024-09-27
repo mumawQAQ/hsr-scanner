@@ -20,7 +20,7 @@ export default function RelicTemplateCard({ template }: RelicTemplateCardProps) 
     <Card
       className={cn(
         'hover:border-1 h-[17rem] w-[15rem] grid-cols-1 hover:border-gray-700 hover:shadow-xl',
-        template.inUse && 'border-1 border-gray-600/40 shadow-md'
+        template.in_use && 'border-1 border-gray-600/40 shadow-md'
       )}
       isPressable
       onPress={handleSelectTemplate}
