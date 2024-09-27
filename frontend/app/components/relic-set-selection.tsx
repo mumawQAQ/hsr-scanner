@@ -22,7 +22,7 @@ export default function RelicSetSelection({ selectedRelicSets, onSelectionChange
 
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {selectedRelicSets?.map((relicSet, index) => (
           <Chip
             key={index}
