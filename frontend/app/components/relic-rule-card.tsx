@@ -186,8 +186,8 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
   };
 
   return (
-    <Card className="min-h-[15rem] w-full">
-      <CardBody className="flex items-center justify-center text-center">
+    <Card className="col-span-1 min-h-[15rem] p-5">
+      <CardBody className="flex gap-8">
         <CharacterSelection
           selectedCharacter={curRule?.fit_characters[0]}
           onSelectionChange={handleSelectedCharacterChange}

@@ -12,39 +12,41 @@ export default function RelicSubStatSelection({ selectedSubStats, onSelectionCha
   const selectionKeys = Object.keys(selectionItems);
 
   return (
-    <div>
-      <Autocomplete
-        classNames={{
-          base: 'max-w-[150px]',
-          listboxWrapper: 'max-h-[320px]',
-        }}
-        inputProps={{
-          classNames: {
-            input: 'ml-1',
-            inputWrapper: 'h-[30px]',
-          },
-        }}
-        variant="bordered"
-        onSelectionChange={key => {
-          const selectedKey = key as string;
-          if (selectedKey === null) return;
-          onSelectionChange(
-            {
-              sub_stat: selectedKey,
-              rating_scale: 0.05,
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <span className="font-semibold">选择副属性: </span>
+        <Autocomplete
+          classNames={{
+            base: 'max-w-[150px]',
+          }}
+          inputProps={{
+            classNames: {
+              input: 'ml-1',
+              inputWrapper: 'h-[30px]',
             },
-            'add'
-          );
-        }}
-      >
-        {selectionKeys.map(subStat => (
-          <AutocompleteItem key={subStat}>{selectionItems[subStat]}</AutocompleteItem>
-        ))}
-      </Autocomplete>
+          }}
+          variant="bordered"
+          onSelectionChange={key => {
+            const selectedKey = key as string;
+            if (selectedKey === null) return;
+            onSelectionChange(
+              {
+                sub_stat: selectedKey,
+                rating_scale: 0.05,
+              },
+              'add'
+            );
+          }}
+        >
+          {selectionKeys.map(subStat => (
+            <AutocompleteItem key={subStat}>{selectionItems[subStat]}</AutocompleteItem>
+          ))}
+        </Autocomplete>
+      </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-4">
         {selectedSubStats?.map((subStat, index) => (
-          <div key={index} className="mb-2 flex items-start rounded bg-white p-4 shadow">
+          <div key={index} className="mb-2 flex items-start rounded-xl bg-white p-4 shadow">
             <div className="flex-1">
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-semibold text-gray-800">{selectionItems[subStat.sub_stat]}</span>

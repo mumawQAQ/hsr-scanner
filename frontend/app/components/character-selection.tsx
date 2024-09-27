@@ -20,34 +20,45 @@ export default function CharacterSelection({ selectedCharacter, onSelectionChang
     return <Spinner />;
   }
 
-  return selectedCharacter ? (
-    <Chip
-      onClose={() => onSelectionChange(null)}
-      variant="faded"
-      startContent={<ImageDisplay filePath={characters[selectedCharacter].icon} width={20} height={20} />}
-    >
-      <span>{characters[selectedCharacter].name}</span>
-    </Chip>
-  ) : (
-    <Autocomplete
-      classNames={{
-        base: 'max-w-[150px]',
-      }}
-      variant="bordered"
-      selectedKey={selectedCharacter}
-      onSelectionChange={key => {
-        const selectedKey = key as string;
-        onSelectionChange(selectedKey);
-      }}
-    >
-      {Object.keys(characters).map(character => (
-        <AutocompleteItem
-          key={character}
-          startContent={<ImageDisplay filePath={characters[character].icon} width={20} height={20} />}
+  return (
+    <div className="flex items-center justify-center gap-2">
+      {selectedCharacter ? (
+        <Chip
+          onClose={() => onSelectionChange(null)}
+          variant="faded"
+          startContent={
+            <ImageDisplay filePath={characters[selectedCharacter].icon} width={40} height={40} className="rounded-lg" />
+          }
+          classNames={{
+            base: 'min-w-[150px] min-h-[50px] pl-3',
+            content: 'flex items-center justify-center font-semibold text-lg',
+          }}
         >
-          {characters[character].name}
-        </AutocompleteItem>
-      ))}
-    </Autocomplete>
+          <span>{characters[selectedCharacter].name}</span>
+        </Chip>
+      ) : (
+        <Autocomplete
+          classNames={{
+            base: 'max-w-[150px] min-h-[50px]',
+          }}
+          variant="bordered"
+          selectedKey={selectedCharacter}
+          onSelectionChange={key => {
+            const selectedKey = key as string;
+            onSelectionChange(selectedKey);
+          }}
+          label="选择角色"
+        >
+          {Object.keys(characters).map(character => (
+            <AutocompleteItem
+              key={character}
+              startContent={<ImageDisplay filePath={characters[character].icon} width={20} height={20} />}
+            >
+              {characters[character].name}
+            </AutocompleteItem>
+          ))}
+        </Autocomplete>
+      )}
+    </div>
   );
 }

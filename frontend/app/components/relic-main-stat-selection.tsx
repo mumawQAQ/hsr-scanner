@@ -41,10 +41,19 @@ export default function RelicMainStatSelection({
 
   const selectionItems = getSelectionItems();
   const selectionKeys = Object.keys(selectionItems);
+  const translatedType = {
+    head: '头部',
+    hand: '手部',
+    body: '身体',
+    feet: '脚部',
+    rope: '绳',
+    sphere: '球',
+  };
 
   if (selectionKeys.length === 1) {
     return (
-      <div>
+      <div className="flex items-center gap-2">
+        <span className="font-semibold">选择{translatedType[type]}主属性: </span>
         {selectedMainStat && selectedMainStat.length > 0 ? (
           <Chip
             onClose={() => {
@@ -77,7 +86,32 @@ export default function RelicMainStatSelection({
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <span className="font-semibold">选择{translatedType[type]}主属性: </span>
+        <Autocomplete
+          classNames={{
+            base: 'max-w-[150px]',
+            listboxWrapper: 'max-h-[320px]',
+          }}
+          inputProps={{
+            classNames: {
+              input: 'ml-1',
+              inputWrapper: 'h-[30px]',
+            },
+          }}
+          variant="bordered"
+          onSelectionChange={key => {
+            const selectedKey = key as string;
+            onSelectionChange(selectedKey, 'add');
+          }}
+        >
+          {selectionKeys.map(mainStat => (
+            <AutocompleteItem key={mainStat}>{selectionItems[mainStat]}</AutocompleteItem>
+          ))}
+        </Autocomplete>
+      </div>
+
       <div className="flex gap-2">
         {selectedMainStat?.map((mainStats, index) => (
           <Chip key={index} onClose={() => onSelectionChange(mainStats, 'remove')} variant="faded">
@@ -85,28 +119,6 @@ export default function RelicMainStatSelection({
           </Chip>
         ))}
       </div>
-
-      <Autocomplete
-        classNames={{
-          base: 'max-w-[150px]',
-          listboxWrapper: 'max-h-[320px]',
-        }}
-        inputProps={{
-          classNames: {
-            input: 'ml-1',
-            inputWrapper: 'h-[30px]',
-          },
-        }}
-        variant="bordered"
-        onSelectionChange={key => {
-          const selectedKey = key as string;
-          onSelectionChange(selectedKey, 'add');
-        }}
-      >
-        {selectionKeys.map(mainStat => (
-          <AutocompleteItem key={mainStat}>{selectionItems[mainStat]}</AutocompleteItem>
-        ))}
-      </Autocomplete>
     </div>
   );
 }

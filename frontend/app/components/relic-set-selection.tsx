@@ -21,7 +21,36 @@ export default function RelicSetSelection({ selectedRelicSets, onSelectionChange
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <span className="font-semibold">选择遗物套装: </span>
+        <Autocomplete
+          classNames={{
+            base: 'max-w-[150px]',
+            listboxWrapper: 'max-h-[320px]',
+          }}
+          inputProps={{
+            classNames: {
+              input: 'ml-1',
+              inputWrapper: 'h-[30px]',
+            },
+          }}
+          variant="bordered"
+          onSelectionChange={key => {
+            const selectedKey = key as string;
+            onSelectionChange(selectedKey, 'add');
+          }}
+        >
+          {Object.keys(relicSets).map(relicSet => (
+            <AutocompleteItem
+              key={relicSet}
+              startContent={<ImageDisplay filePath={relicSets[relicSet].icon} width={20} height={20} />}
+            >
+              {relicSets[relicSet].name}
+            </AutocompleteItem>
+          ))}
+        </Autocomplete>
+      </div>
       <div className="flex flex-wrap gap-2">
         {selectedRelicSets?.map((relicSet, index) => (
           <Chip
@@ -34,33 +63,6 @@ export default function RelicSetSelection({ selectedRelicSets, onSelectionChange
           </Chip>
         ))}
       </div>
-
-      <Autocomplete
-        classNames={{
-          base: 'max-w-[150px]',
-          listboxWrapper: 'max-h-[320px]',
-        }}
-        inputProps={{
-          classNames: {
-            input: 'ml-1',
-            inputWrapper: 'h-[30px]',
-          },
-        }}
-        variant="bordered"
-        onSelectionChange={key => {
-          const selectedKey = key as string;
-          onSelectionChange(selectedKey, 'add');
-        }}
-      >
-        {Object.keys(relicSets).map(relicSet => (
-          <AutocompleteItem
-            key={relicSet}
-            startContent={<ImageDisplay filePath={relicSets[relicSet].icon} width={20} height={20} />}
-          >
-            {relicSets[relicSet].name}
-          </AutocompleteItem>
-        ))}
-      </Autocomplete>
     </div>
   );
 }
