@@ -15,6 +15,7 @@ class GlobalState:
             'width': 0,
             'height': 0
         }
+        self.template_in_use = None
         self.screen_rgb = None
         self.yolo_boxes: list[YoloBox] = []
         self.relic_info: Optional[RelicInfo] = None
