@@ -49,7 +49,7 @@ const RatingTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTempla
         <div className="flex flex-row gap-2">
           {!relicTemplate.in_use && (
             <Button size="sm" variant="bordered" color="default" onPress={handleSelectTemplate}>
-              选择
+              启用
             </Button>
           )}
           <Button size="sm" variant="bordered" color="danger" onPress={handleDeleteTemplate}>
