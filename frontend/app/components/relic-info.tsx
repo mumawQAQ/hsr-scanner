@@ -3,6 +3,9 @@ import useRelicStore from '@/app/hooks/use-relic-store';
 import { Divider } from '@nextui-org/divider';
 import useWindowStore from '@/app/hooks/use-window-store';
 import { Chip } from '@nextui-org/chip';
+import { Tooltip } from '@nextui-org/react';
+import { CircleAlert } from 'lucide-react';
+import React from 'react';
 
 export default function RelicInfo() {
   const { scanningStatus } = useWindowStore();
@@ -13,7 +16,14 @@ export default function RelicInfo() {
       return <div className="font-semibold">选择模板后,开始扫描，显示遗器扫描内容</div>;
     }
     if (relicError) {
-      return <div className="text-red-600">遗器扫描失败，请在正常模式下，检查下面日志/图片区域</div>;
+      return (
+        <Tooltip content="请确保在正常模式下，打开左侧显示图片，并查看日志和图片异常">
+          <div className="flex flex-row gap-2 text-red-600">
+            <CircleAlert />
+            遗器扫描失败
+          </div>
+        </Tooltip>
+      );
     }
 
     return (
