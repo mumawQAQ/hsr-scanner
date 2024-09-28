@@ -8,9 +8,10 @@ import { useNavbarStore } from '@/app/hooks/use-navbar-store';
 export default function Navbar() {
   const router = useRouter();
   const { path, setPath } = usePath();
-  const { leftNavbar, rightNavbar } = useNavbarStore();
+  const { leftNavbar, rightNavbar, clearCustomNavbar } = useNavbarStore();
 
   const handlePathChange = (type: PathType) => {
+    clearCustomNavbar();
     router.push(type);
     setPath(type);
   };
