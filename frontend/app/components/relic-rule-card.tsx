@@ -1,7 +1,7 @@
 'use client';
 import { Card, CardBody, CardFooter } from '@nextui-org/card';
 import { Button } from '@nextui-org/button';
-import { useDeleteRelicRule, useRelicRule, useUpdateRelicRule } from '@/app/apis/relic-template';
+import { useDeleteRelicRule, useRelicRule, useRelicTemplateList, useUpdateRelicRule } from '@/app/apis/relic-template';
 import CharacterSelection from '@/app/components/character-selection';
 import RelicSetSelector from '@/app/components/relic-set-selection';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import { RelicRuleLocal, RelicRuleSubStats } from '@/app/types/relic-rule-type';
 import RelicMainStatSelection from '@/app/components/relic-main-stat-selection';
 import { RelicMainStatsType } from '@/app/types/relic-stat-types';
 import RelicSubStatSelection from '@/app/components/relic-sub-stat-selection';
+import toast from 'react-hot-toast';
 
 type RelicRuleCardProps = {
   templateId: string;
@@ -17,6 +18,7 @@ type RelicRuleCardProps = {
 
 export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps) {
   const { data: relicRule, error, isLoading, refetch: refetchRelicRule } = useRelicRule(ruleId);
+  const { data: templateList } = useRelicTemplateList();
   const { mutate: deleteRule } = useDeleteRelicRule();
   const { mutate: updateRule } = useUpdateRelicRule();
 
@@ -36,6 +38,12 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
   }, [relicRule]);
 
   const handleDelete = async () => {
+    // prevent deleting if the current template is in use
+    if (templateList?.find(template => template.id === templateId)?.in_use) {
+      toast.error('请先停用当前模板以删除规则！');
+      return;
+    }
+
     deleteRule({ template_id: templateId, rule_id: ruleId });
   };
 
@@ -59,6 +67,12 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
 
   const handleSave = () => {
     if (!curRule) {
+      return;
+    }
+
+    // prevent saving if the current template is in use
+    if (templateList?.find(template => template.id === templateId)?.in_use) {
+      toast.error('请先停用当前模板以保存规则！');
       return;
     }
 
