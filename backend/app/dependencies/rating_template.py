@@ -21,8 +21,11 @@ class RatingTemplate:
                 if current_template.id == template_id:
                     # Set the current template to not in use
                     current_template.in_use = False
-                    self.global_state.template_in_use = None
                     self.db.commit()
+
+                    self.global_state.rules_in_use = None
+                    self.global_state.rules_in_use_dirty = True
+
                     return True
             return False
 
@@ -52,8 +55,14 @@ class RatingTemplate:
             # Query again to return the newly updated template
             new_template = self.db.query(RatingTemplateDBModel).filter(
                 RatingTemplateDBModel.id == template_id).first()
-            
-            self.global_state.template_in_use = template_id
+
+            # Query all the rules associated with the template
+            rules = self.db.query(RatingRule).filter(
+                RatingRule.template_id == template_id).all()
+
+            self.global_state.rules_in_use = rules
+            self.global_state.rules_in_use_dirty = True
+
             return new_template
         else:
             self.db.rollback()  # Rollback if no rows are matched
@@ -85,6 +94,11 @@ class RatingTemplate:
                 RatingRule.template_id == template_id).delete()
 
             self.db.commit()
+
+            # if the template id the in use template, set the global state to None
+            if self.global_state.rules_in_use and self.global_state.rules_in_use.id == template_id:
+                self.global_state.rules_in_use = None
+                self.global_state.rules_in_use_dirty = True
 
             return True
 
