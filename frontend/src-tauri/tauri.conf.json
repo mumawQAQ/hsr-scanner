@@ -12,7 +12,10 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "window": {
+        "setAlwaysOnTop": true
+      }
     },
     "bundle": {
       "active": true,

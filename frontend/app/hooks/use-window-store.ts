@@ -14,6 +14,9 @@ type WindowStore = {
 
   fullLog: boolean;
   setFullLog: (full: boolean) => void;
+
+  topWindow: boolean;
+  setTopWindow: (top: boolean) => void;
 };
 
 const useWindowStore = create<WindowStore>(set => ({
@@ -33,6 +36,9 @@ const useWindowStore = create<WindowStore>(set => ({
 
   fullLog: false,
   setFullLog: full => set({ fullLog: full }),
+
+  topWindow: false,
+  setTopWindow: top => set({ topWindow: top }),
 }));
 
 export default useWindowStore;
