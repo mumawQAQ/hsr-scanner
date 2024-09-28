@@ -62,6 +62,32 @@ export const useDeleteTemplate = () => {
   });
 };
 
+export const useUnselectTemplate = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (templateId: string) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/stop-use/${templateId}`;
+        const { data } = await api.patch<ApiResponse<null>>(url);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Failed to select relic template:', error);
+        throw error;
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['relic-template-list'] });
+    },
+  });
+};
+
 export const useSelectTemplate = () => {
   const { api } = useBackendClientStore();
   const queryClient = useQueryClient();

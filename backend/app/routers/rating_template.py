@@ -13,6 +13,24 @@ from app.models.response.rating_template import RatingTemplate as RatingTemplate
 router = APIRouter()
 
 
+@router.patch("/rating-template/stop-use/{template_id}")
+def stop_use_rating_template(template_id: str,
+                             rating_template_dependency: Annotated[
+                                 RatingTemplateDependency, Depends(get_rating_template)]):
+    result = rating_template_dependency.stop_use_template(template_id)
+
+    if not result:
+        return {
+            'status': 'failed',
+            'message': 'Failed to stop using template'
+        }
+
+    return {
+        'status': 'success',
+        'message': 'Template stopped'
+    }
+
+
 @router.patch("/rating-template/use/{template_id}")
 def use_rating_template(template_id: str,
                         rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):

@@ -1,13 +1,35 @@
 from app.dependencies import database
+from app.dependencies.global_state import GlobalState, global_state
 from app.logging_config import logger
 from app.models.database.rating_rule import RatingRule
 from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
 
 
 class RatingTemplate:
-    def __init__(self):
+    def __init__(self, gs: GlobalState):
         # load the sqlite database
         self.db = database.sessionLocal()
+        self.global_state = gs
+
+    def stop_use_template(self, template_id: str):
+        try:
+            # Find any template that is currently in use
+            current_template = self.db.query(RatingTemplateDBModel).filter(
+                RatingTemplateDBModel.in_use == True).first()
+
+            if current_template:
+                if current_template.id == template_id:
+                    # Set the current template to not in use
+                    current_template.in_use = False
+                    self.global_state.template_in_use = None
+                    self.db.commit()
+                    return True
+            return False
+
+        except Exception as e:
+            logger.error(f"Failed to stop using template: {e}")
+            self.db.rollback()
+            return False
 
     def use_template(self, template_id: str):
         # Find any template that is currently in use
@@ -30,6 +52,8 @@ class RatingTemplate:
             # Query again to return the newly updated template
             new_template = self.db.query(RatingTemplateDBModel).filter(
                 RatingTemplateDBModel.id == template_id).first()
+            
+            self.global_state.template_in_use = template_id
             return new_template
         else:
             self.db.rollback()  # Rollback if no rows are matched
@@ -122,7 +146,7 @@ class RatingTemplate:
             RatingRule.id == rule_id).first()
 
 
-rating_template = RatingTemplate()
+rating_template = RatingTemplate(global_state)
 
 
 def get_rating_template():
