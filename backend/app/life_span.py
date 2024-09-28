@@ -8,6 +8,7 @@ from app.dependencies.database import Base, engine
 from app.dependencies.detection import Detection
 from app.dependencies.global_state import global_state
 from app.dependencies.ocr import OCR
+from app.dependencies.relic_rating import RelicRating
 from app.dependencies.screen_shot import get_screen_shot
 
 
@@ -35,10 +36,15 @@ async def life_span(app: FastAPI):
 
     # Load the OCR model
     ocr = OCR(global_state)
-
     # Start the OCR coroutine in a separate thread
     ocr_thread = threading.Thread(target=run_async, args=(ocr.read_relic_info(),))
     ocr_thread.start()
+
+    # Load the relic rating model
+    relic_rating = RelicRating(global_state)
+    # Start the relic rating coroutine in a separate thread
+    relic_rating_thread = threading.Thread(target=run_async, args=(relic_rating.get_relic_rating(),))
+    relic_rating_thread.start()
 
     yield  # This yield allows the context manager to be used with 'async with'
 
@@ -48,3 +54,4 @@ async def life_span(app: FastAPI):
     screen_shot_thread.join()
     detection_thread.join()
     ocr_thread.join()
+    relic_rating_thread.join()
