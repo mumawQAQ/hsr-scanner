@@ -10,6 +10,7 @@ import RelicMainStatSelection from '@/app/components/relic-main-stat-selection';
 import { RelicMainStatsType } from '@/app/types/relic-stat-types';
 import RelicSubStatSelection from '@/app/components/relic-sub-stat-selection';
 import toast from 'react-hot-toast';
+import { useJsonFile } from '@/app/apis/files';
 
 type RelicRuleCardProps = {
   templateId: string;
@@ -17,25 +18,86 @@ type RelicRuleCardProps = {
 };
 
 export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps) {
-  const { data: relicRule, error, isLoading, refetch: refetchRelicRule } = useRelicRule(ruleId);
+  const relicRule = useRelicRule(ruleId);
+  const relicSets = useJsonFile('relic/relic_sets.json');
   const { data: templateList } = useRelicTemplateList();
   const { mutate: deleteRule } = useDeleteRelicRule();
   const { mutate: updateRule } = useUpdateRelicRule();
 
   const [curRule, setCurRule] = useState<RelicRuleLocal | null>(null);
+  const [showOuter, setShowOuter] = useState(false);
+  const [showInner, setShowInner] = useState(false);
+
+  const handleShowInner = (setNames: string[]) => {
+    if (setNames.length === 0) {
+      setShowInner(false);
+      return false;
+    }
+
+    // check any of the set names have inner set
+    const haveInner = setNames.some(setName => {
+      const innerSet = relicSets.data[setName].isInner;
+      if (innerSet) {
+        return true;
+      }
+    });
+
+    setShowInner(haveInner);
+    return haveInner;
+  };
+
+  const handleShowOuter = (setNames: string[]) => {
+    if (setNames.length === 0) {
+      setShowOuter(false);
+      return false;
+    }
+
+    // check any of the set names have outer set
+    const haveOuter = setNames.some(setName => {
+      const innerSet = relicSets.data[setName].isInner;
+      if (!innerSet) {
+        setShowOuter(true);
+        return true;
+      }
+    });
+
+    setShowOuter(haveOuter);
+    return haveOuter;
+  };
 
   useEffect(() => {
-    if (relicRule) {
+    if (relicRule.data) {
       setCurRule({
-        id: relicRule.id,
-        set_names: relicRule.set_names,
-        valuable_mains: relicRule.valuable_mains,
-        valuable_subs: relicRule.valuable_subs,
-        fit_characters: relicRule.fit_characters,
+        id: relicRule.data.id,
+        set_names: relicRule.data.set_names,
+        valuable_mains: relicRule.data.valuable_mains,
+        valuable_subs: relicRule.data.valuable_subs,
+        fit_characters: relicRule.data.fit_characters,
         is_saved: true,
       });
+
+      handleShowInner(relicRule.data.set_names);
+      handleShowOuter(relicRule.data.set_names);
     }
-  }, [relicRule]);
+  }, [relicRule.data]);
+
+  if (relicRule.error || !relicRule.data || relicSets.error || !relicSets.data) {
+    return (
+      <Card className="min-h-[15rem] w-full">
+        <CardBody className="flex items-center justify-center text-center">
+          Error: {relicRule.error?.message || relicSets.error?.message || '无法加载遗物规则数据！'}
+        </CardBody>
+      </Card>
+    );
+  }
+
+  if (relicRule.isLoading || relicSets.isLoading) {
+    return (
+      <Card className="min-h-[15rem] w-full">
+        <CardBody className="flex items-center justify-center text-center">Loading...</CardBody>
+      </Card>
+    );
+  }
 
   const handleDelete = async () => {
     // prevent deleting if the current template is in use
@@ -46,24 +108,6 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
 
     deleteRule({ template_id: templateId, rule_id: ruleId });
   };
-
-  if (error || !relicRule) {
-    return (
-      <Card className="min-h-[15rem] w-full">
-        <CardBody className="flex items-center justify-center text-center">
-          Error: {error ? error.message : '无法加载'}
-        </CardBody>
-      </Card>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Card className="min-h-[15rem] w-full">
-        <CardBody className="flex items-center justify-center text-center">Loading...</CardBody>
-      </Card>
-    );
-  }
 
   const handleSave = () => {
     if (!curRule) {
@@ -88,7 +132,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
       {
         onSuccess: async () => {
           //refresh the relic rule
-          await refetchRelicRule();
+          await relicRule.refetch();
           setCurRule(prev => {
             if (!prev) {
               return null;
@@ -117,7 +161,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
   };
 
   const handleSelectedRelicSetChange = (relicSet: string | null, type: 'add' | 'remove') => {
-    if (!relicSet) {
+    if (!relicSet || !curRule) {
       return;
     }
 
@@ -125,13 +169,31 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
       return;
     }
 
+    const newSetNames =
+      type === 'add' ? [...curRule.set_names, relicSet] : curRule.set_names.filter(set => set !== relicSet);
+
+    console.log(newSetNames);
+
+    const haveInner = handleShowInner(newSetNames);
+    const haveOuter = handleShowOuter(newSetNames);
+
+    // if current set list no longer have inner, clear the head, hand, body, feet stats
+    // if current set list no longer have outer, clear the sphere, rope stats
     setCurRule(prev => {
       if (!prev) {
         return null;
       }
       return {
         ...prev,
-        set_names: type === 'add' ? [...prev.set_names, relicSet] : prev.set_names.filter(set => set !== relicSet),
+        set_names: newSetNames,
+        valuable_mains: {
+          head: haveOuter ? prev.valuable_mains.head : [],
+          hand: haveOuter ? prev.valuable_mains.hand : [],
+          body: haveOuter ? prev.valuable_mains.body : [],
+          feet: haveOuter ? prev.valuable_mains.feet : [],
+          sphere: haveInner ? prev.valuable_mains.sphere : [],
+          rope: haveInner ? prev.valuable_mains.rope : [],
+        },
         is_saved: false,
       };
     });
@@ -207,36 +269,55 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
           onSelectionChange={handleSelectedCharacterChange}
         />
         <RelicSetSelector selectedRelicSets={curRule?.set_names} onSelectionChange={handleSelectedRelicSetChange} />
-        <RelicMainStatSelection
-          type="head"
-          selectedMainStat={curRule?.valuable_mains?.head}
-          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'head', type)}
-        />
-        <RelicMainStatSelection
-          type="hand"
-          selectedMainStat={curRule?.valuable_mains?.hand}
-          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'hand', type)}
-        />
-        <RelicMainStatSelection
-          type="body"
-          selectedMainStat={curRule?.valuable_mains?.body}
-          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'body', type)}
-        />
-        <RelicMainStatSelection
-          type="feet"
-          selectedMainStat={curRule?.valuable_mains?.feet}
-          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'feet', type)}
-        />
-        <RelicMainStatSelection
-          type="rope"
-          selectedMainStat={curRule?.valuable_mains['rope']}
-          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}
-        />
-        <RelicMainStatSelection
-          type="sphere"
-          selectedMainStat={curRule?.valuable_mains['sphere']}
-          onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}
-        />
+
+        {showOuter && (
+          <RelicMainStatSelection
+            type="head"
+            selectedMainStat={curRule?.valuable_mains?.head}
+            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'head', type)}
+          />
+        )}
+
+        {showOuter && (
+          <RelicMainStatSelection
+            type="hand"
+            selectedMainStat={curRule?.valuable_mains?.hand}
+            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'hand', type)}
+          />
+        )}
+
+        {showOuter && (
+          <RelicMainStatSelection
+            type="body"
+            selectedMainStat={curRule?.valuable_mains?.body}
+            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'body', type)}
+          />
+        )}
+
+        {showOuter && (
+          <RelicMainStatSelection
+            type="feet"
+            selectedMainStat={curRule?.valuable_mains?.feet}
+            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'feet', type)}
+          />
+        )}
+
+        {showInner && (
+          <RelicMainStatSelection
+            type="rope"
+            selectedMainStat={curRule?.valuable_mains['rope']}
+            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}
+          />
+        )}
+
+        {showInner && (
+          <RelicMainStatSelection
+            type="sphere"
+            selectedMainStat={curRule?.valuable_mains['sphere']}
+            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}
+          />
+        )}
+
         <RelicSubStatSelection
           selectedSubStats={curRule?.valuable_subs}
           onSelectionChange={handleSelectedSubStatChange}
