@@ -18,3 +18,10 @@ class RatingRule(BaseModel):
     valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
     fit_characters: list[str]
+
+
+class FormattedRatingRule(BaseModel):
+    valuable_mains: list[str]
+    valuable_subs: list[RatingRuleSubStats]
+    top_4_valuable_subs: list[RatingRuleSubStats]
+    fit_characters: list[str]

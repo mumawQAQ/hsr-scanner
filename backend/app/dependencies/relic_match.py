@@ -1,42 +1,12 @@
 import json
-import os
 from typing import Optional
 
 from rapidfuzz import process
 
+from app.constant import RELIC_STATS_MAPPING, RELIC_INNER_PARTS, RELIC_OUTER_PARTS, RELIC_SETS_FILE, \
+    RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
 from app.logging_config import logger
 from app.models.relic_info import RelicSubStat, RelicMainStat, RelicTitle
-
-RELIC_DATA_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'relic')
-RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
-RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
-RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
-RELIC_INNER_PARTS = ['sphere', 'rope']
-RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
-
-RELIC_STATS_MAPPING = {
-    "DEF": "防御",
-    "HP": "生命",
-    "HPPercentage": "生命百分比",
-    "ATK": "攻击",
-    "ATKPercentage": "攻击百分比",
-    "DEFPercentage": "防御百分比",
-    "SPD": "速度",
-    "CRITRate": "暴击率",
-    "CRITDMG": "暴击伤害",
-    "BreakEffect": "击破特攻",
-    "EffectHitRate": "效果命中",
-    "EffectRES": "效果抵抗",
-    "OutgoingHealingBoost": "治疗量加成",
-    "EnergyRegenerationRate": "能量回复效率",
-    "PhysicalDMGBoost": "物理属性伤害提高",
-    "FireDMGBoost": "火属性伤害提高",
-    "IceDMGBoost": "冰属性伤害提高",
-    "LightningDMGBoost": "雷属性伤害提高",
-    "WindDMGBoost": "风属性伤害提高",
-    "QuantumDMGBoost": "量子属性伤害提高",
-    "ImaginaryDMGBoost": "虚数属性伤害提高",
-}
 
 
 class RelicMatch:

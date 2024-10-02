@@ -24,6 +24,8 @@ class GlobalState:
         self.relic_info: Optional[RelicInfo] = None
         self.relic_img: Optional[RelicImg] = None
 
+        self.relic_rating = []
+
 
 global_state = GlobalState()
 

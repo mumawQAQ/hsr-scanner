@@ -212,7 +212,10 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
       ...curRule,
     };
 
-    if (!Object.keys(newRule.valuable_mains).includes(mainStatType)) {
+    console.log(newRule);
+
+    // if the main stat type is undefined, create a new array
+    if (!newRule.valuable_mains[mainStatType]) {
       newRule.valuable_mains[mainStatType] = [];
     }
 

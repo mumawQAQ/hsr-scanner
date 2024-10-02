@@ -58,6 +58,8 @@ fn start_backend(app: AppHandle) {
                     let reader = BufReader::new(stdout_reader);
                     for line in reader.lines() {
                         if let Ok(line) = line {
+                            //TODO: remove this, this is will only print to console in debug mode
+                            println!("{}", line);
                             stdout_app.emit_all("backend-log", line).expect("failed to send stdout");
                         }
                     }
