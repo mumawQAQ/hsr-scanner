@@ -210,5 +210,29 @@
   "Jade": {
     "name": "翡翠",
     "icon": "images/characters/img_52.png"
+  },
+  "Yunli": {
+    "name": "云璃",
+    "icon": "images/characters/img_53.png"
+  },
+  "March 7th: Hunt": {
+    "name": "三月七•巡猎",
+    "icon": "images/characters/img_54.png"
+  },
+  "Lingsha": {
+    "name": "灵砂",
+    "icon": "images/characters/img_55.png"
+  },
+  "Jiaoqiu": {
+    "name": "椒丘",
+    "icon": "images/characters/img_56.png"
+  },
+  "Feixiao": {
+    "name": "飞霄",
+    "icon": "images/characters/img_57.png"
+  },
+  "Moze": {
+    "name": "貊泽",
+    "icon": "images/characters/img_58.png"
   }
 }

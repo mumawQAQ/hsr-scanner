@@ -17,6 +17,7 @@ images/relics/30.png
 images/relics/25.png
 images/relics/11.png
 images/relics/24.png
+images/relics/37.png
 images/relics/26.png
 images/relics/4.png
 images/relics/6.png
@@ -30,6 +31,7 @@ images/relics/23.png
 images/relics/34.png
 images/relics/15.png
 images/relics/19.png
+images/relics/38.png
 images/relics/31.png
 images/relics/3.png
 images/relics/22.png

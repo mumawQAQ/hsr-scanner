@@ -362,5 +362,23 @@
       "sphere": "Talia's Nailscrap Town",
       "rope": "Talia's Exposed Electric Wire"
     }
+  },
+  "Lushaka, the Sunken Seas": {
+    "name": "沉陆海域露莎卡",
+    "icon": "images/relics/37.png",
+    "isInner": true,
+    "parts": {
+      "sphere": "Lushaka's Waterscape",
+      "rope": "Lushaka's Twinlanes"
+    }
+  },
+  "The Wondrous BananAmusement Park": {
+    "name": "奇想蕉乐园",
+    "icon": "images/relics/38.png",
+    "isInner": true,
+    "parts": {
+      "sphere": "BananAmusement Park's BananAxis Plaza",
+      "rope": "BananAmusement Park's Memetic Cables"
+    }
   }
 }

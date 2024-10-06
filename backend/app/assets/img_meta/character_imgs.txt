@@ -1,7 +1,9 @@
 images/characters/img_30.png
 images/characters/img_47.png
 images/characters/img_45.png
+images/characters/img_53.png
 images/characters/img_19.png
+images/characters/img_55.png
 images/characters/img_11.png
 images/characters/img_42.png
 images/characters/img_7.png
@@ -18,6 +20,7 @@ images/characters/img_27.png
 images/characters/img_13.png
 images/characters/img_38.png
 images/characters/img_5.png
+images/characters/img_58.png
 images/characters/img_49.png
 images/characters/img_40.png
 images/characters/img_12.png
@@ -26,6 +29,7 @@ images/characters/img_6.png
 images/characters/img_46.png
 images/characters/img_34.png
 images/characters/img_3.png
+images/characters/img_54.png
 images/characters/img_16.png
 images/characters/img_2.png
 images/characters/img_50.png
@@ -41,12 +45,14 @@ images/characters/img_8.png
 images/characters/img_10.png
 images/characters/img_32.png
 images/characters/img_4.png
+images/characters/img_57.png
 images/characters/img_9.png
 images/characters/img_22.png
 images/characters/img_1.png
 images/characters/img_39.png
 images/characters/img_35.png
 images/characters/img_20.png
+images/characters/img_56.png
 images/characters/img_51.png
 images/characters/img_31.png
 images/characters/img_28.png
