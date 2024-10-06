@@ -9,18 +9,33 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { listen } from '@tauri-apps/api/event';
 import toast from 'react-hot-toast';
 import { usePath } from '@/app/hooks/use-path-store';
+import { useJsonFile } from '@/app/apis/files';
+import { useRelicTemplateList } from '@/app/apis/relic-template';
 
 export default function Home() {
   const { onOpen } = useModal();
   const { setPath } = usePath();
-  const { requirementFulfilled, setBackendPort } = useBackendClientStore();
   const router = useRouter();
+  const relicSets = useJsonFile('relic/relic_sets.json');
+  const characters = useJsonFile('character/character_meta.json');
+  const relicTemplateList = useRelicTemplateList();
 
-  const { backendPort } = useBackendClientStore();
+  const { requirementFulfilled, setBackendPort, backendPort, apiInitialized } = useBackendClientStore();
+
 
   useEffect(() => {
     onOpen('install-requirement');
   }, []);
+
+  useEffect(() => {
+    if (apiInitialized) {
+      // refresh relic sets and characters
+      relicSets.refetch();
+      characters.refetch();
+
+      relicTemplateList.refetch();
+    }
+  }, [apiInitialized]);
 
   useEffect(() => {
     if (requirementFulfilled) {
@@ -52,7 +67,8 @@ export default function Home() {
       };
 
       // Call the async function and handle cleanup
-      let cleanupFunc = () => {}; // Initialize cleanup function
+      let cleanupFunc = () => {
+      }; // Initialize cleanup function
       startAndListen().then(cleanup => {
         if (cleanup) cleanupFunc = cleanup;
       });
@@ -70,6 +86,36 @@ export default function Home() {
       setPath('/dashboard/relic-panel');
     }
   }, [backendPort]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if Ctrl + Shift + I is pressed
+      if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        (event.key === 'I' || event.key === 'i')
+      ) {
+        event.preventDefault(); // Prevent default browser behavior if any
+
+        // Invoke the Rust command to open developer tools
+        invoke('open_browser_console')
+          .then(() => {
+            console.log('Developer tools opened successfully.');
+          })
+          .catch((error) => {
+            console.error('Failed to open developer tools:', error);
+          });
+      }
+    };
+
+    // Attach the event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <div className="flex h-screen items-center justify-center">

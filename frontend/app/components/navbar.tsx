@@ -4,10 +4,12 @@ import React from 'react';
 import { PathType, usePath } from '@/app/hooks/use-path-store';
 import { useRouter } from 'next/navigation';
 import { useNavbarStore } from '@/app/hooks/use-navbar-store';
+import useWindowStore from '@/app/hooks/use-window-store';
 
 export default function Navbar() {
   const router = useRouter();
   const { path, setPath } = usePath();
+  const { isLightMode } = useWindowStore();
   const { leftNavbar, rightNavbar, clearCustomNavbar } = useNavbarStore();
 
   const handlePathChange = (type: PathType) => {
@@ -15,6 +17,10 @@ export default function Navbar() {
     router.push(type);
     setPath(type);
   };
+
+  if (isLightMode) {
+    return null;
+  }
 
   return (
     <NextUINavbar>

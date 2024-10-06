@@ -25,6 +25,6 @@ export type RelicRuleMainStats = {
 };
 
 export type RelicRuleSubStats = {
-  sub_stat: string;
+  name: string;
   rating_scale: number;
 };

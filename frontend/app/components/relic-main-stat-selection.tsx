@@ -18,10 +18,10 @@ export type RelicMainStatSelectionProps = {
 };
 
 export default function RelicMainStatSelection({
-  type,
-  selectedMainStat,
-  onSelectionChange,
-}: RelicMainStatSelectionProps) {
+                                                 type,
+                                                 selectedMainStat,
+                                                 onSelectionChange,
+                                               }: RelicMainStatSelectionProps) {
   const getSelectionItems = () => {
     switch (type) {
       case 'head':
@@ -112,7 +112,7 @@ export default function RelicMainStatSelection({
         </Autocomplete>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {selectedMainStat?.map((mainStats, index) => (
           <Chip key={index} onClose={() => onSelectionChange(mainStats, 'remove')} variant="faded">
             <span>{selectionItems[mainStats]}</span>

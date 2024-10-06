@@ -72,5 +72,5 @@ export const RelicSubStatsType: {
   CRITDMG: '暴击伤害',
   BreakEffect: '击破特攻',
   EffectHitRate: '效果命中',
-  EffectRes: '效果抵抗',
+  EffectRES: '效果抵抗',
 };

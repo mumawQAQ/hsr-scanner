@@ -5,6 +5,7 @@ type WindowStore = {
   setScanningStatus: (status: boolean) => void;
 
   isLightMode: boolean;
+  setIsLightMode: (mode: boolean) => void;
 
   imgShow: boolean;
   setImageShow: (show: boolean) => void;
@@ -27,6 +28,7 @@ const useWindowStore = create<WindowStore>(set => ({
   },
 
   isLightMode: false, // Default light mode
+  setIsLightMode: mode => set({ isLightMode: mode }),
 
   imgShow: false, // Default image show
   setImageShow: show => set({ imgShow: show }),

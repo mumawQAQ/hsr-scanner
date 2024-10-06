@@ -35,12 +35,20 @@ async def websocket_endpoint(websocket: WebSocket,
                 await asyncio.sleep(0.1)
                 continue
 
-            current_message = global_state.relic_info.model_dump_json()
-            if manager.relic_info_last_sent_message != current_message:
-                manager.relic_info_last_sent_message = current_message
+            current_relic_info_message = global_state.relic_info.model_dump_json()
+            if manager.relic_info_last_sent_message != current_relic_info_message:
+                manager.relic_info_last_sent_message = current_relic_info_message
                 await manager.send_message(json.dumps({
                     'type': 'info',
-                    'message': current_message
+                    'message': current_relic_info_message
+                }))
+
+            current_relic_score_message = [score.model_dump_json() for score in global_state.relic_rating]
+            if manager.relic_score_last_sent_message != current_relic_score_message:
+                manager.relic_score_last_sent_message = current_relic_score_message
+                await manager.send_message(json.dumps({
+                    'type': 'score',
+                    'message': current_relic_score_message
                 }))
 
             await asyncio.sleep(0.1)

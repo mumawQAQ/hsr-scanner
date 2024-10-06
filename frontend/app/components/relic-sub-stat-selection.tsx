@@ -31,10 +31,10 @@ export default function RelicSubStatSelection({ selectedSubStats, onSelectionCha
             if (selectedKey === null) return;
             onSelectionChange(
               {
-                sub_stat: selectedKey,
+                name: selectedKey,
                 rating_scale: 0.05,
               },
-              'add'
+              'add',
             );
           }}
         >
@@ -49,7 +49,7 @@ export default function RelicSubStatSelection({ selectedSubStats, onSelectionCha
           <div key={index} className="mb-2 flex items-start rounded-xl bg-white p-4 shadow">
             <div className="flex-1">
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-semibold text-gray-800">{selectionItems[subStat.sub_stat]}</span>
+                <span className="text-sm font-semibold text-gray-800">{selectionItems[subStat.name]}</span>
                 <X
                   size={20}
                   className="cursor-pointer text-gray-500 hover:text-gray-700"
@@ -76,7 +76,7 @@ export default function RelicSubStatSelection({ selectedSubStats, onSelectionCha
                         ...subStat,
                         rating_scale: newValue,
                       },
-                      'update'
+                      'update',
                     );
                   }}
                   className="min-w-20 flex-1"

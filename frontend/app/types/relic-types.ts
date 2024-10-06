@@ -27,3 +27,9 @@ export type RelicImage = {
   main_stat_img: string;
   sub_stat_img: string;
 };
+
+export type RelicScore = {
+  score: number;
+  characters: string[];
+  type: string;
+}

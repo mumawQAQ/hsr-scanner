@@ -8,6 +8,7 @@ class ConnectionManager:
         self.active_connections: List[WebSocket] = []
         self.relic_info_last_sent_message = ''
         self.relic_img_last_sent_message = ''
+        self.relic_score_last_sent_message = ''
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()

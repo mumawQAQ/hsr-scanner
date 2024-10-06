@@ -3,14 +3,74 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.dependencies.rating_template import RatingTemplate as RatingTemplateDependency, get_rating_template
+from app.dependencies.template_en_decode import TemplateEnDecoder, get_template_en_decoder
 from app.models.database.rating_rule import RatingRule as RatingRuleDBModel
 from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
-from app.models.requests.rating_rule import CreateRatingRule, UpdateRatingRule
+from app.models.requests.rating_rule import CreateRatingRule, UpdateRatingRule, ImportRatingRule
 from app.models.requests.rating_template import CreateRatingTemplate
 from app.models.response.rating_rule import RatingRule as RatingRuleResponse, RatingRuleIds as RatingRuleIdsResponse
 from app.models.response.rating_template import RatingTemplate as RatingTemplateResponse
 
 router = APIRouter()
+
+
+@router.post("/rating-template/import")
+def import_rating_template(
+        request: ImportRatingRule,
+        rating_template_dependency: Annotated[
+            RatingTemplateDependency, Depends(get_rating_template)],
+        rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
+):
+    template, rules = rating_template_en_decoder.decode(request.qr_code)
+
+    import_template_result = rating_template_dependency.import_template(template, rules)
+
+    if not import_template_result:
+        return {
+            'status': 'failed',
+            'message': 'Failed to import template'
+        }
+
+    return {
+        'status': 'success',
+        'data': 'Template imported'
+    }
+
+
+@router.get("/rating-template/export/{template_id}")
+def export_rating_template(
+        template_id: str,
+        rating_template_dependency: Annotated[
+            RatingTemplateDependency, Depends(get_rating_template)],
+        rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
+):
+    # get the template from the database
+    db_template_rules = rating_template_dependency.get_template_rules(template_id)
+    db_template = rating_template_dependency.get_template(template_id)
+
+    if db_template is None:
+        return {
+            'status': 'failed',
+            'message': 'Template not found'
+        }
+
+    if db_template_rules is None:
+        return {
+            'status': 'failed',
+            'message': 'Rules not found / No rules to export'
+        }
+
+    # convert the template to pydantic model
+    template = RatingTemplateResponse.model_validate(db_template)
+    rules = [RatingRuleResponse.model_validate(rule) for rule in db_template_rules]
+
+    # encode the template and rules
+    encoded_template = rating_template_en_decoder.encode(template, rules)
+
+    return {
+        'status': 'success',
+        'data': encoded_template
+    }
 
 
 @router.patch("/rating-template/stop-use/{template_id}")

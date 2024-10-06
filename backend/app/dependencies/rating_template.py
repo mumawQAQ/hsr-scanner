@@ -11,6 +11,31 @@ class RatingTemplate:
         self.db = database.sessionLocal()
         self.global_state = gs
 
+        # check if there is a template in use
+        in_use_template = self.db.query(RatingTemplateDBModel).filter(
+            RatingTemplateDBModel.in_use == True).first()
+
+        if in_use_template:
+            # Query all the rules associated with the template
+            rules = self.db.query(RatingRule).filter(
+                RatingRule.template_id == in_use_template.id).all()
+
+            self.global_state.rules_in_use = rules
+            self.global_state.rules_in_use_dirty = True
+
+    def import_template(self, new_template: RatingTemplateDBModel, rules: list[RatingRule]):
+        try:
+            self.db.add(new_template)
+            for rule in rules:
+                self.db.add(rule)
+            self.db.commit()
+
+            return True
+        except Exception as e:
+            logger.error(f"Failed to import template: {e}")
+            self.db.rollback()
+            return False
+
     def stop_use_template(self, template_id: str):
         try:
             # Find any template that is currently in use
@@ -70,6 +95,10 @@ class RatingTemplate:
 
     def get_template_list(self):
         return self.db.query(RatingTemplateDBModel).all()
+
+    def get_template(self, template_id: str) -> RatingTemplateDBModel:
+        return self.db.query(RatingTemplateDBModel).filter(
+            RatingTemplateDBModel.id == template_id).first()
 
     def create_template(self, new_template: RatingTemplateDBModel):
         try:
@@ -158,6 +187,10 @@ class RatingTemplate:
     def get_template_rule(self, rule_id: str):
         return self.db.query(RatingRule).filter(
             RatingRule.id == rule_id).first()
+
+    def get_template_rules(self, template_id: str) -> list[RatingRule]:
+        return self.db.query(RatingRule).filter(
+            RatingRule.template_id == template_id).all()
 
 
 rating_template = RatingTemplate(global_state)

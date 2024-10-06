@@ -8,11 +8,13 @@ import msgpack
 
 from app.constant import RELIC_SETS_FILE, CHARACTERS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
 from app.logging_config import logger
-from app.models.common.rating_rule import RatingRuleSubStats
+from app.models.database.rating_rule import RatingRule as RatingRuleDBModel
+from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
 from app.models.response.rating_rule import RatingRule
 from app.models.response.rating_template import RatingTemplate
 
 
+# TODO: this can optimize by using a more efficient encoding method
 class TemplateEnDecoder:
     def __init__(self):
         self.mappings = {
@@ -56,14 +58,14 @@ class TemplateEnDecoder:
             'd': [self.mappings['character']['forward'][char] for char in rule.fit_characters]
         }
 
-    def decode(self, data_url: str) -> Tuple[RatingTemplate, List[RatingRule]]:
+    def decode(self, data_url: str) -> Tuple[RatingTemplateDBModel, List[RatingRuleDBModel]]:
         try:
             compressed = base64.urlsafe_b64decode(data_url)
             decompressed = lzma.decompress(compressed)
             data = msgpack.unpackb(decompressed, raw=False)
 
             template_id = str(uuid.uuid4())
-            template = RatingTemplate(
+            template = RatingTemplateDBModel(
                 id=template_id,
                 name=data['n'],
                 description=data['d'],
@@ -78,14 +80,14 @@ class TemplateEnDecoder:
             raise
 
     def _decode_rule(self, rule_data: Dict, template_id: str) -> RatingRule:
-        return RatingRule(
+        return RatingRuleDBModel(
             id=str(uuid.uuid4()),
             template_id=template_id,
             set_names=[self.mappings['relic_set']['backward'][id] for id in rule_data['a']],
             valuable_mains={k: [self.mappings['relic_main_stat']['backward'][id] for id in v] for k, v in
                             rule_data['b'].items()},
             valuable_subs=[
-                RatingRuleSubStats(name=self.mappings['relic_sub_stat']['backward'][sub[0]], rating_scale=sub[1]) for
+                {"name": self.mappings['relic_sub_stat']['backward'][sub[0]], "rating_scale": sub[1]} for
                 sub in rule_data['c']],
             fit_characters=[self.mappings['character']['backward'][id] for id in rule_data['d']]
         )

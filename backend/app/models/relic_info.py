@@ -30,3 +30,9 @@ class RelicImg(BaseModel):
     title_img: str
     main_stat_img: str
     sub_stat_img: str
+
+
+class RelicScore(BaseModel):
+    score: float
+    characters: list[str]
+    type: str

@@ -2,6 +2,8 @@
 import InstallRequirementModal from '@/app/components/modal/install-requirement-modal';
 import SelectTemplateModal from '@/app/components/modal/select-template-modal';
 import CreateTemplateModal from '@/app/components/modal/create-template-modal';
+import { ExportTemplateModal } from '@/app/components/modal/export-template-modal';
+import { ImportTemplateModal } from '@/app/components/modal/import-template-modal';
 
 export const ModalProvider = () => {
   return (
@@ -9,6 +11,8 @@ export const ModalProvider = () => {
       <InstallRequirementModal />
       <SelectTemplateModal />
       <CreateTemplateModal />
+      <ExportTemplateModal />
+      <ImportTemplateModal />
     </>
   );
 };

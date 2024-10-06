@@ -7,6 +7,7 @@ from app.constant import RELIC_SETS_FILE, RELIC_STATS_MAPPING, Relic_Sub_Stats_T
 from app.dependencies.global_state import GlobalState
 from app.logging_config import logger
 from app.models.common.rating_rule import RatingRuleSubStats
+from app.models.relic_info import RelicScore
 from app.models.response.rating_rule import RatingRule, FormattedRatingRule
 
 
@@ -64,7 +65,7 @@ class RelicRating:
 
                     chinese_valuable_mains = [RELIC_STATS_MAPPING[main_stat_key] for main_stat_key in valuable_mains]
                     chinese_valuable_subs = [RatingRuleSubStats(
-                        sub_stat=RELIC_STATS_MAPPING[sub_stat.sub_stat],
+                        name=RELIC_STATS_MAPPING[sub_stat.name],
                         rating_scale=sub_stat.rating_scale
                     ) for sub_stat in rule.valuable_subs]
                     chinese_top_4_valuable_subs = sorted(chinese_valuable_subs, reverse=True)[:4]
@@ -84,10 +85,12 @@ class RelicRating:
         logger.info(f"遗器评分模板格式化完成,{self.formatted_rating_rules}")
         self.global_state.rules_in_use_dirty = False
 
-    def calculate_potential_rating(self):
+    def calculate_score(self):
         # get the rules base on the relic info
-        rules = self.formatted_rating_rules[self.global_state.relic_info.main_stat.name]
+        rules = self.formatted_rating_rules[self.global_state.relic_info.title.title]
         new_rating = []
+
+        score_type = "potential" if self.global_state.relic_info.main_stat.level < 15 else "actual"
 
         for rule in rules:
             if self.global_state.relic_info.main_stat.name not in rule.valuable_mains:
@@ -110,10 +113,14 @@ class RelicRating:
 
             # calculate the base potential score
             for sub_stat in self.global_state.relic_info.sub_stats:
-                idx = rule.valuable_subs.index(sub_stat.sub_stat)
-                if idx < 0:
+                result = None
+                for valuable_sub in rule.valuable_subs:
+                    if valuable_sub.name == sub_stat.name:
+                        result = valuable_sub
+                        break
+                if not result:
                     continue
-                valuable_sub_rating_scale = rule.valuable_subs[idx].rating_scale
+                valuable_sub_rating_scale = result.rating_scale
 
                 valuable_sub_count += 1
                 valuable_sub_sum_rating_scale += valuable_sub_rating_scale
@@ -135,7 +142,7 @@ class RelicRating:
             # calculate the possibility of non yet existed sub stats to be valuable
             if len(self.global_state.relic_info.sub_stats) < 4:
                 remain_valuable_subs = [sub_stat for sub_stat in rule.valuable_subs if
-                                        sub_stat.sub_stat not in self.global_state.relic_info.sub_stats]
+                                        sub_stat.name not in self.global_state.relic_info.sub_stats]
                 cur_total_acquired_scale = Relic_Sub_Stats_Total_Acquire_Scale
                 cur_total_possible_acquired_scale = sum([
                     sub_stat.rating_scale * Relic_Sub_Stats_Acquire_Scale[sub_stat.name] for sub_stat in
@@ -156,8 +163,7 @@ class RelicRating:
             actual_total = actual_base_potential_score + actual_exist_remaining_potential_score + actual_non_exist_remaining_potential_score
 
             score = actual_total / ideal_total
-            logger.error(f"遗器潜力分计算完成: {score}")
-            logger.error(f"遗器适用角色: {rule.fit_characters}")
+            new_rating.append(RelicScore(score=score, characters=rule.fit_characters, type=score_type))
 
         self.global_state.relic_rating = new_rating
 
@@ -167,16 +173,13 @@ class RelicRating:
     async def get_relic_rating(self):
         logger.info("开始获取遗器评分")
         while True:
+            if not self.global_state.scan_state:
+                await asyncio.sleep(0.1)
+                continue
             try:
                 self.format_rating_template()
-
-                if self.global_state.relic_info is not None:
-                    if self.global_state.relic_info.main_stat.level < 15:
-                        # if the relic info level is less than 15, calculate the potential rating
-                        self.calculate_potential_rating()
-                    else:
-                        # if the relic info level is 15, calculate the actual rating
-                        pass
+                if self.global_state.relic_info is not None and self.formatted_rating_rules:
+                    self.calculate_score()
                 await asyncio.sleep(0.1)
             except Exception as e:
                 logger.error(f"获取遗器评分失败: {e}")

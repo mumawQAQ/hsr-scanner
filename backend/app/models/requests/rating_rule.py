@@ -14,3 +14,7 @@ class UpdateRatingRule(BaseModel):
     valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
     fit_characters: list[str]
+
+
+class ImportRatingRule(BaseModel):
+    qr_code: str

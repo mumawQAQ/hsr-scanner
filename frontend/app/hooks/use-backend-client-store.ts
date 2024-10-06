@@ -1,11 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
-import { RelicSubStats } from '../../../src/type/types';
+import { RelicScore, RelicSubStats } from '@/app/types/relic-types';
 
 type UseBackendClientStore = {
   requirementFulfilled: boolean;
   setRequirementFulfilled: (fulfilled: boolean) => void;
+
+  apiInitialized: boolean;
 
   backendPort: number | null;
   setBackendPort: (port: number) => void;
@@ -18,6 +20,7 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
   setRequirementFulfilled: fulfilled => {
     set({ requirementFulfilled: fulfilled });
   },
+  apiInitialized: false,
 
   backendPort: null,
   setBackendPort: port => {
@@ -33,12 +36,16 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
     });
 
     set({ api });
+    set({ apiInitialized: true });
+
 
     // initialize the websocket
     const ws = new WebSocket(`ws://localhost:${port}/relic-info`);
-    ws.onopen = () => {};
+    ws.onopen = () => {
+    };
 
-    ws.onclose = () => {};
+    ws.onclose = () => {
+    };
 
     ws.onerror = error => {
       console.error('WebSocket error:', error);
@@ -49,10 +56,10 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
       const data = JSON.parse(event.data);
 
       // check if the data is error
-      if (data.type == 'error') {
+      if (data.type === 'error') {
         useRelicStore.setState({ relicError: data.message });
         useRelicStore.setState({ relicInfo: null });
-      } else if (data.type == 'info') {
+      } else if (data.type === 'info') {
         const message = JSON.parse(data.message);
         const relicInfo = {
           title: {
@@ -73,7 +80,7 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
         };
         useRelicStore.setState({ relicInfo: relicInfo });
         useRelicStore.setState({ relicError: null });
-      } else if (data.type == 'img') {
+      } else if (data.type === 'img') {
         const message = JSON.parse(data.message);
         const relicImage = {
           title_img: message.title_img,
@@ -81,6 +88,26 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
           sub_stat_img: message.sub_stat_img,
         };
         useRelicStore.setState({ relicImage: relicImage });
+      } else if (data.type === 'score') {
+        let scores: RelicScore[] = data.message.map((score: string) => {
+          const formattedScore = JSON.parse(score);
+          return {
+            score: formattedScore.score,
+            characters: formattedScore.characters,
+            type: formattedScore.type,
+          };
+        });
+        scores = scores.sort((a, b) => {
+          if (!a.score) {
+            return 1;
+          }
+          if (!b.score) {
+            return -1;
+          }
+          return b.score - a.score;
+        });
+
+        useRelicStore.setState({ relicScores: scores });
       }
     };
 

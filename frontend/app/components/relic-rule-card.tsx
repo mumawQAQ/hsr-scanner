@@ -143,7 +143,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
             };
           });
         },
-      }
+      },
     );
   };
 
@@ -202,7 +202,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
   const handleSelectedMainStatChange = (
     mainStat: string | null,
     mainStatType: RelicMainStatsType,
-    type: 'add' | 'remove'
+    type: 'add' | 'remove',
   ) => {
     if (!mainStat || !curRule) {
       return;
@@ -243,7 +243,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
     };
 
     if (type === 'add') {
-      const index = newRule.valuable_subs.findIndex(stat => stat.sub_stat === subStat.sub_stat);
+      const index = newRule.valuable_subs.findIndex(stat => stat.name === subStat.name);
       if (index !== -1) {
         return;
       }
@@ -251,7 +251,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
     } else if (type === 'remove') {
       newRule.valuable_subs = newRule.valuable_subs.filter(stat => stat !== subStat);
     } else {
-      const index = newRule.valuable_subs.findIndex(stat => stat.sub_stat === subStat.sub_stat);
+      const index = newRule.valuable_subs.findIndex(stat => stat.name === subStat.name);
       if (index === -1) {
         return;
       }

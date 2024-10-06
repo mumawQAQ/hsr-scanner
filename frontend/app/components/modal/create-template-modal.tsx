@@ -53,7 +53,7 @@ const CreateTemplateModal = () => {
         onError: e => {
           toast.error(`创建模板失败, 请重试, ${e.message}`);
         },
-      }
+      },
     );
   };
 

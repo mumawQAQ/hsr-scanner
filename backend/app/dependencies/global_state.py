@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.models.relic_info import RelicInfo, RelicImg
+from app.models.relic_info import RelicInfo, RelicImg, RelicScore
 from app.models.yolo_box import YoloBox
 
 
@@ -24,7 +24,7 @@ class GlobalState:
         self.relic_info: Optional[RelicInfo] = None
         self.relic_img: Optional[RelicImg] = None
 
-        self.relic_rating = []
+        self.relic_rating: list[RelicScore] = []
 
 
 global_state = GlobalState()

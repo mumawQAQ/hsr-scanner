@@ -1,9 +1,15 @@
 import { create } from 'zustand';
 
-export type ModalType = 'install-requirement' | 'select-template' | 'create-template';
+export type ModalType =
+  'install-requirement'
+  | 'select-template'
+  | 'create-template'
+  | 'export-template'
+  | 'import-template';
 
 interface ModalData {
   updateMessage?: string;
+  qrCodeData?: string;
 }
 
 interface ModalStore {

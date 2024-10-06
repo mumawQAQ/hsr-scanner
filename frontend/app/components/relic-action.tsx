@@ -1,11 +1,11 @@
 'use client';
 import { Switch } from '@nextui-org/switch';
-import { FileLock, Image, ListEnd, PanelTop, ScanEye } from 'lucide-react';
+import { FileLock, Image, ListEnd, PanelTop, PictureInPicture, ScanEye } from 'lucide-react';
 import { Button } from '@nextui-org/button';
 import useWindowStore from '@/app/hooks/use-window-store';
 import { useModal } from '@/app/hooks/use-modal-store';
 import { useUpdateFullLogState, useUpdateScanState } from '@/app/apis/state';
-import { appWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/tauri';
 
 export default function RelicAction() {
   const {
@@ -19,6 +19,8 @@ export default function RelicAction() {
     setFullLog,
     topWindow,
     setTopWindow,
+    isLightMode,
+    setIsLightMode,
   } = useWindowStore();
   const { onOpen } = useModal();
   const { mutate: updateFullLogState } = useUpdateFullLogState();
@@ -46,17 +48,48 @@ export default function RelicAction() {
 
   const handleSetTopWindow = async (status: boolean) => {
     try {
-      await appWindow.setAlwaysOnTop(status);
+      await invoke('set_always_on_top', { status });
       setTopWindow(status);
     } catch (error) {
       console.error('Failed to set window top status:', error);
     }
   };
 
+  const handleSetLightMode = async (mode: boolean) => {
+    try {
+      await invoke('set_window_size', { status: mode });
+      setIsLightMode(mode);
+    } catch (error) {
+      console.error('Failed to set light mode:', error);
+    }
+  };
+
+  if (isLightMode) {
+    return (<div className="flex flex-row gap-4">
+      <Switch size="sm" color="success" thumbIcon={<PanelTop />} isSelected={topWindow}
+              onValueChange={handleSetTopWindow}>
+        窗口置顶
+      </Switch>
+      <Switch size="sm" color="success" thumbIcon={<PictureInPicture />} isSelected={isLightMode}
+              onValueChange={handleSetLightMode}>
+        小屏模式
+      </Switch>
+      <Switch size="sm" color="success" thumbIcon={<ScanEye />} isSelected={scanningStatus}
+              onValueChange={handleScanStateChange}>
+        开始扫描
+      </Switch>
+    </div>);
+  }
+
+
   return (
     <div className="flex flex-col gap-4">
       <Switch color="success" thumbIcon={<PanelTop />} isSelected={topWindow} onValueChange={handleSetTopWindow}>
         窗口置顶
+      </Switch>
+      <Switch color="success" thumbIcon={<PictureInPicture />} isSelected={isLightMode}
+              onValueChange={handleSetLightMode}>
+        小屏模式
       </Switch>
       <Switch color="success" thumbIcon={<ScanEye />} isSelected={scanningStatus} onValueChange={handleScanStateChange}>
         开始扫描

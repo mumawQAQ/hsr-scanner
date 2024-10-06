@@ -39,7 +39,7 @@ const RatingTemplateActionRow = ({ relicTemplate }: { relicTemplate: RelicTempla
       <div
         className={cn(
           'my-2 flex cursor-pointer flex-row items-center justify-between rounded p-2',
-          relicTemplate.in_use && 'border-1 border-gray-700/50 shadow-md'
+          relicTemplate.in_use && 'border-1 border-gray-700/50 shadow-md',
         )}
         onClick={() => {
           console.log('click');
@@ -68,6 +68,9 @@ const SelectTemplateModal = () => {
 
   const handleCreateTemplate = () => {
     onOpen('create-template');
+  };
+  const handleImportTemplate = () => {
+    onOpen('import-template');
   };
 
   const renderTemplateList = () => {
@@ -99,7 +102,7 @@ const SelectTemplateModal = () => {
               <Button size="md" variant="bordered" color="default" onPress={handleCreateTemplate}>
                 创建模板
               </Button>
-              <Button size="md" variant="bordered" color="default">
+              <Button size="md" variant="bordered" color="default" onPress={handleImportTemplate}>
                 导入模板
               </Button>
             </ModalFooter>
