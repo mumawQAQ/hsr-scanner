@@ -3,6 +3,8 @@ import os
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 
+CHARACTERS_FILE = os.path.join(os.path.dirname(__file__), 'assets', 'character', 'character_meta.json')
+
 RELIC_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'relic')
 RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
 RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
