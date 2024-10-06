@@ -26,7 +26,7 @@ export const useJsonFile = (filePath: string) => {
         throw error;
       }
     },
-    staleTime: 5 * 60 * 1000,
+    enabled: !!api,
   });
 };
 
@@ -54,6 +54,6 @@ export const useImage = (imagePath: string) => {
         throw error;
       }
     },
-    staleTime: 5 * 60 * 1000,
+    enabled: !!api,
   });
 };
