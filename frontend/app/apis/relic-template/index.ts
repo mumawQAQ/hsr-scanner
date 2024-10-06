@@ -265,3 +265,52 @@ export const useUpdateRelicRule = () => {
     },
   });
 };
+
+export const useExportTemplate = () => {
+  const { api } = useBackendClientStore();
+  return useMutation({
+    mutationFn: async (templateId: string) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/export/${templateId}`;
+        const { data } = await api.get<ApiResponse<string>>(url);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+        return data.data;
+      } catch (error) {
+        console.error('Failed to export relic template:', error);
+        throw error;
+      }
+    },
+  });
+};
+
+export const useImportTemplate = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (qrCodeData: string) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const url = `/rating-template/import`;
+        const { data } = await api.post<ApiResponse<null>>(url, { qr_code: qrCodeData });
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error('Failed to import relic template:', error);
+        throw error;
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['relic-template-list'] });
+    },
+  });
+};
