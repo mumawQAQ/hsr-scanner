@@ -1,7 +1,10 @@
 import base64
 import json
+import lzma
 import uuid
-import zlib
+from typing import Dict, List, Tuple
+
+import msgpack
 
 from app.constant import RELIC_SETS_FILE, CHARACTERS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
 from app.logging_config import logger
@@ -19,7 +22,7 @@ class TemplateEnDecoder:
             'relic_sub_stat': self._load_mapping(RELIC_SUB_STATS_FILE)
         }
 
-    def _load_mapping(self, file_path):
+    def _load_mapping(self, file_path: str) -> Dict[str, Dict[str, int]]:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -30,87 +33,63 @@ class TemplateEnDecoder:
             logger.error(f"Failed to initialize export tool file: {e}")
             raise e
 
-    def encode(self, template: RatingTemplate, rules: list[RatingRule]):
+    def encode(self, template: RatingTemplate, rules: List[RatingRule]) -> str:
         result = {
-            'name': template.name,
-            'description': template.description,
-            'author': template.author,
-            'rules': [self._encode_rule(rule) for rule in rules]
+            'n': template.name,
+            'd': template.description,
+            'a': template.author,
+            'r': [self._encode_rule(rule) for rule in rules]
         }
 
-        json_str = json.dumps(result, separators=(',', ':'))
-        compressed = zlib.compress(json_str.encode('utf-8'), level=9)
-
-        # print the size
-        print(f"Size of the compressed data: {len(compressed)} bytes")
+        packed = msgpack.packb(result, use_bin_type=True)
+        compressed = lzma.compress(packed, preset=9)
 
         return base64.urlsafe_b64encode(compressed).decode('utf-8')
 
-    def _encode_rule(self, rule: RatingRule):
+    def _encode_rule(self, rule: RatingRule) -> Dict:
         return {
-            # set_names -> a
             'a': [self.mappings['relic_set']['forward'][name] for name in rule.set_names],
-            # valuable_mains -> b
-            'b': {
-                key: [self.mappings['relic_main_stat']['forward'][main] for main in mains]
-                for key, mains in rule.valuable_mains.items()
-                if mains
-            },
-            # valuable_subs -> c
-            'c': [
-                [self.mappings['relic_sub_stat']['forward'][sub.name], sub.rating_scale]
-                for sub in rule.valuable_subs
-            ],
-            # fit_characters -> d
+            'b': {k: [self.mappings['relic_main_stat']['forward'][m] for m in v] for k, v in rule.valuable_mains.items()
+                  if v},
+            'c': [[self.mappings['relic_sub_stat']['forward'][sub.name], sub.rating_scale] for sub in
+                  rule.valuable_subs],
             'd': [self.mappings['character']['forward'][char] for char in rule.fit_characters]
         }
 
-    def decode(self, data_url: str):
+    def decode(self, data_url: str) -> Tuple[RatingTemplate, List[RatingRule]]:
         try:
-            # Decode base64
             compressed = base64.urlsafe_b64decode(data_url)
+            decompressed = lzma.decompress(compressed)
+            data = msgpack.unpackb(decompressed, raw=False)
 
-            # Decompress
-            json_str = zlib.decompress(compressed).decode('utf-8')
-
-            # Parse JSON
-            data = json.loads(json_str)
-
-            # generate a new uuid for the template
             template_id = str(uuid.uuid4())
-
-            # Convert the data to RatingTemplate and RatingRule objects
             template = RatingTemplate(
                 id=template_id,
-                name=data['name'],
-                description=data['description'],
-                author=data['author'],
+                name=data['n'],
+                description=data['d'],
+                author=data['a'],
                 in_use=False
             )
 
-            rules = [self._decode_rule(rule_data, template_id) for rule_data in data['rules']]
-
+            rules = [self._decode_rule(rule_data, template_id) for rule_data in data['r']]
             return template, rules
         except Exception as e:
             logger.error(f"Error decoding template: {e}")
             raise
 
-    def _decode_rule(self, rule_data, template_id):
+    def _decode_rule(self, rule_data: Dict, template_id: str) -> RatingRule:
         return RatingRule(
             id=str(uuid.uuid4()),
             template_id=template_id,
             set_names=[self.mappings['relic_set']['backward'][id] for id in rule_data['a']],
-            valuable_mains={
-                key: [self.mappings['relic_main_stat']['backward'][id] for id in mains]
-                for key, mains in rule_data['b'].items()
-            },
+            valuable_mains={k: [self.mappings['relic_main_stat']['backward'][id] for id in v] for k, v in
+                            rule_data['b'].items()},
             valuable_subs=[
-                RatingRuleSubStats(name=self.mappings['relic_sub_stat']['backward'][sub[0]], rating_scale=sub[1])
-                for sub in rule_data['c']
-            ],
+                RatingRuleSubStats(name=self.mappings['relic_sub_stat']['backward'][sub[0]], rating_scale=sub[1]) for
+                sub in rule_data['c']],
             fit_characters=[self.mappings['character']['backward'][id] for id in rule_data['d']]
         )
 
 
-def get_template_en_decoder():
+def get_template_en_decoder() -> TemplateEnDecoder:
     return TemplateEnDecoder()
