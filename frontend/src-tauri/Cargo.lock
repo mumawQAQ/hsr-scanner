@@ -2670,6 +2670,7 @@ dependencies = [
  "uuid",
  "webkit2gtk",
  "webview2-com",
+ "win7-notifications",
  "windows 0.39.0",
 ]
 
@@ -3322,6 +3323,16 @@ dependencies = [
  "windows 0.39.0",
  "windows-bindgen",
  "windows-metadata",
+]
+
+[[package]]
+name = "win7-notifications"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63b4745047a00800bd8f2b8fb4b0eb6f7d96822084127f0ff7d68d07f692fe38"
+dependencies = [
+ "once_cell",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
