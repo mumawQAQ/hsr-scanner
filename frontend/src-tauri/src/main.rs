@@ -170,6 +170,31 @@ fn install_python_requirements(app: AppHandle) {
     });
 }
 
+#[tauri::command]
+fn set_always_on_top(window: tauri::Window, status: bool) -> Result<(), String> {
+    window
+        .set_always_on_top(status)
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn open_browser_console(window: tauri::Window) -> Result<(), String> {
+    window.open_devtools();
+    Ok(())
+}
+
+#[tauri::command]
+fn set_window_size(window: tauri::Window, status: bool) -> Result<(), String> {
+    let size = if status {
+        tauri::LogicalSize::new(400, 300)
+    } else {
+        tauri::LogicalSize::new(800, 600)
+    };
+
+    window.set_size(size).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 
 fn main() {
     tauri::Builder::default()
@@ -191,9 +216,7 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![install_python_requirements, start_backend])
+        .invoke_handler(tauri::generate_handler![install_python_requirements, start_backend, set_always_on_top, open_browser_console, set_window_size])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
-
