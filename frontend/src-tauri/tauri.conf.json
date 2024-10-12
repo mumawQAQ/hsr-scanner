@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "hsr-scanner",
-    "version": "4.0.0"
+    "version": "4.0.1"
   },
   "tauri": {
     "allowlist": {
@@ -46,7 +46,10 @@
         "../../tools/**/*"
       ],
       "shortDescription": "",
-      "targets": "all",
+      "targets": [
+        "nsis",
+        "updater"
+      ],
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
@@ -60,7 +63,15 @@
       "csp": null
     },
     "updater": {
-      "active": false
+      "active": true,
+      "windows": {
+        "installMode": "passive"
+      },
+      "endpoints": [
+        "https://mumas.org/updater/latest.json"
+      ],
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDhCMDI4MjBBQkE1RkIzOUUKUldTZXMxKzZDb0lDaTdnd0J4SlFUZ0NyV2dVK3BsVWNJSW1GOENrZlZxK0pVb2VpNW5lbHkwa0kK"
     },
     "windows": [
       {
