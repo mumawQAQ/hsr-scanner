@@ -4,6 +4,9 @@ import useRelicStore from '@/app/hooks/use-relic-store';
 import { RelicScore, RelicSubStats } from '@/app/types/relic-types';
 
 type UseBackendClientStore = {
+  isLatestVersion: boolean;
+  setLatestVersion: (latest: boolean) => void;
+
   requirementFulfilled: boolean;
   setRequirementFulfilled: (fulfilled: boolean) => void;
 
@@ -16,6 +19,11 @@ type UseBackendClientStore = {
 };
 
 const useBackendClientStore = create<UseBackendClientStore>(set => ({
+  isLatestVersion: false,
+  setLatestVersion: latest => {
+    set({ isLatestVersion: latest });
+  },
+
   requirementFulfilled: false,
   setRequirementFulfilled: fulfilled => {
     set({ requirementFulfilled: fulfilled });

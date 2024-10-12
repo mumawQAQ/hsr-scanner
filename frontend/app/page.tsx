@@ -11,6 +11,8 @@ import toast from 'react-hot-toast';
 import { usePath } from '@/app/hooks/use-path-store';
 import { useJsonFile } from '@/app/apis/files';
 import { useRelicTemplateList } from '@/app/apis/relic-template';
+import { checkUpdate } from '@tauri-apps/api/updater';
+
 
 export default function Home() {
   const { onOpen } = useModal();
@@ -20,12 +22,43 @@ export default function Home() {
   const characters = useJsonFile('character/character_meta.json');
   const relicTemplateList = useRelicTemplateList();
 
-  const { requirementFulfilled, setBackendPort, backendPort, apiInitialized } = useBackendClientStore();
+  const {
+    requirementFulfilled,
+    setLatestVersion,
+    setBackendPort,
+    backendPort,
+    apiInitialized,
+    isLatestVersion,
+  } = useBackendClientStore();
+
+  useEffect(() => {
+    const updater = async () => {
+      try {
+        const { shouldUpdate } = await checkUpdate();
+        console.log('shouldUpdate:', shouldUpdate);
+        if (shouldUpdate) {
+          onOpen('updater');
+        } else {
+          invoke('post_backup').catch((e) => {
+            console.error('Failed to restore backup file:', e);
+          });
+          setLatestVersion(true);
+        }
+      } catch (error) {
+        toast.error(`检查更新时出错，跳过更新${error}`);
+        setLatestVersion(true);
+      }
+    };
+    updater();
+
+  }, []);
 
 
   useEffect(() => {
-    onOpen('install-requirement');
-  }, []);
+    if (!requirementFulfilled && isLatestVersion) {
+      onOpen('install-requirement');
+    }
+  }, [requirementFulfilled, isLatestVersion]);
 
   useEffect(() => {
     if (apiInitialized) {

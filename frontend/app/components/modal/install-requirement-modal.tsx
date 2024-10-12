@@ -10,12 +10,13 @@ import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 
 const InstallRequirementModal = () => {
   const { isOpen, onClose, type } = useModal();
-  const { setRequirementFulfilled } = useBackendClientStore();
+  const { setRequirementFulfilled, isLatestVersion } = useBackendClientStore();
   const [logQueue, setLogQueue] = useState<string[]>([]);
 
   const isModalOpen = isOpen && type === 'install-requirement';
 
   useEffect(() => {
+    if (!isLatestVersion) return;
     // Start the backend and set up listeners
     const startAndListen = async () => {
       try {
@@ -61,7 +62,8 @@ const InstallRequirementModal = () => {
     };
 
     // Call the async function and handle cleanup
-    let cleanupFunc = () => {}; // Initialize cleanup function
+    let cleanupFunc = () => {
+    }; // Initialize cleanup function
     startAndListen().then(cleanup => {
       if (cleanup) cleanupFunc = cleanup;
     });
@@ -70,7 +72,7 @@ const InstallRequirementModal = () => {
     return () => {
       cleanupFunc();
     };
-  }, []);
+  }, [isLatestVersion]);
 
   return (
     <Modal isOpen={isModalOpen} size="xl">

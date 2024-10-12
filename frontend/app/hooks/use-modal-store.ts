@@ -5,7 +5,8 @@ export type ModalType =
   | 'select-template'
   | 'create-template'
   | 'export-template'
-  | 'import-template';
+  | 'import-template'
+  | 'updater';
 
 interface ModalData {
   updateMessage?: string;
