@@ -7,11 +7,13 @@ import { Divider } from '@nextui-org/divider';
 import useWindowStore from '@/app/hooks/use-window-store';
 import dynamic from 'next/dynamic';
 import RelicScore from '@/app/components/relic-score';
+import useRelicStore from '@/app/hooks/use-relic-store';
 
 const RelicLogger = dynamic(() => import('@/app/components/relic-logger'), { ssr: false });
 
 export default function RelicPanel() {
   const { imgShow, isLightMode } = useWindowStore();
+  const { relicScores } = useRelicStore();
 
   if (isLightMode) {
     return (<div className="grid grid-rows-4">
@@ -32,7 +34,9 @@ export default function RelicPanel() {
       <div className="col-span-3 flex flex-col justify-center">
         <div className="flex justify-center gap-2">
           <RelicInfo />
-          <Divider orientation="vertical" />
+          {
+            relicScores && relicScores.length > 0 && <Divider orientation="vertical" />
+          }
           <RelicScore />
         </div>
         <div className="mt-2 flex justify-center gap-2">
