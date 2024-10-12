@@ -26,6 +26,67 @@ fn resolve_path(app: AppHandle, path: &str) -> Result<String, String> {
         Ok(path_str)
     }
 }
+#[tauri::command]
+fn pre_backup(app: AppHandle) -> Result<String, String> {
+    let bat_dir = resolve_path(app.clone(), "../../tools")
+        .expect("Failed to resolve batch file directory");
+    let bat_path = resolve_path(app.clone(), "../../tools/pre_update.bat")
+        .expect("Failed to resolve batch file path");
+
+    let output = Command::new("cmd")
+        .args(&["/C", &*bat_path])
+        .current_dir(bat_dir)
+        .creation_flags(0x08000000)
+        .output()
+        .map_err(|e| format!("Failed to execute pre_update.bat: {}", e))?;
+
+    if output.status.success() {
+        println!("Pre-backup executed successfully.");
+        Ok("Pre-backup executed successfully.".to_string())
+    } else {
+        println!(
+            "Pre-backup failed with status: {} and stderr: {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        );
+        Err(format!(
+            "Pre-backup failed with status: {} and stderr: {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        ))
+    }
+}
+
+#[tauri::command]
+fn post_backup(app: AppHandle) -> Result<String, String> {
+    let bat_dir = resolve_path(app.clone(), "../../tools")
+        .expect("Failed to resolve batch file directory");
+    let bat_path = resolve_path(app.clone(), "../../tools/post_update.bat")
+        .expect("Failed to resolve batch file path");
+
+    let output = Command::new("cmd")
+        .args(&["/C", &*bat_path])
+        .current_dir(bat_dir)
+        .creation_flags(0x08000000)
+        .output()
+        .map_err(|e| format!("Failed to execute pre_update.bat: {}", e))?;
+
+    if output.status.success() {
+        println!("Post-backup executed successfully.");
+        Ok("Post-backup executed successfully.".to_string())
+    } else {
+        println!(
+            "Post-backup failed with status: {} and stderr: {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        );
+        Err(format!(
+            "Post-backup failed with status: {} and stderr: {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr)
+        ))
+    }
+}
 
 #[tauri::command]
 fn start_backend(app: AppHandle) {
@@ -216,7 +277,15 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![install_python_requirements, start_backend, set_always_on_top, open_browser_console, set_window_size])
+        .invoke_handler(tauri::generate_handler![
+            install_python_requirements,
+            start_backend,
+            set_always_on_top,
+            open_browser_console,
+            set_window_size,
+            pre_backup,
+            post_backup
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
