@@ -64,46 +64,34 @@ export default function RelicAction() {
     }
   };
 
-  if (isLightMode) {
-    return (<div className="flex flex-row gap-4">
-      <Switch size="sm" color="success" thumbIcon={<PanelTop />} isSelected={topWindow}
+
+  return (
+    <div className="flex flex-row gap-4 md:flex-col">
+      <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<PanelTop />} isSelected={topWindow}
               onValueChange={handleSetTopWindow}>
         窗口置顶
       </Switch>
-      <Switch size="sm" color="success" thumbIcon={<PictureInPicture />} isSelected={isLightMode}
+      <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<PictureInPicture />} isSelected={isLightMode}
               onValueChange={handleSetLightMode}>
         小屏模式
       </Switch>
-      <Switch size="sm" color="success" thumbIcon={<ScanEye />} isSelected={scanningStatus}
+      <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<ScanEye />} isSelected={scanningStatus}
               onValueChange={handleScanStateChange}>
         开始扫描
       </Switch>
-    </div>);
-  }
-
-
-  return (
-    <div className="flex flex-col gap-4">
-      <Switch color="success" thumbIcon={<PanelTop />} isSelected={topWindow} onValueChange={handleSetTopWindow}>
-        窗口置顶
-      </Switch>
-      <Switch color="success" thumbIcon={<PictureInPicture />} isSelected={isLightMode}
-              onValueChange={handleSetLightMode}>
-        小屏模式
-      </Switch>
-      <Switch color="success" thumbIcon={<ScanEye />} isSelected={scanningStatus} onValueChange={handleScanStateChange}>
-        开始扫描
-      </Switch>
-      <Switch color="success" thumbIcon={<Image />} isSelected={imgShow} onValueChange={setImageShow}>
+      <Switch color="success" thumbIcon={<Image />} isSelected={imgShow} onValueChange={setImageShow}
+              className="hidden md:block ">
         显示图片
       </Switch>
-      <Switch color="success" thumbIcon={<FileLock />} isSelected={fullLog} onValueChange={handleFullLogChange}>
+      <Switch color="success" thumbIcon={<FileLock />} isSelected={fullLog} onValueChange={handleFullLogChange}
+              className="hidden md:block">
         全部日志
       </Switch>
-      <Switch color="success" thumbIcon={<ListEnd />} isSelected={logPause} onValueChange={setLogPause}>
+      <Switch color="success" thumbIcon={<ListEnd />} isSelected={logPause} onValueChange={setLogPause}
+              className="hidden md:block">
         跟随底部
       </Switch>
-      <Button size="sm" variant="bordered" className="mt-5" onPress={handleSelectTemplate}>
+      <Button size="sm" variant="bordered" className="mt-5 hidden md:block" onPress={handleSelectTemplate}>
         选择模板
       </Button>
     </div>
