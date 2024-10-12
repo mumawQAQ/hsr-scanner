@@ -2,6 +2,7 @@ import { useModal } from '@/app/hooks/use-modal-store';
 import { Button } from '@nextui-org/button';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import { QRCodeSVG } from 'qrcode.react';
+import { Textarea } from '@nextui-org/input';
 
 
 export const ExportTemplateModal = () => {
@@ -14,9 +15,10 @@ export const ExportTemplateModal = () => {
   return (
     <Modal isOpen={isModalOpen} onClose={onClose}>
       <ModalContent className="flex items-center justify-center p-6">
-        <ModalHeader>请保存二维码</ModalHeader>
+        <ModalHeader>请保存二维码或保存模板代码</ModalHeader>
         <ModalBody>
           <QRCodeSVG value={data.qrCodeData ?? ''} size={300} />
+          <Textarea maxRows={2} label="模板代码 (ctrl+a)全选以后复制" value={data.qrCodeData} />
         </ModalBody>
 
         <ModalFooter>
