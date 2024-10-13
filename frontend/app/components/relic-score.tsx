@@ -119,8 +119,12 @@ export default function RelicScore() {
 
 
   const renderScoreResult = () => {
-    if (!scanningStatus || !relicScores || relicScores.length === 0) {
+    if (!scanningStatus || !relicScores) {
       return null;
+    }
+
+    if (relicScores.length === 0) {
+      return <div className="font-semibold text-center">当前遗器无适用角色, 基于当前模板可以遗弃</div>;
     }
 
     return (

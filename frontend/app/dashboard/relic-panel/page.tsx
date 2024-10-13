@@ -35,7 +35,7 @@ export default function RelicPanel() {
         <div className="flex justify-center gap-2">
           <RelicInfo />
           {
-            relicScores && relicScores.length > 0 && <Divider orientation="vertical" />
+            relicScores && <Divider orientation="vertical" />
           }
           <RelicScore />
         </div>

@@ -1,5 +1,4 @@
 import asyncio
-import threading
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -12,10 +11,6 @@ from app.dependencies.relic_rating import RelicRating
 from app.dependencies.screen_shot import get_screen_shot
 
 
-def run_async(coroutine):
-    asyncio.run(coroutine)
-
-
 @asynccontextmanager
 async def life_span(app: FastAPI):
     # TODO: since all of them rely on the global state, we should refactor this to a single coroutine
@@ -24,34 +19,29 @@ async def life_span(app: FastAPI):
     Base.metadata.create_all(engine)
 
     # Start the screen capture coroutine in a separate thread
-    screen_shot_thread = threading.Thread(target=run_async, args=(get_screen_shot(global_state),))
-    screen_shot_thread.start()
+    screen_shot_task = asyncio.create_task(get_screen_shot(global_state))
 
     # Load the ML model
     detection = Detection(global_state)
-
-    # Start the object detection coroutine in a separate thread
-    detection_thread = threading.Thread(target=run_async, args=(detection.detect_objects(),))
-    detection_thread.start()
+    detection_task = asyncio.create_task(detection.detect_objects())
 
     # Load the OCR model
     ocr = OCR(global_state)
     # Start the OCR coroutine in a separate thread
-    ocr_thread = threading.Thread(target=run_async, args=(ocr.read_relic_info(),))
-    ocr_thread.start()
+    ocr_task = asyncio.create_task(ocr.read_relic_info())
 
     # Load the relic rating model
     relic_rating = RelicRating(global_state)
-    # Start the relic rating coroutine in a separate thread
-    relic_rating_thread = threading.Thread(target=run_async, args=(relic_rating.get_relic_rating(),))
-    relic_rating_thread.start()
+    relic_rating_task = asyncio.create_task(relic_rating.get_relic_rating())
 
     yield  # This yield allows the context manager to be used with 'async with'
 
     # Proper thread shutdown and cleanup should be managed here
+    screen_shot_task.cancel()
 
-    # Wait for the threads to finish
-    screen_shot_thread.join()
-    detection_thread.join()
-    ocr_thread.join()
-    relic_rating_thread.join()
+    detection_task.cancel()
+    detection.destroy()
+
+    ocr_task.cancel()
+
+    relic_rating_task.cancel()
