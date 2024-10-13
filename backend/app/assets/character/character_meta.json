@@ -1,0 +1,238 @@
+{
+  "Fu Xuan": {
+    "name": "符玄",
+    "icon": "images/characters/img.png"
+  },
+  "Acheron": {
+    "name": "黄泉",
+    "icon": "images/characters/img_1.png"
+  },
+  "Argenti": {
+    "name": "银枝",
+    "icon": "images/characters/img_2.png"
+  },
+  "Arlan": {
+    "name": "阿兰",
+    "icon": "images/characters/img_3.png"
+  },
+  "Asta": {
+    "name": "艾丝妲",
+    "icon": "images/characters/img_4.png"
+  },
+  "Aventurine": {
+    "name": "砂金",
+    "icon": "images/characters/img_5.png"
+  },
+  "Bailu": {
+    "name": "白鹿",
+    "icon": "images/characters/img_6.png"
+  },
+  "Black Swan": {
+    "name": "黑天鹅",
+    "icon": "images/characters/img_7.png"
+  },
+  "Blade": {
+    "name": "刃",
+    "icon": "images/characters/img_8.png"
+  },
+  "Boothill": {
+    "name": "波提欧",
+    "icon": "images/characters/img_9.png"
+  },
+  "Bronya": {
+    "name": "布洛妮娅",
+    "icon": "images/characters/img_10.png"
+  },
+  "Clara": {
+    "name": "克拉拉",
+    "icon": "images/characters/img_11.png"
+  },
+  "Dan Heng": {
+    "name": "丹恒",
+    "icon": "images/characters/img_12.png"
+  },
+  "Dan Heng Imbibitor Lunae": {
+    "name": "丹恒•饮月",
+    "icon": "images/characters/img_13.png"
+  },
+  "Dr. Ratio": {
+    "name": "真理医生",
+    "icon": "images/characters/img_14.png"
+  },
+  "Firefly": {
+    "name": "流萤",
+    "icon": "images/characters/img_15.png"
+  },
+  "Gallagher": {
+    "name": "加拉赫",
+    "icon": "images/characters/img_16.png"
+  },
+  "Gepard": {
+    "name": "杰帕德",
+    "icon": "images/characters/img_17.png"
+  },
+  "Guinaifen": {
+    "name": "桂乃芬",
+    "icon": "images/characters/img_18.png"
+  },
+  "Hanya": {
+    "name": "寒鸦",
+    "icon": "images/characters/img_19.png"
+  },
+  "Herta": {
+    "name": "黑塔",
+    "icon": "images/characters/img_20.png"
+  },
+  "Himeko": {
+    "name": "姬子",
+    "icon": "images/characters/img_21.png"
+  },
+  "Hook": {
+    "name": "虎克",
+    "icon": "images/characters/img_22.png"
+  },
+  "Huohuo": {
+    "name": "藿藿",
+    "icon": "images/characters/img_23.png"
+  },
+  "Jing Yuan": {
+    "name": "景元",
+    "icon": "images/characters/img_24.png"
+  },
+  "Jingliu": {
+    "name": "静流",
+    "icon": "images/characters/img_25.png"
+  },
+  "Kafka": {
+    "name": "卡芙卡",
+    "icon": "images/characters/img_26.png"
+  },
+  "Luka": {
+    "name": "卢卡",
+    "icon": "images/characters/img_27.png"
+  },
+  "Luocha": {
+    "name": "罗刹",
+    "icon": "images/characters/img_28.png"
+  },
+  "Lynx": {
+    "name": "玲可",
+    "icon": "images/characters/img_29.png"
+  },
+  "March 7th": {
+    "name": "三月七",
+    "icon": "images/characters/img_30.png"
+  },
+  "Misha": {
+    "name": "米沙",
+    "icon": "images/characters/img_31.png"
+  },
+  "Natasha": {
+    "name": "娜塔莎",
+    "icon": "images/characters/img_32.png"
+  },
+  "Pela": {
+    "name": "佩拉",
+    "icon": "images/characters/img_33.png"
+  },
+  "Qingque": {
+    "name": "青雀",
+    "icon": "images/characters/img_34.png"
+  },
+  "Robin": {
+    "name": "知更鸟",
+    "icon": "images/characters/img_35.png"
+  },
+  "Ruan Mei": {
+    "name": "阮•梅",
+    "icon": "images/characters/img_36.png"
+  },
+  "Sampo": {
+    "name": "桑博",
+    "icon": "images/characters/img_37.png"
+  },
+  "Seele": {
+    "name": "希儿",
+    "icon": "images/characters/img_38.png"
+  },
+  "Serval": {
+    "name": "希露瓦",
+    "icon": "images/characters/img_39.png"
+  },
+  "Silver Wolf": {
+    "name": "银狼",
+    "icon": "images/characters/img_40.png"
+  },
+  "Sparkle": {
+    "name": "花火",
+    "icon": "images/characters/img_41.png"
+  },
+  "Sushang": {
+    "name": "素裳",
+    "icon": "images/characters/img_42.png"
+  },
+  "Tingyun": {
+    "name": "停云",
+    "icon": "images/characters/img_43.png"
+  },
+  "Topaz and Numby": {
+    "name": "托帕&账账",
+    "icon": "images/characters/img_44.png"
+  },
+  "Trailblazer: Destruction": {
+    "name": "开拓者•毁灭",
+    "icon": "images/characters/img_45.png"
+  },
+  "Trailblazer: Preservation": {
+    "name": "开拓者•存护",
+    "icon": "images/characters/img_46.png"
+  },
+  "Trailblazer: Harmony": {
+    "name": "开拓者•同谐",
+    "icon": "images/characters/img_47.png"
+  },
+  "Welt": {
+    "name": "瓦尔特",
+    "icon": "images/characters/img_48.png"
+  },
+  "Xueyi": {
+    "name": "雪衣",
+    "icon": "images/characters/img_49.png"
+  },
+  "Yanqing": {
+    "name": "彦卿",
+    "icon": "images/characters/img_50.png"
+  },
+  "Yukong": {
+    "name": "驭空",
+    "icon": "images/characters/img_51.png"
+  },
+  "Jade": {
+    "name": "翡翠",
+    "icon": "images/characters/img_52.png"
+  },
+  "Yunli": {
+    "name": "云璃",
+    "icon": "images/characters/img_53.png"
+  },
+  "March 7th: Hunt": {
+    "name": "三月七•巡猎",
+    "icon": "images/characters/img_54.png"
+  },
+  "Lingsha": {
+    "name": "灵砂",
+    "icon": "images/characters/img_55.png"
+  },
+  "Jiaoqiu": {
+    "name": "椒丘",
+    "icon": "images/characters/img_56.png"
+  },
+  "Feixiao": {
+    "name": "飞霄",
+    "icon": "images/characters/img_57.png"
+  },
+  "Moze": {
+    "name": "貊泽",
+    "icon": "images/characters/img_58.png"
+  }
+}
