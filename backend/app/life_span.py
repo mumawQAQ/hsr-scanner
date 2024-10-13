@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.dependencies import database
 from app.dependencies.database import Base, engine
 from app.dependencies.detection import Detection
 from app.dependencies.global_state import global_state
@@ -35,6 +36,9 @@ async def life_span(app: FastAPI):
     relic_rating_task = asyncio.create_task(relic_rating.get_relic_rating())
 
     yield  # This yield allows the context manager to be used with 'async with'
+
+    # close the database
+    database.sessionLocal().close()
 
     # Proper thread shutdown and cleanup should be managed here
     screen_shot_task.cancel()

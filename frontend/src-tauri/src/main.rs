@@ -232,6 +232,20 @@ fn install_python_requirements(app: AppHandle) {
 }
 
 #[tauri::command]
+fn kill_backend() -> Result<(), String> {
+    let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
+    if let Some(child) = handle.as_mut() {
+        child.kill().expect("Failed to kill the backend process");
+        child.wait().expect("Failed to wait on the backend process");
+        *handle = None;
+        println!("Python process killed.");
+    } else {
+        println!("Python process is not running.");
+    }
+    Ok(())
+}
+
+#[tauri::command]
 fn set_always_on_top(window: tauri::Window, status: bool) -> Result<(), String> {
     window
         .set_always_on_top(status)
@@ -264,13 +278,7 @@ fn main() {
             window.on_window_event(|event| match event {
                 WindowEvent::CloseRequested { .. } => {
                     println!("Application is closing...");
-
-                    // Terminate any running backend process
-                    let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
-                    if let Some(child) = handle.as_mut() {
-                        child.kill().expect("Failed to kill the backend process");
-                        child.wait().expect("Failed to wait on the backend process");
-                    }
+                    kill_backend().expect("Failed to kill the backend process");
                 }
                 _ => {}
             });
@@ -284,7 +292,8 @@ fn main() {
             open_browser_console,
             set_window_size,
             pre_backup,
-            post_backup
+            post_backup,
+            kill_backend
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

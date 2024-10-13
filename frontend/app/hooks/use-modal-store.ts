@@ -6,10 +6,8 @@ export type ModalType =
   | 'create-template'
   | 'export-template'
   | 'import-template'
-  | 'updater';
 
 interface ModalData {
-  updateMessage?: string;
   qrCodeData?: string;
 }
 
