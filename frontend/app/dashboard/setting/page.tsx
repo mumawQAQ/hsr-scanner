@@ -78,7 +78,7 @@ export default function Setting() {
       if (!download && !assertUpdateCheckResponse.update_needed) {
         toast.success('资源已是最新版本');
       } else if (download) {
-        toast.success('资源更新完成');
+        toast.success('资源更新完成, 请重启软件以加载最新资源');
       }
 
     } catch (e) {
