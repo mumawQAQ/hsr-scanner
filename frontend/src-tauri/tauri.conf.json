@@ -15,6 +15,9 @@
       "all": false,
       "window": {
         "setAlwaysOnTop": true
+      },
+      "shell": {
+        "open": true
       }
     },
     "bundle": {
