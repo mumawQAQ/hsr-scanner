@@ -45,20 +45,10 @@ logging_config = {
             'formatter': 'detailed',
             'stream': 'ext://sys.stdout',
         },
-        'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'level': 'ERROR',
-            'formatter': 'standard',
-            'filename': 'app.log',
-            'mode': 'a',
-            'maxBytes': 1000000,  # 1MB
-            'backupCount': 5,
-            'encoding': 'utf-8',
-        },
     },
     'loggers': {
         '': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True
         },

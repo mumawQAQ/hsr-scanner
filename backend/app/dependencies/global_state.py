@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.models.relic_info import RelicInfo, RelicImg
+from app.models.relic_info import RelicInfo, RelicImg, RelicScore
 from app.models.yolo_box import YoloBox
 
 
@@ -16,9 +16,15 @@ class GlobalState:
             'height': 0
         }
         self.screen_rgb = None
+
+        self.rules_in_use = None
+        self.rules_in_use_dirty = False
+
         self.yolo_boxes: list[YoloBox] = []
         self.relic_info: Optional[RelicInfo] = None
         self.relic_img: Optional[RelicImg] = None
+
+        self.relic_rating: list[RelicScore] = []
 
 
 global_state = GlobalState()

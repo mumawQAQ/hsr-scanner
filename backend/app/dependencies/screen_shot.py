@@ -26,7 +26,7 @@ async def get_screen_shot(global_state: GlobalState):
                 break
 
         if not game_window:
-            logger.error("未检测到游戏窗口")
+            logger.error("未检测到游戏窗口，请确保游戏已经启动, 并且游戏语言设置为英文")
             await asyncio.sleep(0.1)
             continue
 

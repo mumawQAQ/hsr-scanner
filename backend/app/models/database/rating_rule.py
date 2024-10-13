@@ -9,6 +9,6 @@ class RatingRule(Base):
     id = Column(String, primary_key=True, index=True)
     template_id = Column(String, ForeignKey('rating_template.id'), index=True)
     set_names = Column(JSON, default=list)
-    part_names = Column(JSON, default=dict)
+    valuable_mains = Column(JSON, default=dict)
     valuable_subs = Column(JSON, default=list)
     fit_characters = Column(JSON, default=list)
