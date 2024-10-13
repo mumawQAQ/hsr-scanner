@@ -10,12 +10,18 @@ import { RefreshCcw } from 'lucide-react';
 import { checkUpdate, installUpdate, UpdateManifest } from '@tauri-apps/api/updater';
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/tauri';
+import { AssertUpdateCheckResponse } from '@/app/types/api-types';
 
 
 export default function Setting() {
   const [version, setVersion] = useState<string | null>(null);
   const [manifest, setManifest] = useState<UpdateManifest | undefined>(undefined);
-  const [onUpdate, setOnUpdate] = useState<boolean>(false);
+  const [onCheckAppUpdate, setOnCheckAppUpdate] = useState<boolean>(false);
+  const [onAppDownload, setOnAppDownload] = useState<boolean>(false);
+
+  const [onAssertUpdate, setOnAssertUpdate] = useState<boolean>(false);
+  const [filesToUpdate, setFilesToUpdate] = useState<string[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
 
 
   useEffect(() => {
@@ -25,18 +31,24 @@ export default function Setting() {
   }, []);
 
 
-  const handleCheckUpdate = async () => {
-    const update = await checkUpdate();
-    if (update.shouldUpdate) {
-      setManifest(update.manifest);
-    } else {
-      toast.success('当前已是最新版本');
+  const handleCheckAppUpdate = async () => {
+    setOnCheckAppUpdate(true);
+    try {
+      const update = await checkUpdate();
+      if (update.shouldUpdate) {
+        setManifest(update.manifest);
+      } else {
+        toast.success('当前已是最新版本');
+      }
+    } catch (e) {
+      toast.error(`检查更新时出现错误 ${e}`);
     }
+    setOnCheckAppUpdate(false);
   };
 
-  const handleUpdate = async () => {
+  const handleAppDownload = async () => {
+    setOnAppDownload(true);
     try {
-      setOnUpdate(true);
       // kill the backend
       await invoke<string>('kill_backend');
       // backup the database
@@ -44,8 +56,36 @@ export default function Setting() {
       await installUpdate();
     } catch (e) {
       toast.error(`更新时出现错误 ${e}`);
-      setOnUpdate(false);
     }
+    setOnAppDownload(false);
+  };
+
+  const handleCheckAssetsUpdate = async (download: boolean) => {
+    setOnAssertUpdate(true);
+    setFilesToUpdate([]);
+    setErrors([]);
+
+    try {
+      const response = await invoke<string>('check_asserts_update', { download: download });
+      const assertUpdateCheckResponse: AssertUpdateCheckResponse = JSON.parse(response);
+
+      if (assertUpdateCheckResponse.errors && assertUpdateCheckResponse.errors.length > 0) {
+        setErrors(assertUpdateCheckResponse.errors);
+      } else if (assertUpdateCheckResponse.update_needed) {
+        setFilesToUpdate(assertUpdateCheckResponse.files || []);
+      }
+
+      if (!download && !assertUpdateCheckResponse.update_needed) {
+        toast.success('资源已是最新版本');
+      } else if (download) {
+        toast.success('资源更新完成');
+      }
+
+    } catch (e) {
+      toast.error(`获取资源时出现错误 ${e}`);
+    }
+
+    setOnAssertUpdate(false);
   };
 
 
@@ -57,29 +97,19 @@ export default function Setting() {
       <Button
         size="sm"
         as={Link}
+        color="primary"
+        showAnchorIcon
         onPress={async () => {
           await open('https://github.com/mumawQAQ/hsr-scanner');
         }}
-        color="primary"
-        showAnchorIcon
       >
         Github
       </Button>
-      <Button
-        size="sm"
-        as={Link}
-        color="primary"
-        showAnchorIcon
-      >
-        提交Bug
+      <Button size="sm" as={Link} color="primary" showAnchorIcon isDisabled>
+        提交Bug (开发中)
       </Button>
-      <Button
-        size="sm"
-        as={Link}
-        color="primary"
-        showAnchorIcon
-      >
-        提交功能建议
+      <Button size="sm" as={Link} color="primary" showAnchorIcon isDisabled>
+        提交功能建议 (开发中)
       </Button>
     </div>
 
@@ -94,14 +124,14 @@ export default function Setting() {
         </div>
 
 
-        <Button size="md" variant="flat" onPress={handleCheckUpdate}>
-          检查更新
+        <Button size="md" variant="flat" onPress={handleCheckAppUpdate} isDisabled={onCheckAppUpdate}>
+          检查软件更新
         </Button>
       </CardBody>
     </Card>
 
     {
-      manifest && <Card className="py-3 px-2" shadow="sm" radius="sm">
+      manifest && <Card className="py-3 px-2 bg-green-400" shadow="sm" radius="sm">
         <CardBody className="flex flex-row items-center">
           <div className="flex flex-col gap-2 grow">
             <div className="text-medium font-semibold">
@@ -111,9 +141,64 @@ export default function Setting() {
               {manifest.body}
             </div>
           </div>
-          <Button size="md" variant="flat" color="success" onPress={handleUpdate} isDisabled={onUpdate}>
-            {onUpdate ? '更新中...' : '更新'}
+          <Button size="md" variant="solid" color="danger" onPress={handleAppDownload} isDisabled={onAppDownload}>
+            {onAppDownload ? '更新中...' : '更新'}
           </Button>
+        </CardBody>
+      </Card>
+    }
+
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-row gap-2 items-center">
+        <RefreshCcw />
+        <div className="grow">
+          当前游戏资源版本：未知（开发中）
+        </div>
+
+
+        <Button size="md" variant="flat" onPress={() => handleCheckAssetsUpdate(false)} isDisabled={onAssertUpdate}>
+          检查资源更新
+        </Button>
+      </CardBody>
+    </Card>
+
+    {
+      filesToUpdate.length > 0 && <Card className="py-3 px-2 bg-green-400" shadow="sm" radius="sm">
+        <CardBody className="flex flex-row items-center">
+          <div className="flex flex-col gap-2 grow">
+            <div className="text-medium font-semibold">
+              发现新资源
+            </div>
+            <div>
+              <ul>
+                {filesToUpdate.map((file) => <li key={file}>{file}</li>)}
+              </ul>
+            </div>
+          </div>
+          <Button
+            size="md"
+            variant="solid"
+            color="danger"
+            onPress={
+              () => handleCheckAssetsUpdate(true)
+            } isDisabled={onAppDownload}>
+            {onAssertUpdate ? '更新中...' : '更新'}
+          </Button>
+        </CardBody>
+      </Card>
+    }
+
+    {
+      errors.length > 0 && <Card className="py-3 px-2 bg-red-900 text-white" shadow="sm" radius="sm">
+        <CardBody className="flex flex-col gap-2">
+          <div className="text-medium font-semibold">
+            获取资源时出现错误
+          </div>
+          <div>
+            <ul>
+              {errors.map((error) => <li key={error}>{error}</li>)}
+            </ul>
+          </div>
         </CardBody>
       </Card>
     }

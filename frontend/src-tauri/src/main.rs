@@ -232,6 +232,32 @@ fn install_python_requirements(app: AppHandle) {
 }
 
 #[tauri::command]
+fn check_asserts_update(app: AppHandle, download: bool) -> Result<String, String> {
+    let python_path = resolve_path(app.clone(), "../../tools/python/python").expect("Failed to resolve python path");
+    let main_script_path = resolve_path(app.clone(), "../../backend/check_assert_update.py").expect("Failed to resolve script path");
+
+    let mut cmd = Command::new(python_path);
+    cmd.arg(&main_script_path);
+
+    if download {
+        cmd.arg("--download");
+    }
+
+    // Execute the command and capture the output
+    let output = cmd.output().map_err(|e| format!("Failed to execute Python script: {}", e))?;
+
+    if output.status.success() {
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        println!("{}", stdout);
+        Ok(stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+        println!("{}", stderr);
+        Err(format!("Python script error: {}", stderr))
+    }
+}
+
+#[tauri::command]
 fn kill_backend() -> Result<(), String> {
     let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
     if let Some(child) = handle.as_mut() {
@@ -293,7 +319,8 @@ fn main() {
             set_window_size,
             pre_backup,
             post_backup,
-            kill_backend
+            kill_backend,
+            check_asserts_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

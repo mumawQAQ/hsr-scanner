@@ -134,7 +134,7 @@ export default function Home() {
       {!backendPort && (
         <div className="flex flex-col">
           <Spinner size="lg" className="my-4" />
-          <div>正在启动后端服务，如果是第一次启动，会比较慢，请稍等....</div>
+          <div>正在启动后端服务，请稍等....</div>
         </div>
       )}
     </div>

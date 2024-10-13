@@ -31,3 +31,9 @@ export type UpdateRelicRuleRequest = {
   valuable_subs: RelicRuleSubStats[];
   fit_characters: string[];
 };
+
+export type AssertUpdateCheckResponse = {
+  update_needed?: boolean;
+  files?: string[];
+  errors?: string[];
+}
