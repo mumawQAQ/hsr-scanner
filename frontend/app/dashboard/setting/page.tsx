@@ -73,11 +73,9 @@ export default function Setting() {
         setErrors(assertUpdateCheckResponse.errors);
       } else if (assertUpdateCheckResponse.update_needed) {
         setFilesToUpdate(assertUpdateCheckResponse.files || []);
-      }
-
-      if (!download && !assertUpdateCheckResponse.update_needed) {
+      } else if (!download) {
         toast.success('资源已是最新版本');
-      } else if (download) {
+      } else {
         toast.success('资源更新完成, 请重启软件以加载最新资源');
       }
 
