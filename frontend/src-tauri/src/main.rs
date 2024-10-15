@@ -242,6 +242,7 @@ fn check_asserts_update(app: AppHandle, download: bool) -> Result<String, String
     if download {
         cmd.arg("--download");
     }
+    cmd.creation_flags(0x08000000); // This prevents the creation of a console window on Windows.
 
     // Execute the command and capture the output
     let output = cmd.output().map_err(|e| format!("Failed to execute Python script: {}", e))?;
