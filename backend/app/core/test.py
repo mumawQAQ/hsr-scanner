@@ -1,18 +1,101 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from abc import ABC, abstractmethod
-from dataclasses import field
 from enum import Enum
 from typing import Dict, List, Any, Optional, Protocol, Type, TypeVar
 from uuid import uuid4
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
+# Setup logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+# ---- Model Interfaces and Implementations ----
+
+from typing import runtime_checkable
+
+
+@runtime_checkable
+class ModelInterface(Protocol):
+    """Protocol defining the interface for models."""
+
+    def load(self) -> None:
+        """Load the model resources."""
+        ...
+
+    def predict(self, input_data: Any) -> Any:
+        """Perform prediction on the input data."""
+        ...
+
+
+class YOLOModel:
+    """YOLO model for object detection."""
+
+    def __init__(self, model_path: str):
+        self.model_path = model_path
+        self.model = None
+
+    def load(self) -> None:
+        """Load the YOLO model."""
+        # Simulate model loading
+        self.model = "YOLO_Model_Instance"
+        logger.info(f"YOLO model loaded from {self.model_path}")
+
+    def predict(self, input_data: Any) -> Any:
+        """Perform object detection on the input data."""
+        # Simulate prediction
+        return {"detections": ["object1", "object2"]}
+
+
+class OCRModel:
+    """OCR model for text recognition."""
+
+    def __init__(self, tesseract_cmd: Optional[str] = None):
+        self.tesseract_cmd = tesseract_cmd
+        self.config = '--oem 3 --psm 6'
+
+    def load(self) -> None:
+        """Initialize OCR settings if necessary."""
+        # Simulate OCR initialization
+        logger.info("OCR model initialized.")
+
+    def predict(self, input_data: Any) -> Any:
+        """Perform OCR on the input data."""
+        # Simulate OCR prediction
+        return {"text": "Sample extracted text"}
+
+
+# ---- Model Manager ----
+
+class ModelManager:
+    """Singleton manager for handling global models."""
+
+    _instance = None
+    _models: Dict[str, ModelInterface] = {}
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ModelManager, cls).__new__(cls)
+        return cls._instance
+
+    def register_model(self, name: str, model: ModelInterface) -> None:
+        """Register and load a model."""
+        if name in self._models:
+            raise ValueError(f"Model '{name}' is already registered.")
+        model.load()
+        self._models[name] = model
+        logger.info(f"Model '{name}' registered and loaded.")
+
+    def get_model(self, name: str) -> ModelInterface:
+        """Retrieve a registered model."""
+        if name not in self._models:
+            raise ValueError(f"Model '{name}' is not registered.")
+        return self._models[name]
 
 
 # ---- WebsocketManager Implementation ----
@@ -46,8 +129,6 @@ class WebsocketManager:
 
 
 # ---- Core Pipeline Protocol and Base Classes ----
-from typing import runtime_checkable
-
 
 @runtime_checkable
 class PipelineStageProtocol(Protocol):
@@ -83,19 +164,22 @@ class StageResult(BaseModel):
     success: bool
     data: Any
     error: Optional[str] = None
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: Dict[str, Any] = {}
 
 
 class PipelineContext(BaseModel):
     """Base context holding pipeline execution data"""
     pipeline_id: str
     pipeline_type: str
-    data: Dict[str, Any] = field(default_factory=dict)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    data: Dict[str, Any] = {}
+    metadata: Dict[str, Any] = {}
 
 
 # ---- Generic Pipeline Stage Base ----
+
 class BasePipelineStage(ABC, PipelineStageProtocol):
+    def __init__(self, websocket_manager: WebsocketManager):
+        self.websocket_manager = websocket_manager
 
     @abstractmethod
     def get_stage_name(self) -> str:
@@ -117,6 +201,7 @@ class BasePipelineStage(ABC, PipelineStageProtocol):
 
 
 # ---- Game Recognition Pipeline Stages ----
+
 class GameRecognitionStage(str, Enum):
     SCREENSHOT = "screenshot"
     SCENE_DETECTION = "scene_detection"
@@ -211,7 +296,10 @@ class GameOCRStage(BasePipelineStage):
             ui_elements = context.data.get(GameRecognitionStage.UI_ELEMENT_DETECTION.value)
             if not ui_elements:
                 raise ValueError("UI elements data not found.")
-            ocr_data = await self.perform_ocr(ui_elements)
+            # Utilize OCRModel
+            model_manager = ModelManager()
+            ocr_model: OCRModel = model_manager.get_model("ocr")
+            ocr_data = ocr_model.predict(ui_elements)
             return StageResult(
                 success=True,
                 data=ocr_data,
@@ -248,6 +336,7 @@ class GameStateAnalysisStage(BasePipelineStage):
 
 
 # ---- Document Processing Pipeline Stages ----
+
 class DocumentProcessingStage(str, Enum):
     CAPTURE = "capture"
     PREPROCESSING = "preprocessing"
@@ -342,7 +431,10 @@ class DocumentOCRStage(BasePipelineStage):
             layout_data = context.data.get(DocumentProcessingStage.LAYOUT_ANALYSIS.value)
             if not layout_data:
                 raise ValueError("Layout analysis data not found.")
-            ocr_text = await self.perform_ocr(layout_data)
+            # Utilize OCRModel
+            model_manager = ModelManager()
+            ocr_model: OCRModel = model_manager.get_model("ocr")
+            ocr_text = ocr_model.predict(layout_data)
             return StageResult(
                 success=True,
                 data=ocr_text,
@@ -379,6 +471,7 @@ class DataExtractionStage(BasePipelineStage):
 
 
 # ---- Pipeline Definitions ----
+
 class GameRecognitionPipeline(PipelineProtocol):
     """Pipeline for game state recognition"""
 
@@ -416,6 +509,7 @@ class DocumentProcessingPipeline(PipelineProtocol):
 
 
 # ---- Pipeline Registry ----
+
 T = TypeVar('T', bound=PipelineProtocol)
 
 
@@ -444,11 +538,12 @@ class PipelineRegistry:
 
 
 # ---- Pipeline Factory ----
+
 class PipelineFactory:
     """Factory for creating pipeline instances"""
 
-    def __init__(self, _websocket_manager: WebsocketManager):
-        self._websocket_manager = _websocket_manager
+    def __init__(self, websocket_manager: WebsocketManager):
+        self.websocket_manager = websocket_manager
 
     def create_pipeline_stages(self, pipeline_type: Type[T]) -> List[PipelineStageProtocol]:
         """Create instances of all stages for a given pipeline type"""
@@ -458,17 +553,18 @@ class PipelineFactory:
             if not issubclass(stage_cls, PipelineStageProtocol):
                 raise TypeError(f"{stage_cls.__name__} does not implement PipelineStageProtocol.")
         return [
-            stage_class(self._websocket_manager)
+            stage_class(self.websocket_manager)
             for stage_class in pipeline_type.get_stages()
         ]
 
 
 # ---- Pipeline Executor ----
+
 class PipelineExecutor:
     """Handles the execution of pipeline stages"""
 
-    def __init__(self, _websocket_manager: WebsocketManager):
-        self.websocket_manager = _websocket_manager
+    def __init__(self, websocket_manager: WebsocketManager):
+        self.websocket_manager = websocket_manager
         self.pipeline_factory = PipelineFactory(websocket_manager)
         self.active_pipelines: Dict[str, Dict[str, Any]] = {}
 
@@ -599,10 +695,18 @@ class PipelineExecutor:
 
 
 # ---- FastAPI Application Setup ----
+
 app = FastAPI()
 websocket_manager = WebsocketManager()
 pipeline_registry = PipelineRegistry()
 pipeline_executor = PipelineExecutor(websocket_manager)
+
+# Initialize ModelManager and register models
+model_manager = ModelManager()
+# Register models (simulate paths and commands)
+model_manager.register_model("yolo", YOLOModel(model_path='yolov5s.pt'))  # Replace with your YOLO model path
+model_manager.register_model("ocr", OCRModel(
+    tesseract_cmd='/usr/bin/tesseract'))  # Replace with your Tesseract executable path
 
 # Register available pipelines
 pipeline_registry.register_pipeline(GameRecognitionPipeline)
@@ -620,7 +724,6 @@ async def websocket_endpoint(websocket: WebSocket):
             logger.info(f"Received message from client: {message}")
 
             # Parse message (assuming JSON format)
-            import json
             try:
                 data = json.loads(message)
             except json.JSONDecodeError:
@@ -746,6 +849,8 @@ async def list_pipelines():
     """Endpoint to list available pipelines."""
     return {"available_pipelines": pipeline_registry.get_available_pipelines()}
 
+
+# ---- Main Execution ----
 
 if __name__ == '__main__':
     import uvicorn
