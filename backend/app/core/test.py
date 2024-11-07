@@ -715,6 +715,7 @@ pipeline_registry.register_pipeline(DocumentProcessingPipeline)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    # there will be only one client, no need to handle multiple connections
     await websocket.accept()
     await websocket_manager.register(websocket)
 
