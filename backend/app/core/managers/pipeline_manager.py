@@ -2,9 +2,11 @@ from typing import Dict, Type, List
 
 from app.core.interfaces.pipeline_interface import PipelineProtocol
 from app.core.pipeline_factory import PIPELINE_TYPE
+from app.core.singleton import singleton
 from app.logging_config import logger
 
 
+@singleton
 class PipelineManager:
     """Manager for managing available pipeline types"""
 

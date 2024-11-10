@@ -1,5 +1,6 @@
 from typing import List, TypeVar, Type
 
+from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
 from app.core.interfaces.pipeline_interface import PipelineStageProtocol, PipelineProtocol
 from app.core.managers.websocket_manager import WebsocketManager
 
@@ -21,5 +22,7 @@ class PipelineFactory:
                 raise TypeError(f"{stage_cls.__name__} does not implement PipelineStageProtocol.")
         return [
             stage_class(self.websocket_manager)
+            if issubclass(stage_class, BasePipelineStage)
+            else stage_class()
             for stage_class in pipeline_type.get_stages()
         ]

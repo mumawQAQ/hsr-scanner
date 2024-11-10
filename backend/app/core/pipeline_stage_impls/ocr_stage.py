@@ -8,9 +8,9 @@ from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
 from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
 from app.core.interfaces.model_interface import ModelInterface
+from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.relic_matcher_model import RelicMatcherInput, RelicMatcherInputType
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
-from app.life_span import get_model_manager
 from app.logging_config import logger
 
 OCR_CONFIDENCE_THRESHOLD = 0.8
@@ -147,8 +147,8 @@ class OCRStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             detection_data = context.data.get(GameRecognitionStage.DETECTION.value)
-            ocr_model = get_model_manager().get_model("ocr")
-            relic_matcher_model = get_model_manager().get_model("relic_matcher")
+            ocr_model = ModelManager().get_model("ocr")
+            relic_matcher_model = ModelManager().get_model("relic_matcher")
 
             if not detection_data:
                 raise ValueError("Decision data not found.")
@@ -196,7 +196,7 @@ class OCRStage(BasePipelineStage):
             return StageResult(
                 success=True,
                 data=relic_ocr_response,
-                metadata=StageResultMetaData(send_to_frontend=True)
+                metadata=StageResultMetaData(send_to_frontend=False)
             )
         except Exception as e:
             logger.error(f"Error in {self.get_stage_name()}: {e}")

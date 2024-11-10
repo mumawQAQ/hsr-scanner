@@ -12,6 +12,7 @@ from app.core.managers.pipeline_manager import PipelineManager
 from app.core.managers.websocket_manager import WebsocketManager
 from app.core.model_impls.ocr_model import OCRModel
 from app.core.model_impls.relic_matcher_model import RelicMatcherModel
+from app.core.model_impls.relic_rating_model import RelicRatingModel
 from app.core.model_impls.yolo_model import YOLOModel
 from app.core.pipeline_executer import PipelineExecutor
 from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAnalysisPipeline
@@ -88,9 +89,6 @@ async def life_span(app: FastAPI):
     global global_state_manager
     global rating_template_repository
 
-    # Init the global state manager
-    global_state_manager = GlobalStateManager()
-
     # Init the template en decoder
     template_en_decoder = TemplateEnDecoder()
 
@@ -98,6 +96,7 @@ async def life_span(app: FastAPI):
     formatter = Formatter()
 
     # Init the managers
+    global_state_manager = GlobalStateManager()
     websocket_manager = WebsocketManager()
     pipeline_manager = PipelineManager()
     model_manager = ModelManager()
@@ -114,6 +113,7 @@ async def life_span(app: FastAPI):
         relic_main_stats_path=RELIC_MAIN_STATS_FILE,
         relic_sub_stats_path=RELIC_SUB_STATS_FILE,
     ))
+    model_manager.register_model("relic_rating", RelicRatingModel(global_state_manager))
 
     # Init all the tables
     Base.metadata.create_all(engine)

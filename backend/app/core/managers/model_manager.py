@@ -1,19 +1,14 @@
 from typing import Dict
 
 from app.core.interfaces.model_interface import ModelInterface
+from app.core.singleton import singleton
 from app.logging_config import logger
 
 
+@singleton
 class ModelManager:
     """Singleton manager for handling global models."""
-
-    _instance = None
     _models: Dict[str, ModelInterface] = {}
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(ModelManager, cls).__new__(cls)
-        return cls._instance
 
     def register_model(self, name: str, model: ModelInterface) -> None:
         """Register and load a model."""

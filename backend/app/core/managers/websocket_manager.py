@@ -2,9 +2,11 @@ from typing import Optional
 
 from fastapi import WebSocket
 
+from app.core.singleton import singleton
 from app.logging_config import logger
 
 
+@singleton
 class WebsocketManager:
     """Manages a single WebSocket connection, allowing messages to be sent to the client."""
 

@@ -1,7 +1,8 @@
 from app.core import database
+from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
-from app.life_span import get_formatter, get_global_state_manager
+from app.core.utils.formatter import Formatter
 from app.logging_config import logger
 
 
@@ -19,11 +20,8 @@ class RatingTemplateRepository:
             rules = self.db.query(RatingRuleORM).filter(
                 RatingRuleORM.template_id == in_use_template.id).all()
 
-            formatter = get_formatter()
-            formatted_rules = formatter.format_rating_template(rules)
-
-            global_state_manager = get_global_state_manager()
-            global_state_manager.update_state({'formatted_rules': formatted_rules})
+            formatted_rules = Formatter().format_rating_template(rules)
+            GlobalStateManager().update_state({'formatted_rules': formatted_rules})
 
     def import_template(self, new_template: RatingTemplateORM, rules: list[RatingRuleORM]):
         try:

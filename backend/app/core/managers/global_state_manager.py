@@ -1,16 +1,11 @@
 from typing import Dict, Any
 
+from app.core.singleton import singleton
 
+
+@singleton
 class GlobalStateManager:
-    """Singleton class to manage global state"""
-
-    _instance = None
     _state = {}
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(GlobalStateManager, cls).__new__(cls)
-        return cls._instance
 
     def update_state(self, new_state: Dict[str, Any]) -> None:
         """Update the global state with new state"""

@@ -2,7 +2,7 @@ from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
-from app.life_span import get_model_manager
+from app.core.managers.model_manager import ModelManager
 from app.logging_config import logger
 
 
@@ -13,7 +13,7 @@ class DetectionStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
-            yolo_model = get_model_manager().get_model("yolo")
+            yolo_model = ModelManager().get_model("yolo")
 
             if not screenshot:
                 raise ValueError("Screenshot data not found.")
