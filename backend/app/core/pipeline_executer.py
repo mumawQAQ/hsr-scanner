@@ -34,7 +34,6 @@ class PipelineExecutor:
                         logger.info(f"Stop event set. Exiting pipeline {context.pipeline_id}.")
                         break
 
-                    # Process stage
                     result = await stage.process(context)
 
                     # Handle stage result

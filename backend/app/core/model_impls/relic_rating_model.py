@@ -99,4 +99,7 @@ class RelicRatingModel(ModelInterface[RelicOCRResponse, Union[None, List[RelicSc
             if score != 0:
                 new_rating.append(RelicScoreResponse(score=score, characters=rule.fit_characters, type=score_type))
 
+        # sort the rating by score
+        new_rating.sort(key=lambda x: x.score, reverse=True)
+
         return new_rating

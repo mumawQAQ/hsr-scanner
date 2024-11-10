@@ -21,7 +21,7 @@ type WindowStore = {
 };
 
 const useWindowStore = create<WindowStore>(set => ({
-  scanningStatus: false,
+  scanningStatus: true,
   setScanningStatus: status => {
     // set request to backend
     set({ scanningStatus: status });

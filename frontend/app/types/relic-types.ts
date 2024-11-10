@@ -17,9 +17,9 @@ export type RelicMainStats = {
 };
 
 export type RelicInfo = {
-  title: RelicTitle;
-  main_stats: RelicMainStats;
-  sub_stats: RelicSubStats[];
+  title: RelicTitle | null;
+  main_stats: RelicMainStats | null;
+  sub_stats: RelicSubStats[] | null;
 };
 
 export type RelicImage = {

@@ -196,7 +196,7 @@ class OCRStage(BasePipelineStage):
             return StageResult(
                 success=True,
                 data=relic_ocr_response,
-                metadata=StageResultMetaData(send_to_frontend=False)
+                metadata=StageResultMetaData(send_to_frontend=True)
             )
         except Exception as e:
             logger.error(f"Error in {self.get_stage_name()}: {e}")
