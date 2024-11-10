@@ -5,10 +5,11 @@ import { useJsonFile } from '@/app/apis/files';
 import ImageDisplay from '@/app/components/image-display';
 import { Chip } from '@nextui-org/chip';
 import { cn } from '@nextui-org/react';
+import { CircleAlert } from 'lucide-react';
 
 export default function RelicScore() {
-  const { scanningStatus } = useWindowStore();
-  const { relicScores } = useRelicStore();
+  const { singleRelicAnalysisId } = useWindowStore();
+  const { relicScores, relicError } = useRelicStore();
   const { data: characters } = useJsonFile('character/character_meta.json');
 
   const renderScore = (score: number, type: string) => {
@@ -119,8 +120,17 @@ export default function RelicScore() {
 
 
   const renderScoreResult = () => {
-    if (!scanningStatus || !relicScores) {
+    if (!singleRelicAnalysisId || !relicScores) {
       return null;
+    }
+
+    if (relicError) {
+      return (
+        <div className="flex flex-row gap-2 text-red-600">
+          <CircleAlert />
+          {relicError}
+        </div>
+      );
     }
 
     if (relicScores.length === 0) {

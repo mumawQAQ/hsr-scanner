@@ -41,7 +41,7 @@ logging_config = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'level': 'ERROR',  # TODO: change this back to ERROR
+            'level': 'ERROR',
             'formatter': 'detailed',
             'stream': 'ext://sys.stdout',
         },

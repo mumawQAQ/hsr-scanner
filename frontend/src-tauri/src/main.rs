@@ -135,6 +135,7 @@ fn start_backend(app: AppHandle) {
                     let reader = BufReader::new(stderr_reader);
                     for line in reader.lines() {
                         if let Ok(line) = line {
+                            println!("{}", line);
                             if let Some(captures) = match_port.captures(&line) {
                                 let port = captures.get(1).unwrap().as_str();
                                 stderr_app.emit_all("backend-port", port).expect("failed to send stderr");

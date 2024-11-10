@@ -1,18 +1,17 @@
 'use client';
 import { Switch } from '@nextui-org/switch';
-import { FileLock, Image, ListEnd, PanelTop, PictureInPicture, ScanEye } from 'lucide-react';
+import { FileLock, ListEnd, PanelTop, PictureInPicture, ScanEye } from 'lucide-react';
 import { Button } from '@nextui-org/button';
 import useWindowStore from '@/app/hooks/use-window-store';
 import { useModal } from '@/app/hooks/use-modal-store';
-import { useUpdateFullLogState, useUpdateScanState } from '@/app/apis/state';
+import { useUpdateFullLogState } from '@/app/apis/state';
 import { invoke } from '@tauri-apps/api/tauri';
+import { useStartPipeline, useStopPipeline } from '@/app/apis/pipeline';
 
 export default function RelicAction() {
   const {
-    setScanningStatus,
-    scanningStatus,
-    imgShow,
-    setImageShow,
+    singleRelicAnalysisId,
+    setSingleRelicAnalysisId,
     logPause,
     setLogPause,
     fullLog,
@@ -24,14 +23,23 @@ export default function RelicAction() {
   } = useWindowStore();
   const { onOpen } = useModal();
   const { mutate: updateFullLogState } = useUpdateFullLogState();
-  const { mutate: updateScanState } = useUpdateScanState();
+  const startPipeline = useStartPipeline();
+  const stopPipeline = useStopPipeline();
 
   const handleScanStateChange = async (status: boolean) => {
-    updateScanState(status, {
-      onSuccess: () => {
-        setScanningStatus(status);
-      },
-    });
+    if (status) {
+      startPipeline.mutate('SingleRelicAnalysisPipeline', {
+        onSuccess: (data) => {
+          setSingleRelicAnalysisId(data.pipeline_id);
+        },
+      });
+    } else {
+      stopPipeline.mutate(singleRelicAnalysisId, {
+        onSuccess: () => {
+          setSingleRelicAnalysisId(null);
+        },
+      });
+    }
   };
 
   const handleFullLogChange = async (status: boolean) => {
@@ -75,13 +83,10 @@ export default function RelicAction() {
               onValueChange={handleSetLightMode}>
         小屏模式
       </Switch>
-      <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<ScanEye />} isSelected={scanningStatus}
+      <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<ScanEye />}
+              isSelected={singleRelicAnalysisId !== null}
               onValueChange={handleScanStateChange}>
         开始扫描
-      </Switch>
-      <Switch color="success" thumbIcon={<Image />} isSelected={imgShow} onValueChange={setImageShow}
-              className="hidden md:block ">
-        显示图片
       </Switch>
       <Switch color="success" thumbIcon={<FileLock />} isSelected={fullLog} onValueChange={handleFullLogChange}
               className="hidden md:block">

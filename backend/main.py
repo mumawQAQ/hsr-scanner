@@ -27,7 +27,7 @@ app.include_router(state.router)
 app.include_router(websocket.router)
 app.include_router(rating_template.router)
 app.include_router(files.router)
-app.include_router(pipeline.router)
+app.include_router(pipeline.router, prefix="/pipeline", tags=["Pipeline Operations"])
 
 if __name__ == '__main__':
     # Apply the logging configuration
