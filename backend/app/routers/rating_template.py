@@ -2,28 +2,32 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.dependencies.rating_template import RatingTemplate as RatingTemplateDependency, get_rating_template
-from app.dependencies.template_en_decode import TemplateEnDecoder, get_template_en_decoder
-from app.models.database.rating_rule import RatingRule as RatingRuleDBModel
-from app.models.database.rating_template import RatingTemplate as RatingTemplateDBModel
-from app.models.requests.rating_rule import CreateRatingRule, UpdateRatingRule, ImportRatingRule
-from app.models.requests.rating_template import CreateRatingTemplate
-from app.models.response.rating_rule import RatingRule as RatingRuleResponse, RatingRuleIds as RatingRuleIdsResponse
-from app.models.response.rating_template import RatingTemplate as RatingTemplateResponse
+from app.core.managers.global_state_manager import GlobalStateManager
+from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
+    ImportRatingRuleRequest
+from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
+from app.core.network_models.responses.rating_rule_response import RatingRuleResponse, RatingRuleIdsResponse
+from app.core.network_models.responses.rating_template_response import RatingTemplateResponse
+from app.core.orm_models.rating_rule_orm import RatingRuleORM
+from app.core.orm_models.rating_template_orm import RatingTemplateORM
+from app.core.repositories.rating_template_repo import RatingTemplateRepository
+from app.core.utils.formatter import Formatter
+from app.core.utils.template_en_decode import TemplateEnDecoder
+from app.life_span import get_formatter, get_template_en_decoder, get_rating_template_repository, \
+    get_global_state_manager
 
 router = APIRouter()
 
 
 @router.post("/rating-template/import")
 def import_rating_template(
-        request: ImportRatingRule,
-        rating_template_dependency: Annotated[
-            RatingTemplateDependency, Depends(get_rating_template)],
+        request: ImportRatingRuleRequest,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
         rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
 ):
     template, rules = rating_template_en_decoder.decode(request.qr_code)
 
-    import_template_result = rating_template_dependency.import_template(template, rules)
+    import_template_result = rating_template_repository.import_template(template, rules)
 
     if not import_template_result:
         return {
@@ -40,13 +44,12 @@ def import_rating_template(
 @router.get("/rating-template/export/{template_id}")
 def export_rating_template(
         template_id: str,
-        rating_template_dependency: Annotated[
-            RatingTemplateDependency, Depends(get_rating_template)],
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
         rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
 ):
     # get the template from the database
-    db_template_rules = rating_template_dependency.get_template_rules(template_id)
-    db_template = rating_template_dependency.get_template(template_id)
+    db_template_rules = rating_template_repository.get_template_rules(template_id)
+    db_template = rating_template_repository.get_template(template_id)
 
     if db_template is None:
         return {
@@ -74,16 +77,20 @@ def export_rating_template(
 
 
 @router.patch("/rating-template/stop-use/{template_id}")
-def stop_use_rating_template(template_id: str,
-                             rating_template_dependency: Annotated[
-                                 RatingTemplateDependency, Depends(get_rating_template)]):
-    result = rating_template_dependency.stop_use_template(template_id)
+def stop_use_rating_template(
+        template_id: str,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
+        global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
+):
+    result = rating_template_repository.stop_use_template(template_id)
 
     if not result:
         return {
             'status': 'failed',
             'message': 'Failed to stop using template'
         }
+
+    global_state_manager.update_state({'formatted_rules': []})
 
     return {
         'status': 'success',
@@ -92,14 +99,21 @@ def stop_use_rating_template(template_id: str,
 
 
 @router.patch("/rating-template/use/{template_id}")
-def use_rating_template(template_id: str,
-                        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
-    db_template = rating_template_dependency.use_template(template_id)
+def use_rating_template(
+        template_id: str,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
+        formatter: Annotated[Formatter, Depends(get_formatter)],
+        global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
+):
+    db_template, db_rules = rating_template_repository.use_template(template_id)
     if db_template is None:
         return {
             'status': 'failed',
             'message': 'Template not found'
         }
+
+    formatted_rules = formatter.format_rating_template(db_rules)
+    global_state_manager.update_state({'formatted_rules': formatted_rules})
 
     result = RatingTemplateResponse.model_validate(db_template)
     return {
@@ -110,8 +124,8 @@ def use_rating_template(template_id: str,
 
 @router.get("/rating-template/list")
 def get_rating_template_list(
-        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
-    db_templates = rating_template_dependency.get_template_list()
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]):
+    db_templates = rating_template_repository.get_template_list()
 
     if not db_templates:
         return {
@@ -128,17 +142,18 @@ def get_rating_template_list(
 
 
 @router.put("/rating-template/create")
-def create_rating_template(new_template: CreateRatingTemplate,
-                           rating_template_dependency: Annotated[
-                               RatingTemplateDependency, Depends(get_rating_template)]):
-    new_db_template = RatingTemplateDBModel(
+def create_rating_template(
+        new_template: CreateRatingTemplateRequest,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    new_db_template = RatingTemplateORM(
         id=new_template.id,
         name=new_template.name,
         description=new_template.description,
         author=new_template.author
     )
 
-    db_template = rating_template_dependency.create_template(new_db_template)
+    db_template = rating_template_repository.create_template(new_db_template)
 
     if db_template is None:
         return {
@@ -155,10 +170,11 @@ def create_rating_template(new_template: CreateRatingTemplate,
 
 
 @router.delete("/rating-template/delete/{template_id}")
-def delete_rating_template(template_id: str,
-                           rating_template_dependency: Annotated[
-                               RatingTemplateDependency, Depends(get_rating_template)]):
-    result = rating_template_dependency.delete_template(template_id)
+def delete_rating_template(
+        template_id: str,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    result = rating_template_repository.delete_template(template_id)
 
     if not result:
         return {
@@ -173,15 +189,16 @@ def delete_rating_template(template_id: str,
 
 
 @router.put("/rating-template/rule/create")
-def create_rating_template_rule(new_rule: CreateRatingRule,
-                                rating_template_dependency: Annotated[
-                                    RatingTemplateDependency, Depends(get_rating_template)]):
-    new_db_rule = RatingRuleDBModel(
+def create_rating_template_rule(
+        new_rule: CreateRatingRuleRequest,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    new_db_rule = RatingRuleORM(
         id=new_rule.rule_id,
         template_id=new_rule.template_id,
     )
 
-    db_rule = rating_template_dependency.create_template_rule(new_db_rule)
+    db_rule = rating_template_repository.create_template_rule(new_db_rule)
 
     if db_rule is None:
         return {
@@ -198,10 +215,11 @@ def create_rating_template_rule(new_rule: CreateRatingRule,
 
 
 @router.delete("/rating-template/rule/delete/{rule_id}")
-def delete_rating_template_rule(rule_id: str,
-                                rating_template_dependency: Annotated[
-                                    RatingTemplateDependency, Depends(get_rating_template)]):
-    result = rating_template_dependency.delete_template_rule(rule_id)
+def delete_rating_template_rule(
+        rule_id: str,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    result = rating_template_repository.delete_template_rule(rule_id)
 
     if not result:
         return {
@@ -216,10 +234,11 @@ def delete_rating_template_rule(rule_id: str,
 
 
 @router.post("/rating-template/rule/update")
-def update_rating_template_rule(updated_rule: UpdateRatingRule,
-                                rating_template_dependency: Annotated[
-                                    RatingTemplateDependency, Depends(get_rating_template)]):
-    db_rule = RatingRuleDBModel(
+def update_rating_template_rule(
+        updated_rule: UpdateRatingRuleRequest,
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    db_rule = RatingRuleORM(
         id=updated_rule.id,
         set_names=updated_rule.set_names,
         valuable_mains=updated_rule.valuable_mains,
@@ -227,7 +246,7 @@ def update_rating_template_rule(updated_rule: UpdateRatingRule,
         fit_characters=updated_rule.fit_characters
     )
 
-    result = rating_template_dependency.update_template_rule(db_rule)
+    result = rating_template_repository.update_template_rule(db_rule)
 
     if not result:
         return {
@@ -244,8 +263,9 @@ def update_rating_template_rule(updated_rule: UpdateRatingRule,
 @router.get("/rating-template/rule/list/{template_id}")
 def get_rating_template_rule_list(
         template_id: str,
-        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
-    db_rules = rating_template_dependency.get_template_rule_list(template_id)
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    db_rules = rating_template_repository.get_template_rule_list(template_id)
 
     if not db_rules:
         return {
@@ -264,8 +284,9 @@ def get_rating_template_rule_list(
 @router.get("/rating-template/rule/{rule_id}")
 def get_rating_template_rule(
         rule_id: str,
-        rating_template_dependency: Annotated[RatingTemplateDependency, Depends(get_rating_template)]):
-    db_rule = rating_template_dependency.get_template_rule(rule_id)
+        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+):
+    db_rule = rating_template_repository.get_template_rule(rule_id)
 
     if db_rule is None:
         return {

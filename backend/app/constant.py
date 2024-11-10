@@ -1,9 +1,16 @@
 import os
 
+GAME_TITLES = ['Honkai: Star Rail']
+
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 
 CHARACTERS_FILE = os.path.join(os.path.dirname(__file__), 'assets', 'character', 'character_meta.json')
+
+TASK_CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.json')
+TASK_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.schema.json')
+
+YOLO_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'yolo_model', 'best.pt')
 
 RELIC_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'relic')
 RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
