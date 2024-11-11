@@ -1,12 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
-import { RelicScore, RelicSubStats } from '@/app/types/relic-types';
 
 type UseBackendClientStore = {
-  isLatestVersion: boolean;
-  setLatestVersion: (latest: boolean) => void;
-
   requirementFulfilled: boolean;
   setRequirementFulfilled: (fulfilled: boolean) => void;
 
@@ -19,10 +15,6 @@ type UseBackendClientStore = {
 };
 
 const useBackendClientStore = create<UseBackendClientStore>(set => ({
-  isLatestVersion: false,
-  setLatestVersion: latest => {
-    set({ isLatestVersion: latest });
-  },
 
   requirementFulfilled: false,
   setRequirementFulfilled: fulfilled => {
@@ -48,7 +40,7 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
 
 
     // initialize the websocket
-    const ws = new WebSocket(`ws://localhost:${port}/relic-info`);
+    const ws = new WebSocket(`ws://localhost:${port}/ws`);
     ws.onopen = () => {
     };
 
@@ -63,59 +55,24 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
       // parse the message
       const data = JSON.parse(event.data);
 
-      // check if the data is error
       if (data.type === 'error') {
-        useRelicStore.setState({ relicError: data.message });
-        useRelicStore.setState({ relicInfo: null });
-      } else if (data.type === 'info') {
-        const message = JSON.parse(data.message);
-        const relicInfo = {
-          title: {
-            title: message.title.title,
-            set_name: message.title.set_name,
-          },
-          main_stats: {
-            name: message.main_stat.name,
-            number: message.main_stat.number,
-            level: message.main_stat.level,
-            enhance_level: message.main_stat.enhance_level,
-          },
-          sub_stats: message.sub_stats.map((subStat: RelicSubStats) => ({
-            name: subStat.name,
-            number: subStat.number,
-            score: subStat.score,
-          })),
-        };
-        useRelicStore.setState({ relicInfo: relicInfo });
-        useRelicStore.setState({ relicError: null });
-      } else if (data.type === 'img') {
-        const message = JSON.parse(data.message);
-        const relicImage = {
-          title_img: message.title_img,
-          main_stat_img: message.main_stat_img,
-          sub_stat_img: message.sub_stat_img,
-        };
-        useRelicStore.setState({ relicImage: relicImage });
-      } else if (data.type === 'score') {
-        let scores: RelicScore[] = data.message.map((score: string) => {
-          const formattedScore = JSON.parse(score);
-          return {
-            score: formattedScore.score,
-            characters: formattedScore.characters,
-            type: formattedScore.type,
-          };
-        });
-        scores = scores.sort((a, b) => {
-          if (!a.score) {
-            return 1;
-          }
-          if (!b.score) {
-            return -1;
-          }
-          return b.score - a.score;
-        });
-
-        useRelicStore.setState({ relicScores: scores });
+        if (data.pipeline_type === 'SingleRelicAnalysisPipeline') {
+          useRelicStore.setState({ relicError: data.error });
+          useRelicStore.setState({ relicInfo: null });
+        }
+      } else if (data.type === 'progress') {
+        console.log(data);
+      } else if (data.type === 'result') {
+        if (data.pipeline_type === 'SingleRelicAnalysisPipeline' && data.stage === 'ocr') {
+          const relicData = data.data;
+          console.log(relicData);
+          useRelicStore.setState({ relicInfo: relicData });
+          useRelicStore.setState({ relicError: null });
+        } else if (data.pipeline_type === 'SingleRelicAnalysisPipeline' && data.stage === 'relic_analysis') {
+          const relicScores = data.data;
+          console.log(relicScores);
+          useRelicStore.setState({ relicScores: relicScores });
+        }
       }
     };
 

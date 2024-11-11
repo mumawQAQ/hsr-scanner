@@ -1,10 +1,10 @@
 [package]
 name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+version = "4.0.2"
+description = ""
+authors = ["muma <wgr5600133@gmail.com>"]
 license = ""
-repository = ""
+repository = "https://github.com/mumawQAQ/hsr-scanner"
 default-run = "app"
 edition = "2021"
 rust-version = "1.60"
@@ -17,7 +17,7 @@ tauri-build = { version = "1.5.4", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.7.2", features = [ "updater", "window-set-always-on-top", "windows7-compat", "devtools"] }
+tauri = { version = "1.7.2", features = ["shell-open", "updater", "window-set-always-on-top", "windows7-compat", "devtools"] }
 regex = "1.10.6"
 
 

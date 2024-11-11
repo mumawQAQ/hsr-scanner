@@ -234,5 +234,9 @@
   "Moze": {
     "name": "貊泽",
     "icon": "images/characters/img_58.png"
+  },
+  "Rappa": {
+    "name": "乱破",
+    "icon": "images/characters/img_59.png"
   }
 }

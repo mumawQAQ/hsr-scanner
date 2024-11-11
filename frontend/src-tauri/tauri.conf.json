@@ -8,13 +8,16 @@
   },
   "package": {
     "productName": "hsr-scanner",
-    "version": "4.0.1"
+    "version": "4.1.0"
   },
   "tauri": {
     "allowlist": {
       "all": false,
       "window": {
         "setAlwaysOnTop": true
+      },
+      "shell": {
+        "open": true
       }
     },
     "bundle": {

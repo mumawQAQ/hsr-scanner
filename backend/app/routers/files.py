@@ -4,7 +4,7 @@ import os
 
 from fastapi import APIRouter
 
-from app.models.requests.files import GetFile
+from app.core.network_models.requests.file_request import GetFileRequest
 
 router = APIRouter()
 
@@ -12,7 +12,7 @@ FILE_FOLDER_PATH = os.path.join(os.path.dirname(__file__), '../assets')
 
 
 @router.post("/files")
-def get_files(request: GetFile):
+def get_files(request: GetFileRequest):
     file_path = os.path.join(FILE_FOLDER_PATH, request.file_path)
     if not os.path.exists(file_path):
         return {'status': 'failed', 'message': f"File {file_path} not found"}

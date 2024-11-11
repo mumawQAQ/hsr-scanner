@@ -2,34 +2,30 @@
 """
 
 import re
-from typing import TYPE_CHECKING, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from pip._vendor.packaging.tags import (
+    PythonVersion,
     Tag,
     compatible_tags,
     cpython_tags,
     generic_tags,
     interpreter_name,
     interpreter_version,
+    ios_platforms,
     mac_platforms,
 )
 
-if TYPE_CHECKING:
-    from pip._vendor.packaging.tags import PythonVersion
+_apple_arch_pat = re.compile(r"(.+)_(\d+)_(\d+)_(.+)")
 
 
-_osx_arch_pat = re.compile(r"(.+)_(\d+)_(\d+)_(.+)")
-
-
-def version_info_to_nodot(version_info):
-    # type: (Tuple[int, ...]) -> str
+def version_info_to_nodot(version_info: Tuple[int, ...]) -> str:
     # Only use up to the first two numbers.
     return "".join(map(str, version_info[:2]))
 
 
-def _mac_platforms(arch):
-    # type: (str) -> List[str]
-    match = _osx_arch_pat.match(arch)
+def _mac_platforms(arch: str) -> List[str]:
+    match = _apple_arch_pat.match(arch)
     if match:
         name, major, minor, actual_arch = match.groups()
         mac_version = (int(major), int(minor))
@@ -48,8 +44,27 @@ def _mac_platforms(arch):
     return arches
 
 
-def _custom_manylinux_platforms(arch):
-    # type: (str) -> List[str]
+def _ios_platforms(arch: str) -> List[str]:
+    match = _apple_arch_pat.match(arch)
+    if match:
+        name, major, minor, actual_multiarch = match.groups()
+        ios_version = (int(major), int(minor))
+        arches = [
+            # Since we have always only checked that the platform starts
+            # with "ios", for backwards-compatibility we extract the
+            # actual prefix provided by the user in case they provided
+            # something like "ioscustom_". It may be good to remove
+            # this as undocumented or deprecate it in the future.
+            "{}_{}".format(name, arch[len("ios_") :])
+            for arch in ios_platforms(ios_version, actual_multiarch)
+        ]
+    else:
+        # arch pattern didn't match (?!)
+        arches = [arch]
+    return arches
+
+
+def _custom_manylinux_platforms(arch: str) -> List[str]:
     arches = [arch]
     arch_prefix, arch_sep, arch_suffix = arch.partition("_")
     if arch_prefix == "manylinux2014":
@@ -70,11 +85,12 @@ def _custom_manylinux_platforms(arch):
     return arches
 
 
-def _get_custom_platforms(arch):
-    # type: (str) -> List[str]
+def _get_custom_platforms(arch: str) -> List[str]:
     arch_prefix, arch_sep, arch_suffix = arch.partition("_")
     if arch.startswith("macosx"):
         arches = _mac_platforms(arch)
+    elif arch.startswith("ios"):
+        arches = _ios_platforms(arch)
     elif arch_prefix in ["manylinux2014", "manylinux2010"]:
         arches = _custom_manylinux_platforms(arch)
     else:
@@ -82,8 +98,7 @@ def _get_custom_platforms(arch):
     return arches
 
 
-def _expand_allowed_platforms(platforms):
-    # type: (Optional[List[str]]) -> Optional[List[str]]
+def _expand_allowed_platforms(platforms: Optional[List[str]]) -> Optional[List[str]]:
     if not platforms:
         return None
 
@@ -100,16 +115,16 @@ def _expand_allowed_platforms(platforms):
     return result
 
 
-def _get_python_version(version):
-    # type: (str) -> PythonVersion
+def _get_python_version(version: str) -> PythonVersion:
     if len(version) > 1:
         return int(version[0]), int(version[1:])
     else:
         return (int(version[0]),)
 
 
-def _get_custom_interpreter(implementation=None, version=None):
-    # type: (Optional[str], Optional[str]) -> str
+def _get_custom_interpreter(
+    implementation: Optional[str] = None, version: Optional[str] = None
+) -> str:
     if implementation is None:
         implementation = interpreter_name()
     if version is None:
@@ -118,12 +133,11 @@ def _get_custom_interpreter(implementation=None, version=None):
 
 
 def get_supported(
-    version=None,  # type: Optional[str]
-    platforms=None,  # type: Optional[List[str]]
-    impl=None,  # type: Optional[str]
-    abis=None,  # type: Optional[List[str]]
-):
-    # type: (...) -> List[Tag]
+    version: Optional[str] = None,
+    platforms: Optional[List[str]] = None,
+    impl: Optional[str] = None,
+    abis: Optional[List[str]] = None,
+) -> List[Tag]:
     """Return a list of supported tags for each version specified in
     `versions`.
 
@@ -136,9 +150,9 @@ def get_supported(
     :param abis: specify a list of abis you want valid
         tags for, or None. If None, use the local interpreter abi.
     """
-    supported = []  # type: List[Tag]
+    supported: List[Tag] = []
 
-    python_version = None  # type: Optional[PythonVersion]
+    python_version: Optional[PythonVersion] = None
     if version is not None:
         python_version = _get_python_version(version)
 

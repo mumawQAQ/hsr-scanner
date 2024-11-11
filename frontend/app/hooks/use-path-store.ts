@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type PathType = '/dashboard/relic-panel' | '/dashboard/relic-templates';
+export type PathType = '/dashboard/relic-panel' | '/dashboard/relic-templates' | '/dashboard/setting';
 
 type UsePathStore = {
   path: PathType | null;

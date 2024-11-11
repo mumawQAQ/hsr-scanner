@@ -2,7 +2,6 @@
 import React from 'react';
 import RelicInfo from '@/app/components/relic-info';
 import RelicAction from '@/app/components/relic-action';
-import RelicImage from '@/app/components/relic-image';
 import { Divider } from '@nextui-org/divider';
 import useWindowStore from '@/app/hooks/use-window-store';
 import dynamic from 'next/dynamic';
@@ -12,7 +11,7 @@ import useRelicStore from '@/app/hooks/use-relic-store';
 const RelicLogger = dynamic(() => import('@/app/components/relic-logger'), { ssr: false });
 
 export default function RelicPanel() {
-  const { imgShow, isLightMode } = useWindowStore();
+  const { isLightMode } = useWindowStore();
   const { relicScores } = useRelicStore();
 
   if (isLightMode) {
@@ -41,8 +40,6 @@ export default function RelicPanel() {
         </div>
         <div className="mt-2 flex justify-center gap-2">
           <RelicLogger />
-          {imgShow && <Divider orientation="vertical" />}
-          {imgShow && <RelicImage />}
         </div>
       </div>
     </div>

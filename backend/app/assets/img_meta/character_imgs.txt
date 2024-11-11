@@ -33,6 +33,7 @@ images/characters/img_54.png
 images/characters/img_16.png
 images/characters/img_2.png
 images/characters/img_50.png
+images/characters/img_59.png
 images/characters/img_15.png
 images/characters/img_52.png
 images/characters/img_24.png

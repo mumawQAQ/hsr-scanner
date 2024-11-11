@@ -1,14 +1,11 @@
 import { create } from 'zustand';
 
 type WindowStore = {
-  scanningStatus: boolean;
-  setScanningStatus: (status: boolean) => void;
+  singleRelicAnalysisId: string | null;
+  setSingleRelicAnalysisId: (id: string | null) => void;
 
   isLightMode: boolean;
   setIsLightMode: (mode: boolean) => void;
-
-  imgShow: boolean;
-  setImageShow: (show: boolean) => void;
 
   logPause: boolean;
   setLogPause: (pause: boolean) => void;
@@ -21,17 +18,11 @@ type WindowStore = {
 };
 
 const useWindowStore = create<WindowStore>(set => ({
-  scanningStatus: false,
-  setScanningStatus: status => {
-    // set request to backend
-    set({ scanningStatus: status });
-  },
+  singleRelicAnalysisId: null,
+  setSingleRelicAnalysisId: id => set({ singleRelicAnalysisId: id }),
 
   isLightMode: false, // Default light mode
   setIsLightMode: mode => set({ isLightMode: mode }),
-
-  imgShow: false, // Default image show
-  setImageShow: show => set({ imgShow: show }),
 
   logPause: false,
   setLogPause: pause => set({ logPause: pause }),

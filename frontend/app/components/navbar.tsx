@@ -26,6 +26,16 @@ export default function Navbar() {
     <NextUINavbar>
       <NavbarContent justify="start">{leftNavbar}</NavbarContent>
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
+        <NavbarItem isActive={path === '/dashboard/setting'}>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              handlePathChange('/dashboard/setting');
+            }}
+          >
+            设置
+          </div>
+        </NavbarItem>
         <NavbarItem isActive={path === '/dashboard/relic-panel'}>
           <div
             className="cursor-pointer"

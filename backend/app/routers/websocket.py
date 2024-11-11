@@ -1,57 +1,33 @@
-import asyncio
-import json
 from typing import Annotated
 
 from fastapi import APIRouter, WebSocket, Depends, WebSocketDisconnect
 
-from app.dependencies.connection_manager import ConnectionManager, get_connection_manager
-from app.dependencies.global_state import GlobalState, get_global_state
+from app.core.managers.websocket_manager import WebsocketManager
+from app.life_span import get_websocket_manager
+from app.logging_config import logger
 
 router = APIRouter()
 
 
-@router.websocket("/relic-info")
-async def websocket_endpoint(websocket: WebSocket,
-                             manager: Annotated[ConnectionManager, Depends(get_connection_manager)],
-                             global_state: Annotated[GlobalState, Depends(get_global_state)]):
-    await manager.connect(websocket)
-
+@router.websocket("/ws")
+async def websocket_endpoint(*,
+                             websocket: WebSocket,
+                             _websocket_manager: Annotated[WebsocketManager, Depends(get_websocket_manager)]):
+    # there will be only one client, no need to handle multiple connections
     try:
-        while True:
-            if global_state.relic_img:
-                current_img = global_state.relic_img.model_dump_json()
-                if manager.relic_img_last_sent_message != current_img:
-                    manager.relic_img_last_sent_message = current_img
-                    await manager.send_message(json.dumps({
-                        'type': 'img',
-                        'message': current_img
-                    }))
+        await websocket.accept()
+        await _websocket_manager.register(websocket)
 
-            if not global_state.relic_info:
-                error_message = json.dumps({'type': 'error', 'message': 'No relic info found'})
-                if manager.relic_info_last_sent_message != error_message:
-                    manager.relic_info_last_sent_message = error_message
-                    await manager.send_message(error_message)
-                await asyncio.sleep(0.1)
-                continue
+        logger.info("WebSocket connection established")
 
-            current_relic_info_message = global_state.relic_info.model_dump_json()
-            if manager.relic_info_last_sent_message != current_relic_info_message:
-                manager.relic_info_last_sent_message = current_relic_info_message
-                await manager.send_message(json.dumps({
-                    'type': 'info',
-                    'message': current_relic_info_message
-                }))
-
-            current_relic_score_message = [score.model_dump_json() for score in global_state.relic_rating]
-            if manager.relic_score_last_sent_message != current_relic_score_message:
-                manager.relic_score_last_sent_message = current_relic_score_message
-                await manager.send_message(json.dumps({
-                    'type': 'score',
-                    'message': current_relic_score_message
-                }))
-
-            await asyncio.sleep(0.1)
+        # Keep the connection alive without processing messages
+        await websocket.receive_text()
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        logger.info("Client disconnected")
+    except Exception as e:
+        logger.error(f"Unexpected error in WebSocket connection: {e}")
+    finally:
+        # Clean up connection
+        await _websocket_manager.unregister()
+        logger.info("WebSocket connection closed")

@@ -4,7 +4,6 @@ import SelectTemplateModal from '@/app/components/modal/select-template-modal';
 import CreateTemplateModal from '@/app/components/modal/create-template-modal';
 import { ExportTemplateModal } from '@/app/components/modal/export-template-modal';
 import { ImportTemplateModal } from '@/app/components/modal/import-template-modal';
-import { UpdaterModal } from '@/app/components/modal/updater-modal';
 
 export const ModalProvider = () => {
   return (
@@ -14,7 +13,6 @@ export const ModalProvider = () => {
       <CreateTemplateModal />
       <ExportTemplateModal />
       <ImportTemplateModal />
-      <UpdaterModal />
     </>
   );
 };

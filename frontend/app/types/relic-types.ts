@@ -17,16 +17,11 @@ export type RelicMainStats = {
 };
 
 export type RelicInfo = {
-  title: RelicTitle;
-  main_stats: RelicMainStats;
-  sub_stats: RelicSubStats[];
+  relic_title: RelicTitle | null;
+  relic_main_stat: RelicMainStats | null;
+  relic_sub_stat: RelicSubStats[] | null;
 };
 
-export type RelicImage = {
-  title_img: string;
-  main_stat_img: string;
-  sub_stat_img: string;
-};
 
 export type RelicScore = {
   score: number;

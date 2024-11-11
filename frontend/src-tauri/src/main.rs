@@ -135,6 +135,7 @@ fn start_backend(app: AppHandle) {
                     let reader = BufReader::new(stderr_reader);
                     for line in reader.lines() {
                         if let Ok(line) = line {
+                            println!("{}", line);
                             if let Some(captures) = match_port.captures(&line) {
                                 let port = captures.get(1).unwrap().as_str();
                                 stderr_app.emit_all("backend-port", port).expect("failed to send stderr");
@@ -232,6 +233,47 @@ fn install_python_requirements(app: AppHandle) {
 }
 
 #[tauri::command]
+fn check_asserts_update(app: AppHandle, download: bool) -> Result<String, String> {
+    let python_path = resolve_path(app.clone(), "../../tools/python/python").expect("Failed to resolve python path");
+    let main_script_path = resolve_path(app.clone(), "../../backend/check_assert_update.py").expect("Failed to resolve script path");
+
+    let mut cmd = Command::new(python_path);
+    cmd.arg(&main_script_path);
+
+    if download {
+        cmd.arg("--download");
+    }
+    cmd.creation_flags(0x08000000); // This prevents the creation of a console window on Windows.
+
+    // Execute the command and capture the output
+    let output = cmd.output().map_err(|e| format!("Failed to execute Python script: {}", e))?;
+
+    if output.status.success() {
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        println!("{}", stdout);
+        Ok(stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+        println!("{}", stderr);
+        Err(format!("Python script error: {}", stderr))
+    }
+}
+
+#[tauri::command]
+fn kill_backend() -> Result<(), String> {
+    let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
+    if let Some(child) = handle.as_mut() {
+        child.kill().expect("Failed to kill the backend process");
+        child.wait().expect("Failed to wait on the backend process");
+        *handle = None;
+        println!("Python process killed.");
+    } else {
+        println!("Python process is not running.");
+    }
+    Ok(())
+}
+
+#[tauri::command]
 fn set_always_on_top(window: tauri::Window, status: bool) -> Result<(), String> {
     window
         .set_always_on_top(status)
@@ -264,13 +306,7 @@ fn main() {
             window.on_window_event(|event| match event {
                 WindowEvent::CloseRequested { .. } => {
                     println!("Application is closing...");
-
-                    // Terminate any running backend process
-                    let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
-                    if let Some(child) = handle.as_mut() {
-                        child.kill().expect("Failed to kill the backend process");
-                        child.wait().expect("Failed to wait on the backend process");
-                    }
+                    kill_backend().expect("Failed to kill the backend process");
                 }
                 _ => {}
             });
@@ -284,7 +320,9 @@ fn main() {
             open_browser_console,
             set_window_size,
             pre_backup,
-            post_backup
+            post_backup,
+            kill_backend,
+            check_asserts_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
