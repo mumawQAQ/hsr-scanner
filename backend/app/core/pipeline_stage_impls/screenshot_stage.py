@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 import pyautogui as pg
 import pygetwindow as gw
 
@@ -31,9 +33,11 @@ class ScreenshotStage(BasePipelineStage):
             height = game_window.height
 
             screen = pg.screenshot(region=(left, top, width, height))
+            image_bgr = cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
 
             screenshot_data = {
                 'image': screen,
+                'image_bgr': image_bgr,
                 'window': {
                     'left': left,
                     'top': top,
