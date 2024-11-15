@@ -40,7 +40,7 @@ class YOLOModel(ModelInterface[Any, Any]):
         img_np = np.array(img)
         img_resized = cv2.resize(img_np, (640, 640))
 
-        detection_result = self.model.predict(source=img_resized, imgsz=640, conf=0.8, save=True, verbose=False)
+        detection_result = self.model.predict(source=img_resized, imgsz=640, conf=0.8, save=False, verbose=False)
         boxes = detection_result[0].boxes.xywhn if len(detection_result) > 0 else []
         classes = detection_result[0].boxes.cls if len(detection_result) > 0 else []
 
