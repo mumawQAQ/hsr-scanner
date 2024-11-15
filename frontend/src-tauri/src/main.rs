@@ -13,11 +13,14 @@ static BACKEND_PROCESS_HANDLE: Mutex<Option<Child>> = Mutex::new(None);
 static REQUIREMENTS_INSTALLED: Mutex<bool> = Mutex::new(false);
 
 fn resolve_path(app: AppHandle, path: &str) -> Result<String, String> {
-    let resolved_path = app.path_resolver()
+    let resolved_path = app
+        .path_resolver()
         .resolve_resource(path)
         .expect("failed to resolve path");
 
-    let path_str = resolved_path.into_os_string().into_string()
+    let path_str = resolved_path
+        .into_os_string()
+        .into_string()
         .expect("failed to convert path to string");
 
     if path_str.starts_with("\\\\?\\") {
@@ -28,8 +31,8 @@ fn resolve_path(app: AppHandle, path: &str) -> Result<String, String> {
 }
 #[tauri::command]
 fn pre_backup(app: AppHandle) -> Result<String, String> {
-    let bat_dir = resolve_path(app.clone(), "../../tools")
-        .expect("Failed to resolve batch file directory");
+    let bat_dir =
+        resolve_path(app.clone(), "../../tools").expect("Failed to resolve batch file directory");
     let bat_path = resolve_path(app.clone(), "../../tools/pre_update.bat")
         .expect("Failed to resolve batch file path");
 
@@ -59,8 +62,8 @@ fn pre_backup(app: AppHandle) -> Result<String, String> {
 
 #[tauri::command]
 fn post_backup(app: AppHandle) -> Result<String, String> {
-    let bat_dir = resolve_path(app.clone(), "../../tools")
-        .expect("Failed to resolve batch file directory");
+    let bat_dir =
+        resolve_path(app.clone(), "../../tools").expect("Failed to resolve batch file directory");
     let bat_path = resolve_path(app.clone(), "../../tools/post_update.bat")
         .expect("Failed to resolve batch file path");
 
@@ -96,8 +99,10 @@ fn start_backend(app: AppHandle) {
             let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
 
             if handle.is_none() {
-                let python_path = resolve_path(app.clone(), "../../tools/python/python").expect("Failed to resolve python path");
-                let main_script_path = resolve_path(app.clone(), "../../backend/main.py").expect("Failed to resolve main script path");
+                let python_path = resolve_path(app.clone(), "../../tools/python/python")
+                    .expect("Failed to resolve python path");
+                let main_script_path = resolve_path(app.clone(), "../../backend/main.py")
+                    .expect("Failed to resolve main script path");
 
                 let mut child = Command::new(python_path)
                     .arg(main_script_path)
@@ -121,7 +126,9 @@ fn start_backend(app: AppHandle) {
                         if let Ok(line) = line {
                             //TODO: remove this, this is will only print to console in debug mode
                             println!("{}", line);
-                            stdout_app.emit_all("backend-log", line).expect("failed to send stdout");
+                            stdout_app
+                                .emit_all("backend-log", line)
+                                .expect("failed to send stdout");
                         }
                     }
                 });
@@ -138,7 +145,9 @@ fn start_backend(app: AppHandle) {
                             println!("{}", line);
                             if let Some(captures) = match_port.captures(&line) {
                                 let port = captures.get(1).unwrap().as_str();
-                                stderr_app.emit_all("backend-port", port).expect("failed to send stderr");
+                                stderr_app
+                                    .emit_all("backend-port", port)
+                                    .expect("failed to send stderr");
                             }
                         }
                     }
@@ -153,7 +162,6 @@ fn start_backend(app: AppHandle) {
     });
 }
 
-
 #[tauri::command]
 fn install_python_requirements(app: AppHandle) {
     std::thread::spawn({
@@ -162,8 +170,11 @@ fn install_python_requirements(app: AppHandle) {
             let mut installed = REQUIREMENTS_INSTALLED.lock().unwrap();
 
             if !*installed {
-                app.emit_all("requirements-status-log", "Installing Python requirements...")
-                    .expect("Failed to send install start notification");
+                app.emit_all(
+                    "requirements-status-log",
+                    "Installing Python requirements...",
+                )
+                .expect("Failed to send install start notification");
 
                 let bat_dir = resolve_path(app.clone(), "../../tools")
                     .expect("Failed to resolve batch file directory");
@@ -179,8 +190,11 @@ fn install_python_requirements(app: AppHandle) {
                     .spawn()
                     .expect("Failed to start install script");
 
-                app.emit_all("requirements-status-log", "Python requirements installation started.")
-                    .expect("Failed to send installation started notification");
+                app.emit_all(
+                    "requirements-status-log",
+                    "Python requirements installation started.",
+                )
+                .expect("Failed to send installation started notification");
 
                 let stdout = child.stdout.take().unwrap();
                 let stderr = child.stderr.take().unwrap();
@@ -194,7 +208,9 @@ fn install_python_requirements(app: AppHandle) {
                     let reader = BufReader::new(stdout_reader);
                     for line in reader.lines() {
                         if let Ok(line) = line {
-                            stdout_app.emit_all("requirements-install-log", line).expect("failed to send stdout");
+                            stdout_app
+                                .emit_all("requirements-install-log", line)
+                                .expect("failed to send stdout");
                         }
                     }
                 });
@@ -207,7 +223,9 @@ fn install_python_requirements(app: AppHandle) {
                     let reader = BufReader::new(stderr_reader);
                     for line in reader.lines() {
                         if let Ok(line) = line {
-                            stderr_app.emit_all("requirements-install-error", line).expect("failed to send stderr");
+                            stderr_app
+                                .emit_all("requirements-install-error", line)
+                                .expect("failed to send stderr");
                         }
                     }
                 });
@@ -234,8 +252,10 @@ fn install_python_requirements(app: AppHandle) {
 
 #[tauri::command]
 fn check_asserts_update(app: AppHandle, download: bool) -> Result<String, String> {
-    let python_path = resolve_path(app.clone(), "../../tools/python/python").expect("Failed to resolve python path");
-    let main_script_path = resolve_path(app.clone(), "../../backend/check_assert_update.py").expect("Failed to resolve script path");
+    let python_path = resolve_path(app.clone(), "../../tools/python/python")
+        .expect("Failed to resolve python path");
+    let main_script_path = resolve_path(app.clone(), "../../backend/check_assert_update.py")
+        .expect("Failed to resolve script path");
 
     let mut cmd = Command::new(python_path);
     cmd.arg(&main_script_path);
@@ -246,7 +266,9 @@ fn check_asserts_update(app: AppHandle, download: bool) -> Result<String, String
     cmd.creation_flags(0x08000000); // This prevents the creation of a console window on Windows.
 
     // Execute the command and capture the output
-    let output = cmd.output().map_err(|e| format!("Failed to execute Python script: {}", e))?;
+    let output = cmd
+        .output()
+        .map_err(|e| format!("Failed to execute Python script: {}", e))?;
 
     if output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout).to_string();
@@ -275,9 +297,7 @@ fn kill_backend() -> Result<(), String> {
 
 #[tauri::command]
 fn set_always_on_top(window: tauri::Window, status: bool) -> Result<(), String> {
-    window
-        .set_always_on_top(status)
-        .map_err(|e| e.to_string())
+    window.set_always_on_top(status).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -297,7 +317,6 @@ fn set_window_size(window: tauri::Window, status: bool) -> Result<(), String> {
     window.set_size(size).map_err(|e| e.to_string())?;
     Ok(())
 }
-
 
 fn main() {
     tauri::Builder::default()
