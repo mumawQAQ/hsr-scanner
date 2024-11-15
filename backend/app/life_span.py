@@ -10,6 +10,7 @@ from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.managers.model_manager import ModelManager
 from app.core.managers.pipeline_manager import PipelineManager
 from app.core.managers.websocket_manager import WebsocketManager
+from app.core.model_impls.icon_matcher_model import IconMatcherModel
 from app.core.model_impls.ocr_model import OCRModel
 from app.core.model_impls.relic_matcher_model import RelicMatcherModel
 from app.core.model_impls.relic_rating_model import RelicRatingModel
@@ -114,6 +115,7 @@ async def life_span(app: FastAPI):
         relic_sub_stats_path=RELIC_SUB_STATS_FILE,
     ))
     model_manager.register_model("relic_rating", RelicRatingModel(global_state_manager))
+    model_manager.register_model("icon_matcher", IconMatcherModel())
 
     # Init all the tables
     Base.metadata.create_all(engine)
