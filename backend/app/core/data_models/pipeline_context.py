@@ -8,3 +8,4 @@ class PipelineContext(BaseModel):
     pipeline_id: str
     pipeline_type: str
     data: Dict[str, Any] = Field(default_factory=dict)
+    meta_data: Dict[str, Any] = Field(default_factory=dict)

@@ -23,7 +23,7 @@ class ScreenshotStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             # get whether to bring the window to the front
-            bring_to_front = context.data.get('bring_to_front', False)
+            bring_to_front = context.meta_data.get('bring_to_front', False)
             # Find game window
             window_info = self.__find_game_window__()
             if not window_info:
