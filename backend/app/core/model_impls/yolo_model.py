@@ -38,10 +38,9 @@ class YOLOModel(ModelInterface[Any, Any]):
         window_w = input_data['window']['width']
 
         img_np = np.array(img)
-        img_rgb = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
-        img_resized = cv2.resize(img_rgb, (640, 640))
+        img_resized = cv2.resize(img_np, (640, 640))
 
-        detection_result = self.model.predict(source=img_resized, imgsz=640, conf=0.8, save=False, verbose=False)
+        detection_result = self.model.predict(source=img_resized, imgsz=640, conf=0.8, save=True, verbose=False)
         boxes = detection_result[0].boxes.xywhn if len(detection_result) > 0 else []
         classes = detection_result[0].boxes.cls if len(detection_result) > 0 else []
 
@@ -55,6 +54,14 @@ class YOLOModel(ModelInterface[Any, Any]):
                 f"Detected {cls} with x_center: {x_center}, y_center: {y_center}, width: {width}, height: {height}")
 
             if cls not in sub_regions:
-                sub_regions[cls] = sub_region_img
+                sub_regions[cls] = {
+                    'image': sub_region_img,
+                    'box': {
+                        'x_center': x_center,
+                        'y_center': y_center,
+                        'width': width,
+                        'height': height
+                    }
+                }
 
         return sub_regions
