@@ -161,29 +161,31 @@ class OCRStage(BasePipelineStage):
             relic_main_stat = None
             relic_sub_stat = None
 
-            # check if the necessary data is present
-            for k, v in detection_data.items():
-                if k == "relic-title":
-                    relic_title_info = self.__handle_relic_title_ocr(ocr_model, v)
-                    if relic_title_info:
-                        relic_title = relic_matcher_model.predict(RelicMatcherInput(
-                            type=RelicMatcherInputType.RELIC_TITLE,
-                            data=relic_title_info,
-                        ))
-                elif k == "relic-main-stat":
-                    relic_main_stat_info = self.__handle_relic_main_stat_ocr(ocr_model, v)
-                    if relic_main_stat_info:
-                        relic_main_stat = relic_matcher_model.predict(RelicMatcherInput(
-                            type=RelicMatcherInputType.RELIC_MAIN_STAT,
-                            data=relic_main_stat_info,
-                        ))
-                elif k == "relic-sub-stat":
-                    relic_sub_stat_info = self.__handle_relic_sub_stat_ocr(ocr_model, v)
-                    if relic_sub_stat_info:
-                        relic_sub_stat = relic_matcher_model.predict(RelicMatcherInput(
-                            type=RelicMatcherInputType.RELIC_SUB_STAT,
-                            data=relic_sub_stat_info,
-                        ))
+            if "relic-title" in detection_data:
+                relic_title_info = self.__handle_relic_title_ocr(ocr_model, detection_data["relic-title"]["image"])
+                if relic_title_info:
+                    relic_title = relic_matcher_model.predict(RelicMatcherInput(
+                        type=RelicMatcherInputType.RELIC_TITLE,
+                        data=relic_title_info,
+                    ))
+
+            if "relic-main-stat" in detection_data:
+                relic_main_stat_info = self.__handle_relic_main_stat_ocr(ocr_model,
+                                                                         detection_data["relic-main-stat"]["image"])
+                if relic_main_stat_info:
+                    relic_main_stat = relic_matcher_model.predict(RelicMatcherInput(
+                        type=RelicMatcherInputType.RELIC_MAIN_STAT,
+                        data=relic_main_stat_info,
+                    ))
+
+            if "relic-sub-stat" in detection_data:
+                relic_sub_stat_info = self.__handle_relic_sub_stat_ocr(ocr_model,
+                                                                       detection_data["relic-sub-stat"]["image"])
+                if relic_sub_stat_info:
+                    relic_sub_stat = relic_matcher_model.predict(RelicMatcherInput(
+                        type=RelicMatcherInputType.RELIC_SUB_STAT,
+                        data=relic_sub_stat_info,
+                    ))
 
             relic_ocr_response = RelicOCRResponse(
                 relic_title=relic_title,
