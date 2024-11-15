@@ -21,6 +21,15 @@ class RelicRatingModel(ModelInterface[RelicOCRResponse, Union[None, List[RelicSc
         if 'formatted_rules' not in global_state.keys():
             return None
 
+        if not input_data.relic_main_stat:
+            raise ValueError("Relic main stat is not found")
+
+        if not input_data.relic_sub_stat:
+            raise ValueError("Relic sub stat is not found")
+
+        if not input_data.relic_title:
+            raise ValueError("Relic title is not found")
+
         rules = global_state['formatted_rules'][input_data.relic_title.title]
         score_type = "potential" if input_data.relic_main_stat.level < 15 else "actual"
         new_rating = []
