@@ -11,11 +11,13 @@ from app.core.managers.model_manager import ModelManager
 from app.core.managers.pipeline_manager import PipelineManager
 from app.core.managers.websocket_manager import WebsocketManager
 from app.core.model_impls.icon_matcher_model import IconMatcherModel
+from app.core.model_impls.keyboard_model import KeyboardModel
 from app.core.model_impls.ocr_model import OCRModel
 from app.core.model_impls.relic_matcher_model import RelicMatcherModel
 from app.core.model_impls.relic_rating_model import RelicRatingModel
 from app.core.model_impls.yolo_model import YOLOModel
 from app.core.pipeline_executer import PipelineExecutor
+from app.core.pipline_impls.auto_relic_analysis import AutoRelicAnalysis
 from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAnalysisPipeline
 from app.core.repositories.rating_template_repo import RatingTemplateRepository
 from app.core.utils.formatter import Formatter
@@ -102,9 +104,11 @@ async def life_span(app: FastAPI):
     pipeline_manager = PipelineManager()
     model_manager = ModelManager()
     pipeline_executor = PipelineExecutor(websocket_manager)
+    pipeline_executor.start_keyboard_listener()
 
     # Register the pipelines
     pipeline_manager.register_pipeline(SingleRelicAnalysisPipeline)
+    pipeline_manager.register_pipeline(AutoRelicAnalysis)
 
     # Register the models
     model_manager.register_model("yolo", YOLOModel(YOLO_MODEL_PATH))
@@ -116,6 +120,7 @@ async def life_span(app: FastAPI):
     ))
     model_manager.register_model("relic_rating", RelicRatingModel(global_state_manager))
     model_manager.register_model("icon_matcher", IconMatcherModel())
+    model_manager.register_model("keyboard", KeyboardModel())
 
     # Init all the tables
     Base.metadata.create_all(engine)
