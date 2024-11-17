@@ -14,14 +14,21 @@ class RelicDiscardStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
+            # TODO: need to check whether the relic need to be discarded or not
             screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
             icon_matcher_model = ModelManager().get_model("icon_matcher")
+
+            # TODO: this may need to move to a separate stage
+            keyboard_model = ModelManager().get_model("keyboard")
 
             if not screenshot:
                 raise ValueError("Screenshot data not found.")
 
             if not icon_matcher_model:
                 raise ValueError("Icon matcher model not found.")
+
+            if not keyboard_model:
+                raise ValueError("Keyboard model not found.")
 
             icon_center_info: IconMatcherOutput = icon_matcher_model.predict(
                 IconMatcherInput(
@@ -41,6 +48,8 @@ class RelicDiscardStage(BasePipelineStage):
 
             # click on the icon
             pg.click(icon_x, icon_y)
+
+            keyboard_model.predict("d")
 
             return StageResult(
                 success=True,
