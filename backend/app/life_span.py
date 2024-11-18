@@ -17,7 +17,7 @@ from app.core.model_impls.relic_matcher_model import RelicMatcherModel
 from app.core.model_impls.relic_rating_model import RelicRatingModel
 from app.core.model_impls.yolo_model import YOLOModel
 from app.core.pipeline_executer import PipelineExecutor
-from app.core.pipline_impls.auto_relic_analysis import AutoRelicAnalysis
+from app.core.pipline_impls.auto_relic_analysis_pipeline import AutoRelicAnalysisPipeline
 from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAnalysisPipeline
 from app.core.repositories.rating_template_repo import RatingTemplateRepository
 from app.core.utils.formatter import Formatter
@@ -108,7 +108,7 @@ async def life_span(app: FastAPI):
 
     # Register the pipelines
     pipeline_manager.register_pipeline(SingleRelicAnalysisPipeline)
-    pipeline_manager.register_pipeline(AutoRelicAnalysis)
+    pipeline_manager.register_pipeline(AutoRelicAnalysisPipeline)
 
     # Register the models
     model_manager.register_model("yolo", YOLOModel(YOLO_MODEL_PATH))
