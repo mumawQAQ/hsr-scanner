@@ -19,7 +19,7 @@ class RelicRatingModel(ModelInterface[RelicOCRResponse, Union[None, List[RelicSc
         global_state = self.global_state_manager.get_state()
 
         if 'formatted_rules' not in global_state.keys():
-            return None
+            raise ValueError("Template rules are not found")
 
         if not input_data.relic_main_stat:
             raise ValueError("Relic main stat is not found")
