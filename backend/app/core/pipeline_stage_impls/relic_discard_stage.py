@@ -33,7 +33,7 @@ class RelicDiscardStage(BasePipelineStage):
             if not screenshot:
                 raise ValueError("Screenshot data not found.")
 
-            if relic_analysis:
+            if relic_analysis is None:
                 if skip_if_error:
                     keyboard_model.predict("d")
                 raise ValueError("Relic analysis data not found.")
