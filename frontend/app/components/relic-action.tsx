@@ -28,7 +28,9 @@ export default function RelicAction() {
 
   const handleScanStateChange = async (status: boolean) => {
     if (status) {
-      startPipeline.mutate('SingleRelicAnalysisPipeline', {
+      startPipeline.mutate({
+        pipeline_name: 'SingleRelicAnalysisPipeline',
+      }, {
         onSuccess: (data) => {
           setSingleRelicAnalysisId(data.pipeline_id);
         },
@@ -54,6 +56,10 @@ export default function RelicAction() {
     onOpen('select-template');
   };
 
+  const handleStartAutoScan = () => {
+    onOpen('start-auto-scan');
+  };
+
   const handleSetTopWindow = async (status: boolean) => {
     try {
       await invoke('set_always_on_top', { status });
@@ -71,7 +77,6 @@ export default function RelicAction() {
       console.error('Failed to set light mode:', error);
     }
   };
-
 
   return (
     <div className="flex flex-row gap-4 md:flex-col">
@@ -98,6 +103,9 @@ export default function RelicAction() {
       </Switch>
       <Button size="sm" variant="bordered" className="mt-5 hidden md:block" onPress={handleSelectTemplate}>
         选择模板
+      </Button>
+      <Button size="sm" variant="bordered" className="block md:hidden" onPress={handleStartAutoScan}>
+        自动扫描
       </Button>
     </div>
   );

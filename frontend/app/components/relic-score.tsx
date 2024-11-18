@@ -8,7 +8,7 @@ import { cn } from '@nextui-org/react';
 import { CircleAlert } from 'lucide-react';
 
 export default function RelicScore() {
-  const { singleRelicAnalysisId } = useWindowStore();
+  const { singleRelicAnalysisId, autoRelicAnalysisId } = useWindowStore();
   const { relicScores, relicError } = useRelicStore();
   const { data: characters } = useJsonFile('character/character_meta.json');
 
@@ -120,7 +120,7 @@ export default function RelicScore() {
 
 
   const renderScoreResult = () => {
-    if (!singleRelicAnalysisId || !relicScores) {
+    if ((!singleRelicAnalysisId && !autoRelicAnalysisId) || !relicScores) {
       return null;
     }
 

@@ -37,3 +37,9 @@ export type AssertUpdateCheckResponse = {
   files?: string[];
   errors?: string[];
 }
+
+
+export type StartPipelineRequest = {
+  pipeline_name: string;
+  meta_data?: Record<string, string | boolean | number>;
+}
