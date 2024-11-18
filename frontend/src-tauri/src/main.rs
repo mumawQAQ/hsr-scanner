@@ -313,7 +313,7 @@ fn open_browser_console(window: tauri::Window) -> Result<(), String> {
 #[tauri::command]
 fn set_window_size(window: tauri::Window, status: bool) -> Result<(), String> {
     let size = if status {
-        tauri::LogicalSize::new(400, 300)
+        tauri::LogicalSize::new(450, 350)
     } else {
         tauri::LogicalSize::new(800, 600)
     };
