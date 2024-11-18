@@ -143,6 +143,10 @@ fn start_backend(app: AppHandle) {
                     for line in reader.lines() {
                         if let Ok(line) = line {
                             println!("{}", line);
+                            stderr_app
+                                .emit_all("backend-error", line.clone())
+                                .expect("failed to send stderr");
+
                             if let Some(captures) = match_port.captures(&line) {
                                 let port = captures.get(1).unwrap().as_str();
                                 stderr_app
