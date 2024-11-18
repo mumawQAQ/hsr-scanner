@@ -9,7 +9,7 @@ from app.core.pipeline_stage_impls.relic_discard_stage import RelicDiscardStage
 from app.core.pipeline_stage_impls.screenshot_stage import ScreenshotStage
 
 
-class AutoRelicAnalysis(PipelineProtocol):
+class AutoRelicAnalysisPipeline(PipelineProtocol):
     """Pipeline for game state recognition"""
 
     @classmethod
