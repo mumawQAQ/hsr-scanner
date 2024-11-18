@@ -21,7 +21,7 @@ export const ImportTemplateModal = () => {
         onOpen('select-template');
       },
       onError: () => {
-        toast.error('导入模板失败，请检查模板代码是否正确, 或联系作者反馈');
+        toast.error('导入模板失败，请检查模板代码是否正确, 检查是否是最新资源, 或联系作者反馈');
       },
     });
   };
