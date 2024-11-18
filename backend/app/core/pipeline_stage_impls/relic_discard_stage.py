@@ -14,15 +14,15 @@ class RelicDiscardStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            # TODO: need to check whether the relic need to be discarded or not
             screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
+            relic_analysis = context.data.get(GameRecognitionStage.RELIC_ANALYSIS.value)
+            relic_discard_score = context.meta_data.get("relic_discard_score", 0.4)
+            skip_if_error = context.meta_data.get("skip_if_error", True)
+
             icon_matcher_model = ModelManager().get_model("icon_matcher")
 
             # TODO: this may need to move to a separate stage
             keyboard_model = ModelManager().get_model("keyboard")
-
-            if not screenshot:
-                raise ValueError("Screenshot data not found.")
 
             if not icon_matcher_model:
                 raise ValueError("Icon matcher model not found.")
@@ -30,24 +30,33 @@ class RelicDiscardStage(BasePipelineStage):
             if not keyboard_model:
                 raise ValueError("Keyboard model not found.")
 
-            icon_center_info: IconMatcherOutput = icon_matcher_model.predict(
-                IconMatcherInput(
-                    source_image_bgr=screenshot['image_bgr'],
-                    icon_type=IconType.DISCARD
+            if not screenshot:
+                raise ValueError("Screenshot data not found.")
+
+            if relic_analysis:
+                if skip_if_error:
+                    keyboard_model.predict("d")
+                raise ValueError("Relic analysis data not found.")
+
+            if len(relic_analysis) == 0 or relic_analysis[0].score < relic_discard_score:
+                icon_center_info: IconMatcherOutput = icon_matcher_model.predict(
+                    IconMatcherInput(
+                        source_image_bgr=screenshot['image_bgr'],
+                        icon_type=IconType.DISCARD
+                    )
                 )
-            )
 
-            icon_center_x = icon_center_info.x_center
-            icon_center_y = icon_center_info.y_center
+                icon_center_x = icon_center_info.x_center
+                icon_center_y = icon_center_info.y_center
 
-            window_left = screenshot['window']['left']
-            window_top = screenshot['window']['top']
+                window_left = screenshot['window']['left']
+                window_top = screenshot['window']['top']
 
-            icon_x = window_left + icon_center_x
-            icon_y = window_top + icon_center_y
+                icon_x = window_left + icon_center_x
+                icon_y = window_top + icon_center_y
 
-            # click on the icon
-            pg.click(icon_x, icon_y)
+                # click on the icon
+                pg.click(icon_x, icon_y)
 
             keyboard_model.predict("d")
 
