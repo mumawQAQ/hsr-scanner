@@ -31,6 +31,8 @@ class RelicRatingModel(ModelInterface[RelicOCRResponse, Union[None, List[RelicSc
             raise ValueError("Relic title is not found")
 
         rules = global_state['formatted_rules'][input_data.relic_title.title]
+
+        # TODO: handle the case where level is none will cause an error
         score_type = "potential" if input_data.relic_main_stat.level < 15 else "actual"
         new_rating = []
 
