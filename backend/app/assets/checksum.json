@@ -1,1 +1,30 @@
-[{"file": "relic/relic_main_stats.json", "checksum": "040aa83e520b5ef343a6f53bdb31a5826c8379c08de872cf0bd4412bccbe7280"}, {"file": "relic/relic_sub_stats.json", "checksum": "56963b6b0c3e9173cb6d4ddf3e8723f2a6af27154b45aa7e102bde51126ba859"}, {"file": "relic/relic_sets.json", "checksum": "f84f893ac520f4402d0d4b8bfbfe7ba5d40846b1488ab3888c29a8c0897f63a3"}, {"file": "yolo_model/best.pt", "checksum": "117ccccb67784f5c5719f729be7f872c7d818a7a010d2e579b815e522ab838b5"}, {"file": "img_meta/relic_imgs.txt", "checksum": "db38ae5b31946291099066c957c7c5efb9ada1cac50bb0c4c185dbaad1b09fc1"}, {"file": "img_meta/character_imgs.txt", "checksum": "bb2181ad4f5695ca5b374457966bd1303fc1e9d6dc7e821ee51e3c593d378ae9"}, {"file": "character/character_meta.json", "checksum": "03ebd2492b3b31af1f84dd783e5e8cacf6a4734454d29847ed0e95270975ebdb"}]
+[
+  {
+    "file": "relic/relic_main_stats.json",
+    "checksum": "040aa83e520b5ef343a6f53bdb31a5826c8379c08de872cf0bd4412bccbe7280"
+  },
+  {
+    "file": "relic/relic_sub_stats.json",
+    "checksum": "56963b6b0c3e9173cb6d4ddf3e8723f2a6af27154b45aa7e102bde51126ba859"
+  },
+  {
+    "file": "relic/relic_sets.json",
+    "checksum": "50acc553ee20be3774a1cd9bccab5ace959a0f96337d9fb57f5c7f34bb77606d"
+  },
+  {
+    "file": "yolo_model/best.pt",
+    "checksum": "30d020984ec956b8e566a07c461c90a9868f997dd0b66913b4d883608276597a"
+  },
+  {
+    "file": "img_meta/relic_imgs.txt",
+    "checksum": "ac17a3f15bbcbb6ffd350716bc4ebdbfbac133550f281024c25ebbfe3d9444e7"
+  },
+  {
+    "file": "img_meta/character_imgs.txt",
+    "checksum": "4a4174ec689974d6554d880c655757dcf3ae0a5f7af1c10e44aa41de1a041bd3"
+  },
+  {
+    "file": "character/character_meta.json",
+    "checksum": "0d56ca78aecd5eb9739d6b6aea8ba870618c6552ad21c336a661b7a85ece57fb"
+  }
+]
