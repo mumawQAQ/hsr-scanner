@@ -6,8 +6,7 @@ from PIL import Image
 from cv2 import Mat
 from numpy import ndarray
 
-from app.constant import DISCARD_ICON_PATH
-from app.core.data_models.icon_matcher import IconMatcherInput, IconType, IconMatcherOutput
+from app.core.data_models.icon_matcher import IconMatcherInput, IconMatcherOutput
 from app.core.interfaces.model_interface import ModelInterface
 
 
@@ -30,9 +29,7 @@ class IconMatcherModel(ModelInterface[IconMatcherInput, IconMatcherOutput]):
         }
 
     def load(self) -> None:
-        self.icons = {
-            IconType.DISCARD.value: self.__load_icon_bgr__(DISCARD_ICON_PATH)
-        }
+        self.icons = {}
 
     def predict(self, input_data: IconMatcherInput) -> IconMatcherOutput:
         source_image_bgr = input_data.source_image_bgr

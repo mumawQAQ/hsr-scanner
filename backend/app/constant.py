@@ -17,9 +17,6 @@ RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
 RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
 RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
 
-IMG_TEMPLATE_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'img_templates')
-DISCARD_ICON_PATH = os.path.join(IMG_TEMPLATE_FOLDER, 'discard_icon.png')
-
 RELIC_STATS_MAPPING = {
     "DEF": "防御",
     "HP": "生命",
