@@ -14,9 +14,7 @@ export default function RelicScore() {
 
   const renderScore = (score: number, type: string) => {
     score = score * 100;
-    const scoreText = `${
-      type === 'potential' ? '潜力值' : '评分'
-    }:${score.toFixed(2)}`;
+    const scoreText = `${score.toFixed(2)}`;
     switch (type) {
       case 'potential':
         if (score < 20) {
@@ -142,6 +140,14 @@ export default function RelicScore() {
         {
           relicScores.map((score, index) => (
             <div key={index} className="flex items-center justify-center gap-2 font-semibold ">
+              {
+                score.characters.map((character, index) => (
+                  <div key={index}>
+                    <ImageDisplay filePath={characters[character].icon} width={20} height={20}
+                                  className="rounded-lg" />
+                  </div>
+                ))
+              }
               <Chip
                 classNames={{
                   base: cn(
@@ -155,14 +161,6 @@ export default function RelicScore() {
               >
                 {renderScore(score.score, score.type)}
               </Chip>
-              {
-                score.characters.map((character, index) => (
-                  <div key={index}>
-                    <ImageDisplay filePath={characters[character].icon} width={20} height={20}
-                                  className="rounded-lg" />
-                  </div>
-                ))
-              }
             </div>
           ))
         }

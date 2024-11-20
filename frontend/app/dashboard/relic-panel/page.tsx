@@ -15,11 +15,12 @@ export default function RelicPanel() {
   const { relicScores } = useRelicStore();
 
   if (isLightMode) {
-    return (<div className="grid grid-rows-4">
+    return (<div className="flex flex-col">
       <div className="flex justify-center">
         <RelicAction />
       </div>
-      <div className="row-span-3 flex flex-col justify-center">
+      <div className="flex justify-center gap-1">
+        <RelicInfo />
         <RelicScore />
       </div>
     </div>);
