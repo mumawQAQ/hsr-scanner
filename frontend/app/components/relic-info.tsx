@@ -8,11 +8,11 @@ import { CircleAlert } from 'lucide-react';
 import React from 'react';
 
 export default function RelicInfo() {
-  const { singleRelicAnalysisId } = useWindowStore();
+  const { singleRelicAnalysisId, autoRelicAnalysisId } = useWindowStore();
   const { relicInfo, relicError } = useRelicStore();
 
   const renderOCRResult = () => {
-    if (!singleRelicAnalysisId) {
+    if (!singleRelicAnalysisId && !autoRelicAnalysisId) {
       return <div className="font-semibold">选择模板后,开始扫描，显示遗器扫描内容</div>;
     }
     if (relicError) {
