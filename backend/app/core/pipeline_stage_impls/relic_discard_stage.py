@@ -1,5 +1,4 @@
-import pyautogui as pg
-
+from app.core.data_models.mouse_event import MouseEventType, MouseModelInput
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
@@ -22,6 +21,7 @@ class RelicDiscardStage(BasePipelineStage):
 
             # TODO: this may need to move to a separate stage
             keyboard_model = ModelManager().get_model("keyboard")
+            mouse_model = ModelManager().get_model("mouse")
 
             if not keyboard_model:
                 raise ValueError("Keyboard model not found.")
@@ -54,9 +54,10 @@ class RelicDiscardStage(BasePipelineStage):
                 logging.info(f"Discard icon screen position: ({icon_x}, {icon_y})")
 
                 # click on the icon
-                pg.click(icon_x, icon_y)
+                mouse_model.predict(MouseModelInput(event_type=MouseEventType.MOVE_TO, x=icon_x, y=icon_y))
+                mouse_model.predict(MouseModelInput(event_type=MouseEventType.CLICK))
                 # reset mouse position
-                pg.moveTo(1, 1)
+                mouse_model.predict(MouseModelInput(event_type=MouseEventType.MOVE_TO, x=1, y=1))
 
             keyboard_model.predict("d")
 
