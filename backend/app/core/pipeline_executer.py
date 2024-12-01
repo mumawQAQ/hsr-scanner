@@ -110,7 +110,8 @@ class PipelineExecutor:
         context = PipelineContext(
             pipeline_id=pipeline_id,
             pipeline_type=pipeline_type.get_pipeline_name(),
-            meta_data=meta_data or {}
+            meta_data=meta_data or {},
+            data={}
         )
 
         stop_event = asyncio.Event()
