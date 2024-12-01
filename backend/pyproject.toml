@@ -14,7 +14,7 @@ fastapi = "^0.115.5"
 paddlepaddle = "^2.6.2"
 sqlalchemy = "^2.0.36"
 ultralytics = "^8.3.39"
-uvicorn = "^0.32.1"
+uvicorn = {extras = ["standard"], version = "^0.32.1"}
 paddleocr = "^2.9.1"
 pynput = "^1.7.7"
 pygetwindow = "^0.0.9"
