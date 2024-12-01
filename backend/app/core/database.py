@@ -1,15 +1,8 @@
-import os
-
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_FILEPATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    'assets',
-    'database',
-    'scanner.db'
-).replace(os.sep, '/')
+from app.constant import DATABASE_FILEPATH
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///" + DATABASE_FILEPATH
 
