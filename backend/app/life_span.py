@@ -11,7 +11,6 @@ from app.core.managers.model_manager import ModelManager
 from app.core.managers.pipeline_manager import PipelineManager
 from app.core.managers.websocket_manager import WebsocketManager
 from app.core.model_impls.keyboard_model import KeyboardModel
-from app.core.model_impls.mouse_model import MouseModel
 from app.core.model_impls.ocr_model import OCRModel
 from app.core.model_impls.relic_matcher_model import RelicMatcherModel
 from app.core.model_impls.relic_rating_model import RelicRatingModel
@@ -119,7 +118,6 @@ async def life_span(app: FastAPI):
     ))
     model_manager.register_model("relic_rating", RelicRatingModel(global_state_manager))
     model_manager.register_model("keyboard", KeyboardModel())
-    model_manager.register_model("mouse", MouseModel())
 
     # Init all the tables
     Base.metadata.create_all(engine)
