@@ -45,7 +45,7 @@ REM Install required packages
 echo Installing required packages...
 for %%m in (%PYPI_MIRRORS%) do (
     echo Trying mirror: %%m
-    "!PYTHON_EXE!" -m pip install -r "!REQUIREMENTS_FILE!" -i %%m --no-warn-script-location --no-cache-dir
+    "!PYTHON_EXE!" -m pip install -r "!REQUIREMENTS_FILE!" -i %%m --no-warn-script-location
     if !errorlevel! equ 0 (
         echo Packages installed successfully using %%m
         goto :success
