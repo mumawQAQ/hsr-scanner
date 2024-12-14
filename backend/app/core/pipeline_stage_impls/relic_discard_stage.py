@@ -19,6 +19,8 @@ class RelicDiscardStage(BasePipelineStage):
             relic_analysis = context.data.get(GameRecognitionStage.RELIC_ANALYSIS.value)
             relic_discard_score = context.meta_data.get("relic_discard_score", 0.4)
             skip_if_error = context.meta_data.get("skip_if_error", True)
+            mouse_x = context.meta_data.get("mouse_x", None)
+            mouse_y = context.meta_data.get("mouse_y", None)
 
             # TODO: this may need to move to a separate stage
             keyboard_model = ModelManager().get_model("keyboard")
@@ -34,17 +36,22 @@ class RelicDiscardStage(BasePipelineStage):
                     keyboard_model.predict("d")
                 raise ValueError("Relic analysis data not found.")
 
-            if detection is None or 'discard-icon' not in detection:
-                if skip_if_error:
-                    keyboard_model.predict("d")
-                raise ValueError("Detection discard icon data not found.")
+            # use the user set mouse position if available
+            if mouse_x is not None and mouse_y is not None:
+                icon_center_x = mouse_x
+                icon_center_y = mouse_y
+            else:
+                if detection is None or 'discard-icon' not in detection:
+                    if skip_if_error:
+                        keyboard_model.predict("d")
+                    raise ValueError("Detection discard icon data not found.")
 
-            if len(relic_analysis) == 0 or relic_analysis[0].score < relic_discard_score:
                 icon_center_x = detection['discard-icon']['box']['x_center']
                 icon_center_y = detection['discard-icon']['box']['y_center']
 
-                logging.info(f"Discard icon center: ({icon_center_x}, {icon_center_y})")
+            logging.error(f"Discard icon center: ({icon_center_x}, {icon_center_y})")
 
+            if len(relic_analysis) == 0 or relic_analysis[0].score < relic_discard_score:
                 window_left = screenshot['window']['left']
                 window_top = screenshot['window']['top']
 

@@ -5,6 +5,13 @@ GAME_TITLES = ['Honkai: Star Rail']
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 
+DATABASE_FILEPATH = os.path.join(
+    os.path.dirname(__file__),
+    'assets',
+    'database',
+    'scanner.db'
+).replace(os.sep, '/')
+
 CHARACTERS_FILE = os.path.join(os.path.dirname(__file__), 'assets', 'character', 'character_meta.json')
 
 TASK_CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.json')
@@ -16,6 +23,11 @@ RELIC_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'relic')
 RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
 RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
 RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
+
+PADDLE_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'paddle')
+PADDLE_CLS_FOLDER = os.path.join(PADDLE_FOLDER, 'cls')
+PADDLE_DET_FOLDER = os.path.join(PADDLE_FOLDER, 'det')
+PADDLE_REC_FOLDER = os.path.join(PADDLE_FOLDER, 'rec')
 
 RELIC_STATS_MAPPING = {
     "DEF": "防御",

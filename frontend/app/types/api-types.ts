@@ -41,5 +41,10 @@ export type AssertUpdateCheckResponse = {
 
 export type StartPipelineRequest = {
   pipeline_name: string;
-  meta_data?: Record<string, string | boolean | number>;
+  meta_data?: Record<string, string | boolean | number | undefined | null>;
+}
+
+export type MousePositionRequest = {
+  mouse_x: number;
+  mouse_y: number;
 }

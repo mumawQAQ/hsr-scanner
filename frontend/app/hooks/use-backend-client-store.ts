@@ -63,7 +63,7 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
       } else if (data.type === 'progress') {
         console.log(data);
       } else if (data.type === 'result') {
-        if (data.pipeline_type === 'SingleRelicAnalysisPipeline' && data.stage === 'ocr') {
+        if (data.stage === 'ocr') {
           const relicData = data.data;
           console.log(relicData);
           useRelicStore.setState({ relicInfo: relicData });

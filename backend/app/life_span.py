@@ -103,7 +103,6 @@ async def life_span(app: FastAPI):
     pipeline_manager = PipelineManager()
     model_manager = ModelManager()
     pipeline_executor = PipelineExecutor(websocket_manager)
-    pipeline_executor.start_keyboard_listener()
 
     # Register the pipelines
     pipeline_manager.register_pipeline(SingleRelicAnalysisPipeline)

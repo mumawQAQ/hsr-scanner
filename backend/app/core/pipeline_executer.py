@@ -2,8 +2,6 @@ import asyncio
 from typing import Dict, Any, Type, Optional, List
 from uuid import uuid4
 
-from pynput import keyboard  # Ensure pynput is imported
-
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.managers.websocket_manager import WebsocketManager
 from app.core.network_models.responses.pipeline_response import PipelineResponse
@@ -18,8 +16,6 @@ class PipelineExecutor:
         self.websocket_manager = websocket_manager
         self.pipeline_factory = PipelineFactory(websocket_manager)
         self.active_pipelines: Dict[str, Dict[str, Any]] = {}
-        self.listener: Optional[keyboard.Listener] = None  # Initialize listener as None
-        self.loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_running_loop()
 
     async def execute_pipeline(
             self,
@@ -114,7 +110,8 @@ class PipelineExecutor:
         context = PipelineContext(
             pipeline_id=pipeline_id,
             pipeline_type=pipeline_type.get_pipeline_name(),
-            meta_data=meta_data or {}
+            meta_data=meta_data or {},
+            data={}
         )
 
         stop_event = asyncio.Event()
@@ -156,52 +153,3 @@ class PipelineExecutor:
                 "status": "running"
             })
         return active
-
-    def on_press(self, key):
-        """
-        Callback for key press events.
-        """
-        try:
-            if key.char == 'e':
-                logger.info(f"Key pressed: {key.char}")
-                if not self.loop:
-                    logger.error("Event loop is not set. Cannot schedule coroutine.")
-                    return
-                # Schedule the asynchronous stop_all_pipelines coroutine
-                asyncio.run_coroutine_threadsafe(
-                    self.stop_all_pipelines(),
-                    self.loop
-                )
-        except AttributeError:
-            # Handle special keys if needed
-            logger.debug(f"Special key pressed: {key}")
-            pass
-
-    def on_release(self, key):
-        """
-        Callback for key release events.
-        """
-        if key == keyboard.Key.esc:
-            logger.info("Esc key pressed. Stopping keyboard listener.")
-            self.stop_keyboard_listener()
-
-    def start_keyboard_listener(self):
-        """
-        Initializes and starts the keyboard listener.
-        """
-        if not self.listener:
-            self.listener = keyboard.Listener(
-                on_press=self.on_press,
-                on_release=self.on_release
-            )
-            self.listener.start()
-            logger.info("Keyboard listener started.")
-
-    def stop_keyboard_listener(self):
-        """
-        Stops the keyboard listener.
-        """
-        if self.listener and self.listener.is_alive():
-            self.listener.stop()
-            self.listener.join()  # Ensure the thread has finished
-            logger.info("Keyboard listener stopped and thread joined.")

@@ -12,6 +12,8 @@ export default function RelicAction() {
   const {
     singleRelicAnalysisId,
     setSingleRelicAnalysisId,
+    autoRelicAnalysisId,
+    setAutoRelicAnalysisId,
     logPause,
     setLogPause,
     fullLog,
@@ -60,6 +62,14 @@ export default function RelicAction() {
     onOpen('start-auto-scan');
   };
 
+  const handleStopAutoScan = () => {
+    stopPipeline.mutate(autoRelicAnalysisId, {
+      onSuccess: () => {
+        setAutoRelicAnalysisId(null);
+      },
+    });
+  };
+
   const handleSetTopWindow = async (status: boolean) => {
     try {
       await invoke('set_always_on_top', { status });
@@ -104,9 +114,17 @@ export default function RelicAction() {
       <Button size="sm" variant="bordered" className="mt-5 hidden md:block" onPress={handleSelectTemplate}>
         选择模板
       </Button>
-      <Button size="sm" variant="bordered" className="block md:hidden" onPress={handleStartAutoScan}>
-        自动扫描
-      </Button>
+      {
+        autoRelicAnalysisId !== null ? (
+          <Button size="sm" variant="bordered" className="block md:hidden" onPress={handleStopAutoScan}>
+            停止扫描
+          </Button>
+        ) : (
+          <Button size="sm" variant="bordered" className="block md:hidden" onPress={handleStartAutoScan}>
+            开始扫描
+          </Button>
+        )
+      }
     </div>
   );
 }

@@ -1,11 +1,11 @@
 from typing import Dict, Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class PipelineContext(BaseModel):
     """Base context holding pipeline execution data"""
     pipeline_id: str
     pipeline_type: str
-    data: Dict[str, Any] = Field(default_factory=dict)
-    meta_data: Dict[str, Any] = Field(default_factory=dict)
+    data: Dict[str, Any]
+    meta_data: Dict[str, Any]
