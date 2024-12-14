@@ -2,8 +2,9 @@ from typing import Optional, Dict, Any
 
 import cv2
 import numpy as np
-import pyautogui as pg
 import pygetwindow as gw
+from PIL import Image
+from mss import mss
 
 from app.constant import GAME_TITLES
 from app.core.data_models.pipeline_context import PipelineContext
@@ -64,19 +65,30 @@ class ScreenshotStage(BasePipelineStage):
         }
 
     def __capture_screenshot__(self, window_rect: Dict[str, int]) -> Dict[str, Any]:
-        """Capture and process the screenshot of the specified window."""
-        # Add small margins to ensure we capture the full window
+        """Capture and process the screenshot of the specified window using mss."""
         left = max(0, window_rect['left'])
         top = max(0, window_rect['top'])
         width = window_rect['width']
         height = window_rect['height']
 
-        # Capture the screenshot
-        screen = pg.screenshot(region=(left, top, width, height))
-        image_bgr = cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
-
-        return {
-            'image': screen,
-            'image_bgr': image_bgr,
-            'window': window_rect
+        monitor = {
+            "left": left,
+            "top": top,
+            "width": width,
+            "height": height
         }
+
+        with mss() as sct:
+            sct_img = sct.grab(monitor)
+
+            # Convert mss output to PIL Image (RGB)
+            img_rgb = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
+
+            # Convert PIL (RGB) to BGR numpy array for OpenCV processing
+            image_bgr = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2BGR)
+
+            return {
+                'image': img_rgb,       # PIL Image in RGB
+                'image_bgr': image_bgr, # OpenCV compatible BGR image
+                'window': window_rect
+            }
