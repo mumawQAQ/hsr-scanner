@@ -11,6 +11,12 @@ import { checkUpdate, installUpdate, UpdateManifest } from '@tauri-apps/api/upda
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/tauri';
 import { AssertUpdateCheckResponse } from '@/app/types/api-types';
+import { listen } from '@tauri-apps/api/event';
+import { Switch } from '@nextui-org/switch';
+import { useConfig } from '@/app/hooks/use-config-hook';
+import { Divider } from '@nextui-org/divider';
+import { Input } from '@nextui-org/input';
+import { useMousePosition } from '@/app/apis/state';
 
 
 export default function Setting() {
@@ -23,11 +29,45 @@ export default function Setting() {
   const [filesToUpdate, setFilesToUpdate] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
+  const appConfig = useConfig();
+  const mousePosition = useMousePosition();
+
 
   useEffect(() => {
     getVersion().then((version) => {
       setVersion(version);
     });
+  }, []);
+
+  useEffect(() => {
+    // Start the backend and set up listeners
+    const startAndListen = async () => {
+      try {
+        const logUnlistener = await listen<string>('screen-annotator-log', event => {
+          console.log(JSON.parse(event.payload));
+        });
+
+        // Return cleanup function to remove event listeners
+        return () => {
+          logUnlistener();
+        };
+      } catch (e) {
+        console.error('Error starting script or setting up listeners:', e);
+      }
+    };
+
+    // Call the async function and handle cleanup
+    let cleanupFunc = () => {
+    }; // Initialize cleanup function
+    startAndListen().then(cleanup => {
+      if (cleanup) cleanupFunc = cleanup;
+    });
+
+    // Cleanup listeners when component unmounts
+    return () => {
+      cleanupFunc();
+    };
+
   }, []);
 
 
@@ -86,6 +126,26 @@ export default function Setting() {
     setOnAssertUpdate(false);
   };
 
+  const handlePreviewMousePosition = () => {
+    const mouseX = appConfig.discardIconX;
+    const mouseY = appConfig.discardIconY;
+
+    if (mouseX === null || mouseY === null) {
+      toast.error('请先填写鼠标位置');
+      return;
+    }
+
+    mousePosition.mutate({
+      mouse_x: mouseX,
+      mouse_y: mouseY,
+    }, {
+      onError: e => {
+        toast.error(`预览鼠标位置失败, 请重试, ${e.message}`);
+      },
+    });
+
+  };
+
 
   return <div className="flex flex-col gap-4">
     <div className="text-center text-gray-600">
@@ -110,6 +170,136 @@ export default function Setting() {
         提交功能建议 (开发中)
       </Button>
     </div>
+
+    <div className="text-medium font-semibold">
+      自动扫描
+    </div>
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-col gap-4">
+        <div className="flex flex-row items-center">
+          <div className="grow flex flex-col gap-2">
+            <div>
+              自动识别丢弃图标
+            </div>
+            <div className="text-sm text-gray-500">
+              如果该选择开启则会使用yolo模型自动检测丢弃图标位置，如果检测识别可能导致无法自动标记丢弃，可以使用手动设置图标位置
+            </div>
+          </div>
+
+
+          <div className="ml-20">
+            <Switch
+              size={'sm'}
+              isSelected={appConfig.autoScanDetectDiscardIcon}
+              onValueChange={appConfig.setAutoScanDetectDiscardIcon}
+            />
+          </div>
+        </div>
+
+        <Divider />
+
+        <div className="flex flex-row items-center">
+          <div className="grow">
+            丢弃图标x坐标
+          </div>
+
+
+          <div className="ml-20">
+            <Input
+              size="sm"
+              type="number"
+              value={
+                appConfig.discardIconX === null ? '0' : appConfig.discardIconX.toString()
+              }
+              onValueChange={
+                (value) => {
+                  if (value === '') {
+                    appConfig.setDiscardIconX(null);
+                  } else {
+                    appConfig.setDiscardIconX(parseInt(value));
+                  }
+                }
+              }
+              min={0}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-row items-center">
+          <div className="grow">
+            丢弃图标y坐标
+          </div>
+
+
+          <div className="ml-20">
+            <Input
+              size="sm"
+              type="number"
+              value={
+                appConfig.discardIconY === null ? '0' : appConfig.discardIconY.toString()
+              }
+              onValueChange={
+                (value) => {
+                  if (value === '') {
+                    appConfig.setDiscardIconY(null);
+                  } else {
+                    appConfig.setDiscardIconY(parseInt(value));
+                  }
+                }
+              }
+              min={0}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button variant="solid" onPress={handlePreviewMousePosition}>
+            预览位置
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-row gap-2 items-center">
+        <div className="grow flex flex-col gap-2">
+          <div>
+            丢弃分数
+          </div>
+          <div className="text-sm text-gray-500">
+            如果分数小于该值则会自动标记
+          </div>
+        </div>
+
+
+        <div className="ml-20">
+          <Input
+            size="sm"
+            type="number"
+            value={
+              appConfig.autoScanConfigDiscardScore === null ? '0' : appConfig.autoScanConfigDiscardScore.toString()
+            }
+            onValueChange={
+              (value) => {
+                if (value === '') {
+                  appConfig.setAutoScanConfigDiscardScore(0);
+                } else {
+                  appConfig.setAutoScanConfigDiscardScore(parseInt(value));
+                }
+              }
+            }
+            min={0}
+            max={100}
+          />
+        </div>
+      </CardBody>
+    </Card>
+
+
+    <div className="text-medium font-semibold">
+      识别区域
+    </div>
+
 
     <div className="text-medium font-semibold">
       版本 & 更新
