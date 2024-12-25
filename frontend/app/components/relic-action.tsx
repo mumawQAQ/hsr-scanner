@@ -121,7 +121,7 @@ export default function RelicAction() {
           </Button>
         ) : (
           <Button size="sm" variant="bordered" className="block md:hidden" onPress={handleStartAutoScan}>
-            开始扫描
+            自动扫描
           </Button>
         )
       }
