@@ -10,18 +10,15 @@ from pydantic import BaseModel
 from typing import List, Optional, Tuple
 
 
-
-
 class Rectangle(BaseModel):
-    x: float
-    y: float
-    w: float
-    h: float
-
+    x: int
+    y: int
+    w: int
+    h: int
 
 
 class ScreenAnnotator:
-    def __init__(self, window_title: List[str],  display_only: bool, rectangles: Optional[List[Rectangle]] = None):
+    def __init__(self, window_title: List[str], display_only: bool, rectangles: Optional[List[Rectangle]] = None):
         self.window_title = window_title
         self.rectangles: List[Rectangle] = rectangles or []
         self.drawing = False
@@ -32,7 +29,6 @@ class ScreenAnnotator:
         self.window_info: Optional[dict] = None
         self.display_only = display_only
 
-
     @staticmethod
     def _output(message: json):
         """
@@ -42,7 +38,6 @@ class ScreenAnnotator:
         data = json string exist only when status = success
         """
         print(json.dumps(message, ensure_ascii=False))
-
 
     def find_window(self) -> bool:
         """Find and activate the target window."""
@@ -61,12 +56,11 @@ class ScreenAnnotator:
 
         target_window = windows[0]
 
-        # Apply scaling factor to window coordinates
         self.window_info = {
-            'left': int(target_window.left ),
+            'left': int(target_window.left),
             'top': int(target_window.top),
-            'width': int(target_window.width ),
-            'height': int(target_window.height )
+            'width': int(target_window.width),
+            'height': int(target_window.height)
         }
 
         # Validate window dimensions
@@ -137,7 +131,7 @@ class ScreenAnnotator:
             return self.display_img
         return None
 
-    def draw_rectangle_callback(self, event: int, x: int, y: int, flags: None, param: None ) -> None:
+    def draw_rectangle_callback(self, event: int, x: int, y: int, flags: None, param: None) -> None:
         """Handle mouse events for drawing rectangles."""
         if not self.window_info:
             return
@@ -195,7 +189,9 @@ class ScreenAnnotator:
 
         if w > minimum_w and h > minimum_h:
             new_rect = Rectangle(x=x, y=y, w=w, h=h)
-            self.rectangles.pop()
+            if len(self.rectangles) > 0:
+                self.rectangles.pop()
+
             self.rectangles.append(new_rect)
 
             self.display_img = self.original_img.copy()
@@ -225,12 +221,11 @@ class ScreenAnnotator:
             return
 
         cv2.namedWindow(canvas_name, cv2.WINDOW_NORMAL)
-        cv2.resizeWindow(canvas_name, 1280 , 1024)
+        cv2.resizeWindow(canvas_name, 1280, 1024)
 
         # before start, draw all the existing rectangles
         for rect in self.rectangles:
             self._draw_rectangle(self.display_img, rect)
-
 
         if not self.display_only:
             cv2.setMouseCallback(canvas_name, lambda *args: self.draw_rectangle_callback(*args))
@@ -253,13 +248,12 @@ class ScreenAnnotator:
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(description="HSR canvas previewer")
-    parser.add_argument('--x', nargs='+', type=float, help='X coordinates of the rectangles')
-    parser.add_argument('--y', nargs='+', type=float, help='Y coordinates of the rectangles')
-    parser.add_argument('--w', nargs='+', type=float, help='Widths of the rectangles')
-    parser.add_argument('--h', nargs='+', type=float, help='Heights of the rectangles')
+    parser.add_argument('--x', nargs='+', type=int, help='X coordinates of the rectangles')
+    parser.add_argument('--y', nargs='+', type=int, help='Y coordinates of the rectangles')
+    parser.add_argument('--w', nargs='+', type=int, help='Widths of the rectangles')
+    parser.add_argument('--h', nargs='+', type=int, help='Heights of the rectangles')
     parser.add_argument('--display_only', action='store_true', help='Only display the existing rectangles')
     args = parser.parse_args()
-
 
     rectangles = []
     if args.x and args.y and args.w and args.h:
