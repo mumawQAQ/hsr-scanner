@@ -108,36 +108,6 @@ export default function Home() {
     }
   }, [backendPort]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if Ctrl + Shift + I is pressed
-      if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        (event.key === 'I' || event.key === 'i')
-      ) {
-        event.preventDefault(); // Prevent default browser behavior if any
-
-        // Invoke the Rust command to open developer tools
-        invoke('open_browser_console')
-          .then(() => {
-            console.log('Developer tools opened successfully.');
-          })
-          .catch((error) => {
-            console.error('Failed to open developer tools:', error);
-          });
-      }
-    };
-
-    // Attach the event listener
-    window.addEventListener('keydown', handleKeyDown);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
   return (
     <div className="flex h-screen items-center justify-center">
       {!backendPort && (
