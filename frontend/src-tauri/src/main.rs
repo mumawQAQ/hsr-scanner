@@ -97,7 +97,7 @@ fn post_backup(app: AppHandle) -> Result<String, String> {
 //
 // }
 #[tauri::command]
-fn start_screen_annotator(app: AppHandle) {
+fn start_screen_annotator(app: AppHandle, display_only: bool, x: Vec<i32>, y: Vec<i32>, w: Vec<i32>, h: Vec<i32>) {
     std::thread::spawn({
         let app = app.clone();
         move || {
@@ -109,14 +109,27 @@ fn start_screen_annotator(app: AppHandle) {
                 let main_script_path = resolve_path(app.clone(), "../../backend/screen_annotator.py")
                     .expect("Failed to resolve main script path");
 
-                let mut child = Command::new(python_path)
-                    .arg("-u")
-                    .arg(main_script_path)
-                    .creation_flags(0x08000000) // This prevents the creation of a console window on Windows.
+                let mut cmd = Command::new(python_path);
+                cmd.arg("-u")
+                    .arg(main_script_path);
+                if display_only {
+                    cmd.arg("--display_only");
+                }
+                for i in 0..x.len() {
+                    cmd.arg("--x").arg(x[i].to_string());
+                    cmd.arg("--y").arg(y[i].to_string());
+                    cmd.arg("--w").arg(w[i].to_string());
+                    cmd.arg("--h").arg(h[i].to_string());
+                }
+
+                cmd.creation_flags(0x08000000); // This prevents the creation of a console window on Windows.
+
+                let mut child = cmd
                     .stdout(Stdio::piped())
                     .stderr(Stdio::piped())
                     .spawn()
                     .expect("Failed to start python process");
+
 
                 let stdout = child.stdout.take().unwrap();
                 let stderr = child.stderr.take().unwrap();
@@ -155,26 +168,32 @@ fn start_screen_annotator(app: AppHandle) {
                     }
                 });
 
+                // Put child into the global handle
                 *handle = Some(child);
                 println!("Python process started.");
 
+                // Drop the lock so other commands can access the handle if needed
+                drop(handle);
+
+                // Spawn a thread to wait on the child’s exit
+                let exit_app = app.clone();
                 std::thread::spawn(move || {
-                    // Lock and take the child process out of the handle
+                    // Take the child out of the handle so we can wait on it
                     let mut handle_monitor = SCREEN_ANNOTATOR_PROCESS_HANDLE.lock().unwrap();
+                    let child_process = handle_monitor.take();
+                    drop(handle_monitor);
 
-                    if let Some(mut child_process) = handle_monitor.take() {
-                        // Release the lock before waiting to prevent deadlocks
-                        drop(handle_monitor);
-
-                        // Wait for the subprocess to exit
+                    if let Some(mut child_process) = child_process {
                         match child_process.wait() {
                             Ok(status) => {
                                 println!("Python process exited with status: {}", status);
                             }
                             Err(e) => {
-                                println!("Failed to wait on Python process: {}", e);
+                                eprintln!("Failed to wait on Python process: {}", e);
                             }
                         }
+                        // Only after the process truly exits do we emit the "exit" event
+                        exit_app.emit_all("screen-annotator-exit", ()).ok();
                     }
                 });
             } else {
