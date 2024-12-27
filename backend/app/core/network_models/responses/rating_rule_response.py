@@ -18,3 +18,13 @@ class CreateRatingRuleResponse(BaseModel):
     valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
     fit_characters: list[str]
+
+
+class GetRatingRuleResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    template_id: int
+    set_names: list[str]
+    valuable_mains: dict[str, list[str]]
+    valuable_subs: list[RatingRuleSubStats]

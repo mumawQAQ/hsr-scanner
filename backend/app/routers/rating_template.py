@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -9,7 +9,7 @@ from app.core.network_models.requests.rating_rule_request import CreateRatingRul
     ImportRatingRuleRequest
 from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
 from app.core.network_models.responses.common_response import SuccessResponse, ErrorResponse
-from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse, RatingRuleIdsResponse
+from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse, GetRatingRuleResponse
 from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
@@ -270,25 +270,37 @@ def update_rating_template_rule(
     )
 
 
-@router.get("/rating-template/rule/list/{template_id}")
+@router.get("/rating-template/rule/list/{template_id}",
+            response_model=SuccessResponse[List[GetRatingRuleResponse]],
+            status_code=HTTPStatus.OK,
+            responses={
+                HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+            })
 def get_rating_template_rule_list(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        template_id: int,
 ):
-    db_rules = rating_template_repository.get_template_rule_list(template_id)
+    try:
+        template = RatingTemplateORM.get_by_id(template_id)
+        db_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == template.id)
+        results = [GetRatingRuleResponse.model_validate(rule).model_dump() for rule in db_rules]
 
-    if not db_rules:
-        return {
-            'status': 'success',
-            'data': []
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': results
+            }
+        )
 
-    results = [RatingRuleIdsResponse.model_validate(rule) for rule in db_rules]
-
-    return {
-        'status': 'success',
-        'data': results
-    }
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
 
 
 @router.get("/rating-template/rule/{rule_id}")
