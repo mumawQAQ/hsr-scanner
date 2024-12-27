@@ -2,12 +2,13 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
     ImportRatingRuleRequest
 from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
-from app.core.network_models.responses.common_response import SuccessResponse
+from app.core.network_models.responses.common_response import SuccessResponse, ErrorResponse
 from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse, RatingRuleIdsResponse
 from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
@@ -17,6 +18,7 @@ from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
 from app.life_span import get_formatter, get_template_en_decoder, get_rating_template_repository, \
     get_global_state_manager
+from app.logging_config import logger
 
 router = APIRouter()
 
@@ -163,17 +165,28 @@ def create_rating_template(req: CreateRatingTemplateRequest):
 
 @router.delete("/rating-template/delete/{template_id}",
                response_model=SuccessResponse[str],
+               responses={
+                   HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+               },
                status_code=HTTPStatus.OK)
 def delete_rating_template(
         template_id: int
 ):
-    template = RatingTemplateORM.get_by_id(template_id)
-    template.delete_instance()
-
-    return SuccessResponse(
-        status='success',
-        data='Template deleted'
-    )
+    try:
+        RatingTemplateORM.get_by_id(template_id).delete_instance()
+        return SuccessResponse(
+            status='success',
+            data='Template deleted'
+        )
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
 
 
 @router.put("/rating-template/rule/create",
@@ -194,23 +207,31 @@ def create_rating_template_rule(
     )
 
 
-@router.delete("/rating-template/rule/delete/{rule_id}")
+@router.delete("/rating-template/rule/delete/{rule_id}",
+               response_model=SuccessResponse[str],
+               responses={
+                   HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+               },
+               status_code=HTTPStatus.OK)
 def delete_rating_template_rule(
-        rule_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        rule_id: int,
 ):
-    result = rating_template_repository.delete_template_rule(rule_id)
+    try:
+        RatingRuleORM.get_by_id(rule_id).delete_instance()
 
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to delete rule'
-        }
-
-    return {
-        'status': 'success',
-        'message': 'Rule deleted'
-    }
+        return SuccessResponse(
+            status='success',
+            data='Rule deleted'
+        )
+    except RatingRuleORM.DoesNotExist:
+        logger.error(f"Rule not found: {rule_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Rule not found'
+            }
+        )
 
 
 @router.post("/rating-template/rule/update")
