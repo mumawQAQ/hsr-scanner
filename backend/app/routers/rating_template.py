@@ -10,7 +10,8 @@ from app.core.network_models.requests.rating_rule_request import CreateRatingRul
 from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
 from app.core.network_models.responses.common_response import SuccessResponse, ErrorResponse
 from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse, GetRatingRuleResponse
-from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
+from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse, \
+    GetRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
 from app.core.repositories.rating_template_repo import RatingTemplateRepository
@@ -126,23 +127,20 @@ def use_rating_template(
     }
 
 
-@router.get("/rating-template/list")
-def get_rating_template_list(
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]):
-    db_templates = rating_template_repository.get_template_list()
+@router.get("/rating-template/list",
+            response_model=SuccessResponse[List[GetRatingTemplateResponse]],
+            status_code=HTTPStatus.OK)
+def get_rating_template_list():
+    db_templates = RatingTemplateORM.select()
+    results = [GetRatingTemplateResponse.model_validate(template).model_dump() for template in db_templates]
 
-    if not db_templates:
-        return {
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
             'status': 'success',
-            'data': []
+            'data': results
         }
-
-    results = [CreateRatingTemplateResponse.model_validate(template) for template in db_templates]
-
-    return {
-        'status': 'success',
-        'data': results
-    }
+    )
 
 
 @router.put("/rating-template/create",
