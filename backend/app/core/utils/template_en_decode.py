@@ -6,8 +6,8 @@ from typing import Dict, List
 import msgpack
 
 from app.constant import RELIC_SETS_FILE, CHARACTERS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
-from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse
-from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
+from app.core.network_models.responses.rating_rule_response import GetRatingRuleResponse
+from app.core.network_models.responses.rating_template_response import GetRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
 from app.logging_config import logger
@@ -34,7 +34,7 @@ class TemplateEnDecoder:
             logger.error(f"Failed to initialize export tool file: {e}")
             raise e
 
-    def encode(self, template: CreateRatingTemplateResponse, rules: List[CreateRatingRuleResponse]) -> str:
+    def encode(self, template: GetRatingTemplateResponse, rules: List[GetRatingRuleResponse]) -> str:
         result = {
             'n': template.name,
             'd': template.description,
@@ -47,7 +47,7 @@ class TemplateEnDecoder:
 
         return base64.urlsafe_b64encode(compressed).decode('utf-8')
 
-    def _encode_rule(self, rule: CreateRatingRuleResponse) -> Dict:
+    def _encode_rule(self, rule: GetRatingRuleResponse) -> Dict:
         return {
             'a': [self.mappings['relic_set']['forward'][name] for name in rule.set_names],
             'b': {k: [self.mappings['relic_main_stat']['forward'][m] for m in v] for k, v in rule.valuable_mains.items()
