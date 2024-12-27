@@ -161,23 +161,19 @@ def create_rating_template(new_template: CreateRatingTemplateRequest):
     )
 
 
-@router.delete("/rating-template/delete/{template_id}")
+@router.delete("/rating-template/delete/{template_id}",
+               response_model=SuccessResponse[str],
+               status_code=HTTPStatus.OK)
 def delete_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        req: DeleteRatingTemplateRequest
 ):
-    result = rating_template_repository.delete_template(template_id)
+    template = RatingTemplateORM.get_by_id(req.template_id)
+    template.delete_instance()
 
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to delete template'
-        }
-
-    return {
-        'status': 'success',
-        'message': 'Template deleted'
-    }
+    return SuccessResponse(
+        status='success',
+        data='Template deleted'
+    )
 
 
 @router.put("/rating-template/rule/create")
