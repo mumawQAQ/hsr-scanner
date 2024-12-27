@@ -4,8 +4,6 @@ from typing import Optional
 from fastapi import FastAPI
 
 from app.constant import YOLO_MODEL_PATH, RELIC_SETS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
-from app.core import database
-from app.core.database import Base, engine
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.managers.model_manager import ModelManager
 from app.core.managers.pipeline_manager import PipelineManager
@@ -19,6 +17,7 @@ from app.core.pipeline_executer import PipelineExecutor
 from app.core.pipline_impls.auto_relic_analysis_pipeline import AutoRelicAnalysisPipeline
 from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAnalysisPipeline
 from app.core.repositories.rating_template_repo import RatingTemplateRepository
+from app.core.utils import database
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
 
@@ -119,13 +118,8 @@ async def life_span(app: FastAPI):
     model_manager.register_model("relic_rating", RelicRatingModel(global_state_manager))
     model_manager.register_model("keyboard", KeyboardModel())
 
-    # Init all the tables
-    Base.metadata.create_all(engine)
-
-    # Init the orm
-    rating_template_repository = RatingTemplateRepository()
-
+    # Init the database
+    database.init_db()
     yield
 
-    # close the database
-    database.sessionLocal().close()
+    database.close_db()
