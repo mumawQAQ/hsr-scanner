@@ -157,9 +157,12 @@ def create_rating_template(req: CreateRatingTemplateRequest):
 
     new_db_template.save()
 
-    return SuccessResponse(
-        status='success',
-        data=CreateRatingTemplateResponse.model_validate(new_db_template)
+    return JSONResponse(
+        status_code=HTTPStatus.CREATED,
+        content={
+            'status': 'success',
+            'data': CreateRatingTemplateResponse.model_validate(new_db_template)
+        }
     )
 
 
@@ -174,9 +177,12 @@ def delete_rating_template(
 ):
     try:
         RatingTemplateORM.get_by_id(template_id).delete_instance()
-        return SuccessResponse(
-            status='success',
-            data='Template deleted'
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'Template deleted'
+            }
         )
     except RatingTemplateORM.DoesNotExist:
         logger.error(f"Template not found: {template_id}")
@@ -201,9 +207,12 @@ def create_rating_template_rule(
 
     new_db_rule.save()
 
-    return SuccessResponse(
-        status='success',
-        data=CreateRatingRuleResponse.model_validate(new_db_rule)
+    return JSONResponse(
+        status_code=HTTPStatus.CREATED,
+        content={
+            'status': 'success',
+            'data': CreateRatingRuleResponse.model_validate(new_db_rule)
+        }
     )
 
 
@@ -219,10 +228,14 @@ def delete_rating_template_rule(
     try:
         RatingRuleORM.get_by_id(rule_id).delete_instance()
 
-        return SuccessResponse(
-            status='success',
-            data='Rule deleted'
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'Rule deleted'
+            }
         )
+
     except RatingRuleORM.DoesNotExist:
         logger.error(f"Rule not found: {rule_id}")
         return JSONResponse(
