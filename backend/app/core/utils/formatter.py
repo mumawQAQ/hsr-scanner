@@ -4,10 +4,12 @@ from collections import defaultdict
 from app.constant import RELIC_SETS_FILE, RELIC_STATS_MAPPING
 from app.core.data_models.formatted_rating_rule import FormattedRatingRule
 from app.core.data_models.rating_rule_sub_stats import RatingRuleSubStats
-from app.core.network_models.responses.rating_rule_response import RatingRuleResponse
+from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse
 from app.core.singleton import singleton
 from app.logging_config import logger
 
+
+# TODO: fix this naming
 
 @singleton
 class Formatter:
@@ -32,7 +34,7 @@ class Formatter:
         if not rules:
             return {}
 
-        rules = [RatingRuleResponse.model_validate(rule) for rule in rules]
+        rules = [CreateRatingRuleResponse.model_validate(rule) for rule in rules]
 
         for rule in rules:
             # check if the rule is valid
