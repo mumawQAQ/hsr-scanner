@@ -6,10 +6,11 @@ from fastapi import APIRouter, Depends
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
     ImportRatingRuleRequest
-from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
+from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest, \
+    DeleteRatingTemplateRequest
 from app.core.network_models.responses.common_response import SuccessResponse
 from app.core.network_models.responses.rating_rule_response import RatingRuleResponse, RatingRuleIdsResponse
-from app.core.network_models.responses.rating_template_response import RatingTemplateResponse
+from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
 from app.core.repositories.rating_template_repo import RatingTemplateRepository
@@ -66,7 +67,7 @@ def export_rating_template(
         }
 
     # convert the template to pydantic model
-    template = RatingTemplateResponse.model_validate(db_template)
+    template = CreateRatingTemplateResponse.model_validate(db_template)
     rules = [RatingRuleResponse.model_validate(rule) for rule in db_template_rules]
 
     # encode the template and rules
@@ -117,7 +118,7 @@ def use_rating_template(
     formatted_rules = formatter.format_rating_template(db_rules)
     global_state_manager.update_state({'formatted_rules': formatted_rules})
 
-    result = RatingTemplateResponse.model_validate(db_template)
+    result = CreateRatingTemplateResponse.model_validate(db_template)
     return {
         'status': 'success',
         'data': result
@@ -135,7 +136,7 @@ def get_rating_template_list(
             'data': []
         }
 
-    results = [RatingTemplateResponse.model_validate(template) for template in db_templates]
+    results = [CreateRatingTemplateResponse.model_validate(template) for template in db_templates]
 
     return {
         'status': 'success',
@@ -144,20 +145,20 @@ def get_rating_template_list(
 
 
 @router.put("/rating-template/create",
-            response_model=SuccessResponse[RatingTemplateResponse],
+            response_model=SuccessResponse[CreateRatingTemplateResponse],
             status_code=HTTPStatus.CREATED)
-def create_rating_template(new_template: CreateRatingTemplateRequest):
+def create_rating_template(req: CreateRatingTemplateRequest):
     new_db_template = RatingTemplateORM(
-        name=new_template.name,
-        description=new_template.description,
-        author=new_template.author
+        name=req.name,
+        description=req.description,
+        author=req.author
     )
 
     new_db_template.save()
 
     return SuccessResponse(
         status='success',
-        data=RatingTemplateResponse.model_validate(new_db_template)
+        data=CreateRatingTemplateResponse.model_validate(new_db_template)
     )
 
 
