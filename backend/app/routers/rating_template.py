@@ -161,7 +161,7 @@ def create_rating_template(req: CreateRatingTemplateRequest):
         status_code=HTTPStatus.CREATED,
         content={
             'status': 'success',
-            'data': CreateRatingTemplateResponse.model_validate(new_db_template)
+            'data': CreateRatingTemplateResponse.model_validate(new_db_template).model_dump()
         }
     )
 
@@ -211,7 +211,7 @@ def create_rating_template_rule(
         status_code=HTTPStatus.CREATED,
         content={
             'status': 'success',
-            'data': CreateRatingRuleResponse.model_validate(new_db_rule)
+            'data': CreateRatingRuleResponse.model_validate(new_db_rule).model_dump()
         }
     )
 
