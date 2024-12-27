@@ -9,11 +9,11 @@ class RatingRuleIdsResponse(BaseModel):
     template_id: str
 
 
-class RatingRuleResponse(BaseModel):
+class CreateRatingRuleResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: str
-    template_id: str
+    id: int
+    template_id: int
     set_names: list[str]
     valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
