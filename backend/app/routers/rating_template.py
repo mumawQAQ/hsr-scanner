@@ -6,10 +6,9 @@ from fastapi import APIRouter, Depends
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
     ImportRatingRuleRequest
-from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest, \
-    DeleteRatingTemplateRequest
+from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
 from app.core.network_models.responses.common_response import SuccessResponse
-from app.core.network_models.responses.rating_rule_response import RatingRuleResponse, RatingRuleIdsResponse
+from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse, RatingRuleIdsResponse
 from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
@@ -68,7 +67,7 @@ def export_rating_template(
 
     # convert the template to pydantic model
     template = CreateRatingTemplateResponse.model_validate(db_template)
-    rules = [RatingRuleResponse.model_validate(rule) for rule in db_template_rules]
+    rules = [CreateRatingRuleResponse.model_validate(rule) for rule in db_template_rules]
 
     # encode the template and rules
     encoded_template = rating_template_en_decoder.encode(template, rules)
@@ -166,9 +165,9 @@ def create_rating_template(req: CreateRatingTemplateRequest):
                response_model=SuccessResponse[str],
                status_code=HTTPStatus.OK)
 def delete_rating_template(
-        req: DeleteRatingTemplateRequest
+        template_id: int
 ):
-    template = RatingTemplateORM.get_by_id(req.template_id)
+    template = RatingTemplateORM.get_by_id(template_id)
     template.delete_instance()
 
     return SuccessResponse(
@@ -177,30 +176,22 @@ def delete_rating_template(
     )
 
 
-@router.put("/rating-template/rule/create")
+@router.put("/rating-template/rule/create",
+            response_model=SuccessResponse[CreateRatingRuleResponse],
+            status_code=HTTPStatus.CREATED)
 def create_rating_template_rule(
-        new_rule: CreateRatingRuleRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        req: CreateRatingRuleRequest,
 ):
     new_db_rule = RatingRuleORM(
-        id=new_rule.rule_id,
-        template_id=new_rule.template_id,
+        template_id=req.template_id,
     )
 
-    db_rule = rating_template_repository.create_template_rule(new_db_rule)
+    new_db_rule.save()
 
-    if db_rule is None:
-        return {
-            'status': 'failed',
-            'message': 'Failed to create rule'
-        }
-
-    result = RatingRuleResponse.model_validate(db_rule)
-
-    return {
-        'status': 'success',
-        'data': result
-    }
+    return SuccessResponse(
+        status='success',
+        data=CreateRatingRuleResponse.model_validate(new_db_rule)
+    )
 
 
 @router.delete("/rating-template/rule/delete/{rule_id}")
@@ -283,7 +274,7 @@ def get_rating_template_rule(
             'message': 'Rule not found'
         }
 
-    result = RatingRuleResponse.model_validate(db_rule)
+    result = CreateRatingRuleResponse.model_validate(db_rule)
 
     return {
         'status': 'success',
