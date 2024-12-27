@@ -28,3 +28,4 @@ class GetRatingRuleResponse(BaseModel):
     set_names: list[str]
     valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
+    fit_characters: list[str]
