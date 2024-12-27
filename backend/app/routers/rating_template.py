@@ -46,39 +46,53 @@ def import_rating_template(
     }
 
 
-@router.get("/rating-template/export/{template_id}")
+# TODO: need to test this function
+@router.get("/rating-template/export/{template_id}",
+            response_model=SuccessResponse[str],
+            status_code=HTTPStatus.OK,
+            responses={
+                HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+            })
 def export_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
+        template_id: int,
         rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
 ):
-    # get the template from the database
-    db_template_rules = rating_template_repository.get_template_rules(template_id)
-    db_template = rating_template_repository.get_template(template_id)
+    try:
+        db_template = RatingTemplateORM.get_by_id(template_id)
+        db_template_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == template_id)
 
-    if db_template is None:
-        return {
-            'status': 'failed',
-            'message': 'Template not found'
-        }
+        if not db_template_rules:
+            return JSONResponse(
+                status_code=HTTPStatus.NOT_FOUND,
+                content={
+                    'status': 'failed',
+                    'message': 'No rules to export'
+                }
+            )
 
-    if db_template_rules is None:
-        return {
-            'status': 'failed',
-            'message': 'Rules not found / No rules to export'
-        }
+        template = GetRatingTemplateResponse.model_validate(db_template)
+        rules = [GetRatingRuleResponse.model_validate(rule) for rule in db_template_rules]
 
-    # convert the template to pydantic model
-    template = CreateRatingTemplateResponse.model_validate(db_template)
-    rules = [CreateRatingRuleResponse.model_validate(rule) for rule in db_template_rules]
+        encoded_template = rating_template_en_decoder.encode(template, rules)
 
-    # encode the template and rules
-    encoded_template = rating_template_en_decoder.encode(template, rules)
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': encoded_template
+            }
+        )
 
-    return {
-        'status': 'success',
-        'data': encoded_template
-    }
+
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
 
 
 # TODO: need to test this function
@@ -86,7 +100,7 @@ def export_rating_template(
               response_model=SuccessResponse[str],
               status_code=HTTPStatus.OK,
               responses={
-                  404: {"model": ErrorResponse}
+                  HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
               })
 def stop_use_rating_template(
         template_id: int,
@@ -141,7 +155,7 @@ def stop_use_rating_template(
               response_model=SuccessResponse[GetRatingTemplateResponse],
               status_code=HTTPStatus.OK,
               responses={
-                  404: {"model": ErrorResponse}
+                  HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
               })
 def use_rating_template(
         template_id: int,
