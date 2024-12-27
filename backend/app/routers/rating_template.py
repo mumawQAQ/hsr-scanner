@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -6,6 +7,7 @@ from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
     ImportRatingRuleRequest
 from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
+from app.core.network_models.responses.common_response import SuccessResponse
 from app.core.network_models.responses.rating_rule_response import RatingRuleResponse, RatingRuleIdsResponse
 from app.core.network_models.responses.rating_template_response import RatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
@@ -141,32 +143,22 @@ def get_rating_template_list(
     }
 
 
-@router.put("/rating-template/create")
-def create_rating_template(
-        new_template: CreateRatingTemplateRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
-):
+@router.put("/rating-template/create",
+            response_model=SuccessResponse[RatingTemplateResponse],
+            status_code=HTTPStatus.CREATED)
+def create_rating_template(new_template: CreateRatingTemplateRequest):
     new_db_template = RatingTemplateORM(
-        id=new_template.id,
         name=new_template.name,
         description=new_template.description,
         author=new_template.author
     )
 
-    db_template = rating_template_repository.create_template(new_db_template)
+    new_db_template.save()
 
-    if db_template is None:
-        return {
-            'status': 'failed',
-            'message': 'Failed to create template'
-        }
-
-    result = RatingTemplateResponse.model_validate(db_template)
-
-    return {
-        'status': 'success',
-        'data': result
-    }
+    return SuccessResponse(
+        status='success',
+        data=RatingTemplateResponse.model_validate(new_db_template)
+    )
 
 
 @router.delete("/rating-template/delete/{template_id}")
