@@ -103,28 +103,56 @@ def stop_use_rating_template(
     }
 
 
-@router.patch("/rating-template/use/{template_id}")
+# TODO: need to test this function
+@router.patch("/rating-template/use/{template_id}",
+              response_model=SuccessResponse[GetRatingTemplateResponse],
+              status_code=HTTPStatus.OK,
+              responses={
+                  404: {"model": ErrorResponse}
+              })
 def use_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
+        template_id: int,
         formatter: Annotated[Formatter, Depends(get_formatter)],
         global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
 ):
-    db_template, db_rules = rating_template_repository.use_template(template_id)
-    if db_template is None:
+    try:
+        db_template = RatingTemplateORM.get_by_id(template_id)
+        db_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == template_id)
+
+        # check if the template is already in use
+        if db_template.in_use:
+            return {
+                'status': 'success',
+                'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
+            }
+
+        # get all the in used templates
+        in_used_templates = RatingTemplateORM.select().where(RatingTemplateORM.in_use == True)
+
+        # stop using all the in used templates
+        for template in in_used_templates:
+            template.in_use = False
+            template.save()
+
+        # start using the template
+        db_template.in_use = True
+        db_template.save()
+
+        # update the global state
+        formatted_rules = formatter.format_rating_template(db_rules)
+        global_state_manager.update_state({'formatted_rules': formatted_rules})
+
+        return {
+            'status': 'success',
+            'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
+        }
+
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
         return {
             'status': 'failed',
             'message': 'Template not found'
         }
-
-    formatted_rules = formatter.format_rating_template(db_rules)
-    global_state_manager.update_state({'formatted_rules': formatted_rules})
-
-    result = CreateRatingTemplateResponse.model_validate(db_template)
-    return {
-        'status': 'success',
-        'data': result
-    }
 
 
 @router.get("/rating-template/list",
