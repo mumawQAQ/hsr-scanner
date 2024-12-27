@@ -1,13 +1,13 @@
 import argparse
+import json
+from typing import List, Optional, Tuple
 
 import cv2
-import json
 import numpy as np
 import pygetwindow as gw
 from mss import mss
 from mss.exception import ScreenShotError
 from pydantic import BaseModel
-from typing import List, Optional, Tuple
 
 
 class Rectangle(BaseModel):
@@ -171,7 +171,7 @@ class ScreenAnnotator:
         if not self._validate_image(self.current_img):
             return
 
-        cv2.rectangle(self.current_img, self.start_point, end_point, (255, 0, 0), 1)
+        cv2.rectangle(self.current_img, self.start_point, end_point, (255, 0, 0), 2)
         for rect in self.rectangles:
             self._draw_rectangle(self.current_img, rect)
 
@@ -211,7 +211,7 @@ class ScreenAnnotator:
             (int(rect.x), int(rect.y)),
             (int(rect.x + rect.w), int(rect.y + rect.h)),
             (255, 0, 0),
-            1
+            2
         )
 
     def run(self) -> None:
