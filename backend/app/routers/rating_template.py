@@ -234,31 +234,27 @@ def delete_rating_template_rule(
         )
 
 
-@router.post("/rating-template/rule/update")
+@router.post("/rating-template/rule/update",
+             response_model=SuccessResponse[str],
+             status_code=HTTPStatus.OK)
 def update_rating_template_rule(
         updated_rule: UpdateRatingRuleRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
 ):
-    db_rule = RatingRuleORM(
+    RatingRuleORM(
         id=updated_rule.id,
         set_names=updated_rule.set_names,
         valuable_mains=updated_rule.valuable_mains,
         valuable_subs=[value.model_dump() for value in updated_rule.valuable_subs],
         fit_characters=updated_rule.fit_characters
-    )
+    ).save()
 
-    result = rating_template_repository.update_template_rule(db_rule)
-
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to update rule'
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'message': 'Rule updated'
         }
-
-    return {
-        'status': 'success',
-        'message': 'Rule updated'
-    }
+    )
 
 
 @router.get("/rating-template/rule/list/{template_id}")

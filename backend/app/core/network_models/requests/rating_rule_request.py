@@ -8,7 +8,7 @@ class CreateRatingRuleRequest(BaseModel):
 
 
 class UpdateRatingRuleRequest(BaseModel):
-    id: str
+    id: int
     set_names: list[str]
     valuable_mains: dict[str, list[str]]
     valuable_subs: list[RatingRuleSubStats]
