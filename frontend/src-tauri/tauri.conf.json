@@ -45,7 +45,8 @@
         "signingIdentity": null
       },
       "resources": [
-        "../../backend/**/*",
+        "../../backend/app/**/*",
+        "../../backend/*.py",
         "../../tools/**/*"
       ],
       "shortDescription": "",
