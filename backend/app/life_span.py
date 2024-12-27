@@ -16,7 +16,6 @@ from app.core.model_impls.yolo_model import YOLOModel
 from app.core.pipeline_executer import PipelineExecutor
 from app.core.pipline_impls.auto_relic_analysis_pipeline import AutoRelicAnalysisPipeline
 from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAnalysisPipeline
-from app.core.repositories.rating_template_repo import RatingTemplateRepository
 from app.core.utils import database
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
@@ -28,7 +27,6 @@ pipeline_executor: Optional[PipelineExecutor] = None
 formatter: Optional[Formatter] = None
 template_en_decoder: Optional[TemplateEnDecoder] = None
 global_state_manager: Optional[GlobalStateManager] = None
-rating_template_repository: Optional[RatingTemplateRepository] = None
 
 
 def get_websocket_manager() -> WebsocketManager:
@@ -73,12 +71,6 @@ def get_global_state_manager() -> GlobalStateManager:
     return global_state_manager
 
 
-def get_rating_template_repository() -> RatingTemplateRepository:
-    if rating_template_repository is None:
-        raise RuntimeError("RatingTemplateRepository not initialized")
-    return rating_template_repository
-
-
 @asynccontextmanager
 async def life_span(app: FastAPI):
     global websocket_manager
@@ -88,7 +80,6 @@ async def life_span(app: FastAPI):
     global formatter
     global template_en_decoder
     global global_state_manager
-    global rating_template_repository
 
     # Init the template en decoder
     template_en_decoder = TemplateEnDecoder()
