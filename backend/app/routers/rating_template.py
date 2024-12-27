@@ -81,26 +81,59 @@ def export_rating_template(
     }
 
 
-@router.patch("/rating-template/stop-use/{template_id}")
+# TODO: need to test this function
+@router.patch("/rating-template/stop-use/{template_id}",
+              response_model=SuccessResponse[str],
+              status_code=HTTPStatus.OK,
+              responses={
+                  404: {"model": ErrorResponse}
+              })
 def stop_use_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
+        template_id: int,
         global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
 ):
-    result = rating_template_repository.stop_use_template(template_id)
+    # check if the current template is in use
+    global_state_manager_state = global_state_manager.get_state()
 
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to stop using template'
-        }
+    current_used_template_id = global_state_manager_state.get('current_used_template_id', None)
 
-    global_state_manager.update_state({'formatted_rules': []})
+    if not current_used_template_id:
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'No template in use'
+            }
+        )
 
-    return {
-        'status': 'success',
-        'message': 'Template stopped'
-    }
+    try:
+        db_template = RatingTemplateORM.get_by_id(template_id)
+        db_template.in_use = False
+        db_template.save()
+
+        # update the global state
+        global_state_manager.update_state({
+            'current_used_template_id': None,
+            'formatted_rules': []
+        })
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'Template stopped'
+            }
+        )
+
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': "Template not found"
+            }
+        )
 
 
 # TODO: need to test this function
@@ -121,10 +154,13 @@ def use_rating_template(
 
         # check if the template is already in use
         if db_template.in_use:
-            return {
-                'status': 'success',
-                'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
-            }
+            return JSONResponse(
+                status_code=HTTPStatus.OK,
+                content={
+                    'status': 'success',
+                    'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
+                }
+            )
 
         # get all the in used templates
         in_used_templates = RatingTemplateORM.select().where(RatingTemplateORM.in_use == True)
@@ -141,18 +177,25 @@ def use_rating_template(
         # update the global state
         formatted_rules = formatter.format_rating_template(db_rules)
         global_state_manager.update_state({'formatted_rules': formatted_rules})
+        global_state_manager.update_state({'current_used_template_id': template_id})
 
-        return {
-            'status': 'success',
-            'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
+            }
+        )
 
     except RatingTemplateORM.DoesNotExist:
         logger.error(f"Template not found: {template_id}")
-        return {
-            'status': 'failed',
-            'message': 'Template not found'
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
 
 
 @router.get("/rating-template/list",
