@@ -303,22 +303,32 @@ def get_rating_template_rule_list(
         )
 
 
-@router.get("/rating-template/rule/{rule_id}")
+@router.get("/rating-template/rule/{rule_id}",
+            response_model=SuccessResponse[GetRatingRuleResponse],
+            status_code=HTTPStatus.OK,
+            responses={
+                HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+            })
 def get_rating_template_rule(
-        rule_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        rule_id: int,
 ):
-    db_rule = rating_template_repository.get_template_rule(rule_id)
+    try:
+        db_rule = RatingRuleORM.get_by_id(rule_id)
 
-    if db_rule is None:
-        return {
-            'status': 'failed',
-            'message': 'Rule not found'
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': GetRatingRuleResponse.model_validate(db_rule).model_dump()
+            }
+        )
 
-    result = CreateRatingRuleResponse.model_validate(db_rule)
-
-    return {
-        'status': 'success',
-        'data': result
-    }
+    except RatingRuleORM.DoesNotExist:
+        logger.error(f"Rule not found: {rule_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Rule not found'
+            }
+        )
