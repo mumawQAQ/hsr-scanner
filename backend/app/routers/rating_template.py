@@ -14,36 +14,31 @@ from app.core.network_models.responses.rating_template_response import CreateRat
     GetRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
-from app.core.repositories.rating_template_repo import RatingTemplateRepository
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
-from app.life_span import get_formatter, get_template_en_decoder, get_rating_template_repository, \
-    get_global_state_manager
+from app.life_span import get_formatter, get_template_en_decoder, get_global_state_manager
 from app.logging_config import logger
 
 router = APIRouter()
 
 
-@router.post("/rating-template/import")
+# TODO: need to test this function
+@router.post("/rating-template/import",
+             response_model=SuccessResponse[str],
+             status_code=HTTPStatus.OK)
 def import_rating_template(
         request: ImportRatingRuleRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
         rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
 ):
-    template, rules = rating_template_en_decoder.decode(request.qr_code)
+    rating_template_en_decoder.decode_and_save(request.qr_code)
 
-    import_template_result = rating_template_repository.import_template(template, rules)
-
-    if not import_template_result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to import template'
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'data': 'Template imported'
         }
-
-    return {
-        'status': 'success',
-        'data': 'Template imported'
-    }
+    )
 
 
 # TODO: need to test this function

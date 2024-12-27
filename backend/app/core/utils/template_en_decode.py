@@ -1,13 +1,11 @@
 import base64
 import json
 import lzma
-import uuid
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import msgpack
 
 from app.constant import RELIC_SETS_FILE, CHARACTERS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
-# TODO: fix this naming of this
 from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse
 from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
@@ -59,30 +57,29 @@ class TemplateEnDecoder:
             'd': [self.mappings['character']['forward'][char] for char in rule.fit_characters]
         }
 
-    def decode(self, data_url: str) -> Tuple[RatingTemplateORM, List[RatingRuleORM]]:
+    def decode_and_save(self, data_url: str):
         try:
             compressed = base64.urlsafe_b64decode(data_url)
             decompressed = lzma.decompress(compressed)
             data = msgpack.unpackb(decompressed, raw=False)
 
-            template_id = str(uuid.uuid4())
             template = RatingTemplateORM(
-                id=template_id,
                 name=data['n'],
                 description=data['d'],
                 author=data['a'],
                 in_use=False
             )
 
-            rules = [self._decode_rule(rule_data, template_id) for rule_data in data['r']]
-            return template, rules
+            template.save()
+            rules = [self._decode_rule(rule_data, template.id) for rule_data in data['r']]
+            RatingRuleORM.bulk_create(rules)
+
         except Exception as e:
             logger.error(f"Error decoding template: {e}")
-            raise
+            raise e
 
-    def _decode_rule(self, rule_data: Dict, template_id: str) -> RatingRuleORM:
+    def _decode_rule(self, rule_data: Dict, template_id: int) -> RatingRuleORM:
         return RatingRuleORM(
-            id=str(uuid.uuid4()),
             template_id=template_id,
             set_names=[self.mappings['relic_set']['backward'][id] for id in rule_data['a']],
             valuable_mains={k: [self.mappings['relic_main_stat']['backward'][id] for id in v] for k, v in
