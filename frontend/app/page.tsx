@@ -22,6 +22,7 @@ export default function Home() {
   const relicSets = useJsonFile('relic/relic_sets.json');
   const characters = useJsonFile('character/character_meta.json');
   const relicTemplateList = useRelicTemplateList();
+  const backendClient = useBackendClientStore();
 
   const {
     requirementFulfilled,
@@ -48,6 +49,10 @@ export default function Home() {
       characters.refetch();
 
       relicTemplateList.refetch();
+
+      // init the used template
+      backendClient.api?.get('/rating-template/init');
+
     }
   }, [apiInitialized]);
 
