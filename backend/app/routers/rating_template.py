@@ -22,6 +22,47 @@ from app.logging_config import logger
 router = APIRouter()
 
 
+@router.get("/rating-template/init",
+            response_model=SuccessResponse[str],
+            status_code=HTTPStatus.OK)
+def init_rating_template(
+        formatter: Annotated[Formatter, Depends(get_formatter)],
+        global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
+):
+    """
+    This function should be called once at the start of the app, it helps init the current used rating template from database to global state
+    """
+    # get the current used template from database
+    current_used_template = RatingTemplateORM.select().where(RatingTemplateORM.in_use == True).first()
+
+    if not current_used_template:
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'No template in use'
+            }
+        )
+
+    # get all the rules and format them
+    db_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == current_used_template.id)
+    formatted_rules = formatter.format_rating_template(db_rules)
+
+    # update the global state
+    global_state_manager.update_state({
+        'current_used_template_id': current_used_template.id,
+        'formatted_rules': formatted_rules
+    })
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'data': 'Template inited'
+        }
+    )
+
+
 # TODO: need to test this function
 @router.post("/rating-template/import",
              response_model=SuccessResponse[str],
