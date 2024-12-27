@@ -17,6 +17,7 @@ import { useConfig } from '@/app/hooks/use-config-hook';
 import { Divider } from '@nextui-org/divider';
 import { Input } from '@nextui-org/input';
 import { useMousePosition } from '@/app/apis/state';
+import BoxSetting from '@/app/components/box-setting';
 
 
 export default function Setting() {
@@ -38,38 +39,6 @@ export default function Setting() {
       setVersion(version);
     });
   }, []);
-
-  useEffect(() => {
-    // Start the backend and set up listeners
-    const startAndListen = async () => {
-      try {
-        const logUnlistener = await listen<string>('screen-annotator-log', event => {
-          console.log(JSON.parse(event.payload));
-        });
-
-        // Return cleanup function to remove event listeners
-        return () => {
-          logUnlistener();
-        };
-      } catch (e) {
-        console.error('Error starting script or setting up listeners:', e);
-      }
-    };
-
-    // Call the async function and handle cleanup
-    let cleanupFunc = () => {
-    }; // Initialize cleanup function
-    startAndListen().then(cleanup => {
-      if (cleanup) cleanupFunc = cleanup;
-    });
-
-    // Cleanup listeners when component unmounts
-    return () => {
-      cleanupFunc();
-    };
-
-  }, []);
-
 
   const handleCheckAppUpdate = async () => {
     setOnCheckAppUpdate(true);
@@ -182,7 +151,7 @@ export default function Setting() {
               自动识别丢弃图标
             </div>
             <div className="text-sm text-gray-500">
-              如果该选择开启则会使用yolo模型自动检测丢弃图标位置，如果检测识别可能导致无法自动标记丢弃，可以使用手动设置图标位置
+              如果该选择开启则会使用yolo模型自动检测丢弃图标位置，如果检测失败可能导致无法自动标记，可以关闭此选项并手动设置图标位置
             </div>
           </div>
 
@@ -197,6 +166,9 @@ export default function Setting() {
         </div>
 
         <Divider />
+        <div className="font-bold">
+          手动设置丢弃图标位置
+        </div>
 
         <div className="flex flex-row items-center">
           <div className="grow">
@@ -221,6 +193,7 @@ export default function Setting() {
                 }
               }
               min={0}
+              max={10000}
             />
           </div>
         </div>
@@ -248,6 +221,7 @@ export default function Setting() {
                 }
               }
               min={0}
+              max={10000}
             />
           </div>
         </div>
@@ -299,6 +273,42 @@ export default function Setting() {
     <div className="text-medium font-semibold">
       识别区域
     </div>
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-col gap-4">
+        <div className="flex flex-row items-center">
+          <div className="grow flex flex-col gap-2">
+            <div>
+              自动识别遗器属性/名称位置
+            </div>
+            <div className="text-sm text-gray-500">
+              如果该选择开启则会使用yolo模型自动检测遗器主属性，副属性，名称位置，如果检测失败可能导致ocr错误，可以关闭此选项并手动设置位置
+            </div>
+          </div>
+
+
+          <div className="ml-20">
+            <Switch
+              size={'sm'}
+            />
+          </div>
+        </div>
+        <Divider />
+
+        <div>
+          <div className="font-bold">
+            手动设置遗器名称位置
+          </div>
+          <div className="text-sm text-gray-500">
+            在点击预览位置/生成位置之前请保证游戏打开，语言选择英语，并且在遗器背包界面
+          </div>
+
+        </div>
+
+        <BoxSetting name={'遗器名称'} />
+        <BoxSetting name={'遗器主属性'} />
+        <BoxSetting name={'遗器副属性'} />
+      </CardBody>
+    </Card>
 
 
     <div className="text-medium font-semibold">
