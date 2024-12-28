@@ -4,8 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from app.constant import RELIC_BOX_TYPES
-from app.core.network_models.requests.relic_box_position_request import GetRelicBoxPositionRequest, \
-    UpdateRelicBoxPositionRequest
+from app.core.network_models.requests.relic_box_position_request import UpdateRelicBoxPositionRequest
 from app.core.network_models.responses.common_response import SuccessResponse, ErrorResponse
 from app.core.network_models.responses.relic_box_position_response import GetRelicBoxPositionResponse, BoxPosition
 from app.core.orm_models.config_orm import ConfigORM
@@ -59,23 +58,23 @@ def set_relic_box_config(req: UpdateRelicBoxPositionRequest):
     )
 
 
-@router.get("/relic-box-position",
+@router.get("/relic-box-position/{relic_box_type}",
             response_model=SuccessResponse[GetRelicBoxPositionResponse],
             responses={
                 HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
             },
             status_code=HTTPStatus.OK)
-def get_relic_box_config(req: GetRelicBoxPositionRequest):
-    db_config = ConfigORM.select().where(ConfigORM.key == req.type).first()
+def get_relic_box_config(relic_box_type: str):
+    db_config = ConfigORM.select().where(ConfigORM.key == relic_box_type).first()
 
-    if not db_config and req.type in RELIC_BOX_TYPES:
+    if not db_config and relic_box_type in RELIC_BOX_TYPES:
         return JSONResponse(
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
                 'data': GetRelicBoxPositionResponse(
                     id=0,
-                    key=req.type,
+                    key=relic_box_type,
                     value=BoxPosition(x=0, y=0, w=0, h=0)
                 ).model_dump()
             }
@@ -89,7 +88,7 @@ def get_relic_box_config(req: GetRelicBoxPositionRequest):
             }
         )
     else:
-        logger.error(f"Config not found: {req.type}")
+        logger.error(f"Config not found: {relic_box_type}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
