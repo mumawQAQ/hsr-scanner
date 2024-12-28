@@ -10,8 +10,7 @@ import { RefreshCcw } from 'lucide-react';
 import { checkUpdate, installUpdate, UpdateManifest } from '@tauri-apps/api/updater';
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/tauri';
-import { AssertUpdateCheckResponse } from '@/app/types/api-types';
-import { listen } from '@tauri-apps/api/event';
+import { AssertUpdateCheckResponse, RelicBoxPositionType } from '@/app/types/api-types';
 import { Switch } from '@nextui-org/switch';
 import { useConfig } from '@/app/hooks/use-config-hook';
 import { Divider } from '@nextui-org/divider';
@@ -304,9 +303,9 @@ export default function Setting() {
 
         </div>
 
-        <BoxSetting name={'遗器名称'} />
-        <BoxSetting name={'遗器主属性'} />
-        <BoxSetting name={'遗器副属性'} />
+        <BoxSetting name={'relic_title'} />
+        <BoxSetting name={'relic_main_stat'} />
+        <BoxSetting name={'relic_sub_stat'} />
       </CardBody>
     </Card>
 

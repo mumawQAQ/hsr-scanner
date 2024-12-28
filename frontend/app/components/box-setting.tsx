@@ -1,21 +1,21 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/tauri';
 import { listen } from '@tauri-apps/api/event';
+import { useRelicBoxPosition, useUpdateRelicBoxPosition } from '@/app/apis/config';
+import { RelicBoxPositionType } from '@/app/types/api-types';
 
 type BoxSettingProps = {
-  name: string,
+  name: RelicBoxPositionType,
 };
 
 const BoxSetting = ({ name }: BoxSettingProps) => {
   const [isGenerating, setIsGenerating] = React.useState(false);
-  const [x, setX] = React.useState(0);
-  const [y, setY] = React.useState(0);
-  const [w, setW] = React.useState(0);
-  const [h, setH] = React.useState(0);
+  const relicBoxPosition = useRelicBoxPosition(name);
+  const updateRelicBoxPosition = useUpdateRelicBoxPosition();
 
   useEffect(() => {
     if (isGenerating) {
@@ -27,10 +27,15 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
             const result = JSON.parse(event.payload);
             if (result.status === 'success') {
               const box = JSON.parse(result.data);
-              setX(box.x);
-              setY(box.y);
-              setW(box.w);
-              setH(box.h);
+              updateRelicBoxPosition.mutate({
+                type: name,
+                box: {
+                  x: box.x,
+                  y: box.y,
+                  w: box.w,
+                  h: box.h,
+                },
+              });
             } else {
               toast.error(result.message);
             }
@@ -92,10 +97,10 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
     try {
       await invoke('start_screen_annotator', {
         displayOnly: true,
-        x: [x],
-        y: [y],
-        w: [w],
-        h: [h],
+        x: [relicBoxPosition.data ? relicBoxPosition.data.value.x : 0],
+        y: [relicBoxPosition.data ? relicBoxPosition.data.value.y : 0],
+        w: [relicBoxPosition.data ? relicBoxPosition.data.value.w : 0],
+        h: [relicBoxPosition.data ? relicBoxPosition.data.value.h : 0],
       });
     } catch (error) {
       console.error('Error calling generate position script:', error);
@@ -105,6 +110,37 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
 
   const handleStopGenerateBox = () => {
     setIsGenerating(false);
+  };
+
+  const handleBoxChange = (type: 'x' | 'y' | 'w' | 'h', val: string) => {
+    const newValue = parseInt(val, 10) || 0;
+
+    const x = relicBoxPosition.data ? relicBoxPosition.data.value.x : 0;
+    const y = relicBoxPosition.data ? relicBoxPosition.data.value.y : 0;
+    const w = relicBoxPosition.data ? relicBoxPosition.data.value.w : 0;
+    const h = relicBoxPosition.data ? relicBoxPosition.data.value.h : 0;
+
+    if (type === 'x') {
+      updateRelicBoxPosition.mutate({
+        type: name,
+        box: { x: newValue, y, w, h },
+      });
+    } else if (type === 'y') {
+      updateRelicBoxPosition.mutate({
+        type: name,
+        box: { x, y: newValue, w, h },
+      });
+    } else if (type === 'w') {
+      updateRelicBoxPosition.mutate({
+        type: name,
+        box: { x, y, w: newValue, h },
+      });
+    } else if (type === 'h') {
+      updateRelicBoxPosition.mutate({
+        type: name,
+        box: { x, y, w, h: newValue },
+      });
+    }
   };
 
   return (
@@ -121,7 +157,8 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
           type="number"
           variant="underlined"
           min={0}
-          value={x.toString()}
+          value={relicBoxPosition.data ? relicBoxPosition.data.value.x.toString() : '0'}
+          onValueChange={(val) => handleBoxChange('x', val)}
           max={10000}
         />
         <Input
@@ -129,7 +166,8 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
           label="Y"
           type="number"
           variant="underlined"
-          value={y.toString()}
+          value={relicBoxPosition.data ? relicBoxPosition.data.value.y.toString() : '0'}
+          onValueChange={(val) => handleBoxChange('y', val)}
           min={0}
           max={10000}
         />
@@ -138,7 +176,8 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
           label="W"
           type="number"
           variant="underlined"
-          value={w.toString()}
+          value={relicBoxPosition.data ? relicBoxPosition.data.value.w.toString() : '0'}
+          onValueChange={(val) => handleBoxChange('w', val)}
           min={0}
           max={10000}
         />
@@ -147,7 +186,8 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
           label="H"
           type="number"
           variant="underlined"
-          value={h.toString()}
+          value={relicBoxPosition.data ? relicBoxPosition.data.value.h.toString() : '0'}
+          onValueChange={(val) => handleBoxChange('h', val)}
           min={0}
           max={10000}
         />
