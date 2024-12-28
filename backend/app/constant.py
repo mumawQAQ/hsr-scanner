@@ -2,6 +2,8 @@ import os
 
 GAME_TITLES = ['Honkai: Star Rail']
 
+RELIC_BOX_TYPES = ["relic_main_stat", "relic_sub_stat", "relic_title"]
+
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 
