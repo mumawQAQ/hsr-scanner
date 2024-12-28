@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Input } from '@nextui-org/input';
 import { Button } from '@nextui-org/button';
 import toast from 'react-hot-toast';
