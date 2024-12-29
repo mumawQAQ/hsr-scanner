@@ -70,3 +70,16 @@ export type RelicBoxPositionResponse = {
     h: number;
   }
 }
+
+export type DiscardIconPositionRequest = {
+  x: number;
+  y: number;
+}
+
+export type DiscardIconPositionResponse = {
+  key: string;
+  value: {
+    x: number;
+    y: number;
+  }
+}
