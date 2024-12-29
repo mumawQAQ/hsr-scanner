@@ -1,7 +1,6 @@
-from typing import Any
-
 import numpy as np
 import torch
+from typing import Any
 from ultralytics import YOLO
 
 from app.core.interfaces.model_interface import ModelInterface
@@ -30,7 +29,7 @@ class YOLOModel(ModelInterface[Any, Any]):
 
         img_np = np.array(img)
 
-        detection_result = self.model.predict(source=img, imgsz=640, conf=0.6, save=False, verbose=False)
+        detection_result = self.model.predict(source=img, imgsz=640, conf=0.8, save=False, verbose=False)
         boxes = detection_result[0].boxes.xywhn if len(detection_result) > 0 else []
         classes = detection_result[0].boxes.cls if len(detection_result) > 0 else []
 

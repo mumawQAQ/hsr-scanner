@@ -13,20 +13,31 @@ class DetectionStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
-            yolo_model = ModelManager().get_model("yolo")
+
+            auto_detect_relic_box_position = context.meta_data.get('auto_detect_relic_box_position', True)
+            auto_detect_discard_icon = context.meta_data.get('auto_detect_discard_icon', True)
 
             if not screenshot:
                 raise ValueError("Screenshot data not found.")
 
-            if not yolo_model:
-                raise ValueError("YOLO model not found.")
+            if not auto_detect_relic_box_position and not auto_detect_discard_icon:
+                return StageResult(
+                    success=True,
+                    data={},
+                )
+            else:
+                yolo_model = ModelManager().get_model("yolo")
 
-            detection_data = yolo_model.predict(screenshot)
+                if not yolo_model:
+                    raise ValueError("YOLO model not found.")
 
-            return StageResult(
-                success=True,
-                data=detection_data,
-            )
+                detection_data = yolo_model.predict(screenshot)
+
+                return StageResult(
+                    success=True,
+                    data=detection_data,
+                )
+
 
         except Exception as e:
             logger.error(f"Error in {self.get_stage_name()}: {e}")

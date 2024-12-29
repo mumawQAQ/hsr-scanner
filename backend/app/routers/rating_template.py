@@ -1,302 +1,449 @@
-from typing import Annotated
+from http import HTTPStatus
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
     ImportRatingRuleRequest
 from app.core.network_models.requests.rating_template_request import CreateRatingTemplateRequest
-from app.core.network_models.responses.rating_rule_response import RatingRuleResponse, RatingRuleIdsResponse
-from app.core.network_models.responses.rating_template_response import RatingTemplateResponse
+from app.core.network_models.responses.common_response import SuccessResponse, ErrorResponse
+from app.core.network_models.responses.rating_rule_response import CreateRatingRuleResponse, GetRatingRuleResponse
+from app.core.network_models.responses.rating_template_response import CreateRatingTemplateResponse, \
+    GetRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
-from app.core.repositories.rating_template_repo import RatingTemplateRepository
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
-from app.life_span import get_formatter, get_template_en_decoder, get_rating_template_repository, \
-    get_global_state_manager
+from app.life_span import get_formatter, get_template_en_decoder, get_global_state_manager
+from app.logging_config import logger
 
 router = APIRouter()
 
 
-@router.post("/rating-template/import")
-def import_rating_template(
-        request: ImportRatingRuleRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
-        rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
-):
-    template, rules = rating_template_en_decoder.decode(request.qr_code)
-
-    import_template_result = rating_template_repository.import_template(template, rules)
-
-    if not import_template_result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to import template'
-        }
-
-    return {
-        'status': 'success',
-        'data': 'Template imported'
-    }
-
-
-@router.get("/rating-template/export/{template_id}")
-def export_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
-        rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
-):
-    # get the template from the database
-    db_template_rules = rating_template_repository.get_template_rules(template_id)
-    db_template = rating_template_repository.get_template(template_id)
-
-    if db_template is None:
-        return {
-            'status': 'failed',
-            'message': 'Template not found'
-        }
-
-    if db_template_rules is None:
-        return {
-            'status': 'failed',
-            'message': 'Rules not found / No rules to export'
-        }
-
-    # convert the template to pydantic model
-    template = RatingTemplateResponse.model_validate(db_template)
-    rules = [RatingRuleResponse.model_validate(rule) for rule in db_template_rules]
-
-    # encode the template and rules
-    encoded_template = rating_template_en_decoder.encode(template, rules)
-
-    return {
-        'status': 'success',
-        'data': encoded_template
-    }
-
-
-@router.patch("/rating-template/stop-use/{template_id}")
-def stop_use_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
-        global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
-):
-    result = rating_template_repository.stop_use_template(template_id)
-
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to stop using template'
-        }
-
-    global_state_manager.update_state({'formatted_rules': []})
-
-    return {
-        'status': 'success',
-        'message': 'Template stopped'
-    }
-
-
-@router.patch("/rating-template/use/{template_id}")
-def use_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)],
+@router.get("/rating-template/init",
+            response_model=SuccessResponse[str],
+            status_code=HTTPStatus.OK)
+def init_rating_template(
         formatter: Annotated[Formatter, Depends(get_formatter)],
         global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
 ):
-    db_template, db_rules = rating_template_repository.use_template(template_id)
-    if db_template is None:
-        return {
-            'status': 'failed',
-            'message': 'Template not found'
-        }
+    """
+    This function should be called once at the start of the app, it helps init the current used rating template from database to global state
+    """
+    # get the current used template from database
+    current_used_template = RatingTemplateORM.select().where(RatingTemplateORM.in_use == True).first()
 
+    if not current_used_template:
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'No template in use'
+            }
+        )
+
+    # get all the rules and format them
+    db_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == current_used_template.id)
     formatted_rules = formatter.format_rating_template(db_rules)
-    global_state_manager.update_state({'formatted_rules': formatted_rules})
 
-    result = RatingTemplateResponse.model_validate(db_template)
-    return {
-        'status': 'success',
-        'data': result
-    }
+    # update the global state
+    global_state_manager.update_state({
+        'current_used_template_id': current_used_template.id,
+        'formatted_rules': formatted_rules
+    })
 
-
-@router.get("/rating-template/list")
-def get_rating_template_list(
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]):
-    db_templates = rating_template_repository.get_template_list()
-
-    if not db_templates:
-        return {
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
             'status': 'success',
-            'data': []
+            'data': 'Template inited'
         }
-
-    results = [RatingTemplateResponse.model_validate(template) for template in db_templates]
-
-    return {
-        'status': 'success',
-        'data': results
-    }
-
-
-@router.put("/rating-template/create")
-def create_rating_template(
-        new_template: CreateRatingTemplateRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
-):
-    new_db_template = RatingTemplateORM(
-        id=new_template.id,
-        name=new_template.name,
-        description=new_template.description,
-        author=new_template.author
     )
 
-    db_template = rating_template_repository.create_template(new_db_template)
 
-    if db_template is None:
-        return {
-            'status': 'failed',
-            'message': 'Failed to create template'
-        }
-
-    result = RatingTemplateResponse.model_validate(db_template)
-
-    return {
-        'status': 'success',
-        'data': result
-    }
-
-
-@router.delete("/rating-template/delete/{template_id}")
-def delete_rating_template(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+@router.post("/rating-template/import",
+             response_model=SuccessResponse[str],
+             status_code=HTTPStatus.OK)
+def import_rating_template(
+        request: ImportRatingRuleRequest,
+        rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
 ):
-    result = rating_template_repository.delete_template(template_id)
+    rating_template_en_decoder.decode_and_save(request.qr_code)
 
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to delete template'
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'data': 'Template imported'
         }
-
-    return {
-        'status': 'success',
-        'message': 'Template deleted'
-    }
+    )
 
 
-@router.put("/rating-template/rule/create")
+@router.get("/rating-template/export/{template_id}",
+            response_model=SuccessResponse[str],
+            status_code=HTTPStatus.OK,
+            responses={
+                HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+            })
+def export_rating_template(
+        template_id: int,
+        rating_template_en_decoder: Annotated[TemplateEnDecoder, Depends(get_template_en_decoder)]
+):
+    try:
+        db_template = RatingTemplateORM.get_by_id(template_id)
+        db_template_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == template_id)
+
+        if not db_template_rules:
+            return JSONResponse(
+                status_code=HTTPStatus.NOT_FOUND,
+                content={
+                    'status': 'failed',
+                    'message': 'No rules to export'
+                }
+            )
+
+        template = GetRatingTemplateResponse.model_validate(db_template)
+        rules = [GetRatingRuleResponse.model_validate(rule) for rule in db_template_rules]
+
+        encoded_template = rating_template_en_decoder.encode(template, rules)
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': encoded_template
+            }
+        )
+
+
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
+
+
+@router.patch("/rating-template/stop-use/{template_id}",
+              response_model=SuccessResponse[str],
+              status_code=HTTPStatus.OK,
+              responses={
+                  HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+              })
+def stop_use_rating_template(
+        template_id: int,
+        global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
+):
+    # check if the current template is in use
+    global_state_manager_state = global_state_manager.get_state()
+
+    current_used_template_id = global_state_manager_state.get('current_used_template_id', None)
+
+    if not current_used_template_id:
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'No template in use'
+            }
+        )
+
+    try:
+        db_template = RatingTemplateORM.get_by_id(template_id)
+        db_template.in_use = False
+        db_template.save()
+
+        # update the global state
+        global_state_manager.update_state({
+            'current_used_template_id': None,
+            'formatted_rules': []
+        })
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'Template stopped'
+            }
+        )
+
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': "Template not found"
+            }
+        )
+
+
+@router.patch("/rating-template/use/{template_id}",
+              response_model=SuccessResponse[GetRatingTemplateResponse],
+              status_code=HTTPStatus.OK,
+              responses={
+                  HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+              })
+def use_rating_template(
+        template_id: int,
+        formatter: Annotated[Formatter, Depends(get_formatter)],
+        global_state_manager: Annotated[GlobalStateManager, Depends(get_global_state_manager)]
+):
+    try:
+        db_template = RatingTemplateORM.get_by_id(template_id)
+        db_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == template_id)
+
+        # check if the template is already in use
+        if db_template.in_use:
+            return JSONResponse(
+                status_code=HTTPStatus.OK,
+                content={
+                    'status': 'success',
+                    'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
+                }
+            )
+
+        # get all the in used templates
+        in_used_templates = RatingTemplateORM.select().where(RatingTemplateORM.in_use == True)
+
+        # stop using all the in used templates
+        for template in in_used_templates:
+            template.in_use = False
+            template.save()
+
+        # start using the template
+        db_template.in_use = True
+        db_template.save()
+
+        # update the global state
+        formatted_rules = formatter.format_rating_template(db_rules)
+        global_state_manager.update_state({'formatted_rules': formatted_rules})
+        global_state_manager.update_state({'current_used_template_id': template_id})
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': GetRatingTemplateResponse.model_validate(db_template).model_dump()
+            }
+        )
+
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
+
+
+@router.get("/rating-template/list",
+            response_model=SuccessResponse[List[GetRatingTemplateResponse]],
+            status_code=HTTPStatus.OK)
+def get_rating_template_list():
+    db_templates = RatingTemplateORM.select()
+    results = [GetRatingTemplateResponse.model_validate(template).model_dump() for template in db_templates]
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'data': results
+        }
+    )
+
+
+@router.put("/rating-template/create",
+            response_model=SuccessResponse[CreateRatingTemplateResponse],
+            status_code=HTTPStatus.CREATED)
+def create_rating_template(req: CreateRatingTemplateRequest):
+    new_db_template = RatingTemplateORM(
+        name=req.name,
+        description=req.description,
+        author=req.author
+    )
+
+    new_db_template.save()
+
+    return JSONResponse(
+        status_code=HTTPStatus.CREATED,
+        content={
+            'status': 'success',
+            'data': CreateRatingTemplateResponse.model_validate(new_db_template).model_dump()
+        }
+    )
+
+
+@router.delete("/rating-template/delete/{template_id}",
+               response_model=SuccessResponse[str],
+               responses={
+                   HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+               },
+               status_code=HTTPStatus.OK)
+def delete_rating_template(
+        template_id: int
+):
+    try:
+        RatingTemplateORM.get_by_id(template_id).delete_instance()
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'Template deleted'
+            }
+        )
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
+
+
+@router.put("/rating-template/rule/create",
+            response_model=SuccessResponse[CreateRatingRuleResponse],
+            status_code=HTTPStatus.CREATED)
 def create_rating_template_rule(
-        new_rule: CreateRatingRuleRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        req: CreateRatingRuleRequest,
 ):
     new_db_rule = RatingRuleORM(
-        id=new_rule.rule_id,
-        template_id=new_rule.template_id,
+        template_id=req.template_id,
     )
 
-    db_rule = rating_template_repository.create_template_rule(new_db_rule)
+    new_db_rule.save()
 
-    if db_rule is None:
-        return {
-            'status': 'failed',
-            'message': 'Failed to create rule'
+    return JSONResponse(
+        status_code=HTTPStatus.CREATED,
+        content={
+            'status': 'success',
+            'data': CreateRatingRuleResponse.model_validate(new_db_rule).model_dump()
         }
-
-    result = RatingRuleResponse.model_validate(db_rule)
-
-    return {
-        'status': 'success',
-        'data': result
-    }
+    )
 
 
-@router.delete("/rating-template/rule/delete/{rule_id}")
+@router.delete("/rating-template/rule/delete/{rule_id}",
+               response_model=SuccessResponse[str],
+               responses={
+                   HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+               },
+               status_code=HTTPStatus.OK)
 def delete_rating_template_rule(
-        rule_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        rule_id: int,
 ):
-    result = rating_template_repository.delete_template_rule(rule_id)
+    try:
+        RatingRuleORM.get_by_id(rule_id).delete_instance()
 
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to delete rule'
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': 'Rule deleted'
+            }
+        )
 
-    return {
-        'status': 'success',
-        'message': 'Rule deleted'
-    }
+    except RatingRuleORM.DoesNotExist:
+        logger.error(f"Rule not found: {rule_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Rule not found'
+            }
+        )
 
 
-@router.post("/rating-template/rule/update")
+@router.post("/rating-template/rule/update",
+             response_model=SuccessResponse[str],
+             status_code=HTTPStatus.OK)
 def update_rating_template_rule(
         updated_rule: UpdateRatingRuleRequest,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
 ):
-    db_rule = RatingRuleORM(
+    RatingRuleORM(
         id=updated_rule.id,
         set_names=updated_rule.set_names,
         valuable_mains=updated_rule.valuable_mains,
         valuable_subs=[value.model_dump() for value in updated_rule.valuable_subs],
         fit_characters=updated_rule.fit_characters
+    ).save()
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'message': 'Rule updated'
+        }
     )
 
-    result = rating_template_repository.update_template_rule(db_rule)
 
-    if not result:
-        return {
-            'status': 'failed',
-            'message': 'Failed to update rule'
-        }
-
-    return {
-        'status': 'success',
-        'message': 'Rule updated'
-    }
-
-
-@router.get("/rating-template/rule/list/{template_id}")
+@router.get("/rating-template/rule/list/{template_id}",
+            response_model=SuccessResponse[List[GetRatingRuleResponse]],
+            status_code=HTTPStatus.OK,
+            responses={
+                HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+            })
 def get_rating_template_rule_list(
-        template_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        template_id: int,
 ):
-    db_rules = rating_template_repository.get_template_rule_list(template_id)
+    try:
+        template = RatingTemplateORM.get_by_id(template_id)
+        db_rules = RatingRuleORM.select().where(RatingRuleORM.template_id == template.id)
+        results = [GetRatingRuleResponse.model_validate(rule).model_dump() for rule in db_rules]
 
-    if not db_rules:
-        return {
-            'status': 'success',
-            'data': []
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': results
+            }
+        )
 
-    results = [RatingRuleIdsResponse.model_validate(rule) for rule in db_rules]
+    except RatingTemplateORM.DoesNotExist:
+        logger.error(f"Template not found: {template_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Template not found'
+            }
+        )
 
-    return {
-        'status': 'success',
-        'data': results
-    }
 
-
-@router.get("/rating-template/rule/{rule_id}")
+@router.get("/rating-template/rule/{rule_id}",
+            response_model=SuccessResponse[GetRatingRuleResponse],
+            status_code=HTTPStatus.OK,
+            responses={
+                HTTPStatus.NOT_FOUND: {"model": ErrorResponse}
+            })
 def get_rating_template_rule(
-        rule_id: str,
-        rating_template_repository: Annotated[RatingTemplateRepository, Depends(get_rating_template_repository)]
+        rule_id: int,
 ):
-    db_rule = rating_template_repository.get_template_rule(rule_id)
+    try:
+        db_rule = RatingRuleORM.get_by_id(rule_id)
 
-    if db_rule is None:
-        return {
-            'status': 'failed',
-            'message': 'Rule not found'
-        }
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': GetRatingRuleResponse.model_validate(db_rule).model_dump()
+            }
+        )
 
-    result = RatingRuleResponse.model_validate(db_rule)
-
-    return {
-        'status': 'success',
-        'data': result
-    }
+    except RatingRuleORM.DoesNotExist:
+        logger.error(f"Rule not found: {rule_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND,
+            content={
+                'status': 'failed',
+                'message': 'Rule not found'
+            }
+        )

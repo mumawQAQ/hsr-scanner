@@ -17,10 +17,11 @@ class RelicDiscardStage(BasePipelineStage):
             screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
             detection = context.data.get(GameRecognitionStage.DETECTION.value)
             relic_analysis = context.data.get(GameRecognitionStage.RELIC_ANALYSIS.value)
-            relic_discard_score = context.meta_data.get("relic_discard_score", 0.4)
-            skip_if_error = context.meta_data.get("skip_if_error", True)
-            mouse_x = context.meta_data.get("mouse_x", None)
-            mouse_y = context.meta_data.get("mouse_y", None)
+            relic_discard_score = context.meta_data.get("relic_discard_score", 40) / 100
+            skip_if_error = context.meta_data.get("analysis_fail_skip", True)
+            auto_detect_discard_icon = context.meta_data.get("auto_detect_discard_icon", True)
+            discard_icon_x = context.meta_data.get("discard_icon_x", 0)
+            discard_icon_y = context.meta_data.get("discard_icon_y", 0)
 
             # TODO: this may need to move to a separate stage
             keyboard_model = ModelManager().get_model("keyboard")
@@ -37,9 +38,9 @@ class RelicDiscardStage(BasePipelineStage):
                 raise ValueError("Relic analysis data not found.")
 
             # use the user set mouse position if available
-            if mouse_x is not None and mouse_y is not None:
-                icon_center_x = mouse_x
-                icon_center_y = mouse_y
+            if not auto_detect_discard_icon:
+                icon_center_x = discard_icon_x
+                icon_center_y = discard_icon_y
             else:
                 if detection is None or 'discard-icon' not in detection:
                     if skip_if_error:

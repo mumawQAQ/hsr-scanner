@@ -2,6 +2,16 @@ import os
 
 GAME_TITLES = ['Honkai: Star Rail']
 
+RELIC_DISCARD_SCORE = 'relic_discard_score'
+
+AUTO_DETECT_DISCARD_ICON = 'auto_detect_discard_icon'
+AUTO_DETECT_RELIC_BOX = 'auto_detect_relic_box'
+ANALYSIS_FAIL_SKIP = 'analysis_fail_skip'
+
+DISCARD_ICON_POSITION = "discard_icon_position"
+
+RELIC_BOX_TYPES = ["relic_main_stat", "relic_sub_stat", "relic_title"]
+
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
 

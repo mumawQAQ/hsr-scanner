@@ -10,6 +10,7 @@ use tauri::{AppHandle, Manager, WindowEvent};
 
 // Use a mutex to manage singleton behavior
 static BACKEND_PROCESS_HANDLE: Mutex<Option<Child>> = Mutex::new(None);
+static SCREEN_ANNOTATOR_PROCESS_HANDLE: Mutex<Option<Child>> = Mutex::new(None);
 static REQUIREMENTS_INSTALLED: Mutex<bool> = Mutex::new(false);
 
 fn resolve_path(app: AppHandle, path: &str) -> Result<String, String> {
@@ -89,6 +90,113 @@ fn post_backup(app: AppHandle) -> Result<String, String> {
             String::from_utf8_lossy(&output.stderr)
         ))
     }
+}
+
+#[tauri::command]
+fn start_screen_annotator(app: AppHandle, display_only: bool, x: Vec<i32>, y: Vec<i32>, w: Vec<i32>, h: Vec<i32>) {
+    std::thread::spawn({
+        let app = app.clone();
+        move || {
+            let mut handle = SCREEN_ANNOTATOR_PROCESS_HANDLE.lock().unwrap();
+
+            if handle.is_none() {
+                let python_path = resolve_path(app.clone(), "../../tools/python/python")
+                    .expect("Failed to resolve python path");
+                let main_script_path = resolve_path(app.clone(), "../../backend/screen_annotator.py")
+                    .expect("Failed to resolve main script path");
+
+                let mut cmd = Command::new(python_path);
+                cmd.arg("-u")
+                    .arg(main_script_path);
+                if display_only {
+                    cmd.arg("--display_only");
+                }
+                for i in 0..x.len() {
+                    cmd.arg("--x").arg(x[i].to_string());
+                    cmd.arg("--y").arg(y[i].to_string());
+                    cmd.arg("--w").arg(w[i].to_string());
+                    cmd.arg("--h").arg(h[i].to_string());
+                }
+
+                cmd.creation_flags(0x08000000); // This prevents the creation of a console window on Windows.
+
+                let mut child = cmd
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped())
+                    .spawn()
+                    .expect("Failed to start python process");
+
+
+                let stdout = child.stdout.take().unwrap();
+                let stderr = child.stderr.take().unwrap();
+
+                // Handle stdout
+                let stdout_reader = std::io::BufReader::new(stdout);
+                // copy app handle to move into closure
+                let stdout_app = app.clone();
+                std::thread::spawn(move || {
+                    use std::io::{BufRead, BufReader};
+                    let reader = BufReader::new(stdout_reader);
+                    for line in reader.lines() {
+                        if let Ok(line) = line {
+                            //TODO: remove this, this is will only print to console in debug mode
+                            println!("{}", line);
+                            stdout_app
+                                .emit_all("screen-annotator-log", line)
+                                .expect("failed to send stdout");
+                        }
+                    }
+                });
+
+                let stderr_reader = std::io::BufReader::new(stderr);
+                // copy app handle to move into closure
+                let stderr_app = app.clone();
+                std::thread::spawn(move || {
+                    use std::io::{BufRead, BufReader};
+                    let reader = BufReader::new(stderr_reader);
+                    for line in reader.lines() {
+                        if let Ok(line) = line {
+                            println!("{}", line);
+                            stderr_app
+                                .emit_all("screen-annotator-error", line)
+                                .expect("failed to send stderr");
+                        }
+                    }
+                });
+
+                // Put child into the global handle
+                *handle = Some(child);
+                println!("Python process started.");
+
+                // Drop the lock so other commands can access the handle if needed
+                drop(handle);
+
+                // Spawn a thread to wait on the child’s exit
+                let exit_app = app.clone();
+                std::thread::spawn(move || {
+                    // Take the child out of the handle so we can wait on it
+                    let mut handle_monitor = SCREEN_ANNOTATOR_PROCESS_HANDLE.lock().unwrap();
+                    let child_process = handle_monitor.take();
+                    drop(handle_monitor);
+
+                    if let Some(mut child_process) = child_process {
+                        match child_process.wait() {
+                            Ok(status) => {
+                                println!("Python process exited with status: {}", status);
+                            }
+                            Err(e) => {
+                                eprintln!("Failed to wait on Python process: {}", e);
+                            }
+                        }
+                        // Only after the process truly exits do we emit the "exit" event
+                        exit_app.emit_all("screen-annotator-exit", ()).ok();
+                    }
+                });
+            } else {
+                println!("Python process is already running.");
+            }
+        }
+    });
 }
 
 #[tauri::command]
@@ -286,7 +394,17 @@ fn check_asserts_update(app: AppHandle, download: bool) -> Result<String, String
 }
 
 #[tauri::command]
-fn kill_backend() -> Result<(), String> {
+fn kill_background_process() -> Result<(), String> {
+    let mut handle = SCREEN_ANNOTATOR_PROCESS_HANDLE.lock().unwrap();
+    if let Some(child) = handle.as_mut() {
+        child.kill().expect("Failed to kill the screen annotator process");
+        child.wait().expect("Failed to wait on the screen annotator process");
+        *handle = None;
+        println!("Screen annotator process killed.");
+    } else {
+        println!("Screen annotator process is not running.");
+    }
+
     let mut handle = BACKEND_PROCESS_HANDLE.lock().unwrap();
     if let Some(child) = handle.as_mut() {
         child.kill().expect("Failed to kill the backend process");
@@ -304,11 +422,6 @@ fn set_always_on_top(window: tauri::Window, status: bool) -> Result<(), String> 
     window.set_always_on_top(status).map_err(|e| e.to_string())
 }
 
-#[tauri::command]
-fn open_browser_console(window: tauri::Window) -> Result<(), String> {
-    window.open_devtools();
-    Ok(())
-}
 
 #[tauri::command]
 fn set_window_size(window: tauri::Window, status: bool) -> Result<(), String> {
@@ -329,7 +442,7 @@ fn main() {
             window.on_window_event(|event| match event {
                 WindowEvent::CloseRequested { .. } => {
                     println!("Application is closing...");
-                    kill_backend().expect("Failed to kill the backend process");
+                    kill_background_process().expect("Failed to kill the backend process");
                 }
                 _ => {}
             });
@@ -340,12 +453,12 @@ fn main() {
             install_python_requirements,
             start_backend,
             set_always_on_top,
-            open_browser_console,
             set_window_size,
             pre_backup,
             post_backup,
-            kill_backend,
-            check_asserts_update
+            kill_background_process,
+            check_asserts_update,
+            start_screen_annotator
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

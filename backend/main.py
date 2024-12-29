@@ -7,6 +7,7 @@ from uvicorn import Server
 
 from app.life_span import life_span
 from app.logging_config import logging_config
+from app.routers import config
 from app.routers import files
 from app.routers import pipeline
 from app.routers import rating_template
@@ -28,6 +29,7 @@ app.include_router(websocket.router)
 app.include_router(rating_template.router)
 app.include_router(files.router)
 app.include_router(pipeline.router, prefix="/pipeline", tags=["Pipeline Operations"])
+app.include_router(config.router, prefix="/config", tags=["Config Operations"])
 
 if __name__ == '__main__':
     # Apply the logging configuration

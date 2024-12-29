@@ -1,5 +1,7 @@
 import { RelicRuleMainStats, RelicRuleSubStats } from '@/app/types/relic-rule-type';
 
+export type RelicBoxPositionType = 'relic_main_stat' | 'relic_sub_stat' | 'relic_title';
+
 export type ApiResponse<T> = {
   status: 'success' | 'failed';
   message: string; // this only exists when status is 'error'
@@ -41,10 +43,43 @@ export type AssertUpdateCheckResponse = {
 
 export type StartPipelineRequest = {
   pipeline_name: string;
-  meta_data?: Record<string, string | boolean | number | undefined | null>;
+  meta_data?: Record<string, string | boolean | number | undefined | null | object>;
 }
 
 export type MousePositionRequest = {
   mouse_x: number;
   mouse_y: number;
+}
+
+export type RelicBoxPositionRequest = {
+  type: RelicBoxPositionType;
+  box: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  }
+}
+
+export type RelicBoxPositionResponse = {
+  key: RelicBoxPositionType;
+  value: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  }
+}
+
+export type DiscardIconPositionRequest = {
+  x: number;
+  y: number;
+}
+
+export type DiscardIconPositionResponse = {
+  key: string;
+  value: {
+    x: number;
+    y: number;
+  }
 }

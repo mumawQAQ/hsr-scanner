@@ -6,22 +6,22 @@ import { Toaster } from 'react-hot-toast';
 import { ModalProvider } from '@/app/providers/modal-provider';
 import QueryClientProvider from '@/app/providers/query-client-provider';
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+export default function RootLayout({ children }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body>
-        <MyNextUIProvider>
-          <QueryClientProvider>
-            {children}
-            <Toaster />
-            <ModalProvider />
-          </QueryClientProvider>
-        </MyNextUIProvider>
-      </body>
+    <body>
+    <MyNextUIProvider>
+      <QueryClientProvider>
+        {children}
+        <Toaster position={'bottom-center'} toastOptions={{
+          duration: 1000,
+        }} />
+        <ModalProvider />
+      </QueryClientProvider>
+    </MyNextUIProvider>
+    </body>
     </html>
   );
 }

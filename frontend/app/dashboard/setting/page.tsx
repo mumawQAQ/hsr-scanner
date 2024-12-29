@@ -11,6 +11,24 @@ import { checkUpdate, installUpdate, UpdateManifest } from '@tauri-apps/api/upda
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/tauri';
 import { AssertUpdateCheckResponse } from '@/app/types/api-types';
+import { Switch } from '@nextui-org/switch';
+import { Divider } from '@nextui-org/divider';
+import { Input } from '@nextui-org/input';
+import { useMousePosition } from '@/app/apis/state';
+import BoxSetting from '@/app/components/box-setting';
+import {
+  useAnalysisFailSkip,
+  useAutoDetectDiscardIcon,
+  useAutoDetectRelicBoxPosition,
+  useDiscardIconPosition,
+  useRelicDiscardScore,
+  useUpdateAnalysisFailSkip,
+  useUpdateAutoDetectDiscardIcon,
+  useUpdateAutoDetectRelicBoxPosition,
+  useUpdateDiscardIconPosition,
+  useUpdateRelicDiscardScore,
+} from '@/app/apis/config';
+import { useJsonFile } from '@/app/apis/files';
 
 
 export default function Setting() {
@@ -23,13 +41,26 @@ export default function Setting() {
   const [filesToUpdate, setFilesToUpdate] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
+  const { data: assetsCheckSum } = useJsonFile('checksum.json');
+
+  const mousePosition = useMousePosition();
+  const autoDetectDiscardIcon = useAutoDetectDiscardIcon();
+  const updateAutoDetectDiscardIcon = useUpdateAutoDetectDiscardIcon();
+  const discardIconPosition = useDiscardIconPosition();
+  const updateDiscardIconPosition = useUpdateDiscardIconPosition();
+  const autoDetectRelicBoxPosition = useAutoDetectRelicBoxPosition();
+  const updateAutoDetectRelicBoxPosition = useUpdateAutoDetectRelicBoxPosition();
+  const relicDiscardScore = useRelicDiscardScore();
+  const updateRelicDiscardScore = useUpdateRelicDiscardScore();
+  const analysisFailSkip = useAnalysisFailSkip();
+  const updateAnalysisFailSkip = useUpdateAnalysisFailSkip();
+
 
   useEffect(() => {
     getVersion().then((version) => {
       setVersion(version);
     });
   }, []);
-
 
   const handleCheckAppUpdate = async () => {
     setOnCheckAppUpdate(true);
@@ -86,6 +117,61 @@ export default function Setting() {
     setOnAssertUpdate(false);
   };
 
+  const handlePreviewMousePosition = () => {
+    const mouseX = discardIconPosition.data ? discardIconPosition.data.value.x : 0;
+    const mouseY = discardIconPosition.data ? discardIconPosition.data.value.y : 0;
+
+    if (mouseX === 0 || mouseY === 0) {
+      toast.error('请先填写鼠标位置');
+      return;
+    }
+
+    mousePosition.mutate({
+      mouse_x: mouseX,
+      mouse_y: mouseY,
+    }, {
+      onError: e => {
+        toast.error(`预览鼠标位置失败, 请重试, ${e.message}`);
+      },
+    });
+  };
+
+  const handleChangeAutoDetectDiscardIcon = (isSelected: boolean) => {
+    updateAutoDetectDiscardIcon.mutate(isSelected);
+  };
+
+  const handleChangeAutoDetectRelicBoxPosition = (isSelected: boolean) => {
+    updateAutoDetectRelicBoxPosition.mutate(isSelected);
+  };
+
+  const handleChangeDiscardIconPosition = (type: string, val: string) => {
+    const newValue = parseInt(val, 10) || 0;
+    const discardIconX = discardIconPosition.data ? discardIconPosition.data.value.x : 0;
+    const discardIconY = discardIconPosition.data ? discardIconPosition.data.value.y : 0;
+
+
+    if (type === 'x') {
+      updateDiscardIconPosition.mutate({
+        x: newValue,
+        y: discardIconY,
+      });
+    } else if (type === 'y') {
+      updateDiscardIconPosition.mutate({
+        x: discardIconX,
+        y: newValue,
+      });
+    }
+  };
+
+  const handleChangeRelicDiscardScore = (val: string) => {
+    const newValue = parseInt(val, 10) || 0;
+    updateRelicDiscardScore.mutate(newValue);
+  };
+
+  const handleChangeAnalysisFailSkip = (isSelected: boolean) => {
+    updateAnalysisFailSkip.mutate(isSelected);
+  };
+
 
   return <div className="flex flex-col gap-4">
     <div className="text-center text-gray-600">
@@ -110,6 +196,177 @@ export default function Setting() {
         提交功能建议 (开发中)
       </Button>
     </div>
+
+    <div className="text-medium font-semibold">
+      自动扫描
+    </div>
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-col gap-4">
+        <div className="flex flex-row items-center">
+          <div className="grow flex flex-col gap-2">
+            <div>
+              自动识别丢弃图标
+            </div>
+            <div className="text-sm text-gray-500">
+              如果该选择开启则会使用yolo模型自动检测丢弃图标位置，如果检测失败可能导致无法自动标记，可以关闭此选项并手动设置图标位置
+            </div>
+          </div>
+
+
+          <div className="ml-20">
+            <Switch
+              size={'sm'}
+              isSelected={autoDetectDiscardIcon.data}
+              onValueChange={handleChangeAutoDetectDiscardIcon}
+            />
+          </div>
+        </div>
+
+        <Divider />
+        <div className="font-bold">
+          手动设置丢弃图标位置
+        </div>
+
+        <div className="flex flex-row items-center">
+          <div className="grow">
+            丢弃图标x坐标
+          </div>
+
+
+          <div className="ml-20">
+            <Input
+              size="sm"
+              type="number"
+              value={
+                discardIconPosition.data ? discardIconPosition.data.value.x.toString() : '0'
+              }
+              onValueChange={(val) => handleChangeDiscardIconPosition('x', val)}
+              min={0}
+              max={10000}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-row items-center">
+          <div className="grow">
+            丢弃图标y坐标
+          </div>
+
+
+          <div className="ml-20">
+            <Input
+              size="sm"
+              type="number"
+              value={
+                discardIconPosition.data ? discardIconPosition.data.value.y.toString() : '0'
+              }
+              onValueChange={(val) => handleChangeDiscardIconPosition('y', val)}
+              min={0}
+              max={10000}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button variant="solid" onPress={handlePreviewMousePosition}>
+            预览位置
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-row gap-2 items-center">
+        <div className="grow flex flex-col gap-2">
+          <div>
+            丢弃分数
+          </div>
+          <div className="text-sm text-gray-500">
+            如果分数小于该值则会自动标记
+          </div>
+        </div>
+
+
+        <div className="ml-20">
+          <Input
+            size="sm"
+            type="number"
+            value={
+              relicDiscardScore.data ? relicDiscardScore.data.toString() : '0'
+            }
+            onValueChange={handleChangeRelicDiscardScore}
+            min={0}
+            max={100}
+          />
+        </div>
+      </CardBody>
+    </Card>
+
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-row gap-2 items-center">
+        <div className="grow flex flex-col gap-2">
+          <div>
+            出错跳过
+          </div>
+          <div className="text-sm text-gray-500">
+            在识别过程中可能因为各种情况导致识别错误，如果开启此选项，则会跳过当前遗器的标记，继续进行下一个遗器的识别
+          </div>
+        </div>
+
+
+        <div className="ml-20">
+          <Switch
+            size={'sm'}
+            isSelected={analysisFailSkip.data}
+            onValueChange={handleChangeAnalysisFailSkip}
+          />
+        </div>
+      </CardBody>
+    </Card>
+
+
+    <div className="text-medium font-semibold">
+      识别区域
+    </div>
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-col gap-4">
+        <div className="flex flex-row items-center">
+          <div className="grow flex flex-col gap-2">
+            <div>
+              自动识别遗器属性/名称位置
+            </div>
+            <div className="text-sm text-gray-500">
+              如果该选择开启则会使用yolo模型自动检测遗器主属性，副属性，名称位置，如果检测失败可能导致ocr错误，可以关闭此选项并手动设置位置
+            </div>
+          </div>
+
+
+          <div className="ml-20">
+            <Switch
+              size={'sm'}
+              isSelected={autoDetectRelicBoxPosition.data}
+              onValueChange={handleChangeAutoDetectRelicBoxPosition}
+            />
+          </div>
+        </div>
+        <Divider />
+
+        <div>
+          <div className="font-bold">
+            手动设置遗器名称位置
+          </div>
+          <div className="text-sm text-gray-500">
+            在点击预览位置/生成位置之前请保证游戏打开，语言选择英语，并且在遗器背包界面
+          </div>
+
+        </div>
+
+        <BoxSetting name={'relic_title'} />
+        <BoxSetting name={'relic_main_stat'} />
+        <BoxSetting name={'relic_sub_stat'} />
+      </CardBody>
+    </Card>
+
 
     <div className="text-medium font-semibold">
       版本 & 更新
@@ -150,7 +407,7 @@ export default function Setting() {
       <CardBody className="flex flex-row gap-2 items-center">
         <RefreshCcw />
         <div className="grow">
-          当前游戏资源版本：未知（开发中）
+          当前游戏资源版本：{assetsCheckSum?.version ?? '未知版本'}
         </div>
 
 
