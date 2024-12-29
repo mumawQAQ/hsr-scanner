@@ -407,7 +407,7 @@ export default function Setting() {
       <CardBody className="flex flex-row gap-2 items-center">
         <RefreshCcw />
         <div className="grow">
-          当前游戏资源版本：{assetsCheckSum.version ?? '未知版本'}
+          当前游戏资源版本：{assetsCheckSum?.version ?? '未知版本'}
         </div>
 
 
