@@ -92,10 +92,6 @@ fn post_backup(app: AppHandle) -> Result<String, String> {
     }
 }
 
-// #[tauri::command]
-// fn start_screen_annotator(app: AppHandle, display_only:bool,x:Vec<i32>, y: Vec<i32>, w: Vec<i32>, h: Vec<i32>) {
-//
-// }
 #[tauri::command]
 fn start_screen_annotator(app: AppHandle, display_only: bool, x: Vec<i32>, y: Vec<i32>, w: Vec<i32>, h: Vec<i32>) {
     std::thread::spawn({
