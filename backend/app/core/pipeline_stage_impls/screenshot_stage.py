@@ -1,7 +1,5 @@
 from typing import Optional, Dict, Any
 
-import cv2
-import numpy as np
 import pygetwindow as gw
 from PIL import Image
 from mss import mss
@@ -84,11 +82,7 @@ class ScreenshotStage(BasePipelineStage):
             # Convert mss output to PIL Image (RGB)
             img_rgb = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
 
-            # Convert PIL (RGB) to BGR numpy array for OpenCV processing
-            image_bgr = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2BGR)
-
             return {
-                'image': img_rgb,       # PIL Image in RGB
-                'image_bgr': image_bgr, # OpenCV compatible BGR image
+                'image': img_rgb,  # PIL Image in RGB
                 'window': window_rect
             }
