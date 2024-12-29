@@ -63,7 +63,6 @@ def init_rating_template(
     )
 
 
-# TODO: need to test this function
 @router.post("/rating-template/import",
              response_model=SuccessResponse[str],
              status_code=HTTPStatus.OK)
@@ -82,7 +81,6 @@ def import_rating_template(
     )
 
 
-# TODO: need to test this function
 @router.get("/rating-template/export/{template_id}",
             response_model=SuccessResponse[str],
             status_code=HTTPStatus.OK,
@@ -131,7 +129,6 @@ def export_rating_template(
         )
 
 
-# TODO: need to test this function
 @router.patch("/rating-template/stop-use/{template_id}",
               response_model=SuccessResponse[str],
               status_code=HTTPStatus.OK,
@@ -186,7 +183,6 @@ def stop_use_rating_template(
         )
 
 
-# TODO: need to test this function
 @router.patch("/rating-template/use/{template_id}",
               response_model=SuccessResponse[GetRatingTemplateResponse],
               status_code=HTTPStatus.OK,
