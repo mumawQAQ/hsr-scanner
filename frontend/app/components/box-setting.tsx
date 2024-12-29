@@ -146,7 +146,7 @@ const BoxSetting = ({ name }: BoxSettingProps) => {
   return (
     <div className="flex flex-row items-center">
       <div className="grow">
-        {name}
+        {name === 'relic_title' ? '遗器标题' : name === 'relic_main_stat' ? '遗器主属性' : '遗器副属性'}
       </div>
 
 
