@@ -3,7 +3,8 @@ from http import HTTPStatus
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from app.constant import RELIC_BOX_TYPES, AUTO_DETECT_DISCARD_ICON, AUTO_DETECT_RELIC_BOX, DISCARD_ICON_POSITION
+from app.constant import RELIC_BOX_TYPES, AUTO_DETECT_DISCARD_ICON, AUTO_DETECT_RELIC_BOX, DISCARD_ICON_POSITION, \
+    RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP
 from app.core.data_models.icon_position import IconPosition
 from app.core.network_models.requests.discard_icon_position_request import UpdateDiscardIconPositionRequest
 from app.core.network_models.requests.relic_box_position_request import UpdateRelicBoxPositionRequest
@@ -14,6 +15,112 @@ from app.core.orm_models.config_orm import ConfigORM
 from app.logging_config import logger
 
 router = APIRouter()
+
+
+@router.get("/analysis-fail-skip",
+            response_model=SuccessResponse[bool],
+            status_code=HTTPStatus.OK)
+def get_analysis_fail_skip():
+    db_config = ConfigORM.select().where(ConfigORM.key == ANALYSIS_FAIL_SKIP).first()
+
+    if not db_config:
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': True
+            }
+        )
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={'status': 'success', 'data': db_config.value}
+    )
+
+
+@router.patch("/analysis-fail-skip/{state}",
+              response_model=SuccessResponse[str],
+              status_code=HTTPStatus.OK)
+def change_analysis_fail_skip(state: bool):
+    db_config = ConfigORM.select().where(ConfigORM.key == ANALYSIS_FAIL_SKIP).first()
+
+    # if there is no config, create a new one
+    if not db_config:
+        new_db_config = ConfigORM(key=ANALYSIS_FAIL_SKIP, value=state)
+        new_db_config.save()
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': "Config created"
+            }
+        )
+
+    # if there is a config, update it
+    db_config.value = state
+    db_config.save()
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'message': "Config updated"
+        }
+    )
+
+
+@router.get("/relic-discard-score",
+            response_model=SuccessResponse[int],
+            status_code=HTTPStatus.OK)
+def get_relic_discard_score():
+    db_config = ConfigORM.select().where(ConfigORM.key == RELIC_DISCARD_SCORE).first()
+
+    if not db_config:
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': 40
+            }
+        )
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={'status': 'success', 'data': db_config.value}
+    )
+
+
+@router.patch("/relic-discard-score/{score}",
+              response_model=SuccessResponse[str],
+              status_code=HTTPStatus.OK)
+def change_relic_discard_score(score: int):
+    db_config = ConfigORM.select().where(ConfigORM.key == RELIC_DISCARD_SCORE).first()
+
+    # if there is no config, create a new one
+    if not db_config:
+        new_db_config = ConfigORM(key=RELIC_DISCARD_SCORE, value=score)
+        new_db_config.save()
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': "Config created"
+            }
+        )
+
+    # if there is a config, update it
+    db_config.value = score
+    db_config.save()
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'message': "Config updated"
+        }
+    )
 
 
 @router.patch("/auto-detect-discard-icon/{state}",
