@@ -1,11 +1,123 @@
 import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  ApiResponse, DiscardIconPositionRequest, DiscardIconPositionResponse,
+  ApiResponse,
+  DiscardIconPositionRequest,
+  DiscardIconPositionResponse,
   RelicBoxPositionRequest,
   RelicBoxPositionResponse,
   RelicBoxPositionType,
 } from '@/app/types/api-types';
+
+export const useAnalysisFailSkip = () => {
+  const { api } = useBackendClientStore();
+  return useQuery({
+    queryKey: ['analysis-fail-skip'],
+    queryFn: async () => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const { data } = await api.get<ApiResponse<boolean>>('config/analysis-fail-skip');
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+
+        return data.data;
+      } catch (error) {
+        console.error('Failed to fetch analysis-fail-skip:', error);
+        throw error;
+      }
+    },
+  });
+};
+
+export const useUpdateAnalysisFailSkip = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (analysisFailSkip: boolean) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const { data } = await api.patch<ApiResponse<string>>(`config/analysis-fail-skip/${analysisFailSkip}`);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+
+        return data.data;
+      } catch (error) {
+        console.error('Failed to update analysis-fail-skip:', error);
+        throw error;
+      }
+
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['analysis-fail-skip'],
+      });
+    },
+  });
+};
+
+
+export const useRelicDiscardScore = () => {
+  const { api } = useBackendClientStore();
+  return useQuery({
+    queryKey: ['relic-discard-score'],
+    queryFn: async () => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const { data } = await api.get<ApiResponse<number>>('config/relic-discard-score');
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+
+        return data.data;
+      } catch (error) {
+        console.error('Failed to fetch relic-discard-score:', error);
+        throw error;
+      }
+
+    },
+  });
+};
+
+export const useUpdateRelicDiscardScore = () => {
+  const { api } = useBackendClientStore();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (relicDiscardScore: number) => {
+      if (!api) {
+        throw new Error('API not initialized');
+      }
+
+      try {
+        const { data } = await api.patch<ApiResponse<string>>(`config/relic-discard-score/${relicDiscardScore}`);
+        if (data.status !== 'success') {
+          throw new Error(data.message);
+        }
+
+        return data.data;
+      } catch (error) {
+        console.error('Failed to update relic-discard-score:', error);
+        throw error;
+      }
+
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['relic-discard-score'],
+      });
+    },
+  });
+};
 
 export const useAutoDetectDiscardIcon = () => {
   const { api } = useBackendClientStore();

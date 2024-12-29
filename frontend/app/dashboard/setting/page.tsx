@@ -10,13 +10,24 @@ import { RefreshCcw } from 'lucide-react';
 import { checkUpdate, installUpdate, UpdateManifest } from '@tauri-apps/api/updater';
 import toast from 'react-hot-toast';
 import { invoke } from '@tauri-apps/api/tauri';
-import { AssertUpdateCheckResponse, RelicBoxPositionType } from '@/app/types/api-types';
+import { AssertUpdateCheckResponse } from '@/app/types/api-types';
 import { Switch } from '@nextui-org/switch';
-import { useConfig } from '@/app/hooks/use-config-hook';
 import { Divider } from '@nextui-org/divider';
 import { Input } from '@nextui-org/input';
 import { useMousePosition } from '@/app/apis/state';
 import BoxSetting from '@/app/components/box-setting';
+import {
+  useAnalysisFailSkip,
+  useAutoDetectDiscardIcon,
+  useAutoDetectRelicBoxPosition,
+  useDiscardIconPosition,
+  useRelicDiscardScore,
+  useUpdateAnalysisFailSkip,
+  useUpdateAutoDetectDiscardIcon,
+  useUpdateAutoDetectRelicBoxPosition,
+  useUpdateDiscardIconPosition,
+  useUpdateRelicDiscardScore,
+} from '@/app/apis/config';
 
 
 export default function Setting() {
@@ -29,8 +40,17 @@ export default function Setting() {
   const [filesToUpdate, setFilesToUpdate] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const appConfig = useConfig();
   const mousePosition = useMousePosition();
+  const autoDetectDiscardIcon = useAutoDetectDiscardIcon();
+  const updateAutoDetectDiscardIcon = useUpdateAutoDetectDiscardIcon();
+  const discardIconPosition = useDiscardIconPosition();
+  const updateDiscardIconPosition = useUpdateDiscardIconPosition();
+  const autoDetectRelicBoxPosition = useAutoDetectRelicBoxPosition();
+  const updateAutoDetectRelicBoxPosition = useUpdateAutoDetectRelicBoxPosition();
+  const relicDiscardScore = useRelicDiscardScore();
+  const updateRelicDiscardScore = useUpdateRelicDiscardScore();
+  const analysisFailSkip = useAnalysisFailSkip();
+  const updateAnalysisFailSkip = useUpdateAnalysisFailSkip();
 
 
   useEffect(() => {
@@ -95,10 +115,10 @@ export default function Setting() {
   };
 
   const handlePreviewMousePosition = () => {
-    const mouseX = appConfig.discardIconX;
-    const mouseY = appConfig.discardIconY;
+    const mouseX = discardIconPosition.data ? discardIconPosition.data.value.x : 0;
+    const mouseY = discardIconPosition.data ? discardIconPosition.data.value.y : 0;
 
-    if (mouseX === null || mouseY === null) {
+    if (mouseX === 0 || mouseY === 0) {
       toast.error('请先填写鼠标位置');
       return;
     }
@@ -111,7 +131,42 @@ export default function Setting() {
         toast.error(`预览鼠标位置失败, 请重试, ${e.message}`);
       },
     });
+  };
 
+  const handleChangeAutoDetectDiscardIcon = (isSelected: boolean) => {
+    updateAutoDetectDiscardIcon.mutate(isSelected);
+  };
+
+  const handleChangeAutoDetectRelicBoxPosition = (isSelected: boolean) => {
+    updateAutoDetectRelicBoxPosition.mutate(isSelected);
+  };
+
+  const handleChangeDiscardIconPosition = (type: string, val: string) => {
+    const newValue = parseInt(val, 10) || 0;
+    const discardIconX = discardIconPosition.data ? discardIconPosition.data.value.x : 0;
+    const discardIconY = discardIconPosition.data ? discardIconPosition.data.value.y : 0;
+
+
+    if (type === 'x') {
+      updateDiscardIconPosition.mutate({
+        x: newValue,
+        y: discardIconY,
+      });
+    } else if (type === 'y') {
+      updateDiscardIconPosition.mutate({
+        x: discardIconX,
+        y: newValue,
+      });
+    }
+  };
+
+  const handleChangeRelicDiscardScore = (val: string) => {
+    const newValue = parseInt(val, 10) || 0;
+    updateRelicDiscardScore.mutate(newValue);
+  };
+
+  const handleChangeAnalysisFailSkip = (isSelected: boolean) => {
+    updateAnalysisFailSkip.mutate(isSelected);
   };
 
 
@@ -158,8 +213,8 @@ export default function Setting() {
           <div className="ml-20">
             <Switch
               size={'sm'}
-              isSelected={appConfig.autoScanDetectDiscardIcon}
-              onValueChange={appConfig.setAutoScanDetectDiscardIcon}
+              isSelected={autoDetectDiscardIcon.data}
+              onValueChange={handleChangeAutoDetectDiscardIcon}
             />
           </div>
         </div>
@@ -180,17 +235,9 @@ export default function Setting() {
               size="sm"
               type="number"
               value={
-                appConfig.discardIconX === null ? '0' : appConfig.discardIconX.toString()
+                discardIconPosition.data ? discardIconPosition.data.value.x.toString() : '0'
               }
-              onValueChange={
-                (value) => {
-                  if (value === '') {
-                    appConfig.setDiscardIconX(null);
-                  } else {
-                    appConfig.setDiscardIconX(parseInt(value));
-                  }
-                }
-              }
+              onValueChange={(val) => handleChangeDiscardIconPosition('x', val)}
               min={0}
               max={10000}
             />
@@ -208,17 +255,9 @@ export default function Setting() {
               size="sm"
               type="number"
               value={
-                appConfig.discardIconY === null ? '0' : appConfig.discardIconY.toString()
+                discardIconPosition.data ? discardIconPosition.data.value.y.toString() : '0'
               }
-              onValueChange={
-                (value) => {
-                  if (value === '') {
-                    appConfig.setDiscardIconY(null);
-                  } else {
-                    appConfig.setDiscardIconY(parseInt(value));
-                  }
-                }
-              }
+              onValueChange={(val) => handleChangeDiscardIconPosition('y', val)}
               min={0}
               max={10000}
             />
@@ -250,19 +289,33 @@ export default function Setting() {
             size="sm"
             type="number"
             value={
-              appConfig.autoScanConfigDiscardScore === null ? '0' : appConfig.autoScanConfigDiscardScore.toString()
+              relicDiscardScore.data ? relicDiscardScore.data.toString() : '0'
             }
-            onValueChange={
-              (value) => {
-                if (value === '') {
-                  appConfig.setAutoScanConfigDiscardScore(0);
-                } else {
-                  appConfig.setAutoScanConfigDiscardScore(parseInt(value));
-                }
-              }
-            }
+            onValueChange={handleChangeRelicDiscardScore}
             min={0}
             max={100}
+          />
+        </div>
+      </CardBody>
+    </Card>
+
+    <Card className="py-5 px-2" shadow="sm" radius="sm">
+      <CardBody className="flex flex-row gap-2 items-center">
+        <div className="grow flex flex-col gap-2">
+          <div>
+            出错跳过
+          </div>
+          <div className="text-sm text-gray-500">
+            在识别过程中可能因为各种情况导致识别错误，如果开启此选项，则会跳过当前遗器的标记，继续进行下一个遗器的识别
+          </div>
+        </div>
+
+
+        <div className="ml-20">
+          <Switch
+            size={'sm'}
+            isSelected={analysisFailSkip.data}
+            onValueChange={handleChangeAnalysisFailSkip}
           />
         </div>
       </CardBody>
@@ -288,6 +341,8 @@ export default function Setting() {
           <div className="ml-20">
             <Switch
               size={'sm'}
+              isSelected={autoDetectRelicBoxPosition.data}
+              onValueChange={handleChangeAutoDetectRelicBoxPosition}
             />
           </div>
         </div>
