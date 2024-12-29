@@ -28,6 +28,7 @@ import {
   useUpdateDiscardIconPosition,
   useUpdateRelicDiscardScore,
 } from '@/app/apis/config';
+import { useJsonFile } from '@/app/apis/files';
 
 
 export default function Setting() {
@@ -39,6 +40,8 @@ export default function Setting() {
   const [onAssertUpdate, setOnAssertUpdate] = useState<boolean>(false);
   const [filesToUpdate, setFilesToUpdate] = useState<string[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+
+  const { data: assetsCheckSum } = useJsonFile('checksum.json');
 
   const mousePosition = useMousePosition();
   const autoDetectDiscardIcon = useAutoDetectDiscardIcon();
@@ -404,7 +407,7 @@ export default function Setting() {
       <CardBody className="flex flex-row gap-2 items-center">
         <RefreshCcw />
         <div className="grow">
-          当前游戏资源版本：未知（开发中）
+          当前游戏资源版本：{assetsCheckSum.version ?? '未知版本'}
         </div>
 
 
