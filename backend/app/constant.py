@@ -2,8 +2,25 @@ import os
 
 GAME_TITLES = ['Honkai: Star Rail']
 
+RELIC_DISCARD_SCORE = 'relic_discard_score'
+
+AUTO_DETECT_DISCARD_ICON = 'auto_detect_discard_icon'
+AUTO_DETECT_RELIC_BOX = 'auto_detect_relic_box'
+ANALYSIS_FAIL_SKIP = 'analysis_fail_skip'
+
+DISCARD_ICON_POSITION = "discard_icon_position"
+
+RELIC_BOX_TYPES = ["relic_main_stat", "relic_sub_stat", "relic_title"]
+
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
+
+DATABASE_FILEPATH = os.path.join(
+    os.path.dirname(__file__),
+    'assets',
+    'database',
+    'scanner.db'
+).replace(os.sep, '/')
 
 CHARACTERS_FILE = os.path.join(os.path.dirname(__file__), 'assets', 'character', 'character_meta.json')
 
@@ -16,6 +33,11 @@ RELIC_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'relic')
 RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
 RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
 RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
+
+PADDLE_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'paddle')
+PADDLE_CLS_FOLDER = os.path.join(PADDLE_FOLDER, 'cls')
+PADDLE_DET_FOLDER = os.path.join(PADDLE_FOLDER, 'det')
+PADDLE_REC_FOLDER = os.path.join(PADDLE_FOLDER, 'rec')
 
 RELIC_STATS_MAPPING = {
     "DEF": "防御",

@@ -6,3 +6,4 @@ class GameRecognitionStage(str, Enum):
     DETECTION = "detection"
     OCR = "ocr"
     RELIC_ANALYSIS = "relic_analysis"
+    RELIC_DISCARD = "relic_discard"

@@ -1,5 +1,3 @@
-import asyncio
-
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
@@ -11,10 +9,6 @@ from app.core.network_models.responses.relic_ocr_response import RelicOCRRespons
 class RelicAnalysisStage(BasePipelineStage):
     def get_stage_name(self) -> str:
         return GameRecognitionStage.RELIC_ANALYSIS.value
-
-    async def analyze_game_state(self, ocr_data: str) -> str:
-        await asyncio.sleep(1)  # Simulate processing time
-        return "game_state_data"
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:

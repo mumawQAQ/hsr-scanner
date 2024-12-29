@@ -1,8 +1,6 @@
-from typing import Any
-
-import cv2
 import numpy as np
 import torch
+from typing import Any
 from ultralytics import YOLO
 
 from app.core.interfaces.model_interface import ModelInterface
@@ -15,14 +13,6 @@ class YOLOModel(ModelInterface[Any, Any]):
     def __init__(self, model_path: str):
         self.model_path = model_path
         self.model = None
-
-    def img_transform(self, img: np.ndarray, x_center: float, y_center: float, width: float, height: float, w: int,
-                      h: int) -> np.ndarray:
-        x1 = int((x_center - width / 2) * w)
-        y1 = int((y_center - height / 2) * h)
-        x2 = int((x_center + width / 2) * w)
-        y2 = int((y_center + height / 2) * h)
-        return img[y1:y2, x1:x2]
 
     def load(self) -> None:
         """Load the YOLO model."""
@@ -38,10 +28,8 @@ class YOLOModel(ModelInterface[Any, Any]):
         window_w = input_data['window']['width']
 
         img_np = np.array(img)
-        img_rgb = cv2.cvtColor(img_np, cv2.COLOR_BGR2RGB)
-        img_resized = cv2.resize(img_rgb, (640, 640))
 
-        detection_result = self.model.predict(source=img_resized, imgsz=640, conf=0.8, save=False, verbose=False)
+        detection_result = self.model.predict(source=img, imgsz=640, conf=0.8, save=False, verbose=False)
         boxes = detection_result[0].boxes.xywhn if len(detection_result) > 0 else []
         classes = detection_result[0].boxes.cls if len(detection_result) > 0 else []
 
@@ -50,11 +38,32 @@ class YOLOModel(ModelInterface[Any, Any]):
         for box, cls in zip(boxes, classes):
             x_center, y_center, width, height = box[:4]
             cls = self.model.names[int(cls)]
-            sub_region_img = self.img_transform(img_np, x_center, y_center, width, height, window_w, window_h)
+
+            # Transform image using original dimensions
+            x1 = int((x_center - width / 2) * window_w)
+            y1 = int((y_center - height / 2) * window_h)
+            x2 = int((x_center + width / 2) * window_w)
+            y2 = int((y_center + height / 2) * window_h)
+
+            x_center = int(x_center * window_w)
+            y_center = int(y_center * window_h)
+            width = int(width * window_w)
+            height = int(height * window_h)
+
+            sub_region_img = img_np[y1:y2, x1:x2]
+
             logger.info(
                 f"Detected {cls} with x_center: {x_center}, y_center: {y_center}, width: {width}, height: {height}")
 
             if cls not in sub_regions:
-                sub_regions[cls] = sub_region_img
+                sub_regions[cls] = {
+                    'image': sub_region_img,
+                    'box': {
+                        'x_center': x_center,
+                        'y_center': y_center,
+                        'width': width,
+                        'height': height
+                    }
+                }
 
         return sub_regions

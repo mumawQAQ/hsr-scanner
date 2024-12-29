@@ -21,5 +21,15 @@ export default function ImageDisplay({ filePath, width = 100, height = 100, clas
     return <Spinner size="sm" />;
   }
 
-  return <Image src={imgSrc} alt="img" width={width} height={height} className={className ?? ''} />;
+  return <Image
+    src={imgSrc}
+    alt="img"
+    width={width}
+    height={height}
+    className={className ?? ''}
+    style={{
+      minHeight: height,
+      minWidth: width,
+    }}
+  />;
 }

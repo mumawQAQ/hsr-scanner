@@ -4,19 +4,19 @@ from typing import Optional
 from fastapi import FastAPI
 
 from app.constant import YOLO_MODEL_PATH, RELIC_SETS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
-from app.core import database
-from app.core.database import Base, engine
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.managers.model_manager import ModelManager
 from app.core.managers.pipeline_manager import PipelineManager
 from app.core.managers.websocket_manager import WebsocketManager
+from app.core.model_impls.keyboard_model import KeyboardModel
 from app.core.model_impls.ocr_model import OCRModel
 from app.core.model_impls.relic_matcher_model import RelicMatcherModel
 from app.core.model_impls.relic_rating_model import RelicRatingModel
 from app.core.model_impls.yolo_model import YOLOModel
 from app.core.pipeline_executer import PipelineExecutor
+from app.core.pipline_impls.auto_relic_analysis_pipeline import AutoRelicAnalysisPipeline
 from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAnalysisPipeline
-from app.core.repositories.rating_template_repo import RatingTemplateRepository
+from app.core.utils import database
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
 
@@ -27,7 +27,6 @@ pipeline_executor: Optional[PipelineExecutor] = None
 formatter: Optional[Formatter] = None
 template_en_decoder: Optional[TemplateEnDecoder] = None
 global_state_manager: Optional[GlobalStateManager] = None
-rating_template_repository: Optional[RatingTemplateRepository] = None
 
 
 def get_websocket_manager() -> WebsocketManager:
@@ -72,12 +71,6 @@ def get_global_state_manager() -> GlobalStateManager:
     return global_state_manager
 
 
-def get_rating_template_repository() -> RatingTemplateRepository:
-    if rating_template_repository is None:
-        raise RuntimeError("RatingTemplateRepository not initialized")
-    return rating_template_repository
-
-
 @asynccontextmanager
 async def life_span(app: FastAPI):
     global websocket_manager
@@ -87,7 +80,6 @@ async def life_span(app: FastAPI):
     global formatter
     global template_en_decoder
     global global_state_manager
-    global rating_template_repository
 
     # Init the template en decoder
     template_en_decoder = TemplateEnDecoder()
@@ -104,6 +96,7 @@ async def life_span(app: FastAPI):
 
     # Register the pipelines
     pipeline_manager.register_pipeline(SingleRelicAnalysisPipeline)
+    pipeline_manager.register_pipeline(AutoRelicAnalysisPipeline)
 
     # Register the models
     model_manager.register_model("yolo", YOLOModel(YOLO_MODEL_PATH))
@@ -114,14 +107,10 @@ async def life_span(app: FastAPI):
         relic_sub_stats_path=RELIC_SUB_STATS_FILE,
     ))
     model_manager.register_model("relic_rating", RelicRatingModel(global_state_manager))
+    model_manager.register_model("keyboard", KeyboardModel())
 
-    # Init all the tables
-    Base.metadata.create_all(engine)
-
-    # Init the orm
-    rating_template_repository = RatingTemplateRepository()
-
+    # Init the database
+    database.init_db()
     yield
 
-    # close the database
-    database.sessionLocal().close()
+    database.close_db()

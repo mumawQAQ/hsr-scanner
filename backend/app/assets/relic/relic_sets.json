@@ -380,5 +380,27 @@
       "sphere": "BananAmusement Park's BananAxis Plaza",
       "rope": "BananAmusement Park's Memetic Cables"
     }
+  },
+  "Sacerdos' Relived Ordeal": {
+    "name": "重循苦旅的司铎",
+    "icon": "images/relics/39.png",
+    "isInner": false,
+    "parts": {
+      "head": "Sacerdos' Melodic Earrings",
+      "hand": "Sacerdos' Welcoming Gloves",
+      "body": "Sacerdos' Ceremonial Garb",
+      "feet": "Sacerdos' Arduous Boots"
+    }
+  },
+  "Scholar Lost in Erudition": {
+    "name": "识海迷坠的学者",
+    "icon": "images/relics/40.png",
+    "isInner": false,
+    "parts": {
+      "head": "Scholar's Silver-Rimmed Monocle",
+      "hand": "Scholar's Auxiliary Knuckle",
+      "body": "Scholar's Tweed Jacket",
+      "feet": "Scholar's Felt Snowboots"
+    }
   }
 }

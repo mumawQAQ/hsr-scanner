@@ -24,9 +24,9 @@ async def start_pipeline(
         _pipeline_executor: PipelineExecutor = Depends(get_pipeline_executor)
 ):
     pipeline_name = request.pipeline_name
-    initial_data = request.initial_data
+    meta_data = request.meta_data
 
-    logger.info(f"Starting pipeline '{pipeline_name}' with initial data: {initial_data}")
+    logger.info(f"Starting pipeline '{pipeline_name}' with meta data: {meta_data}")
 
     try:
         pipeline_class = _pipeline_manager.get_pipeline(pipeline_name)
@@ -34,7 +34,7 @@ async def start_pipeline(
         logger.error(f"Error starting pipeline: {e}")
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=str(e))
 
-    pipeline_id = _pipeline_executor.start_pipeline(pipeline_class, initial_data)
+    pipeline_id = _pipeline_executor.start_pipeline(pipeline_class, meta_data)
 
     response = StartPipelineResponse(
         message=f"Pipeline '{pipeline_name}' started.",

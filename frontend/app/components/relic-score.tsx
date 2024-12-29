@@ -5,18 +5,16 @@ import { useJsonFile } from '@/app/apis/files';
 import ImageDisplay from '@/app/components/image-display';
 import { Chip } from '@nextui-org/chip';
 import { cn } from '@nextui-org/react';
-import { CircleAlert } from 'lucide-react';
 
 export default function RelicScore() {
-  const { singleRelicAnalysisId } = useWindowStore();
-  const { relicScores, relicError } = useRelicStore();
+  const { singleRelicAnalysisId, autoRelicAnalysisId } = useWindowStore();
+  const { relicScores } = useRelicStore();
   const { data: characters } = useJsonFile('character/character_meta.json');
+
 
   const renderScore = (score: number, type: string) => {
     score = score * 100;
-    const scoreText = `${
-      type === 'potential' ? '潜力值' : '评分'
-    }:${score.toFixed(2)}`;
+    const scoreText = `${score.toFixed(2)}`;
     switch (type) {
       case 'potential':
         if (score < 20) {
@@ -120,17 +118,8 @@ export default function RelicScore() {
 
 
   const renderScoreResult = () => {
-    if (!singleRelicAnalysisId || !relicScores) {
+    if ((!singleRelicAnalysisId && !autoRelicAnalysisId) || !relicScores) {
       return null;
-    }
-
-    if (relicError) {
-      return (
-        <div className="flex flex-row gap-2 text-red-600">
-          <CircleAlert />
-          {relicError}
-        </div>
-      );
     }
 
     if (relicScores.length === 0) {
@@ -142,6 +131,14 @@ export default function RelicScore() {
         {
           relicScores.map((score, index) => (
             <div key={index} className="flex items-center justify-center gap-2 font-semibold ">
+              {
+                score.characters.map((character, index) => (
+                  <div key={index}>
+                    <ImageDisplay filePath={characters[character].icon} width={20} height={20}
+                                  className="rounded-lg" />
+                  </div>
+                ))
+              }
               <Chip
                 classNames={{
                   base: cn(
@@ -155,14 +152,6 @@ export default function RelicScore() {
               >
                 {renderScore(score.score, score.type)}
               </Chip>
-              {
-                score.characters.map((character, index) => (
-                  <div key={index}>
-                    <ImageDisplay filePath={characters[character].icon} width={20} height={20}
-                                  className="rounded-lg" />
-                  </div>
-                ))
-              }
             </div>
           ))
         }

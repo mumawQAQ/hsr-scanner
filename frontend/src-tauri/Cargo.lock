@@ -73,8 +73,6 @@ name = "app"
 version = "4.0.2"
 dependencies = [
  "regex",
- "serde",
- "serde_json",
  "tauri",
  "tauri-build",
 ]

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
+import toast from 'react-hot-toast';
 
 type UseBackendClientStore = {
   requirementFulfilled: boolean;
@@ -56,19 +57,17 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
       const data = JSON.parse(event.data);
 
       if (data.type === 'error') {
-        if (data.pipeline_type === 'SingleRelicAnalysisPipeline') {
-          useRelicStore.setState({ relicError: data.error });
-          useRelicStore.setState({ relicInfo: null });
+        if (data.pipeline_type === 'SingleRelicAnalysisPipeline' || data.pipeline_type === 'AutoRelicAnalysisPipeline') {
+          toast.error(data.error);
         }
       } else if (data.type === 'progress') {
         console.log(data);
       } else if (data.type === 'result') {
-        if (data.pipeline_type === 'SingleRelicAnalysisPipeline' && data.stage === 'ocr') {
+        if (data.stage === 'ocr') {
           const relicData = data.data;
           console.log(relicData);
           useRelicStore.setState({ relicInfo: relicData });
-          useRelicStore.setState({ relicError: null });
-        } else if (data.pipeline_type === 'SingleRelicAnalysisPipeline' && data.stage === 'relic_analysis') {
+        } else if (data.stage === 'relic_analysis') {
           const relicScores = data.data;
           console.log(relicScores);
           useRelicStore.setState({ relicScores: relicScores });

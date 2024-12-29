@@ -6,6 +6,7 @@ export type ModalType =
   | 'create-template'
   | 'export-template'
   | 'import-template'
+  | 'start-auto-scan';
 
 interface ModalData {
   qrCodeData?: string;

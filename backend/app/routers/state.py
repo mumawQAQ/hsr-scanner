@@ -1,7 +1,9 @@
 import logging
 
 from fastapi import APIRouter
+from pynput.mouse import Controller as MouseController
 
+from app.core.network_models.requests.mouse_position_request import MousePositionRequest
 from app.logging_config import logger
 
 router = APIRouter()
@@ -24,3 +26,16 @@ def change_log_level(state: bool):
         console_handler.setLevel(logging.ERROR)
 
     return {'status': 'success'}
+
+
+@router.post("/mouse-position")
+async def mouse_position(
+        request: MousePositionRequest,
+):
+    x = request.mouse_x
+    y = request.mouse_y
+
+    mouse = MouseController()
+    mouse.position = (x, y)
+
+    logger.info(f"Mouse moved to ({x}, {y})")

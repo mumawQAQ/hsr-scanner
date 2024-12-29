@@ -1,5 +1,6 @@
 import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 import { useMutation } from '@tanstack/react-query';
+import { StartPipelineRequest } from '@/app/types/api-types';
 
 export const useStopPipeline = () => {
   const { api } = useBackendClientStore();
@@ -30,7 +31,7 @@ export const useStopPipeline = () => {
 export const useStartPipeline = () => {
   const { api } = useBackendClientStore();
   return useMutation({
-    async mutationFn(pipelineName: string) {
+    async mutationFn(startPipelineRequest: StartPipelineRequest) {
       if (!api) {
         throw new Error('API not initialized');
       }
@@ -38,7 +39,8 @@ export const useStartPipeline = () => {
       try {
         const url = `pipeline/start`;
         const { data } = await api.post(url, {
-          pipeline_name: pipelineName,
+          pipeline_name: startPipelineRequest.pipeline_name,
+          meta_data: startPipelineRequest.meta_data || {},
         });
         return data;
       } catch (error) {

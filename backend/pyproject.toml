@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "hsr-scanner"
+version = "0.1.0"
+description = ""
+authors = ["muma <wgr5600133@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.115.5"
+paddlepaddle = "^2.6.2"
+ultralytics = "^8.3.39"
+uvicorn = {extras = ["standard"], version = "^0.32.1"}
+paddleocr = "^2.9.1"
+pynput = "^1.7.7"
+pygetwindow = "^0.0.9"
+pyautogui = "0.9.50"
+opencv-python = "^4.10.0.84"
+torch = "2.2.2"
+msgpack = "^1.1.0"
+setuptools = "^75.6.0"
+mss = "^10.0.0"
+peewee = "^3.17.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

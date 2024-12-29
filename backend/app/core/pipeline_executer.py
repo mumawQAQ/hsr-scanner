@@ -70,6 +70,9 @@ class PipelineExecutor:
 
                     logger.info(f"Pipeline {context.pipeline_id} completed stage {stage.get_stage_name()}.")
 
+                # Clear the context data after each iteration
+                context.data = {}
+
                 # TODO: adjust sleep time
                 await asyncio.sleep(0.25)  # Adjust as needed
 
@@ -99,7 +102,7 @@ class PipelineExecutor:
     def start_pipeline(
             self,
             pipeline_type: Type[PIPELINE_TYPE],
-            initial_data: Optional[Dict[str, Any]] = None
+            meta_data: Optional[Dict[str, Any]] = None
     ) -> str:
         """Start a pipeline and return its ID"""
         pipeline_id = str(uuid4())
@@ -107,7 +110,8 @@ class PipelineExecutor:
         context = PipelineContext(
             pipeline_id=pipeline_id,
             pipeline_type=pipeline_type.get_pipeline_name(),
-            data=initial_data or {}
+            meta_data=meta_data or {},
+            data={}
         )
 
         stop_event = asyncio.Event()

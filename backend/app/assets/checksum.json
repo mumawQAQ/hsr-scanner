@@ -1,1 +1,437 @@
-[{"file": "relic/relic_main_stats.json", "checksum": "040aa83e520b5ef343a6f53bdb31a5826c8379c08de872cf0bd4412bccbe7280"}, {"file": "relic/relic_sub_stats.json", "checksum": "56963b6b0c3e9173cb6d4ddf3e8723f2a6af27154b45aa7e102bde51126ba859"}, {"file": "relic/relic_sets.json", "checksum": "f84f893ac520f4402d0d4b8bfbfe7ba5d40846b1488ab3888c29a8c0897f63a3"}, {"file": "yolo_model/best.pt", "checksum": "117ccccb67784f5c5719f729be7f872c7d818a7a010d2e579b815e522ab838b5"}, {"file": "img_meta/relic_imgs.txt", "checksum": "db38ae5b31946291099066c957c7c5efb9ada1cac50bb0c4c185dbaad1b09fc1"}, {"file": "img_meta/character_imgs.txt", "checksum": "bb2181ad4f5695ca5b374457966bd1303fc1e9d6dc7e821ee51e3c593d378ae9"}, {"file": "character/character_meta.json", "checksum": "03ebd2492b3b31af1f84dd783e5e8cacf6a4734454d29847ed0e95270975ebdb"}]
+{
+  "version": "2.7",
+  "files": [
+    {
+      "file": "relic/relic_main_stats.json",
+      "checksum": "040aa83e520b5ef343a6f53bdb31a5826c8379c08de872cf0bd4412bccbe7280"
+    },
+    {
+      "file": "relic/relic_sub_stats.json",
+      "checksum": "56963b6b0c3e9173cb6d4ddf3e8723f2a6af27154b45aa7e102bde51126ba859"
+    },
+    {
+      "file": "relic/relic_sets.json",
+      "checksum": "50acc553ee20be3774a1cd9bccab5ace959a0f96337d9fb57f5c7f34bb77606d"
+    },
+    {
+      "file": "yolo_model/best.pt",
+      "checksum": "59a3f4a81b212a8cc24d9a02d8706e3fd59f84660c517d9c9683a42f125f8613"
+    },
+    {
+      "file": "img_meta/relic_imgs.txt",
+      "checksum": "ac17a3f15bbcbb6ffd350716bc4ebdbfbac133550f281024c25ebbfe3d9444e7"
+    },
+    {
+      "file": "img_meta/character_imgs.txt",
+      "checksum": "48ed2e466ccafc1272428086bf33e23a571b65c44d70e2f31e05f89d3646f59f"
+    },
+    {
+      "file": "images/relics/29.png",
+      "checksum": "47e975928421b213abe624dba0b38dbde64d927037a337bb926ea282065a4f15"
+    },
+    {
+      "file": "images/relics/39.png",
+      "checksum": "52d6f9f93ba066e4f0aeeae3a58348acbab9d4032c3d50d46f360eabe30c58a2"
+    },
+    {
+      "file": "images/relics/18.png",
+      "checksum": "7ea0d66c279dd368f2fc5d6cbb7707b011a80ab0bbf249ec3ecd6d1eafba4ae0"
+    },
+    {
+      "file": "images/relics/14.png",
+      "checksum": "c2564186671dd3d27fa4eb18cf8d91bb757a8f73e3534e261e6e3d7ebc2c53a9"
+    },
+    {
+      "file": "images/relics/21.png",
+      "checksum": "981a7f360cdf37b236077d2017de58cf2d837ec68230dc45c18132afb4e9f2a4"
+    },
+    {
+      "file": "images/relics/35.png",
+      "checksum": "35958f3eb399a6d2b706c53b6f04d26e273b1b279ed7496ccc3880d8c4aa65f4"
+    },
+    {
+      "file": "images/relics/10.png",
+      "checksum": "b601bcde0d26c4fd7cffc15bf8f12b44066d765d942e6d2f2766704bd836f568"
+    },
+    {
+      "file": "images/relics/5.png",
+      "checksum": "3f9419e6287a58f98928b37018499eedf2d9b2bf35916a5371a75f6599d3b4f5"
+    },
+    {
+      "file": "images/relics/1.png",
+      "checksum": "1561b468971b33ed5926ac9b35117a41d6521648ed3da8eb2c2857e17053a889"
+    },
+    {
+      "file": "images/relics/27.png",
+      "checksum": "d632fbf7cce04ac5fdda0aa6b5ac891d23b25a2bcd36e5bd5cde7f01c79c9353"
+    },
+    {
+      "file": "images/relics/33.png",
+      "checksum": "b8a8a3bae1a5aa8ef48f6342b498ab2ca919f998a555d3e57c424122b9a912cc"
+    },
+    {
+      "file": "images/relics/13.png",
+      "checksum": "0a9182012a1a3173975bdf2cccccac5bcda912df9b62921cff09077698c30b44"
+    },
+    {
+      "file": "images/relics/28.png",
+      "checksum": "c37f27a34a2d6e15a75d054520c8889cb1f3d4e2ef929eac1992fb7e995ea673"
+    },
+    {
+      "file": "images/relics/12.png",
+      "checksum": "5f7dd6af79128efec450011e1af243af870212d2556cd2185a85289acdd6de2d"
+    },
+    {
+      "file": "images/relics/9.png",
+      "checksum": "f6739e94b4fb01044d7079e870cfc42ca23650b817fb327c6b51443b29d9736b"
+    },
+    {
+      "file": "images/relics/16.png",
+      "checksum": "6c57b39876f62e2241cd3aec5caaf85b380ba4b42d9211bb9bcc7ebc55962819"
+    },
+    {
+      "file": "images/relics/30.png",
+      "checksum": "7996c5373b28d447487a169fab6782ecba7d2ed71d411dcbde78b85a7aa9566e"
+    },
+    {
+      "file": "images/relics/25.png",
+      "checksum": "4b9488436cbd4ddcc9b564e46a3dd6ae1568beb4be2deb9186f29919bb1d0d83"
+    },
+    {
+      "file": "images/relics/11.png",
+      "checksum": "464e434af217a71c6316aea1019e522faf654912da5cab72617e2520662edbfb"
+    },
+    {
+      "file": "images/relics/24.png",
+      "checksum": "63e5823834ef856cfe4622d86b58a7844b442eee666ef9c238ad43d9765a923c"
+    },
+    {
+      "file": "images/relics/37.png",
+      "checksum": "c957ee5d260438b6f27a4d7f20dbc36894ed56de59a286f0a9f92f5e41d7b086"
+    },
+    {
+      "file": "images/relics/26.png",
+      "checksum": "b4f83300442cedf1892b3871cc81ca9bc6429a91e3aec45cd8c2e8a6a713e24e"
+    },
+    {
+      "file": "images/relics/4.png",
+      "checksum": "b0e99ccea6e72b164ddd2b93b67048fb5329d6e552cb42b5158cc9ae7fd6c7ac"
+    },
+    {
+      "file": "images/relics/6.png",
+      "checksum": "26aace26bccdffae2a1a31524fea46f7708ac5e48d762d35d8844c97e2e9f987"
+    },
+    {
+      "file": "images/relics/32.png",
+      "checksum": "cf7a25f6910771ca9181b655cf436a20d662a5ea44dadd0b600040838161bc40"
+    },
+    {
+      "file": "images/relics/2.png",
+      "checksum": "fb646aac97f4ab1851fff305830b254f93b4c58f50084280c6ff1b9851188921"
+    },
+    {
+      "file": "images/relics/36.png",
+      "checksum": "292d63d2d04fb4882da55acfed3912c5d8988bf70c6ce521f8323c3c4b2a664e"
+    },
+    {
+      "file": "images/relics/20.png",
+      "checksum": "070a8ba250b0420f447e582581c287b3ac8272717839fd6448d1ef7066235c50"
+    },
+    {
+      "file": "images/relics/7.png",
+      "checksum": "a6aa08a9276cd214001dfdf0722331945e756c3c096e337d5e4ae67897552d8c"
+    },
+    {
+      "file": "images/relics/8.png",
+      "checksum": "6167627d425721f1b464320bed3c733d49747ea16c31663ac80364902d320a77"
+    },
+    {
+      "file": "images/relics/40.png",
+      "checksum": "34604b4f6c39a770788965cdebf784d92b8b071cf06c28d03652a308234737b8"
+    },
+    {
+      "file": "images/relics/23.png",
+      "checksum": "f51ac3f0c1c38cbecb822706c2f88077529ebde21844b9d2cbf6148823694d2a"
+    },
+    {
+      "file": "images/relics/34.png",
+      "checksum": "5b0edc7e425b54b06a0385704c5f75affe92209b50890949fad82c622997c8e0"
+    },
+    {
+      "file": "images/relics/15.png",
+      "checksum": "1fd69da4c62c3a049a86a3c2a8f9357df1667abbfce463bf5777a3a3823ecca5"
+    },
+    {
+      "file": "images/relics/19.png",
+      "checksum": "36d5255a46b984b66926346818bcc70107f26e2237c00a97b96ea5307dc7110a"
+    },
+    {
+      "file": "images/relics/38.png",
+      "checksum": "11e944065febc93f142da6e937fd865ddaf675d7ef9d01916bc523b2434ecef9"
+    },
+    {
+      "file": "images/relics/31.png",
+      "checksum": "732a4dad8e32aeb175e1b0a5d1c2f005dca5a816f3a25cb4f17d538798ba7118"
+    },
+    {
+      "file": "images/relics/3.png",
+      "checksum": "3c3628d2752a1b08f27aa8470dc895ff1cc41b703b178f649e9799d90c43318a"
+    },
+    {
+      "file": "images/relics/22.png",
+      "checksum": "cb357b3edf31357855bb98199e2791e6cf1816d1a9194a649b227cd37f4eb345"
+    },
+    {
+      "file": "images/relics/17.png",
+      "checksum": "a5253ea67c90e98245a68298d2e079c3df23865e99827023d0441f7c40d877d9"
+    },
+    {
+      "file": "images/characters/img_30.png",
+      "checksum": "81c26c685039eeb79c45ee6d589dcb191c7bfa62716397aca732a0364cd22521"
+    },
+    {
+      "file": "images/characters/img_47.png",
+      "checksum": "ff471c682036d6c0569e1bcca357d14ff0ca761e3a84c2730023f44ae5ff9eab"
+    },
+    {
+      "file": "images/characters/img_45.png",
+      "checksum": "0296e51bb64ff28af764e2b7ef3b886ee9ece78d7321e41c015d5b8e79e55ffa"
+    },
+    {
+      "file": "images/characters/img_53.png",
+      "checksum": "48489beab67f5dc54fdc9ef5a9543bda46c92b65eb973fbe770736dc5f92e5ed"
+    },
+    {
+      "file": "images/characters/img_19.png",
+      "checksum": "6b9a6adfaf75d790f03333848474c96f07698fafe292c5b35d0973dd63aa4c04"
+    },
+    {
+      "file": "images/characters/img_55.png",
+      "checksum": "1ffaf1eaeaf3984e9ccee1ab747d0e4e4bb3ee7013b4dd751bcac0b561d0ce5e"
+    },
+    {
+      "file": "images/characters/img_11.png",
+      "checksum": "13cd48f1fe7a6c64a9c3028148a8bae5bdcb5b1473fb601d3efdb9aeb044ef25"
+    },
+    {
+      "file": "images/characters/img_42.png",
+      "checksum": "0ac00dffd5038f689c112507fb3a5442d816ea5378343d09d0d2c2f53ddcb555"
+    },
+    {
+      "file": "images/characters/img_7.png",
+      "checksum": "4a2514b3d45a2d4d08c22287d1986bb718a8af7fe0fe141e2a884ae0251891b1"
+    },
+    {
+      "file": "images/characters/img_29.png",
+      "checksum": "185936613f6a6f1347528d159ce5c5443b516066994bc99fdb48e37eebb90380"
+    },
+    {
+      "file": "images/characters/img_33.png",
+      "checksum": "41ff9f8d04e68258d3612a1fb9b5fb636c38e9b5a97bbaf6360ee49c01ae8e82"
+    },
+    {
+      "file": "images/characters/img.png",
+      "checksum": "51668eac888515c711dd3b433eae654e790c688ebe6b699111a35b5250a42133"
+    },
+    {
+      "file": "images/characters/img_26.png",
+      "checksum": "6272659874d25e7e242b2dabee1d089aa37be0909a31c9f0e40d0a3b71d08352"
+    },
+    {
+      "file": "images/characters/img_18.png",
+      "checksum": "0b96262b63150c327ec25da6147595e9ab648f3638604d777c935a4f7a8e61aa"
+    },
+    {
+      "file": "images/characters/img_36.png",
+      "checksum": "b7a46eeb24d9af145e72ebe0dcf24e973195ac68e3eb4e33ead00dbc0369fcb6"
+    },
+    {
+      "file": "images/characters/img_41.png",
+      "checksum": "bf1162d84cb57e2fe9aa7b5b1bd29416c209d9465e0e8be1175e7fc658455f91"
+    },
+    {
+      "file": "images/characters/img_14.png",
+      "checksum": "65fb658ff84a7f58dae062da821373c547a761aee4096f81ace5c9c8834190cd"
+    },
+    {
+      "file": "images/characters/img_44.png",
+      "checksum": "dbec11f0c0c8abc90aef0182e22e942b1aa92d83f777efb35bad1128cd4ed041"
+    },
+    {
+      "file": "images/characters/img_27.png",
+      "checksum": "be136f81082daa957b49b645a1d59ed2fa5ea813167e2a0c0a9d878a4c97dd83"
+    },
+    {
+      "file": "images/characters/img_13.png",
+      "checksum": "0f15f5a3bb6a6aaa887e8ac689d65504183fb9ea9ead751b958c199630acfd4f"
+    },
+    {
+      "file": "images/characters/img_38.png",
+      "checksum": "1080fbffa94975bdff54f2526da9abcd5ec78a52eb13e033fab2c926497dae65"
+    },
+    {
+      "file": "images/characters/img_5.png",
+      "checksum": "0256b33074cb50b0735a4ed3e93b1de5d9518105bd13c55c136e5e10b2fac17e"
+    },
+    {
+      "file": "images/characters/img_58.png",
+      "checksum": "b32906fb0660fd1d095ca9b448178e00acfdffc4bef579fe095a1b1c171187e7"
+    },
+    {
+      "file": "images/characters/img_49.png",
+      "checksum": "e35e3df2d2ee6440b55b6f2e98719dbe1ca535a3b9fb0175f52f0b3add0db026"
+    },
+    {
+      "file": "images/characters/img_40.png",
+      "checksum": "7abb6cfbac031218a8325a432159c8f6a5beb89a6e3da6c107b4d9cf81823fc0"
+    },
+    {
+      "file": "images/characters/img_12.png",
+      "checksum": "405953c288f801c17f876a4e6c2b94e1354ab1384ed1d82cebb0a1a4727a63fb"
+    },
+    {
+      "file": "images/characters/img_21.png",
+      "checksum": "7eb5f8d89efd86ca3a6bf6922635e4803ab2af0ed862f709ea89cac5948e5846"
+    },
+    {
+      "file": "images/characters/img_6.png",
+      "checksum": "2ba4c6d290777b0209515568e3ca1259aa34bd2169cff224817af32487d1893f"
+    },
+    {
+      "file": "images/characters/img_46.png",
+      "checksum": "8ca0a4931e2c37cbaf90aa38d516f1e4fda4adfab6e623415f8250a24edf3c64"
+    },
+    {
+      "file": "images/characters/img_34.png",
+      "checksum": "84d7eb0c89665081ccbc6e9688878b53b5aacb77c0f73a2dfcc8324453193a8b"
+    },
+    {
+      "file": "images/characters/img_3.png",
+      "checksum": "c9b45cda46bae9535a660fafeaefd05e9b50c79fd063088edc0928a99ba246ea"
+    },
+    {
+      "file": "images/characters/img_54.png",
+      "checksum": "4a58a8ae09b74760ee62d29aa0bc2922cafdaf36a18532b56c76136262e5cca5"
+    },
+    {
+      "file": "images/characters/img_16.png",
+      "checksum": "b85e4128fbfb4ec4a76e98592cf255a2eadfb4c2b60169f8421d0c4e43b68523"
+    },
+    {
+      "file": "images/characters/img_2.png",
+      "checksum": "16a6d4cccf54bdeb7ebb8d5418483ebf8c54c0687297cb48e94c9ccdce025e10"
+    },
+    {
+      "file": "images/characters/img_50.png",
+      "checksum": "b218e006615e63df2e74a806859355e6530d90cf27ad036e316aa61c53088562"
+    },
+    {
+      "file": "images/characters/img_59.png",
+      "checksum": "3ad60faab923739ebf1165f85ae7eb3804eedb87cd85125a25eb1c54404dba33"
+    },
+    {
+      "file": "images/characters/img_15.png",
+      "checksum": "c80b12c1d426773acd0533e5420c74f52a6e5ae59ca9bf0f71886a07e1fd8c39"
+    },
+    {
+      "file": "images/characters/img_52.png",
+      "checksum": "945ceb16f06c228b649ba4934af645f3d310e20f88abbfb810840eb72d26140d"
+    },
+    {
+      "file": "images/characters/img_24.png",
+      "checksum": "158cf11dc47c65dc0cac37fb1e3007d14fb42dae851c2d88b7cfcd626ac2c1fd"
+    },
+    {
+      "file": "images/characters/img_43.png",
+      "checksum": "f82e6af72687fec9d5c996507572b438ddb994e2fc8f6e376baa0618b81de519"
+    },
+    {
+      "file": "images/characters/img_25.png",
+      "checksum": "7ec6406d1084e45b4200942b8be95941da37ba744d6b819d591092ed660d8385"
+    },
+    {
+      "file": "images/characters/img_61.png",
+      "checksum": "403414744203f9eba443e8cc3c5ab2d3559f7131281817e5c325e6ee881b9d4d"
+    },
+    {
+      "file": "images/characters/img_48.png",
+      "checksum": "a84d886ad8e6bf48f4669fa533efa1be59835649d35c442bf94d53cdf6ec7b52"
+    },
+    {
+      "file": "images/characters/img_17.png",
+      "checksum": "8b58a895efa0f1ebc909c30dee5b336c425bed64402ec2fc85f898a8400691a6"
+    },
+    {
+      "file": "images/characters/img_23.png",
+      "checksum": "7407237339ed3f281b2c5fc1ac9d7ced7a4ec1e8821b238442f10245acb7783d"
+    },
+    {
+      "file": "images/characters/img_60.png",
+      "checksum": "4249c1d8bdfa8005b41b49a09fa38fad1ef01d2b14bbfd2f45a7fb4f0992649b"
+    },
+    {
+      "file": "images/characters/img_8.png",
+      "checksum": "8c49a29928c60c8ddc9c3106c786400279dbddce69c1cfb4b70ba30d96a73571"
+    },
+    {
+      "file": "images/characters/img_10.png",
+      "checksum": "1e069af88c99c920ba1ca303370114959215997c3a17557b7e6d189cdb42244b"
+    },
+    {
+      "file": "images/characters/img_32.png",
+      "checksum": "0d0675cbea2d160287edbd38eb5518b831d7f0e85dd0db24a0a6d4d0bdeda857"
+    },
+    {
+      "file": "images/characters/img_4.png",
+      "checksum": "d15caf3c0153099e4c7d7fca39867dc73cf0793c0677a965e13d24924f48ea56"
+    },
+    {
+      "file": "images/characters/img_57.png",
+      "checksum": "f0bcfe5d1912526d0246b8ca90bf2eef7280382454578ce0a34089cc3fda6ddb"
+    },
+    {
+      "file": "images/characters/img_9.png",
+      "checksum": "10bc95b32cc546b356e62580a91d8dde9a181750cb3be9d0cd4f77783a23ac5d"
+    },
+    {
+      "file": "images/characters/img_22.png",
+      "checksum": "ed0e955a888847c658148eb262272e4c5b14475746b94be06a8e4bdc3f828749"
+    },
+    {
+      "file": "images/characters/img_1.png",
+      "checksum": "d98c758e24a7ae5342e50fb27f55d9fdf433dff267b797e12941bb7aca4e437e"
+    },
+    {
+      "file": "images/characters/img_39.png",
+      "checksum": "aa956424b52f9ddce232e7a403670cd12065da1a4abcc7f6c6b2527ed106cd58"
+    },
+    {
+      "file": "images/characters/img_35.png",
+      "checksum": "7a39478ea3afe77aeeb98b9f583bd0bc1d52dd8a62c718da612df5819ed89cc9"
+    },
+    {
+      "file": "images/characters/img_20.png",
+      "checksum": "10af3e7697a20b6c156aec557d086664a28cd7ce28d5910aebc3f93c32ff6346"
+    },
+    {
+      "file": "images/characters/img_56.png",
+      "checksum": "265e26f8cb42011f014b475fc0e6c8d1d8cf62d6953a8be40ffd6b4eeb881bb9"
+    },
+    {
+      "file": "images/characters/img_51.png",
+      "checksum": "dbd1cd91f4e6920604e914dedca9baa94fd23624f24a13e16edee895b2dbb093"
+    },
+    {
+      "file": "images/characters/img_31.png",
+      "checksum": "e4764cbb49cd41eb499719a479387d41267382787f10d45d68ac6c0c1c2d9cbb"
+    },
+    {
+      "file": "images/characters/img_28.png",
+      "checksum": "91b7941707af96853d59d3cb557885e9378a1e1abeeda3956b5f5a96dd64f37f"
+    },
+    {
+      "file": "character/character_meta.json",
+      "checksum": "050ed6fe4b57603fd0bbb736e701ade5333bee39a9acbfdf233abd273eb58674"
+    }
+  ]
+}

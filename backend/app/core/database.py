@@ -1,27 +1,16 @@
-import os
+from peewee import Model
+from playhouse.sqliteq import SqliteExtDatabase
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from app.constant import DATABASE_FILEPATH
 
-DATABASE_FILEPATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    'assets',
-    'database',
-    'scanner.db'
-).replace(os.sep, '/')
+db = SqliteExtDatabase(DATABASE_FILEPATH, pragmas={
+    'journal_mode': 'wal',
+    'cache_size': -1 * 64000,  # 64MB
+    'foreign_keys': 1,
+    'ignore_check_constraints': 0,
+    'synchronous': 0})
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///" + DATABASE_FILEPATH
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False}
-)
-
-sessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
-
-Base = declarative_base()
+class BaseModel(Model):
+    class Meta:
+        database = db

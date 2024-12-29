@@ -238,5 +238,13 @@
   "Rappa": {
     "name": "乱破",
     "icon": "images/characters/img_59.png"
+  },
+  "Sunday": {
+    "name": "星期日",
+    "icon": "images/characters/img_60.png"
+  },
+  "Fugue": {
+    "name": "忘归人",
+    "icon": "images/characters/img_61.png"
   }
 }

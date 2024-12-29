@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "hsr-scanner",
-    "version": "4.1.0"
+    "version": "4.3.0"
   },
   "tauri": {
     "allowlist": {
@@ -45,7 +45,8 @@
         "signingIdentity": null
       },
       "resources": [
-        "../../backend/**/*",
+        "../../backend/app/**/*",
+        "../../backend/*.py",
         "../../tools/**/*"
       ],
       "shortDescription": "",

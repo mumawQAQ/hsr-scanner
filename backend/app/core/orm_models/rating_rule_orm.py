@@ -1,14 +1,17 @@
-from sqlalchemy import Column, String, JSON, ForeignKey
+from peewee import AutoField, ForeignKeyField
+from playhouse.sqlite_ext import JSONField
 
-from app.core.database import Base
+from app.core.database import BaseModel
+from app.core.orm_models.rating_template_orm import RatingTemplateORM
 
 
-class RatingRuleORM(Base):
-    __tablename__ = "rating_rule"
+class RatingRuleORM(BaseModel):
+    id = AutoField(primary_key=True)
+    template_id = ForeignKeyField(RatingTemplateORM, field="id", index=True, on_delete="CASCADE", lazy_load=False)
+    set_names = JSONField(default=[])
+    valuable_mains = JSONField(default={})
+    valuable_subs = JSONField(default=[])
+    fit_characters = JSONField(default=[])
 
-    id = Column(String, primary_key=True, index=True)
-    template_id = Column(String, ForeignKey('rating_template.id'), index=True)
-    set_names = Column(JSON, default=list)
-    valuable_mains = Column(JSON, default=dict)
-    valuable_subs = Column(JSON, default=list)
-    fit_characters = Column(JSON, default=list)
+    class Meta:
+        table_name = "rating_rule"
