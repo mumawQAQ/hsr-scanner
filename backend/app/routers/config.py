@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from loguru import logger
 
 from app.constant import RELIC_BOX_TYPES, AUTO_DETECT_DISCARD_ICON, AUTO_DETECT_RELIC_BOX, DISCARD_ICON_POSITION, \
     RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP
@@ -12,7 +13,6 @@ from app.core.network_models.responses.common_response import SuccessResponse, E
 from app.core.network_models.responses.discard_icon_position_response import GetDiscardIconPositionResponse
 from app.core.network_models.responses.relic_box_position_response import GetRelicBoxPositionResponse, BoxPosition
 from app.core.orm_models.config_orm import ConfigORM
-from app.logging_config import logger
 
 router = APIRouter()
 
