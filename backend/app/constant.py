@@ -1,5 +1,11 @@
 import os
 
+# this file should only put in the root path, it contains paths used in other files
+
+ROOT_PATH = os.path.dirname(__file__)
+CONFIG_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'configs')
+MODEL_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'model_config.json')
+
 GAME_TITLES = ['Honkai: Star Rail']
 
 RELIC_DISCARD_SCORE = 'relic_discard_score'
@@ -23,9 +29,6 @@ DATABASE_FILEPATH = os.path.join(
 ).replace(os.sep, '/')
 
 CHARACTERS_FILE = os.path.join(os.path.dirname(__file__), 'assets', 'character', 'character_meta.json')
-
-TASK_CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.json')
-TASK_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.schema.json')
 
 YOLO_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'yolo_model', 'best.pt')
 
