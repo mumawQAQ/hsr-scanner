@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import Server
 
 from app.life_span import life_span
-from app.logging_config import set_log_level
 from app.routers import config, websocket
 from app.routers import files
 from app.routers import pipeline
@@ -29,8 +28,6 @@ app.include_router(pipeline.router, prefix="/pipeline", tags=["Pipeline Operatio
 app.include_router(config.router, prefix="/config", tags=["Config Operations"])
 
 if __name__ == '__main__':
-    set_log_level("INFO")
-
     config = uvicorn.Config(app, port=0)
     server: Server = uvicorn.Server(config)
     server.run()

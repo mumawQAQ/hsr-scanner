@@ -13,6 +13,7 @@ from app.core.pipline_impls.single_relic_analysis_pipeline import SingleRelicAna
 from app.core.utils import database
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
+from app.logging_config import set_log_level
 
 websocket_manager: Optional[WebsocketManager] = None
 pipeline_manager: Optional[PipelineManager] = None
@@ -75,6 +76,8 @@ async def life_span(app: FastAPI):
     global template_en_decoder
     global global_state_manager
 
+    set_log_level("INFO")
+
     # Init the template en decoder
     template_en_decoder = TemplateEnDecoder()
 
@@ -94,6 +97,8 @@ async def life_span(app: FastAPI):
 
     # Init the database
     database.init_db()
+
+    set_log_level("ERROR")
     yield
 
     database.close_db()
