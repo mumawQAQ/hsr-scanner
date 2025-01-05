@@ -3,6 +3,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from loguru import logger
 
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
@@ -17,7 +18,6 @@ from app.core.orm_models.rating_template_orm import RatingTemplateORM
 from app.core.utils.formatter import Formatter
 from app.core.utils.template_en_decode import TemplateEnDecoder
 from app.life_span import get_formatter, get_template_en_decoder, get_global_state_manager
-from app.logging_config import logger
 
 router = APIRouter()
 

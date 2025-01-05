@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
+from loguru import logger
 
 from app.core.managers.pipeline_manager import PipelineManager
 from app.core.network_models.requests.pipeline_request import StartPipelineRequest, StopPipelineRequest
@@ -9,7 +10,6 @@ from app.core.network_models.responses.pipeline_response import StartPipelineRes
     ActivePipelinesResponse, StatusResponse
 from app.core.pipeline_executer import PipelineExecutor
 from app.life_span import get_pipeline_manager, get_pipeline_executor
-from app.logging_config import logger
 
 router = APIRouter()
 

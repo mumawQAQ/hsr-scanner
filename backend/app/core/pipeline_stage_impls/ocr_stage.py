@@ -2,6 +2,7 @@ import re
 from typing import Optional, List, Any, Dict
 
 import numpy as np
+from loguru import logger
 from numpy import ndarray
 
 from app.core.data_models.pipeline_context import PipelineContext
@@ -12,7 +13,6 @@ from app.core.interfaces.model_interface import ModelInterface
 from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.relic_matcher_model import RelicMatcherInput, RelicMatcherInputType
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
-from app.logging_config import logger
 
 OCR_CONFIDENCE_THRESHOLD = 0.7
 

@@ -2,13 +2,13 @@ import json
 from enum import Enum
 from typing import Any, Dict, Union, Optional, List
 
+from loguru import logger
 from pydantic import BaseModel
 from rapidfuzz import process
 
 from app.constant import RELIC_INNER_PARTS, RELIC_OUTER_PARTS, RELIC_STATS_MAPPING
 from app.core.data_models.relic_info import RelicTitle, RelicMainStat, RelicSubStat
 from app.core.interfaces.model_interface import ModelInterface
-from app.logging_config import logger
 
 
 class RelicMatcherInputType(Enum):

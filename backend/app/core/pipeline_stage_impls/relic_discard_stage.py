@@ -1,11 +1,11 @@
 import pyautogui as pg
+from loguru import logger
 
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
-from app.logging_config import logging
 
 
 class RelicDiscardStage(BasePipelineStage):
@@ -50,7 +50,7 @@ class RelicDiscardStage(BasePipelineStage):
                 icon_center_x = detection['discard-icon']['box']['x_center']
                 icon_center_y = detection['discard-icon']['box']['y_center']
 
-            logging.error(f"Discard icon center: ({icon_center_x}, {icon_center_y})")
+            logger.error(f"Discard icon center: ({icon_center_x}, {icon_center_y})")
 
             if len(relic_analysis) == 0 or relic_analysis[0].score < relic_discard_score:
                 window_left = screenshot['window']['left']
@@ -59,7 +59,7 @@ class RelicDiscardStage(BasePipelineStage):
                 icon_x = window_left + icon_center_x
                 icon_y = window_top + icon_center_y
 
-                logging.info(f"Discard icon screen position: ({icon_x}, {icon_y})")
+                logger.info(f"Discard icon screen position: ({icon_x}, {icon_y})")
 
                 # click on the icon
                 pg.click(icon_x, icon_y)

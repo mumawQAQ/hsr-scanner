@@ -1,10 +1,11 @@
+from typing import Any
+
 import numpy as np
 import torch
-from typing import Any
+from loguru import logger
 from ultralytics import YOLO
 
 from app.core.interfaces.model_interface import ModelInterface
-from app.logging_config import logger
 
 
 class YOLOModel(ModelInterface[Any, Any]):

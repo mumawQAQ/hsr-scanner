@@ -1,9 +1,10 @@
 from typing import Dict, Type, List
 
+from loguru import logger
+
 from app.core.interfaces.pipeline_interface import PipelineProtocol
 from app.core.pipeline_factory import PIPELINE_TYPE
 from app.core.singleton import singleton
-from app.logging_config import logger
 
 
 @singleton

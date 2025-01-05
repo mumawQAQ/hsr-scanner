@@ -2,11 +2,12 @@ import asyncio
 from typing import Dict, Any, Type, Optional, List
 from uuid import uuid4
 
+from loguru import logger
+
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.managers.websocket_manager import WebsocketManager
 from app.core.network_models.responses.pipeline_response import PipelineResponse
 from app.core.pipeline_factory import PipelineFactory, PIPELINE_TYPE
-from app.logging_config import logger
 
 
 class PipelineExecutor:

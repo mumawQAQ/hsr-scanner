@@ -1,9 +1,10 @@
+from loguru import logger
+
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
-from app.logging_config import logger
 
 
 class DetectionStage(BasePipelineStage):

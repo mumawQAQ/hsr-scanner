@@ -1,9 +1,9 @@
 from typing import Optional
 
 from fastapi import WebSocket
+from loguru import logger
 
 from app.core.singleton import singleton
-from app.logging_config import logger
 
 
 @singleton

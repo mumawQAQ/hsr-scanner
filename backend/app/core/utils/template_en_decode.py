@@ -4,13 +4,13 @@ import lzma
 from typing import Dict, List
 
 import msgpack
+from loguru import logger
 
 from app.constant import RELIC_SETS_FILE, CHARACTERS_FILE, RELIC_MAIN_STATS_FILE, RELIC_SUB_STATS_FILE
 from app.core.network_models.responses.rating_rule_response import GetRatingRuleResponse
 from app.core.network_models.responses.rating_template_response import GetRatingTemplateResponse
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
 from app.core.orm_models.rating_template_orm import RatingTemplateORM
-from app.logging_config import logger
 
 
 # TODO: this can optimize by using a more efficient encoding method

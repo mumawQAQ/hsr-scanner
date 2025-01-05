@@ -1,10 +1,10 @@
 from typing import Annotated
 
 from fastapi import APIRouter, WebSocket, Depends, WebSocketDisconnect
+from loguru import logger
 
 from app.core.managers.websocket_manager import WebsocketManager
 from app.life_span import get_websocket_manager
-from app.logging_config import logger
 
 router = APIRouter()
 
