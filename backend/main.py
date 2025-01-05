@@ -1,18 +1,15 @@
-from logging.config import dictConfig
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import Server
 
 from app.life_span import life_span
-from app.logging_config import logging_config
-from app.routers import config
+from app.logging_config import set_log_level
+from app.routers import config, websocket
 from app.routers import files
 from app.routers import pipeline
 from app.routers import rating_template
 from app.routers import state
-from app.routers import websocket
 
 app = FastAPI(lifespan=life_span)
 
@@ -32,8 +29,7 @@ app.include_router(pipeline.router, prefix="/pipeline", tags=["Pipeline Operatio
 app.include_router(config.router, prefix="/config", tags=["Config Operations"])
 
 if __name__ == '__main__':
-    # Apply the logging configuration
-    dictConfig(logging_config)
+    set_log_level("INFO")
 
     config = uvicorn.Config(app, port=0)
     server: Server = uvicorn.Server(config)
