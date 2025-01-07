@@ -5,6 +5,8 @@ import os
 ROOT_PATH = os.path.dirname(__file__)
 CONFIG_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'configs')
 MODEL_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'model_config.json')
+STAGE_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'stage_config.json')
+STATE_MACHINE_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'state_machine_config.json')
 
 GAME_TITLES = ['Honkai: Star Rail']
 
