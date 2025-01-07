@@ -1,0 +1,80 @@
+{
+  "pipelines": {
+    "SingleRelicAnalysisPipeline": {
+      "states": [
+        "idle",
+        "cancel",
+        "screenshot_stage",
+        "detection_stage",
+        "ocr_stage",
+        "relic_analysis_stage",
+        "error_stage",
+        "complete_stage"
+      ],
+      "initial": "idle",
+      "running_states": [
+        "screenshot_stage",
+        "detection_stage",
+        "ocr_stage",
+        "relic_analysis_stage",
+        "error_stage",
+        "complete_stage"
+      ],
+      "transitions": [
+        {
+          "trigger": "start_pipeline",
+          "source": "idle",
+          "dest": "screenshot_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage",
+          "source": "screenshot_stage",
+          "dest": "detection_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage",
+          "source": "detection_stage",
+          "dest": "ocr_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage",
+          "source": "ocr_stage",
+          "dest": "relic_analysis_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage",
+          "source": "relic_analysis_stage",
+          "dest": "complete_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage",
+          "source": "error_stage",
+          "dest": "screenshot_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage",
+          "source": "complete_stage",
+          "dest": "screenshot_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "stop_pipeline",
+          "source": "*",
+          "dest": "cancel"
+        },
+        {
+          "trigger": "on_error",
+          "source": "*",
+          "dest": "error_stage",
+          "after": "run_current_stage"
+        }
+      ]
+    }
+  }
+}

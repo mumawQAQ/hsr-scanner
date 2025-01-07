@@ -1,0 +1,32 @@
+{
+  "stages": [
+    {
+      "name": "screenshot_stage",
+      "class": "app.core.pipeline_stage_impls.screenshot_stage.ScreenshotStage"
+    },
+    {
+      "name": "detection_stage",
+      "class": "app.core.pipeline_stage_impls.detection_stage.DetectionStage"
+    },
+    {
+      "name": "ocr_stage",
+      "class": "app.core.pipeline_stage_impls.ocr_stage.OCRStage"
+    },
+    {
+      "name": "relic_analysis_stage",
+      "class": "app.core.pipeline_stage_impls.relic_analysis_stage.RelicAnalysisStage"
+    },
+    {
+      "name": "relic_discard_stage",
+      "class": "app.core.pipeline_stage_impls.relic_discard_stage.RelicDiscardStage"
+    },
+    {
+      "name": "error_stage",
+      "class": "app.core.pipeline_stage_impls.error_stage.ErrorStage"
+    },
+    {
+      "name": "complete_stage",
+      "class": "app.core.pipeline_stage_impls.complete_stage.CompleteStage"
+    }
+  ]
+}
