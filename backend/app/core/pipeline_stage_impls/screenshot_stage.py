@@ -2,27 +2,28 @@ from typing import Optional, Dict, Any
 
 import pygetwindow as gw
 from PIL import Image
+from loguru import logger
 from mss import mss
 
 from app.constant import GAME_TITLES
 from app.core.data_models.pipeline_context import PipelineContext
-from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
-from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
+from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 
 
 class ScreenshotStage(BasePipelineStage):
-    def get_stage_name(self) -> str:
-        return GameRecognitionStage.SCREENSHOT.value
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             # Find game window
             window_info = self.__find_game_window__()
             if not window_info:
-                raise ValueError(
-                    f"Game window not found. Searched titles: {GAME_TITLES}. "
-                    f"Make sure the game is running and the language is set to English."
+                error_msg = f"Game window not found. Searched titles: {GAME_TITLES}. Make sure the game is running and the language is set to English."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    error=error_msg,
+                    data=None
                 )
 
             screenshot_data = self.__capture_screenshot__(window_info)
@@ -33,6 +34,7 @@ class ScreenshotStage(BasePipelineStage):
             )
 
         except Exception as e:
+            logger.exception(f"Error in screenshot stage")
             return StageResult(
                 success=False,
                 error=f"Unexpected error during screenshot capture: {str(e)}",
