@@ -12,7 +12,7 @@ from app.routers import rating_template
 from app.routers import state
 
 app = FastAPI(lifespan=life_span)
-sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
+sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins=[])
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,19 +53,19 @@ async def start_pipeline(sid, data):
     # Stop existing pipeline if running
     existing_runner = current_runners.get(sid)
     if existing_runner:
-        await existing_runner.stop_pipeline()
+        await existing_runner.handle_stop_pipeline()
 
     # Create and start a new pipeline
     new_runner = PipelineStateMachine(config_name, meta_data, sio, sid)
     current_runners[sid] = new_runner
-    await new_runner.run_pipeline()
+    await new_runner.handle_run_pipeline()
 
 
 @sio.event
 async def stop_pipeline(sid, data):
     runner = current_runners.get(sid)
     if runner:
-        await runner.stop_pipeline()
+        await runner.handle_stop_pipeline()
         del current_runners[sid]
 
 
