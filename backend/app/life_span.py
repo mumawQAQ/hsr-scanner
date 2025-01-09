@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.managers.model_manager import ModelManager
 from app.core.managers.pipeline_manager import PipelineManager
+from app.core.managers.stage_manager import StageManager
 from app.core.managers.websocket_manager import WebsocketManager
 from app.core.pipeline_executer import PipelineExecutor
 from app.core.pipline_impls.auto_relic_analysis_pipeline import AutoRelicAnalysisPipeline
@@ -22,6 +23,7 @@ pipeline_executor: Optional[PipelineExecutor] = None
 formatter: Optional[Formatter] = None
 template_en_decoder: Optional[TemplateEnDecoder] = None
 global_state_manager: Optional[GlobalStateManager] = None
+stage_manager: Optional[StageManager] = None
 
 
 def get_websocket_manager() -> WebsocketManager:
@@ -66,6 +68,12 @@ def get_global_state_manager() -> GlobalStateManager:
     return global_state_manager
 
 
+def get_stage_manager() -> StageManager:
+    if stage_manager is None:
+        raise RuntimeError("StageManager not initialized")
+    return stage_manager
+
+
 @asynccontextmanager
 async def life_span(app: FastAPI):
     global websocket_manager
@@ -75,6 +83,7 @@ async def life_span(app: FastAPI):
     global formatter
     global template_en_decoder
     global global_state_manager
+    global stage_manager
 
     set_log_level("INFO")
 
@@ -89,6 +98,7 @@ async def life_span(app: FastAPI):
     websocket_manager = WebsocketManager()
     pipeline_manager = PipelineManager()
     model_manager = ModelManager()
+    stage_manager = StageManager()
     pipeline_executor = PipelineExecutor(websocket_manager)
 
     # Register the pipelines
