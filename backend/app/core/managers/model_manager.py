@@ -41,14 +41,14 @@ class ModelManager:
             model_params = model_config.get('params', {})
 
             if not model_cls_path or not model_name:
-                logger.warning(f"config missing 'class' 或 'name' field: {model_config}")
-                continue
+                logger.warning(f"config missing 'class' or 'name' field: {model_config}")
+                raise SystemExit()
 
             try:
                 model_cls = self.load_class(model_cls_path)
             except (ImportError, AttributeError) as e:
                 logger.exception(f"unable to load class {model_cls_path}")
-                continue
+                raise SystemExit()
 
             resolved_params = {}
             for key, value in model_params.items():
