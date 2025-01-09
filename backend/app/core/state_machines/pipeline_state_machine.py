@@ -1,3 +1,4 @@
+import asyncio
 from typing import Dict, Any
 from uuid import uuid4
 
@@ -34,68 +35,86 @@ class PipelineStateMachine:
             transitions=pipeline_config["transitions"],
             initial=pipeline_config["initial"],
             auto_transitions=False,  # Disable auto transitions to prevent unexpected behavior
-            ignore_invalid_triggers=True  # Ignore invalid triggers
+            ignore_invalid_triggers=True  # Ignore invalid triggers for safety
         )
 
     async def run_current_stage(self):
-
+        """
+        Invoked after a transition leads us to a new stage, or after we move to an error stage.
+        """
         try:
-            if self.state != "idle":
-                stage_instance = self.stage_manager.get_stage(self.state)
-                logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Running {self.state} ...")
-                result = await stage_instance.process(self.context)
+            # TODO: this need to be configurable by the user
+            await asyncio.sleep(0.05)
+            # If we've just become idle, we shouldn't proceed.
+            if self.state == "idle":
+                logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Pipeline has been cancelled.")
+                return
 
-                if result.success:
-                    self.context.data[stage_instance.get_stage_name()] = result.data
+            stage_instance = self.stage_manager.get_stage(self.state)
+            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Running {self.state} ...")
 
-                    if result.metadata.send_to_frontend:
-                        # Send result to frontend
-                        await self.sio.emit(
-                            "pipeline_result",
-                            PipelineResponse(
-                                type="result",
-                                stage=stage_instance.get_stage_name(),
-                                data=result.data,
-                                pipeline_id=self.context.pipeline_id,
-                                pipeline_type=self.config_name
-                            ).model_dump(),
-                            to=self.sid
-                        )
+            result = await stage_instance.process(self.context)
 
-                    logger.info(
-                        f"[{self.config_name}:{self.context.pipeline_id}] Completed stage {stage_instance.get_stage_name()}."
-                    )
+            if result.success:
+                # Stage completed successfully
+                self.context.data[stage_instance.get_stage_name()] = result.data
 
-                    if self.state != "idle":
-                        await self.next_stage_trigger()
-
-                else:
-                    # Send error message to frontend
+                if result.metadata.send_to_frontend:
+                    # Send result to frontend
                     await self.sio.emit(
-                        "pipeline_error",
+                        "pipeline_result",
                         PipelineResponse(
-                            type="error",
+                            type="result",
                             stage=stage_instance.get_stage_name(),
-                            error=result.error,
+                            data=result.data,
                             pipeline_id=self.context.pipeline_id,
                             pipeline_type=self.config_name
                         ).model_dump(),
                         to=self.sid
                     )
-                    logger.error(
-                        f"[{self.config_name}:{self.context.pipeline_id}] Error while running {self.state} stage."
-                    )
 
-                    await self.on_error_trigger()
+                logger.info(
+                    f"[{self.config_name}:{self.context.pipeline_id}] Completed stage {stage_instance.get_stage_name()}."
+                )
+
+                # Only trigger next stage if we haven't stopped or errored in the meantime
+                if self.state != "idle":
+                    await self.next_stage_trigger()
+
             else:
-                logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Pipeline has been cancelled.")
+                self.context.data[stage_instance.get_stage_name()] = None
+                # Stage returned an error
+                await self.sio.emit(
+                    "pipeline_error",
+                    PipelineResponse(
+                        type="error",
+                        stage=stage_instance.get_stage_name(),
+                        error=result.error,
+                        pipeline_id=self.context.pipeline_id,
+                        pipeline_type=self.config_name
+                    ).model_dump(),
+                    to=self.sid
+                )
+                logger.error(
+                    f"[{self.config_name}:{self.context.pipeline_id}] Error while running {self.state} stage."
+                )
+
+                # Avoid repeatedly triggering the error if we're already in an error state
+                if "error_state" not in self.state:
+                    await self.on_error_trigger()
+
         except Exception:
             logger.exception(
-                f"[{self.config_name}:{self.context.pipeline_id}] Error while running {self.state} stage."
+                f"[{self.config_name}:{self.context.pipeline_id}] Exception while running {self.state} stage."
             )
-            await self.on_error_trigger()
+            # Avoid repeatedly triggering the error if we're already in an error state
+            if "error_state" not in self.state:
+                await self.on_error_trigger()
 
     async def handle_run_pipeline(self):
+        """
+        Called externally to start the pipeline from an idle state.
+        """
         await self.sio.emit(
             "pipeline_started",
             {"pipeline_id": self.context.pipeline_id, "pipeline_type": self.config_name},
@@ -104,12 +123,20 @@ class PipelineStateMachine:
         await self.start_pipeline_trigger()
 
     async def handle_stop_pipeline(self):
+        """
+        Called externally (e.g., from a socket event) to stop the pipeline.
+        """
+        # If already idle, do nothing:
         if self.state == "idle":
+            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Stop requested but pipeline is already idle.")
             return
-        
+
         await self.sio.emit(
             "pipeline_stopped",
             {"pipeline_id": self.context.pipeline_id, "pipeline_type": self.config_name},
             to=self.sid
         )
+
+        # Attempt to stop the pipeline (valid from any state except idle).
+        logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Stopping pipeline.")
         await self.stop_pipeline_trigger()
