@@ -6,6 +6,5 @@ from pydantic import BaseModel
 class PipelineContext(BaseModel):
     """Base context holding pipeline execution data"""
     pipeline_id: str
-    pipeline_type: str
     data: Dict[str, Any]
     meta_data: Dict[str, Any]
