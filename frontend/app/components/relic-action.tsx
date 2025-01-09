@@ -6,7 +6,6 @@ import useWindowStore from '@/app/hooks/use-window-store';
 import { useModal } from '@/app/hooks/use-modal-store';
 import { useUpdateFullLogState } from '@/app/apis/state';
 import { invoke } from '@tauri-apps/api/tauri';
-import { useStartPipeline, useStopPipeline } from '@/app/apis/pipeline';
 import {
   useAnalysisFailSkip,
   useAutoDetectDiscardIcon,
@@ -15,13 +14,10 @@ import {
   useRelicBoxPosition,
   useRelicDiscardScore,
 } from '@/app/apis/config';
+import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 
 export default function RelicAction() {
   const {
-    singleRelicAnalysisId,
-    setSingleRelicAnalysisId,
-    autoRelicAnalysisId,
-    setAutoRelicAnalysisId,
     logPause,
     setLogPause,
     fullLog,
@@ -32,10 +28,9 @@ export default function RelicAction() {
     setIsLightMode,
   } = useWindowStore();
   const { onOpen } = useModal();
+  const backendClientStore = useBackendClientStore();
 
   const { mutate: updateFullLogState } = useUpdateFullLogState();
-  const startPipeline = useStartPipeline();
-  const stopPipeline = useStopPipeline();
   const discardIconPosition = useDiscardIconPosition();
   const analysisFailSkip = useAnalysisFailSkip();
   const relicDiscardScore = useRelicDiscardScore();
@@ -48,40 +43,29 @@ export default function RelicAction() {
 
   const handleScanStateChange = async (status: boolean) => {
     if (status) {
-      startPipeline.mutate({
-        pipeline_name: 'SingleRelicAnalysisPipeline',
-        meta_data: {
-          auto_detect_relic_box_position: autoDetectRelicBoxPosition.data,
-          relic_title_box: {
-            x: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.x : 0,
-            y: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.y : 0,
-            w: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.w : 0,
-            h: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.h : 0,
-          },
-          relic_main_stat_box: {
-            x: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.x : 0,
-            y: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.y : 0,
-            w: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.w : 0,
-            h: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.h : 0,
-          },
-          relic_sub_stat_box: {
-            x: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.x : 0,
-            y: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.y : 0,
-            w: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.w : 0,
-            h: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.h : 0,
-          },
+      backendClientStore.startPipeline('SingleRelicAnalysisPipeline', {
+        auto_detect_relic_box_position: autoDetectRelicBoxPosition.data ?? true,
+        relic_title_box: {
+          x: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.x : 0,
+          y: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.y : 0,
+          w: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.w : 0,
+          h: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.h : 0,
         },
-      }, {
-        onSuccess: (data) => {
-          setSingleRelicAnalysisId(data.pipeline_id);
+        relic_main_stat_box: {
+          x: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.x : 0,
+          y: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.y : 0,
+          w: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.w : 0,
+          h: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.h : 0,
+        },
+        relic_sub_stat_box: {
+          x: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.x : 0,
+          y: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.y : 0,
+          w: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.w : 0,
+          h: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.h : 0,
         },
       });
     } else {
-      stopPipeline.mutate(singleRelicAnalysisId, {
-        onSuccess: () => {
-          setSingleRelicAnalysisId(null);
-        },
-      });
+      backendClientStore.stopPipeline();
     }
   };
 
@@ -118,47 +102,36 @@ export default function RelicAction() {
 
   const handleAutoScanStateChange = async (status: boolean) => {
     if (status) {
-      startPipeline.mutate({
-        pipeline_name: 'AutoRelicAnalysisPipeline',
-        meta_data: {
-          analysis_fail_skip: analysisFailSkip.data,
-          relic_discard_score: relicDiscardScore.data ? relicDiscardScore.data : 40,
+      backendClientStore.startPipeline('AutoRelicAnalysisPipeline', {
+        analysis_fail_skip: analysisFailSkip.data ?? true,
+        relic_discard_score: relicDiscardScore.data ?? 40,
 
-          auto_detect_discard_icon: autoDetectDiscardIcon.data,
-          discard_icon_x: discardIconPosition.data ? discardIconPosition.data.value.x : 0,
-          discard_icon_y: discardIconPosition.data ? discardIconPosition.data.value.y : 0,
+        auto_detect_discard_icon: autoDetectDiscardIcon.data ?? true,
+        discard_icon_x: discardIconPosition.data ? discardIconPosition.data.value.x : 0,
+        discard_icon_y: discardIconPosition.data ? discardIconPosition.data.value.y : 0,
 
-          auto_detect_relic_box_position: autoDetectRelicBoxPosition.data,
-          relic_title_box: {
-            x: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.x : 0,
-            y: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.y : 0,
-            w: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.w : 0,
-            h: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.h : 0,
-          },
-          relic_main_stat_box: {
-            x: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.x : 0,
-            y: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.y : 0,
-            w: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.w : 0,
-            h: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.h : 0,
-          },
-          relic_sub_stat_box: {
-            x: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.x : 0,
-            y: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.y : 0,
-            w: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.w : 0,
-            h: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.h : 0,
-          },
+        auto_detect_relic_box_position: autoDetectRelicBoxPosition.data ?? true,
+        relic_title_box: {
+          x: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.x : 0,
+          y: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.y : 0,
+          w: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.w : 0,
+          h: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.h : 0,
         },
-      }, {
-        onSuccess: (data) => {
-          setAutoRelicAnalysisId(data.pipeline_id);
+        relic_main_stat_box: {
+          x: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.x : 0,
+          y: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.y : 0,
+          w: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.w : 0,
+          h: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.h : 0,
+        },
+        relic_sub_stat_box: {
+          x: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.x : 0,
+          y: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.y : 0,
+          w: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.w : 0,
+          h: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.h : 0,
         },
       });
     } else {
-      stopPipeline.mutate(autoRelicAnalysisId, {
-        onSuccess: () => {
-          setAutoRelicAnalysisId(null);
-        },
-      });
+      backendClientStore.stopPipeline();
     }
   };
 
@@ -173,12 +146,12 @@ export default function RelicAction() {
         小屏模式
       </Switch>
       <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<ScanEye />}
-              isSelected={singleRelicAnalysisId !== null}
+              isSelected={backendClientStore.singleRelicAnalysisId !== null}
               onValueChange={handleScanStateChange}>
         手动扫描
       </Switch>
       <Switch color="success" size={isLightMode ? 'sm' : 'md'} thumbIcon={<Workflow />}
-              isSelected={autoRelicAnalysisId !== null}
+              isSelected={backendClientStore.autoRelicAnalysisId !== null}
               onValueChange={handleAutoScanStateChange}>
         自动扫描
       </Switch>

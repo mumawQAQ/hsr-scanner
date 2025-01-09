@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 
 type WindowStore = {
-  singleRelicAnalysisId: string | null;
-  setSingleRelicAnalysisId: (id: string | null) => void;
-
-  autoRelicAnalysisId: string | null;
-  setAutoRelicAnalysisId: (id: string | null) => void;
-
   isLightMode: boolean;
   setIsLightMode: (mode: boolean) => void;
 
@@ -21,11 +15,6 @@ type WindowStore = {
 };
 
 const useWindowStore = create<WindowStore>(set => ({
-  singleRelicAnalysisId: null,
-  setSingleRelicAnalysisId: id => set({ singleRelicAnalysisId: id }),
-
-  autoRelicAnalysisId: null,
-  setAutoRelicAnalysisId: id => set({ autoRelicAnalysisId: id }),
 
   isLightMode: false, // Default light mode
   setIsLightMode: mode => set({ isLightMode: mode }),

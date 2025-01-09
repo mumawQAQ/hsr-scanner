@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { create } from 'zustand';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import toast from 'react-hot-toast';
+import { io, Socket } from 'socket.io-client';
 
 type UseBackendClientStore = {
   requirementFulfilled: boolean;
@@ -11,11 +12,33 @@ type UseBackendClientStore = {
 
   backendPort: number | null;
   setBackendPort: (port: number) => void;
-  ws: WebSocket | null;
+  ws: Socket | null;
   api: AxiosInstance | null;
+
+  singleRelicAnalysisId: string | null;
+  autoRelicAnalysisId: string | null;
+
+  startPipeline: (configName: string, metaData: Record<string, object | boolean | number>) => void;
+  stopPipeline: () => void;
 };
 
-const useBackendClientStore = create<UseBackendClientStore>(set => ({
+const useBackendClientStore = create<UseBackendClientStore>((set, get) => ({
+  singleRelicAnalysisId: null,
+  autoRelicAnalysisId: null,
+
+  startPipeline: (configName, metaData) => {
+    if (!get().ws) {
+      return;
+    }
+    get().ws?.emit('start_pipeline', { config_name: configName, meta_data: metaData });
+  },
+
+  stopPipeline: () => {
+    if (!get().ws) {
+      return;
+    }
+    get().ws?.emit('stop_pipeline', {});
+  },
 
   requirementFulfilled: false,
   setRequirementFulfilled: fulfilled => {
@@ -41,41 +64,41 @@ const useBackendClientStore = create<UseBackendClientStore>(set => ({
 
 
     // initialize the websocket
-    const ws = new WebSocket(`ws://localhost:${port}/ws`);
-    ws.onopen = () => {
-    };
+    const socketClient = io(`http://localhost:${port}`);
 
-    ws.onclose = () => {
-    };
-
-    ws.onerror = error => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onmessage = event => {
-      // parse the message
-      const data = JSON.parse(event.data);
-
-      if (data.type === 'error') {
-        if (data.pipeline_type === 'SingleRelicAnalysisPipeline' || data.pipeline_type === 'AutoRelicAnalysisPipeline') {
-          toast.error(data.error);
-        }
-      } else if (data.type === 'progress') {
-        console.log(data);
-      } else if (data.type === 'result') {
-        if (data.stage === 'ocr') {
-          const relicData = data.data;
-          console.log(relicData);
-          useRelicStore.setState({ relicInfo: relicData });
-        } else if (data.stage === 'relic_analysis') {
-          const relicScores = data.data;
-          console.log(relicScores);
-          useRelicStore.setState({ relicScores: relicScores });
-        }
+    socketClient.on('pipeline_result', (data) => {
+      if (data.stage === 'ocr_stage') {
+        const relicData = data.data;
+        console.log(relicData);
+        useRelicStore.setState({ relicInfo: relicData });
+      } else if (data.stage === 'relic_analysis_stage') {
+        const relicScores = data.data;
+        console.log(relicScores);
+        useRelicStore.setState({ relicScores: relicScores });
       }
-    };
+    });
 
-    set({ ws });
+    socketClient.on('pipeline_error', (data) => {
+      toast.error(data.error);
+    });
+
+    socketClient.on('pipeline_started', (data) => {
+      if (data.pipeline_type === 'SingleRelicAnalysisPipeline') {
+        set({ singleRelicAnalysisId: data.pipeline_id });
+      } else if (data.pipeline_type === 'AutoRelicAnalysisPipeline') {
+        set({ autoRelicAnalysisId: data.pipeline_id });
+      }
+    });
+
+    socketClient.on('pipeline_stopped', (data) => {
+      if (data.pipeline_type === 'SingleRelicAnalysisPipeline') {
+        set({ singleRelicAnalysisId: null });
+      } else if (data.pipeline_type === 'AutoRelicAnalysisPipeline') {
+        set({ autoRelicAnalysisId: null });
+      }
+    });
+
+    set({ ws: socketClient });
   },
   ws: null,
   api: null,

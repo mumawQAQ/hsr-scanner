@@ -1,13 +1,13 @@
-import useWindowStore from '@/app/hooks/use-window-store';
 import React from 'react';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import { useJsonFile } from '@/app/apis/files';
 import ImageDisplay from '@/app/components/image-display';
 import { Chip } from '@nextui-org/chip';
 import { cn } from '@nextui-org/react';
+import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 
 export default function RelicScore() {
-  const { singleRelicAnalysisId, autoRelicAnalysisId } = useWindowStore();
+  const backendClientStore = useBackendClientStore();
   const { relicScores } = useRelicStore();
   const { data: characters } = useJsonFile('character/character_meta.json');
 
@@ -118,7 +118,7 @@ export default function RelicScore() {
 
 
   const renderScoreResult = () => {
-    if ((!singleRelicAnalysisId && !autoRelicAnalysisId) || !relicScores) {
+    if ((!backendClientStore.singleRelicAnalysisId && !backendClientStore.autoRelicAnalysisId) || !relicScores) {
       return null;
     }
 

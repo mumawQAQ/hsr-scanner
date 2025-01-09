@@ -1,15 +1,15 @@
 'use client';
 import useRelicStore from '@/app/hooks/use-relic-store';
 import { Divider } from '@nextui-org/divider';
-import useWindowStore from '@/app/hooks/use-window-store';
 import { Chip } from '@nextui-org/chip';
 import React from 'react';
+import useBackendClientStore from '@/app/hooks/use-backend-client-store';
 
 export default function RelicInfo() {
-  const { singleRelicAnalysisId, autoRelicAnalysisId } = useWindowStore();
+  const backendClientStore = useBackendClientStore();
   const { relicInfo } = useRelicStore();
 
-  if (!singleRelicAnalysisId && !autoRelicAnalysisId) {
+  if (!backendClientStore.singleRelicAnalysisId && !backendClientStore.autoRelicAnalysisId) {
     return <div className="font-semibold">选择模板后,开始扫描，显示遗器扫描内容</div>;
   }
 
