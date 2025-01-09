@@ -2,10 +2,9 @@ from abc import ABC, abstractmethod
 
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
-from app.core.interfaces.pipeline_interface import PipelineStageProtocol
 
 
-class BasePipelineStage(ABC, PipelineStageProtocol):
+class BasePipelineStage(ABC):
 
     def __init__(self, stage_name: str) -> None:
         self.stage_name = stage_name
