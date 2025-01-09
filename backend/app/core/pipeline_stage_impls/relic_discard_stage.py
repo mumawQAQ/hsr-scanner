@@ -1,3 +1,5 @@
+import asyncio
+
 import pyautogui as pg
 from loguru import logger
 
@@ -15,7 +17,6 @@ class RelicDiscardStage(BasePipelineStage):
             detection = context.data.get("detection_stage")
             relic_analysis = context.data.get("relic_analysis_stage")
             relic_discard_score = context.meta_data.get("relic_discard_score", 40) / 100
-            skip_if_error = context.meta_data.get("analysis_fail_skip", True)
             auto_detect_discard_icon = context.meta_data.get("auto_detect_discard_icon", True)
             discard_icon_x = context.meta_data.get("discard_icon_x", 0)
             discard_icon_y = context.meta_data.get("discard_icon_y", 0)
@@ -42,9 +43,6 @@ class RelicDiscardStage(BasePipelineStage):
                 )
 
             if relic_analysis is None:
-                if skip_if_error:
-                    keyboard_model.predict("d")
-
                 error_msg = "Relic analysis data not found."
                 logger.error(error_msg)
                 return StageResult(
@@ -59,9 +57,6 @@ class RelicDiscardStage(BasePipelineStage):
                 icon_center_y = discard_icon_y
             else:
                 if detection is None or 'discard-icon' not in detection:
-                    if skip_if_error:
-                        keyboard_model.predict("d")
-
                     error_msg = "Discard icon data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
                     logger.error(error_msg)
                     return StageResult(
@@ -88,6 +83,9 @@ class RelicDiscardStage(BasePipelineStage):
                 pg.click(icon_x, icon_y)
                 # reset mouse position
                 pg.moveTo(1, 1)
+
+                # wait for 0.5 seconds, if this is too fast the next relic may not be processed
+                await asyncio.sleep(0.5)
 
             keyboard_model.predict("d")
 
