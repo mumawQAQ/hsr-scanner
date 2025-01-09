@@ -7,7 +7,7 @@
         "detection_stage",
         "ocr_stage",
         "relic_analysis_stage",
-        "error_stage",
+        "single_analysis_error_stage",
         "complete_stage"
       ],
       "initial": "idle",
@@ -44,7 +44,7 @@
         },
         {
           "trigger": "next_stage_trigger",
-          "source": "error_stage",
+          "source": "single_analysis_error_stage",
           "dest": "screenshot_stage",
           "after": "run_current_stage"
         },
@@ -62,7 +62,81 @@
         {
           "trigger": "on_error_trigger",
           "source": "*",
-          "dest": "error_stage",
+          "dest": "single_analysis_error_stage",
+          "after": "run_current_stage"
+        }
+      ]
+    },
+    "AutoRelicAnalysisPipeline": {
+      "states": [
+        "idle",
+        "screenshot_stage",
+        "detection_stage",
+        "ocr_stage",
+        "relic_analysis_stage",
+        "relic_discard_stage",
+        "auto_analysis_error_stage",
+        "complete_stage"
+      ],
+      "initial": "idle",
+      "transitions": [
+        {
+          "trigger": "start_pipeline_trigger",
+          "source": "idle",
+          "dest": "screenshot_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "screenshot_stage",
+          "dest": "detection_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "detection_stage",
+          "dest": "ocr_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "ocr_stage",
+          "dest": "relic_analysis_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "relic_analysis_stage",
+          "dest": "relic_discard_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "relic_discard_stage",
+          "dest": "complete_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "auto_analysis_error_stage",
+          "dest": "screenshot_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "complete_stage",
+          "dest": "screenshot_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "stop_pipeline_trigger",
+          "source": "*",
+          "dest": "idle"
+        },
+        {
+          "trigger": "on_error_trigger",
+          "source": "*",
+          "dest": "auto_analysis_error_stage",
           "after": "run_current_stage"
         }
       ]

@@ -21,12 +21,16 @@
       "class": "app.core.pipeline_stage_impls.relic_discard_stage.RelicDiscardStage"
     },
     {
-      "name": "error_stage",
-      "class": "app.core.pipeline_stage_impls.error_stage.ErrorStage"
-    },
-    {
       "name": "complete_stage",
       "class": "app.core.pipeline_stage_impls.complete_stage.CompleteStage"
+    },
+    {
+      "name": "single_analysis_error_stage",
+      "class": "app.core.pipeline_stage_impls.single_analysis_error_stage.SingleAnalysisErrorStage"
+    },
+    {
+      "name": "auto_analysis_error_stage",
+      "class": "app.core.pipeline_stage_impls.auto_analysis_error_stage.AutoAnalysisErrorStage"
     }
   ]
 }
