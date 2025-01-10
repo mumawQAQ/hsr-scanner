@@ -5,6 +5,7 @@ import { MyNextUIProvider } from '@/app/providers/nextui-provider';
 import { Toaster } from 'react-hot-toast';
 import { ModalProvider } from '@/app/providers/modal-provider';
 import QueryClientProvider from '@/app/providers/query-client-provider';
+import { Setup } from '@/app/components/setup';
 
 export default function RootLayout({ children }: Readonly<{
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{
         <Toaster position={'bottom-center'} toastOptions={{
           duration: 1000,
         }} />
+        <Setup />
         <ModalProvider />
       </QueryClientProvider>
     </MyNextUIProvider>

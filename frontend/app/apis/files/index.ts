@@ -27,6 +27,8 @@ export const useJsonFile = (filePath: string) => {
       }
     },
     enabled: !!api,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
@@ -55,5 +57,7 @@ export const useImage = (imagePath: string) => {
       }
     },
     enabled: !!api,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };

@@ -9,7 +9,6 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { listen } from '@tauri-apps/api/event';
 import toast from 'react-hot-toast';
 import { usePath } from '@/app/hooks/use-path-store';
-import { useJsonFile } from '@/app/apis/files';
 import ClientLogViewer from '@/app/components/client-logviewer';
 
 
@@ -18,15 +17,11 @@ export default function Home() {
   const { setPath } = usePath();
   const [logQueue, setLogQueue] = useState<string[]>([]);
   const router = useRouter();
-  const relicSets = useJsonFile('relic/relic_sets.json');
-  const characters = useJsonFile('character/character_meta.json');
-  const backendClient = useBackendClientStore();
 
   const {
     requirementFulfilled,
     setBackendPort,
     backendPort,
-    apiInitialized,
   } = useBackendClientStore();
 
   useEffect(() => {
@@ -39,18 +34,6 @@ export default function Home() {
 
     installRequirement();
   }, []);
-
-  useEffect(() => {
-    if (apiInitialized) {
-      // refresh relic sets and characters
-      relicSets.refetch();
-      characters.refetch();
-
-      // init the used template
-      backendClient.api?.get('/rating-template/init');
-
-    }
-  }, [apiInitialized]);
 
   useEffect(() => {
     if (requirementFulfilled) {
@@ -113,7 +96,6 @@ export default function Home() {
     <div className="flex h-screen items-center justify-center">
       {!backendPort && (
         <div>
-
           <div>
             <ClientLogViewer height={400} width={450} isTextWrapped={true} data={logQueue} hasLineNumbers={false} />
           </div>
