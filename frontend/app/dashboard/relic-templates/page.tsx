@@ -23,7 +23,7 @@ export default function RelicTemplates() {
   }
 
   return (
-    <div className="grid grid-cols-1 items-center justify-items-center gap-5 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="flex flex-wrap gap-5">
       {relicTemplates?.map((template: RelicTemplate) => <RelicTemplateCard template={template} key={template.id} />)}
       <RelicTemplateCreateCard />
     </div>

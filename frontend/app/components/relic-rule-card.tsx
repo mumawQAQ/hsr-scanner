@@ -11,6 +11,7 @@ import { RelicMainStatsType } from '@/app/types/relic-stat-types';
 import RelicSubStatSelection from '@/app/components/relic-sub-stat-selection';
 import toast from 'react-hot-toast';
 import { useJsonFile } from '@/app/apis/files';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 type RelicRuleCardProps = {
   templateId: string;
@@ -27,6 +28,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
   const [curRule, setCurRule] = useState<RelicRuleLocal | null>(null);
   const [showOuter, setShowOuter] = useState(false);
   const [showInner, setShowInner] = useState(false);
+  const [hiddenDetails, setHiddenDetails] = useState(true);
 
   const handleShowInner = (setNames: string[]) => {
     if (setNames.length === 0) {
@@ -83,7 +85,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
 
   if (relicRule.error || !relicRule.data || relicSets.error || !relicSets.data) {
     return (
-      <Card className="min-h-[15rem] w-full">
+      <Card className="min-h-[15rem] w-[22rem]">
         <CardBody className="flex items-center justify-center text-center">
           Error: {relicRule.error?.message || relicSets.error?.message || '无法加载遗物规则数据！'}
         </CardBody>
@@ -93,7 +95,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
 
   if (relicRule.isLoading || relicSets.isLoading) {
     return (
-      <Card className="min-h-[15rem] w-full">
+      <Card className="min-h-[15rem] w-[22rem]">
         <CardBody className="flex items-center justify-center text-center">Loading...</CardBody>
       </Card>
     );
@@ -265,7 +267,7 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
   };
 
   return (
-    <Card className="col-span-1 min-h-[15rem] p-5">
+    <Card className="col-span-1 min-h-[15rem] p-5 w-[22rem]">
       <CardBody className="flex gap-8">
         <CharacterSelection
           selectedCharacter={curRule?.fit_characters[0]}
@@ -273,58 +275,79 @@ export default function RelicRuleCard({ ruleId, templateId }: RelicRuleCardProps
         />
         <RelicSetSelector selectedRelicSets={curRule?.set_names} onSelectionChange={handleSelectedRelicSetChange} />
 
-        {showOuter && (
-          <RelicMainStatSelection
-            type="head"
-            selectedMainStat={curRule?.valuable_mains?.head}
-            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'head', type)}
-          />
-        )}
+        {
+          !hiddenDetails ? (
+            <>
+              {showOuter && (
+                <RelicMainStatSelection
+                  type="head"
+                  selectedMainStat={curRule?.valuable_mains?.head}
+                  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'head', type)}
+                />
+              )}
 
-        {showOuter && (
-          <RelicMainStatSelection
-            type="hand"
-            selectedMainStat={curRule?.valuable_mains?.hand}
-            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'hand', type)}
-          />
-        )}
+              {showOuter && (
+                <RelicMainStatSelection
+                  type="hand"
+                  selectedMainStat={curRule?.valuable_mains?.hand}
+                  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'hand', type)}
+                />
+              )}
 
-        {showOuter && (
-          <RelicMainStatSelection
-            type="body"
-            selectedMainStat={curRule?.valuable_mains?.body}
-            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'body', type)}
-          />
-        )}
+              {showOuter && (
+                <RelicMainStatSelection
+                  type="body"
+                  selectedMainStat={curRule?.valuable_mains?.body}
+                  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'body', type)}
+                />
+              )}
 
-        {showOuter && (
-          <RelicMainStatSelection
-            type="feet"
-            selectedMainStat={curRule?.valuable_mains?.feet}
-            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'feet', type)}
-          />
-        )}
+              {showOuter && (
+                <RelicMainStatSelection
+                  type="feet"
+                  selectedMainStat={curRule?.valuable_mains?.feet}
+                  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'feet', type)}
+                />
+              )}
 
-        {showInner && (
-          <RelicMainStatSelection
-            type="rope"
-            selectedMainStat={curRule?.valuable_mains['rope']}
-            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}
-          />
-        )}
+              {showInner && (
+                <RelicMainStatSelection
+                  type="rope"
+                  selectedMainStat={curRule?.valuable_mains['rope']}
+                  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'rope', type)}
+                />
+              )}
 
-        {showInner && (
-          <RelicMainStatSelection
-            type="sphere"
-            selectedMainStat={curRule?.valuable_mains['sphere']}
-            onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}
-          />
-        )}
+              {showInner && (
+                <RelicMainStatSelection
+                  type="sphere"
+                  selectedMainStat={curRule?.valuable_mains['sphere']}
+                  onSelectionChange={(mainStat, type) => handleSelectedMainStatChange(mainStat, 'sphere', type)}
+                />
+              )}
 
-        <RelicSubStatSelection
-          selectedSubStats={curRule?.valuable_subs}
-          onSelectionChange={handleSelectedSubStatChange}
-        />
+              <RelicSubStatSelection
+                selectedSubStats={curRule?.valuable_subs}
+                onSelectionChange={handleSelectedSubStatChange}
+              />
+              <div className="justify-center flex">
+                <Button variant="bordered" onPress={() => setHiddenDetails(true)}>
+                  <ChevronUpIcon />
+                  隐藏详情
+                </Button>
+              </div>
+
+            </>
+          ) : (
+            <div className="justify-center flex">
+              <Button variant="bordered" onPress={() => setHiddenDetails(false)}>
+                <ChevronDownIcon />
+                显示详情
+              </Button>
+            </div>
+          )
+        }
+
       </CardBody>
       <CardFooter className="flex justify-end gap-2">
         <Button size="sm" variant="bordered" color={!curRule?.is_saved ? 'danger' : 'default'} onPress={handleSave}>

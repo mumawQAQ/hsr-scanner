@@ -26,7 +26,7 @@ export default function RelicRuleCreateCard({ templateId }: RelicRuleCreateCardP
   };
 
   return (
-    <Card className="min-h-[15rem] w-full" shadow="sm" isPressable onPress={handleCreateRule}>
+    <Card className="min-h-[15rem] w-[22rem]" shadow="sm" isPressable onPress={handleCreateRule}>
       <CardBody className="flex items-center justify-center">
         <Plus />
       </CardBody>

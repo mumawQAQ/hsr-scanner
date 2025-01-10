@@ -23,18 +23,8 @@ export default function RelicSetSelection({ selectedRelicSets, onSelectionChange
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <span className="font-semibold">选择遗物套装: </span>
         <Autocomplete
-          classNames={{
-            base: 'max-w-[150px]',
-            listboxWrapper: 'max-h-[320px]',
-          }}
-          inputProps={{
-            classNames: {
-              input: 'ml-1',
-              inputWrapper: 'h-[30px]',
-            },
-          }}
+          label="选择遗物套装"
           variant="bordered"
           onSelectionChange={key => {
             const selectedKey = key as string;
@@ -54,6 +44,9 @@ export default function RelicSetSelection({ selectedRelicSets, onSelectionChange
       <div className="flex flex-wrap gap-2">
         {selectedRelicSets?.map((relicSet, index) => (
           <Chip
+            classNames={{
+              content: 'max-w-[80px] text-ellipsis overflow-hidden',
+            }}
             key={index}
             onClose={() => onSelectionChange(relicSet, 'remove')}
             variant="faded"
