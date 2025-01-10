@@ -1,7 +1,8 @@
 from typing import Optional, Dict, Any
 
+import cv2
+import numpy as np
 import pygetwindow as gw
-from PIL import Image
 from loguru import logger
 from mss import mss
 
@@ -78,13 +79,15 @@ class ScreenshotStage(BasePipelineStage):
             "height": height
         }
 
+        # TODO: this can be optimized to not create new mss each time
         with mss() as sct:
             sct_img = sct.grab(monitor)
+            img_np = np.array(sct_img)
 
-            # Convert mss output to PIL Image (RGB)
-            img_rgb = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
+            # # Convert from BGRA to RGB
+            img_np = cv2.cvtColor(img_np, cv2.COLOR_BGRA2BGR)
 
             return {
-                'image': img_rgb,  # PIL Image in RGB
+                'image': img_np,
                 'window': window_rect
             }

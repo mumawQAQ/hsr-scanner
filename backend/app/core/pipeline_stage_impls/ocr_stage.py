@@ -1,7 +1,6 @@
 import re
 from typing import Optional, List, Any, Dict
 
-import numpy as np
 from loguru import logger
 from numpy import ndarray
 
@@ -246,8 +245,7 @@ class OCRStage(BasePipelineStage):
                         data=None,
                         error=error_msg
                     )
-                img = screenshot['image']
-                img_np = np.array(img)
+                img_np = screenshot['image']
 
                 relic_title_box_x1 = relic_title_box['x']
                 relic_title_box_y1 = relic_title_box['y']
