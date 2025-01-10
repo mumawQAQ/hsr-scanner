@@ -10,7 +10,6 @@ import { listen } from '@tauri-apps/api/event';
 import toast from 'react-hot-toast';
 import { usePath } from '@/app/hooks/use-path-store';
 import { useJsonFile } from '@/app/apis/files';
-import { useRelicTemplateList } from '@/app/apis/relic-template';
 import ClientLogViewer from '@/app/components/client-logviewer';
 
 
@@ -21,7 +20,6 @@ export default function Home() {
   const router = useRouter();
   const relicSets = useJsonFile('relic/relic_sets.json');
   const characters = useJsonFile('character/character_meta.json');
-  const relicTemplateList = useRelicTemplateList();
   const backendClient = useBackendClientStore();
 
   const {
@@ -47,8 +45,6 @@ export default function Home() {
       // refresh relic sets and characters
       relicSets.refetch();
       characters.refetch();
-
-      relicTemplateList.refetch();
 
       // init the used template
       backendClient.api?.get('/rating-template/init');
