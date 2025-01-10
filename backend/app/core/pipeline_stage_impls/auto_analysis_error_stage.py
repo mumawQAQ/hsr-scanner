@@ -9,7 +9,7 @@ from app.core.managers.model_manager import ModelManager
 class AutoAnalysisErrorStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         skip_if_error = context.meta_data.get("analysis_fail_skip", True)
-        context.data = {}
+        context.cleanup()
 
         if skip_if_error:
             keyboard_model = ModelManager().get_model("keyboard")
