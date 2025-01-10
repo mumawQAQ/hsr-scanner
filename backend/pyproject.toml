@@ -27,6 +27,7 @@ peewee = "^3.17.8"
 python-socketio = "^5.12.1"
 transitions = "^0.9.2"
 loguru = "^0.7.3"
+objgraph = "^3.6.2"
 
 
 [build-system]
