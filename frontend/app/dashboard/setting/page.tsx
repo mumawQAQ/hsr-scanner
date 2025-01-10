@@ -81,7 +81,7 @@ export default function Setting() {
     setOnAppDownload(true);
     try {
       // kill the backend
-      await invoke<string>('kill_backend');
+      await invoke<string>('kill_background_process');
       // backup the database
       await invoke<string>('pre_backup');
       await installUpdate();

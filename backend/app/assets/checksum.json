@@ -14,16 +14,20 @@
       "checksum": "50acc553ee20be3774a1cd9bccab5ace959a0f96337d9fb57f5c7f34bb77606d"
     },
     {
+      "file": "configs/state_machine_config.json",
+      "checksum": "df66a11456bcf29d665cf88d2184b4bc9313ef3f5b1b830226825099fc68ef37"
+    },
+    {
+      "file": "configs/model_config.json",
+      "checksum": "0d998757554e2b543d2366e635ee74835193a74a34b9a1029661568224301e1c"
+    },
+    {
+      "file": "configs/stage_config.json",
+      "checksum": "60c3724d0de4515ca732e0239ae04ef796f6b86c62796d98e825772c441b901c"
+    },
+    {
       "file": "yolo_model/best.pt",
       "checksum": "59a3f4a81b212a8cc24d9a02d8706e3fd59f84660c517d9c9683a42f125f8613"
-    },
-    {
-      "file": "img_meta/relic_imgs.txt",
-      "checksum": "ac17a3f15bbcbb6ffd350716bc4ebdbfbac133550f281024c25ebbfe3d9444e7"
-    },
-    {
-      "file": "img_meta/character_imgs.txt",
-      "checksum": "48ed2e466ccafc1272428086bf33e23a571b65c44d70e2f31e05f89d3646f59f"
     },
     {
       "file": "images/relics/29.png",
@@ -428,6 +432,10 @@
     {
       "file": "images/characters/img_28.png",
       "checksum": "91b7941707af96853d59d3cb557885e9378a1e1abeeda3956b5f5a96dd64f37f"
+    },
+    {
+      "file": "images/characters/img_37.png",
+      "checksum": "a04a702d18e598c5d8f15a52971edc52e43a263c5241cc3428d98e5c9c83b42c"
     },
     {
       "file": "character/character_meta.json",
