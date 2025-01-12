@@ -1,6 +1,7 @@
 import re
 from typing import Optional, List, Any, Dict
 
+import cv2
 from loguru import logger
 from numpy import ndarray
 
@@ -18,6 +19,8 @@ OCR_CONFIDENCE_THRESHOLD = 0.7
 def pp_relic_stat_img(img: ndarray, split_ratio: float) -> tuple[ndarray, ndarray]:
     stat_name_area = img[:, : int(img.shape[1] * split_ratio)]
     stat_val_area = img[:, int(img.shape[1] * split_ratio):]
+    stat_val_area = cv2.resize(stat_val_area, None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
+
     return stat_name_area, stat_val_area
 
 
