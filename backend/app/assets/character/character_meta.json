@@ -246,5 +246,25 @@
   "Fugue": {
     "name": "忘归人",
     "icon": "images/characters/img_61.png"
+  },
+  "Trailblazer: Remembrance": {
+    "name": "开拓者•记忆",
+    "icon": "images/characters/img_62.png"
+  },
+  "The Herta": {
+    "name": "大黑塔",
+    "icon": "images/characters/img_63.png"
+  },
+  "Aglaea": {
+    "name": "阿格莱雅",
+    "icon": "images/characters/img_64.png"
+  },
+  "Tribbie": {
+    "name": "缇宝",
+    "icon": "images/characters/img_65.png"
+  },
+  "Mydei": {
+    "name": "万敌",
+    "icon": "images/characters/img_66.png"
   }
 }
