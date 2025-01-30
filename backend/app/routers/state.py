@@ -1,29 +1,19 @@
-import logging
-
 from fastapi import APIRouter
+from loguru import logger
 from pynput.mouse import Controller as MouseController
 
 from app.core.network_models.requests.mouse_position_request import MousePositionRequest
-from app.logging_config import logger
+from app.logging_config import set_log_level
 
 router = APIRouter()
 
 
 @router.patch("/full-log/{state}")
 def change_log_level(state: bool):
-    console_handler = None
-    for handler in logging.getLogger().handlers:
-        if handler.get_name() == 'console':
-            console_handler = handler
-
-    if console_handler is None:
-        logger.error("无法找到控制台日志处理器")
-        return {'status': 'failed'}
-
     if state:
-        console_handler.setLevel(logging.DEBUG)
+        set_log_level("DEBUG")
     else:
-        console_handler.setLevel(logging.ERROR)
+        set_log_level("ERROR")
 
     return {'status': 'success'}
 

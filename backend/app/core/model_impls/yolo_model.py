@@ -1,10 +1,10 @@
-import numpy as np
-import torch
 from typing import Any
+
+import torch
+from loguru import logger
 from ultralytics import YOLO
 
 from app.core.interfaces.model_interface import ModelInterface
-from app.logging_config import logger
 
 
 class YOLOModel(ModelInterface[Any, Any]):
@@ -23,13 +23,11 @@ class YOLOModel(ModelInterface[Any, Any]):
 
     def predict(self, input_data: Any) -> Any:
         """Perform object detection on the input data."""
-        img = input_data['image']
+        img_np = input_data['image']
         window_h = input_data['window']['height']
         window_w = input_data['window']['width']
 
-        img_np = np.array(img)
-
-        detection_result = self.model.predict(source=img, imgsz=640, conf=0.8, save=False, verbose=False)
+        detection_result = self.model.predict(source=img_np, imgsz=640, conf=0.8, save=False, verbose=False)
         boxes = detection_result[0].boxes.xywhn if len(detection_result) > 0 else []
         classes = detection_result[0].boxes.cls if len(detection_result) > 0 else []
 

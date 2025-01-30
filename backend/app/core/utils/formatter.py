@@ -1,12 +1,13 @@
 import json
 from collections import defaultdict
 
+from loguru import logger
+
 from app.constant import RELIC_SETS_FILE, RELIC_STATS_MAPPING
 from app.core.data_models.formatted_rating_rule import FormattedRatingRule
 from app.core.data_models.rating_rule_sub_stats import RatingRuleSubStats
 from app.core.network_models.responses.rating_rule_response import GetRatingRuleResponse
 from app.core.singleton import singleton
-from app.logging_config import logger
 
 
 @singleton

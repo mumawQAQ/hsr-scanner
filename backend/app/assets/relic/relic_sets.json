@@ -402,5 +402,27 @@
       "body": "Scholar's Tweed Jacket",
       "feet": "Scholar's Felt Snowboots"
     }
+  },
+  "Hero of Triumphant Song": {
+    "name": "凯歌祝捷的英豪",
+    "icon": "images/relics/41.png",
+    "isInner": false,
+    "parts": {
+      "head": "Hero's Wreath of Championship",
+      "hand": "Hero's Gilded Bracers",
+      "body": "Hero's Gallant Golden Armor",
+      "feet": "Hero's Firechasing Shinguard"
+    }
+  },
+  "Poet of Mourning Collapse": {
+    "name": "哀歌覆国的诗人",
+    "icon": "images/relics/42.png",
+    "isInner": false,
+    "parts": {
+      "head": "Poet's Dill Wreath",
+      "hand": "Poet's Gilded Bracelet",
+      "body": "Poet's Star-Studded Skirt",
+      "feet": "Poet's Silver-Studded Shoes"
+    }
   }
 }

@@ -12,7 +12,3 @@ class PipelineStageProtocol(Protocol):
     @abstractmethod
     async def process(self, context: PipelineContext) -> StageResult:
         pass
-
-    @abstractmethod
-    def get_stage_name(self) -> str:
-        pass

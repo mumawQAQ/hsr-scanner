@@ -1,18 +1,17 @@
 import re
 from typing import Optional, List, Any, Dict
 
-import numpy as np
+import cv2
+from loguru import logger
 from numpy import ndarray
 
 from app.core.data_models.pipeline_context import PipelineContext
-from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
-from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
+from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.interfaces.model_interface import ModelInterface
 from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.relic_matcher_model import RelicMatcherInput, RelicMatcherInputType
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
-from app.logging_config import logger
 
 OCR_CONFIDENCE_THRESHOLD = 0.7
 
@@ -20,6 +19,8 @@ OCR_CONFIDENCE_THRESHOLD = 0.7
 def pp_relic_stat_img(img: ndarray, split_ratio: float) -> tuple[ndarray, ndarray]:
     stat_name_area = img[:, : int(img.shape[1] * split_ratio)]
     stat_val_area = img[:, int(img.shape[1] * split_ratio):]
+    stat_val_area = cv2.resize(stat_val_area, None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
+
     return stat_name_area, stat_val_area
 
 
@@ -61,7 +62,7 @@ def format_relic_main_stat(
 
     if not relic_main_stat_name_ocr_result or not relic_main_stat_val_ocr_result:
         logger.error(
-            f"No relic main stat name ocr result: {relic_main_stat_name_ocr_result}, relic main stat val ocr result: {relic_main_stat_val_ocr_result}"
+            f"No relic main stat name ocr result or relic main stat val ocr result: {relic_main_stat_name_ocr_result} ----> {relic_main_stat_val_ocr_result}"
         )
         return None
 
@@ -156,8 +157,6 @@ def format_relic_sub_stat(
 
 
 class OCRStage(BasePipelineStage):
-    def get_stage_name(self) -> str:
-        return GameRecognitionStage.OCR.value
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
@@ -166,41 +165,90 @@ class OCRStage(BasePipelineStage):
             relic_matcher_model = ModelManager().get_model("relic_matcher")
 
             if not ocr_model:
-                raise ValueError("OCR model not found.")
-            if not relic_matcher_model:
-                raise ValueError("Relic matcher model not found.")
+                error_msg = "OCR model not found. This error should not happen. please contact the developer."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    data=None,
+                    error=error_msg
+                )
 
-            relic_title_image = None
-            relic_main_stat_image = None
-            relic_sub_stat_image = None
+            if not relic_matcher_model:
+                error_msg = "Relic matcher model not found. This error should not happen. please contact the developer."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    data=None,
+                    error=error_msg
+                )
 
             if auto_detect_relic_box_position:
-                detection_data = context.data.get(GameRecognitionStage.DETECTION.value)
+                detection_data = context.data.get("detection_stage")
                 if not detection_data:
-                    raise ValueError("Decision data not found.")
+                    error_msg = "detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        error=error_msg,
+                        data=None
+                    )
 
                 if "relic-title" in detection_data:
                     relic_title_image = detection_data["relic-title"]["image"]
+                else:
+                    error_msg = "relic title detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        error=error_msg,
+                        data=None
+                    )
 
                 if "relic-main-stat" in detection_data:
                     relic_main_stat_image = detection_data["relic-main-stat"]["image"]
+                else:
+                    error_msg = "relic main stat detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        error=error_msg,
+                        data=None
+                    )
 
                 if "relic-sub-stat" in detection_data:
                     relic_sub_stat_image = detection_data["relic-sub-stat"]["image"]
+                else:
+                    error_msg = "relic sub stat detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        error=error_msg,
+                        data=None
+                    )
             else:
-                screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
+                screenshot = context.data.get("screenshot_stage")
                 relic_title_box = context.meta_data.get('relic_title_box', None)
                 relic_main_stat_box = context.meta_data.get('relic_main_stat_box', None)
                 relic_sub_stat_box = context.meta_data.get('relic_sub_stat_box', None)
 
                 if not screenshot:
-                    raise ValueError("Screenshot data not found.")
+                    error_msg = "Screenshot data not found. This error should not happen. please contact the developer."
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        data=None,
+                        error=error_msg
+                    )
 
                 if not relic_title_box or not relic_main_stat_box or not relic_sub_stat_box:
-                    raise ValueError("Relic box data not found.")
-
-                img = screenshot['image']
-                img_np = np.array(img)
+                    error_msg = "Relic box data not found. if you disable the auto detect relic box position, you need to manually set the relic box position."
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        data=None,
+                        error=error_msg
+                    )
+                img_np = screenshot['image']
 
                 relic_title_box_x1 = relic_title_box['x']
                 relic_title_box_y1 = relic_title_box['y']
@@ -262,29 +310,23 @@ class OCRStage(BasePipelineStage):
                 metadata=StageResultMetaData(send_to_frontend=True)
             )
         except Exception as e:
-            logger.error(f"Error in {self.get_stage_name()}: {e}")
+            logger.exception(f"Error in relic ocr stage")
             return StageResult(success=False, data=None, error=str(e))
 
-    def __handle_relic_title_ocr(self, ocr_model: ModelInterface, img: Optional[ndarray]) -> Optional[str]:
-        if img is None:
-            raise ValueError("relic title image data not found.")
+    def __handle_relic_title_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[str]:
         result = ocr_model.predict(img)
         return format_relic_title(result)
 
-    def __handle_relic_main_stat_ocr(self, ocr_model: ModelInterface, img: Optional[ndarray]) -> Optional[
+    def __handle_relic_main_stat_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[
         Dict[str, str]]:
-        if img is None:
-            raise ValueError("relic main stat image data not found.")
         # TODO: make the split ratio read from config file, this should not be hardcoded
         stat_name_area, stat_val_area = pp_relic_stat_img(img, 0.7)
         name_result = ocr_model.predict(stat_name_area)
         val_result = ocr_model.predict(stat_val_area)
         return format_relic_main_stat(name_result, val_result)
 
-    def __handle_relic_sub_stat_ocr(self, ocr_model: ModelInterface, img: Optional[ndarray]) -> Optional[
+    def __handle_relic_sub_stat_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[
         Dict[str, str]]:
-        if img is None:
-            raise ValueError("relic sub stat image data not found.")
         # TODO: make the split ratio read from config file, this should not be hardcoded
         stat_name_area, stat_val_area = pp_relic_stat_img(img, 0.7)
         name_result = ocr_model.predict(stat_name_area)

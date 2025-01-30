@@ -1,24 +1,22 @@
+import asyncio
+
 import pyautogui as pg
+from loguru import logger
 
 from app.core.data_models.pipeline_context import PipelineContext
-from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
-from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
+from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
-from app.logging_config import logging
 
 
 class RelicDiscardStage(BasePipelineStage):
-    def get_stage_name(self) -> str:
-        return GameRecognitionStage.RELIC_DISCARD.value
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            screenshot = context.data.get(GameRecognitionStage.SCREENSHOT.value)
-            detection = context.data.get(GameRecognitionStage.DETECTION.value)
-            relic_analysis = context.data.get(GameRecognitionStage.RELIC_ANALYSIS.value)
+            screenshot = context.data.get("screenshot_stage")
+            detection = context.data.get("detection_stage")
+            relic_analysis = context.data.get("relic_analysis_stage")
             relic_discard_score = context.meta_data.get("relic_discard_score", 40) / 100
-            skip_if_error = context.meta_data.get("analysis_fail_skip", True)
             auto_detect_discard_icon = context.meta_data.get("auto_detect_discard_icon", True)
             discard_icon_x = context.meta_data.get("discard_icon_x", 0)
             discard_icon_y = context.meta_data.get("discard_icon_y", 0)
@@ -27,15 +25,31 @@ class RelicDiscardStage(BasePipelineStage):
             keyboard_model = ModelManager().get_model("keyboard")
 
             if not keyboard_model:
-                raise ValueError("Keyboard model not found.")
+                error_msg = "Keyboard model not found. This error should not happen. please contact the developer."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    data=None,
+                    error=error_msg
+                )
 
             if not screenshot:
-                raise ValueError("Screenshot data not found.")
+                error_msg = "Screenshot data not found. Make sure the game is running and the language is set to English."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    data=None,
+                    error=error_msg
+                )
 
             if relic_analysis is None:
-                if skip_if_error:
-                    keyboard_model.predict("d")
-                raise ValueError("Relic analysis data not found.")
+                error_msg = "Relic analysis data not found."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    data=None,
+                    error=error_msg
+                )
 
             # use the user set mouse position if available
             if not auto_detect_discard_icon:
@@ -43,14 +57,18 @@ class RelicDiscardStage(BasePipelineStage):
                 icon_center_y = discard_icon_y
             else:
                 if detection is None or 'discard-icon' not in detection:
-                    if skip_if_error:
-                        keyboard_model.predict("d")
-                    raise ValueError("Detection discard icon data not found.")
+                    error_msg = "Discard icon data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        data=None,
+                        error=error_msg
+                    )
 
                 icon_center_x = detection['discard-icon']['box']['x_center']
                 icon_center_y = detection['discard-icon']['box']['y_center']
 
-            logging.error(f"Discard icon center: ({icon_center_x}, {icon_center_y})")
+            logger.info(f"Discard icon center: ({icon_center_x}, {icon_center_y})")
 
             if len(relic_analysis) == 0 or relic_analysis[0].score < relic_discard_score:
                 window_left = screenshot['window']['left']
@@ -59,12 +77,15 @@ class RelicDiscardStage(BasePipelineStage):
                 icon_x = window_left + icon_center_x
                 icon_y = window_top + icon_center_y
 
-                logging.info(f"Discard icon screen position: ({icon_x}, {icon_y})")
+                logger.info(f"Discard icon screen position: ({icon_x}, {icon_y})")
 
                 # click on the icon
                 pg.click(icon_x, icon_y)
                 # reset mouse position
                 pg.moveTo(1, 1)
+
+                # wait for 0.5 seconds, if this is too fast the next relic may not be processed
+                await asyncio.sleep(0.5)
 
             keyboard_model.predict("d")
 
@@ -73,4 +94,5 @@ class RelicDiscardStage(BasePipelineStage):
                 data=None,
             )
         except Exception as e:
+            logger.exception(f"Error in relic discard stage")
             return StageResult(success=False, data=None, error=str(e))

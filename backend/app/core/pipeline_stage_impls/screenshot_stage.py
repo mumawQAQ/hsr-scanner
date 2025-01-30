@@ -1,28 +1,30 @@
 from typing import Optional, Dict, Any
 
+import cv2
+import numpy as np
 import pygetwindow as gw
-from PIL import Image
+from loguru import logger
 from mss import mss
 
 from app.constant import GAME_TITLES
 from app.core.data_models.pipeline_context import PipelineContext
-from app.core.data_models.stage_enums import GameRecognitionStage
 from app.core.data_models.stage_result import StageResult
-from app.core.interfaces.base.base_pipeline_stage import BasePipelineStage
+from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 
 
 class ScreenshotStage(BasePipelineStage):
-    def get_stage_name(self) -> str:
-        return GameRecognitionStage.SCREENSHOT.value
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             # Find game window
             window_info = self.__find_game_window__()
             if not window_info:
-                raise ValueError(
-                    f"Game window not found. Searched titles: {GAME_TITLES}. "
-                    f"Make sure the game is running and the language is set to English."
+                error_msg = f"Game window not found. Searched titles: {GAME_TITLES}. Make sure the game is running and the language is set to English."
+                logger.error(error_msg)
+                return StageResult(
+                    success=False,
+                    error=error_msg,
+                    data=None
                 )
 
             screenshot_data = self.__capture_screenshot__(window_info)
@@ -33,6 +35,7 @@ class ScreenshotStage(BasePipelineStage):
             )
 
         except Exception as e:
+            logger.exception(f"Error in screenshot stage")
             return StageResult(
                 success=False,
                 error=f"Unexpected error during screenshot capture: {str(e)}",
@@ -76,13 +79,15 @@ class ScreenshotStage(BasePipelineStage):
             "height": height
         }
 
+        # TODO: this can be optimized to not create new mss each time
         with mss() as sct:
             sct_img = sct.grab(monitor)
+            img_np = np.array(sct_img)
 
-            # Convert mss output to PIL Image (RGB)
-            img_rgb = Image.frombytes("RGB", sct_img.size, sct_img.rgb)
+            # # Convert from BGRA to RGB
+            img_np = cv2.cvtColor(img_np, cv2.COLOR_BGRA2BGR)
 
             return {
-                'image': img_rgb,  # PIL Image in RGB
+                'image': img_np,
                 'window': window_rect
             }

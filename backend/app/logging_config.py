@@ -1,58 +1,16 @@
-import logging
+import sys
+
+from loguru import logger
 
 
-class CustomFormatter(logging.Formatter):
-    grey = "\x1b[38;21m"
-    green = "\x1b[32;21m"
-    yellow = "\x1b[33;21m"
-    red = "\x1b[31;21m"
-    bold_red = "\x1b[31;1m"
-    reset = "\x1b[0m"
-    base_format = "%(asctime)s [%(levelname)s] %(name)s (%(filename)s:%(lineno)d): %(message)s"
-
-    LEVEL_COLORS = {
-        logging.DEBUG: grey,
-        logging.INFO: green,
-        logging.WARNING: yellow,
-        logging.ERROR: red,
-        logging.CRITICAL: bold_red
-    }
-
-    def format(self, record):
-        # Apply color only to the levelname part
-        log_fmt = self.base_format.replace("[%(levelname)s]",
-                                           self.LEVEL_COLORS[record.levelno] + "[%(levelname)s]" + self.reset)
-        formatter = logging.Formatter(log_fmt)
-        return formatter.format(record)
-
-
-# Define the logging configuration
-logging_config = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'detailed': {
-            '()': CustomFormatter
-        },
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s (%(filename)s:%(lineno)d): %(message)s'
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'level': 'ERROR',
-            'formatter': 'detailed',
-            'stream': 'ext://sys.stdout',
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-    }
-}
-
-logger = logging.getLogger(__name__)
+def set_log_level(log_level):
+    logger.configure(
+        handlers=[
+            {
+                "sink": sys.stdout,
+                "level": log_level,
+                "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level:<8}</level> | <cyan>{name}:{function}:{line}</cyan> - <level>{message}</level>",
+                "colorize": True,
+            }
+        ]
+    )

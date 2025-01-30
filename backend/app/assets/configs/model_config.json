@@ -1,0 +1,50 @@
+{
+  "models": [
+    {
+      "name": "keyboard",
+      "class": "app.core.model_impls.keyboard_model.KeyboardModel"
+    },
+    {
+      "name": "ocr",
+      "class": "app.core.model_impls.ocr_model.OCRModel"
+    },
+    {
+      "name": "relic_matcher",
+      "class": "app.core.model_impls.relic_matcher_model.RelicMatcherModel",
+      "params": {
+        "relic_sets_path": {
+          "value": "assets/relic/relic_sets.json",
+          "type": "path"
+        },
+        "relic_main_stats_path": {
+          "value": "assets/relic/relic_main_stats.json",
+          "type": "path"
+        },
+        "relic_sub_stats_path": {
+          "value": "assets/relic/relic_sub_stats.json",
+          "type": "path"
+        }
+      }
+    },
+    {
+      "name": "relic_rating",
+      "class": "app.core.model_impls.relic_rating_model.RelicRatingModel",
+      "params": {
+        "global_state_manager": {
+          "value": "app.core.managers.global_state_manager.GlobalStateManager",
+          "type": "class"
+        }
+      }
+    },
+    {
+      "name": "yolo",
+      "class": "app.core.model_impls.yolo_model.YOLOModel",
+      "params": {
+        "model_path": {
+          "value": "assets/yolo_model/best.pt",
+          "type": "path"
+        }
+      }
+    }
+  ]
+}

@@ -1,5 +1,34 @@
 import os
 
+# this file should only put in the root path, it contains paths used in other files
+
+ROOT_PATH = os.path.dirname(__file__)
+ASSETS_FOLDER = os.path.join(ROOT_PATH, 'assets')
+CONFIG_FOLDER = os.path.join(ASSETS_FOLDER, 'configs')
+MODEL_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'model_config.json')
+STAGE_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'stage_config.json')
+STATE_MACHINE_CONFIG_PATH = os.path.join(CONFIG_FOLDER, 'state_machine_config.json')
+
+CHARACTERS_FILE = os.path.join(ASSETS_FOLDER, 'character', 'character_meta.json')
+
+YOLO_MODEL_PATH = os.path.join(ASSETS_FOLDER, 'yolo_model', 'best.pt')
+
+RELIC_DATA_FOLDER = os.path.join(ASSETS_FOLDER, 'relic')
+RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
+RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
+RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
+
+PADDLE_FOLDER = os.path.join(ASSETS_FOLDER, 'paddle')
+PADDLE_CLS_FOLDER = os.path.join(PADDLE_FOLDER, 'cls')
+PADDLE_DET_FOLDER = os.path.join(PADDLE_FOLDER, 'det')
+PADDLE_REC_FOLDER = os.path.join(PADDLE_FOLDER, 'rec')
+
+DATABASE_FILEPATH = os.path.join(
+    ASSETS_FOLDER,
+    'database',
+    'scanner.db'
+).replace(os.sep, '/')
+
 GAME_TITLES = ['Honkai: Star Rail']
 
 RELIC_DISCARD_SCORE = 'relic_discard_score'
@@ -14,30 +43,6 @@ RELIC_BOX_TYPES = ["relic_main_stat", "relic_sub_stat", "relic_title"]
 
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']
-
-DATABASE_FILEPATH = os.path.join(
-    os.path.dirname(__file__),
-    'assets',
-    'database',
-    'scanner.db'
-).replace(os.sep, '/')
-
-CHARACTERS_FILE = os.path.join(os.path.dirname(__file__), 'assets', 'character', 'character_meta.json')
-
-TASK_CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.json')
-TASK_SCHEMA_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'configs', 'task_config.schema.json')
-
-YOLO_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'yolo_model', 'best.pt')
-
-RELIC_DATA_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'relic')
-RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
-RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')
-RELIC_SUB_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sub_stats.json')
-
-PADDLE_FOLDER = os.path.join(os.path.dirname(__file__), 'assets', 'paddle')
-PADDLE_CLS_FOLDER = os.path.join(PADDLE_FOLDER, 'cls')
-PADDLE_DET_FOLDER = os.path.join(PADDLE_FOLDER, 'det')
-PADDLE_REC_FOLDER = os.path.join(PADDLE_FOLDER, 'rec')
 
 RELIC_STATS_MAPPING = {
     "DEF": "防御",
