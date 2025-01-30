@@ -7,12 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-backend/app/assets/database/*
 node_modules
 dist
 dist-ssr
-dist-electron
-release
 *.local
 
 # Editor directories and files
@@ -25,4 +22,3 @@ release
 *.njsproj
 *.sln
 *.sw?
-/backend/.venv/
