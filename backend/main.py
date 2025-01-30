@@ -41,7 +41,7 @@ async def disconnect(sid):
     print(f"Client disconnected: {sid}")
     runner = current_runners.get(sid)
     if runner:
-        await runner.stop_pipeline()
+        await runner.handle_stop_pipeline()
         del current_runners[sid]
 
 
