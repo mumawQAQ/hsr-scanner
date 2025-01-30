@@ -7,7 +7,7 @@ REM This script restores backed-up files after the update.
 REM Define variables
 SET "SCRIPT_DIR=%~dp0"
 SET "APP_DIR=%SCRIPT_DIR%..\"
-SET "BACKUP_DIR=%SCRIPT_DIR%\..\..\..\update_backup"
+SET "BACKUP_DIR=%SCRIPT_DIR%\..\..\update_backup"
 
 REM Normalize paths
 SET "APP_DIR=!APP_DIR:\=\\!"
