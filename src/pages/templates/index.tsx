@@ -107,21 +107,18 @@ const Templates = () => {
                         </Masonry>
                     </ResponsiveMasonry>
 
-                    <div className="fixed bottom-[4.5rem] right-4 z-40">
+                    <div className="fixed bottom-[1rem] right-4 z-40 flex gap-2 flex-col">
                         <Button onClick={handleExportTemplate}>
                             <FileUp />
                             导出
                         </Button>
-                    </div>
-
-                    {!viewTemplateInUse && (
-                        <div className="fixed bottom-[1rem] right-4 z-40">
+                        {!viewTemplateInUse && (
                             <Button onClick={createNewRelicRule}>
                                 <Plus />
                                 创建规则
                             </Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div className="flex flex-wrap gap-4 mt-2 mx-2">
