@@ -34,6 +34,7 @@ class PipelineStateMachine:
             states=pipeline_config["states"],
             transitions=pipeline_config["transitions"],
             initial=pipeline_config["initial"],
+            queued=True,
             auto_transitions=False,  # Disable auto transitions to prevent unexpected behavior
             ignore_invalid_triggers=True  # Ignore invalid triggers for safety
         )
