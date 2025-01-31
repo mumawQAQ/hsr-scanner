@@ -33,10 +33,13 @@
 
 ## 开发方式
 
-1. 确保你有node环境以及tauri环境，目前使用的node版本为v20.17.0,
-   tauri的配置方式参考(https://tauri.app/v1/guides/getting-started/prerequisites)
-2. 进入frontend文件夹，运行npm install
-3. 在frontend文件夹中，运行npm run tauri dev
+1. 确保你有node和pnpm环境以及tauri环境
+   tauri的配置方式参考(https://v2.tauri.app/start/)
+2. 运行下面的代码
+```
+pnpm install
+npm run tauri dev
+```
 
 ### 开发常见问题
 
@@ -45,21 +48,17 @@
 ## 本项目使用到的技术
 
 1. tauri用于桌面端的开发以及打包(https://tauri.app/)
-2. nextjs用于界面的渲染以及展示(https://nextjs.org/)
-3. fastapi用于后端数据与前端数据的交互(https://fastapi.tiangolo.com/)
-4. yolov8用于主属性，副属性，遗器标题的位置捕捉，以适配不同的屏幕分辨率(https://github.com/ultralytics/ultralytics)
-5. pytesseract和rapidfuzz用于ocr以及对识别错误的文本进行fuzz修正
-6. sqlite用于遗器模板的持久化储存
+2. fastapi用于后端数据与前端数据的交互(https://fastapi.tiangolo.com/)
+3. yolov8用于主属性，副属性，遗器标题的位置捕捉，以适配不同的屏幕分辨率(https://github.com/ultralytics/ultralytics)
+4. paddelocr和rapidfuzz用于ocr以及对识别错误的文本进行fuzz修正
+5. sqlite用于遗器模板的持久化储存
 
 ## 强化概率统计过程
 
 详细的强化概率统计过程文档请参见 [Statistics.md](Statistics.md)。
 
-## 适配度计算逻辑
 
-![ab3d1d99-9eea-4b9f-a4ec-3fc10b0b3997](https://github.com/user-attachments/assets/6438cec1-989d-4a99-802e-feed8a64398e)
-
-## 潜力值计算逻辑
+## 潜力值/适配度计算逻辑
 
 ![f661dfb1-3944-4038-8610-c081021724bc](https://github.com/user-attachments/assets/0f46e4cd-517a-499e-a273-553f2acf872a)
 
