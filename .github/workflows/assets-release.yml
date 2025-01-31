@@ -1,0 +1,38 @@
+name: 'release assets'
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Game resource version'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup ENV
+        run: |
+          echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+
+      - name: SSH to Server and Latest Repo
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/ubuntu/
+            ./generate_static_file_info.sh --version ${{ env.VERSION }}
+            
