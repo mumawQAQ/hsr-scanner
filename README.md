@@ -63,3 +63,8 @@
 
 ![f661dfb1-3944-4038-8610-c081021724bc](https://github.com/user-attachments/assets/0f46e4cd-517a-499e-a273-553f2acf872a)
 
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=mumawQAQ/hsr-scanner&type=Date)](https://star-history.com/#mumawQAQ/hsr-scanner&Date)
+
