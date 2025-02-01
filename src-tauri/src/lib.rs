@@ -442,7 +442,7 @@ pub fn run() {
                 let monitor_size = monitor.size();
                 let window_size = logs.outer_size().unwrap();
 
-                let pos = PhysicalPosition::new(0, monitor_size.height as i32 - window_size.height as i32);
+                let pos = PhysicalPosition::new(5, monitor_size.height as i32 - window_size.height as i32);
                 logs.set_position(pos).unwrap();
             }
 
