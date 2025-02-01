@@ -1,29 +1,29 @@
 {
-  "version": "2.7",
+  "version": "3.0",
   "files": [
     {
       "file": "relic/relic_main_stats.json",
-      "checksum": "040aa83e520b5ef343a6f53bdb31a5826c8379c08de872cf0bd4412bccbe7280"
+      "checksum": "c6dcfdc233db680388f68696c15402d70a5a2946525c4e68f6e3d9587864a55c"
     },
     {
       "file": "relic/relic_sub_stats.json",
-      "checksum": "56963b6b0c3e9173cb6d4ddf3e8723f2a6af27154b45aa7e102bde51126ba859"
+      "checksum": "c47c3464ff2d9a214ef963931565ef70d9675521a9449cb1a6f8e19c76d536f5"
     },
     {
       "file": "relic/relic_sets.json",
-      "checksum": "50acc553ee20be3774a1cd9bccab5ace959a0f96337d9fb57f5c7f34bb77606d"
+      "checksum": "78a69e841def36a13a0c87917f78c6b5940bec7f3d44584b2f17d0eb722fa9b2"
     },
     {
       "file": "configs/state_machine_config.json",
-      "checksum": "df66a11456bcf29d665cf88d2184b4bc9313ef3f5b1b830226825099fc68ef37"
+      "checksum": "b880d4189f1de7150b8361a6d04cebaf073dca1d43b718448a699a5bd61eb7f7"
     },
     {
       "file": "configs/model_config.json",
-      "checksum": "0d998757554e2b543d2366e635ee74835193a74a34b9a1029661568224301e1c"
+      "checksum": "b5a7d42d7ba4597c41cbe23fb584d6fdd5d160c418669dc479eb797d414b89c3"
     },
     {
       "file": "configs/stage_config.json",
-      "checksum": "60c3724d0de4515ca732e0239ae04ef796f6b86c62796d98e825772c441b901c"
+      "checksum": "4fdf25a076f8445eb8d9eee6c86a50176e3a6546dbaf0d68a27bd65164f9a924"
     },
     {
       "file": "yolo_model/best.pt",
@@ -66,6 +66,10 @@
       "checksum": "1561b468971b33ed5926ac9b35117a41d6521648ed3da8eb2c2857e17053a889"
     },
     {
+      "file": "images/relics/42.png",
+      "checksum": "30a9afece123c0ad8f002745d3f6d75e65a0ec9d9b5c187f5effc343e55a4d50"
+    },
+    {
       "file": "images/relics/27.png",
       "checksum": "d632fbf7cce04ac5fdda0aa6b5ac891d23b25a2bcd36e5bd5cde7f01c79c9353"
     },
@@ -88,6 +92,10 @@
     {
       "file": "images/relics/9.png",
       "checksum": "f6739e94b4fb01044d7079e870cfc42ca23650b817fb327c6b51443b29d9736b"
+    },
+    {
+      "file": "images/relics/41.png",
+      "checksum": "40a54fa0a1d4ebde6867ecd171d01b5667f62698f05bacb77879bee635e10cbb"
     },
     {
       "file": "images/relics/16.png",
@@ -214,6 +222,10 @@
       "checksum": "1ffaf1eaeaf3984e9ccee1ab747d0e4e4bb3ee7013b4dd751bcac0b561d0ce5e"
     },
     {
+      "file": "images/characters/img_62.png",
+      "checksum": "684fcc1e1ce695d00fe0b837694eaf301b8d662c5420e014188a3c614e9bb45b"
+    },
+    {
       "file": "images/characters/img_11.png",
       "checksum": "13cd48f1fe7a6c64a9c3028148a8bae5bdcb5b1473fb601d3efdb9aeb044ef25"
     },
@@ -250,12 +262,20 @@
       "checksum": "b7a46eeb24d9af145e72ebe0dcf24e973195ac68e3eb4e33ead00dbc0369fcb6"
     },
     {
+      "file": "images/characters/img_64.png",
+      "checksum": "a87f4635f84308b00b8363c8d0ff0c0bf55be43d6236f328011f57c384fbbb70"
+    },
+    {
       "file": "images/characters/img_41.png",
       "checksum": "bf1162d84cb57e2fe9aa7b5b1bd29416c209d9465e0e8be1175e7fc658455f91"
     },
     {
       "file": "images/characters/img_14.png",
       "checksum": "65fb658ff84a7f58dae062da821373c547a761aee4096f81ace5c9c8834190cd"
+    },
+    {
+      "file": "images/characters/img_66.png",
+      "checksum": "3e1d83b3ec28d23e8801f912acfa4ecbab2f948e320b1f2603345f7a600d99b4"
     },
     {
       "file": "images/characters/img_44.png",
@@ -358,6 +378,10 @@
       "checksum": "403414744203f9eba443e8cc3c5ab2d3559f7131281817e5c325e6ee881b9d4d"
     },
     {
+      "file": "images/characters/img_65.png",
+      "checksum": "c157dfd9c8c1addddfde1863347745b43aed7cbf4621494f5332f7cd9b8163c8"
+    },
+    {
       "file": "images/characters/img_48.png",
       "checksum": "a84d886ad8e6bf48f4669fa533efa1be59835649d35c442bf94d53cdf6ec7b52"
     },
@@ -414,6 +438,10 @@
       "checksum": "7a39478ea3afe77aeeb98b9f583bd0bc1d52dd8a62c718da612df5819ed89cc9"
     },
     {
+      "file": "images/characters/img_63.png",
+      "checksum": "08c94d3d51fc9e17946dc97ca0d988c0a0f55a57b65e4eb1daf6d8157b73cb36"
+    },
+    {
       "file": "images/characters/img_20.png",
       "checksum": "10af3e7697a20b6c156aec557d086664a28cd7ce28d5910aebc3f93c32ff6346"
     },
@@ -439,7 +467,7 @@
     },
     {
       "file": "character/character_meta.json",
-      "checksum": "050ed6fe4b57603fd0bbb736e701ade5333bee39a9acbfdf233abd273eb58674"
+      "checksum": "b3b54b11ae2b4fdd67f2250107660a28f4e775676d87fab8a42789a8216a6de3"
     }
   ]
 }
