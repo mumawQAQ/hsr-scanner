@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button.tsx'
 import SwitchWithLabel from '@/components/switch-with-label.tsx'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { PipelineType, useBackend } from '@/hooks/use-backend.ts'
 import { io, Socket } from 'socket.io-client'
 import useRelic from '@/hooks/use-relic.ts'
@@ -21,9 +21,6 @@ import { useJsonFile } from '@/apis/files'
 import axios from 'axios'
 import { getBackendUrl } from '@/lib/utils.ts'
 import { useRelicTemplateList } from '@/apis/relic-template'
-import { listen } from '@tauri-apps/api/event'
-import { LogViewer } from '@patternfly/react-log-viewer'
-import { useUpdateFullLogState } from '@/apis/state'
 import { invoke } from '@tauri-apps/api/core'
 import { useCheckAssetUpdate } from '@/hooks/use-check-asset-update.ts'
 import { useCheckAppUpdate } from '@/hooks/use-check-app-update.ts'
@@ -54,12 +51,8 @@ const SCORE_CONFIG = {
 
 const Home = () => {
     const [socketIoClient, setSocketIoClient] = useState<Socket | null>(null)
-    const [logQueue, setLogQueue] = useState<string[]>([])
-    const [logPaused, setLogPaused] = useState(false)
-    const [fullLogState, setFullLogState] = useState(false)
     const [windowOnTop, setWindowOnTop] = useState(false)
     const [minimized, setMinimized] = useState(false)
-    const logViewerRef = useRef()
 
     const backendStore = useBackend()
     const relicStore = useRelic()
@@ -75,7 +68,6 @@ const Home = () => {
     const relicTitleBoxPosition = useRelicBoxPosition('relic_title')
     const relicMainStatBoxPosition = useRelicBoxPosition('relic_main_stat')
     const relicSubStatBoxPosition = useRelicBoxPosition('relic_sub_stat')
-    const updateFullLogState = useUpdateFullLogState()
 
     useCheckAssetUpdate()
     useCheckAppUpdate()
@@ -125,45 +117,6 @@ const Home = () => {
 
         setSocketIoClient(socketClient)
     }, [backendStore.backendPort])
-
-    useEffect(() => {
-        // Start the backend and set up listeners
-        const listenLogs = async () => {
-            const logUnlistener = await listen<string>('backend-log', (event) => {
-                setLogQueue((prev) => {
-                    if (prev.length >= 5000) {
-                        return [...prev.slice(1), event.payload]
-                    }
-                    return [...prev, event.payload]
-                })
-            })
-
-            // Return cleanup function to remove event listeners
-            return () => {
-                logUnlistener()
-            }
-        }
-
-        let cleanupFunc = () => {}
-        listenLogs().then((cleanup) => {
-            if (cleanup) cleanupFunc = cleanup
-        })
-
-        // Cleanup listeners when component unmounts
-        return () => {
-            cleanupFunc()
-        }
-    }, [])
-
-    useEffect(() => {
-        if (logPaused) {
-            if (logViewerRef.current) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                logViewerRef.current.scrollToBottom()
-            }
-        }
-    }, [logQueue, logPaused])
 
     const ScoreChip = React.memo(({ score, type }: { score: number; type: 'potential' | 'actual' }) => {
         const scorePercentage = score * 100
@@ -284,14 +237,6 @@ const Home = () => {
         modelStore.onOpen('select-template')
     }
 
-    const handleLogChange = (checked: boolean) => {
-        updateFullLogState.mutate(checked, {
-            onSuccess: () => {
-                setFullLogState(checked)
-            },
-        })
-    }
-
     const handleWindowOnTopChange = async (checked: boolean) => {
         await invoke('set_window_on_top', { onTop: checked })
         setWindowOnTop(checked)
@@ -356,18 +301,6 @@ const Home = () => {
                     />
                     {!minimized && (
                         <>
-                            <SwitchWithLabel
-                                id="all"
-                                text="全部日志"
-                                checked={fullLogState}
-                                onCheckedChange={handleLogChange}
-                            />
-                            <SwitchWithLabel
-                                id="follow"
-                                text="跟随底部"
-                                checked={logPaused}
-                                onCheckedChange={setLogPaused}
-                            />
                             <Button onClick={handleSelectTemplate}>选择模板</Button>
                         </>
                     )}
@@ -427,18 +360,6 @@ const Home = () => {
                     </div>
                 )}
             </div>
-            {!minimized && (
-                <div className="flex justify-center">
-                    <LogViewer
-                        height={150}
-                        width={400}
-                        isTextWrapped={true}
-                        data={logQueue}
-                        hasLineNumbers={false}
-                        ref={logViewerRef}
-                    />
-                </div>
-            )}
         </div>
     )
 }

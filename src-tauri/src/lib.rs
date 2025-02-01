@@ -1,8 +1,9 @@
 use std::os::windows::process::CommandExt;
 use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
 use tauri::path::BaseDirectory;
-use tauri::{AppHandle, Emitter, Manager, WindowEvent};
+use tauri::{AppHandle, Emitter, Manager, PhysicalPosition, WindowEvent};
 
 static BACKEND_PROCESS_HANDLE: Mutex<Option<Child>> = Mutex::new(None);
 static REQUIREMENTS_INSTALLED: Mutex<bool> = Mutex::new(false);
@@ -433,11 +434,38 @@ pub fn run() {
         .setup(|app| {
             #[cfg(desktop)]
             let _ = app.handle().plugin(tauri_plugin_updater::Builder::new().build());
-            let window = app.get_window("main").unwrap();
-            window.on_window_event(|event| match event {
+            let allow_logs_close = Arc::new(AtomicBool::new(false));
+            let main = app.get_window("main").unwrap();
+            let logs = app.get_window("logs").unwrap();
+
+            logs.set_ignore_cursor_events(true).unwrap();
+            
+            if let Some(monitor) = logs.current_monitor().unwrap(){
+                let monitor_size = monitor.size();
+                let window_size = logs.outer_size().unwrap();
+
+                let pos = PhysicalPosition::new(0, monitor_size.height as i32 - window_size.height as i32);
+                logs.set_position(pos).unwrap();
+            }
+
+            let allow_logs_close_for_logs = allow_logs_close.clone();
+            logs.on_window_event(move |event| match event {
+                WindowEvent::CloseRequested { api, .. } => {
+                    if !allow_logs_close_for_logs.load(Ordering::Relaxed) {
+                        api.prevent_close();
+                    }
+                }
+                _ => {}
+            });
+
+            let allow_logs_close_for_main = allow_logs_close.clone();
+            let logs_for_main = logs.clone();
+            main.on_window_event(move |event| match event {
                 WindowEvent::CloseRequested { .. } => {
                     println!("Application is closing...");
                     kill_background_process().expect("Failed to kill the backend process");
+                    allow_logs_close_for_main.store(true, Ordering::Relaxed);
+                    logs_for_main.close().unwrap();
                 }
                 _ => {}
             });

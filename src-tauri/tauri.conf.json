@@ -12,9 +12,26 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "hsr-scanner",
+        "url": "index.html",
         "width": 800,
         "height": 600
+      },
+      {
+        "label": "logs",
+        "title": "logs",
+        "url": "logs.html",
+        "width": 650,
+        "height": 250,
+        "transparent": true,
+        "decorations": false,
+        "resizable": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "x": 0,
+        "y": 0
       }
     ],
     "security": {
