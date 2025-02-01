@@ -1,6 +1,6 @@
 import { useJsonFile } from '@/apis/files'
 import { useDeleteRelicRule, useRelicRule, useUpdateRelicRule } from '@/apis/relic-template'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card.tsx'
 import CharacterSelection from '@/components/templates/character-selection.tsx'
 import RelicSetSelection from '@/components/templates/relic-set-selection.tsx'
@@ -18,7 +18,7 @@ type RelicRuleCardProps = {
     isInUse: boolean
 }
 
-export default function RelicRuleCard({ ruleId, templateId, isInUse }: RelicRuleCardProps) {
+function RelicRuleCard({ ruleId, templateId, isInUse }: RelicRuleCardProps) {
     const relicRule = useRelicRule(ruleId)
     const updateRelicRule = useUpdateRelicRule()
     const relicSets = useJsonFile('relic/relic_sets.json')
@@ -26,31 +26,6 @@ export default function RelicRuleCard({ ruleId, templateId, isInUse }: RelicRule
     const [showOuter, setShowOuter] = useState(false)
     const [showInner, setShowInner] = useState(false)
     const [hiddenDetails, setHiddenDetails] = useState(true)
-
-    useEffect(() => {
-        if (relicRule.data) {
-            handleShowInner(relicRule.data.set_names)
-            handleShowOuter(relicRule.data.set_names)
-        }
-    }, [relicRule.data])
-
-    if (relicRule.error || !relicRule.data || relicSets.error || !relicSets.data) {
-        return (
-            <Card className="min-h-[15rem] w-[22rem] relative">
-                <CardContent className="flex items-center justify-center text-center">
-                    Error: {relicRule.error?.message || relicSets.error?.message || '无法加载遗物规则数据！'}
-                </CardContent>
-            </Card>
-        )
-    }
-
-    if (relicRule.isLoading || relicSets.isLoading) {
-        return (
-            <Card className="min-h-[15rem] w-[22rem] relative">
-                <CardContent className="flex items-center justify-center text-center">加载中...</CardContent>
-            </Card>
-        )
-    }
 
     const handleShowInner = (setNames: string[]) => {
         if (setNames.length === 0) {
@@ -80,6 +55,31 @@ export default function RelicRuleCard({ ruleId, templateId, isInUse }: RelicRule
 
         setShowOuter(haveOuter)
         return haveOuter
+    }
+
+    useEffect(() => {
+        if (relicRule.data) {
+            handleShowInner(relicRule.data.set_names)
+            handleShowOuter(relicRule.data.set_names)
+        }
+    }, [relicRule.data])
+
+    if (relicRule.error || !relicRule.data || relicSets.error || !relicSets.data) {
+        return (
+            <Card className="min-h-[15rem] w-[22rem] relative">
+                <CardContent className="flex items-center justify-center text-center">
+                    Error: {relicRule.error?.message || relicSets.error?.message || '无法加载遗物规则数据！'}
+                </CardContent>
+            </Card>
+        )
+    }
+
+    if (relicRule.isLoading || relicSets.isLoading) {
+        return (
+            <Card className="min-h-[15rem] w-[22rem] relative">
+                <CardContent className="flex items-center justify-center text-center">加载中...</CardContent>
+            </Card>
+        )
     }
 
     const handleDelete = () => {
@@ -163,6 +163,8 @@ export default function RelicRuleCard({ ruleId, templateId, isInUse }: RelicRule
             }),
         })
     }
+
+    console.log('rendered')
 
     return (
         <Card className="px-4 py-6 bg-white shadow-md rounded-lg relative">
@@ -261,3 +263,7 @@ export default function RelicRuleCard({ ruleId, templateId, isInUse }: RelicRule
         </Card>
     )
 }
+
+export default React.memo(RelicRuleCard, (prevProps, nextProps) => {
+    return prevProps.templateId === nextProps.templateId && prevProps.ruleId === nextProps.ruleId
+})

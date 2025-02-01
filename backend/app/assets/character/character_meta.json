@@ -1,270 +1,337 @@
 {
   "Fu Xuan": {
     "name": "符玄",
-    "icon": "images/characters/img.png"
+    "icon": "images/characters/img.png",
+    "paths": "存护"
   },
   "Acheron": {
     "name": "黄泉",
-    "icon": "images/characters/img_1.png"
+    "icon": "images/characters/img_1.png",
+    "paths": "虚无"
   },
   "Argenti": {
     "name": "银枝",
-    "icon": "images/characters/img_2.png"
+    "icon": "images/characters/img_2.png",
+    "paths": "智识"
   },
   "Arlan": {
     "name": "阿兰",
-    "icon": "images/characters/img_3.png"
+    "icon": "images/characters/img_3.png",
+    "paths": "毁灭"
   },
   "Asta": {
     "name": "艾丝妲",
-    "icon": "images/characters/img_4.png"
+    "icon": "images/characters/img_4.png",
+    "paths": "同协"
   },
   "Aventurine": {
     "name": "砂金",
-    "icon": "images/characters/img_5.png"
+    "icon": "images/characters/img_5.png",
+    "paths": "存护"
   },
   "Bailu": {
     "name": "白鹿",
-    "icon": "images/characters/img_6.png"
+    "icon": "images/characters/img_6.png",
+    "paths": "丰饶"
   },
   "Black Swan": {
     "name": "黑天鹅",
-    "icon": "images/characters/img_7.png"
+    "icon": "images/characters/img_7.png",
+    "paths": "虚无"
   },
   "Blade": {
     "name": "刃",
-    "icon": "images/characters/img_8.png"
+    "icon": "images/characters/img_8.png",
+    "paths": "毁灭"
   },
   "Boothill": {
     "name": "波提欧",
-    "icon": "images/characters/img_9.png"
+    "icon": "images/characters/img_9.png",
+    "paths": "巡猎"
   },
   "Bronya": {
     "name": "布洛妮娅",
-    "icon": "images/characters/img_10.png"
+    "icon": "images/characters/img_10.png",
+    "paths": "同协"
   },
   "Clara": {
     "name": "克拉拉",
-    "icon": "images/characters/img_11.png"
+    "icon": "images/characters/img_11.png",
+    "paths": "毁灭"
   },
   "Dan Heng": {
     "name": "丹恒",
-    "icon": "images/characters/img_12.png"
+    "icon": "images/characters/img_12.png",
+    "paths": "巡猎"
   },
   "Dan Heng Imbibitor Lunae": {
     "name": "丹恒•饮月",
-    "icon": "images/characters/img_13.png"
+    "icon": "images/characters/img_13.png",
+    "paths": "毁灭"
   },
   "Dr. Ratio": {
     "name": "真理医生",
-    "icon": "images/characters/img_14.png"
+    "icon": "images/characters/img_14.png",
+    "paths": "巡猎"
   },
   "Firefly": {
     "name": "流萤",
-    "icon": "images/characters/img_15.png"
+    "icon": "images/characters/img_15.png",
+    "paths": "毁灭"
   },
   "Gallagher": {
     "name": "加拉赫",
-    "icon": "images/characters/img_16.png"
+    "icon": "images/characters/img_16.png",
+    "paths": "丰饶"
   },
   "Gepard": {
     "name": "杰帕德",
-    "icon": "images/characters/img_17.png"
+    "icon": "images/characters/img_17.png",
+    "paths": "存护"
   },
   "Guinaifen": {
     "name": "桂乃芬",
-    "icon": "images/characters/img_18.png"
+    "icon": "images/characters/img_18.png",
+    "paths": "虚无"
   },
   "Hanya": {
     "name": "寒鸦",
-    "icon": "images/characters/img_19.png"
+    "icon": "images/characters/img_19.png",
+    "paths": "同协"
   },
   "Herta": {
     "name": "黑塔",
-    "icon": "images/characters/img_20.png"
+    "icon": "images/characters/img_20.png",
+    "paths": "智识"
   },
   "Himeko": {
     "name": "姬子",
-    "icon": "images/characters/img_21.png"
+    "icon": "images/characters/img_21.png",
+    "paths": "智识"
   },
   "Hook": {
     "name": "虎克",
-    "icon": "images/characters/img_22.png"
+    "icon": "images/characters/img_22.png",
+    "paths": "毁灭"
   },
   "Huohuo": {
     "name": "藿藿",
-    "icon": "images/characters/img_23.png"
+    "icon": "images/characters/img_23.png",
+    "paths": "丰饶"
   },
   "Jing Yuan": {
     "name": "景元",
-    "icon": "images/characters/img_24.png"
+    "icon": "images/characters/img_24.png",
+    "paths": "智识"
   },
   "Jingliu": {
     "name": "静流",
-    "icon": "images/characters/img_25.png"
+    "icon": "images/characters/img_25.png",
+    "paths": "毁灭"
   },
   "Kafka": {
     "name": "卡芙卡",
-    "icon": "images/characters/img_26.png"
+    "icon": "images/characters/img_26.png",
+    "paths": "虚无"
   },
   "Luka": {
     "name": "卢卡",
-    "icon": "images/characters/img_27.png"
+    "icon": "images/characters/img_27.png",
+    "paths": "虚无"
   },
   "Luocha": {
     "name": "罗刹",
-    "icon": "images/characters/img_28.png"
+    "icon": "images/characters/img_28.png",
+    "paths": "丰饶"
   },
   "Lynx": {
     "name": "玲可",
-    "icon": "images/characters/img_29.png"
+    "icon": "images/characters/img_29.png",
+    "paths": "丰饶"
   },
   "March 7th": {
     "name": "三月七",
-    "icon": "images/characters/img_30.png"
+    "icon": "images/characters/img_30.png",
+    "paths": "存护"
   },
   "Misha": {
     "name": "米沙",
-    "icon": "images/characters/img_31.png"
+    "icon": "images/characters/img_31.png",
+    "paths": "毁灭"
   },
   "Natasha": {
     "name": "娜塔莎",
-    "icon": "images/characters/img_32.png"
+    "icon": "images/characters/img_32.png",
+    "paths": "丰饶"
   },
   "Pela": {
     "name": "佩拉",
-    "icon": "images/characters/img_33.png"
+    "icon": "images/characters/img_33.png",
+    "paths": "虚无"
   },
   "Qingque": {
     "name": "青雀",
-    "icon": "images/characters/img_34.png"
+    "icon": "images/characters/img_34.png",
+    "paths": "智识"
   },
   "Robin": {
     "name": "知更鸟",
-    "icon": "images/characters/img_35.png"
+    "icon": "images/characters/img_35.png",
+    "paths": "同协"
   },
   "Ruan Mei": {
     "name": "阮•梅",
-    "icon": "images/characters/img_36.png"
+    "icon": "images/characters/img_36.png",
+    "paths": "同协"
   },
   "Sampo": {
     "name": "桑博",
-    "icon": "images/characters/img_37.png"
+    "icon": "images/characters/img_37.png",
+    "paths": "虚无"
   },
   "Seele": {
     "name": "希儿",
-    "icon": "images/characters/img_38.png"
+    "icon": "images/characters/img_38.png",
+    "paths": "巡猎"
   },
   "Serval": {
     "name": "希露瓦",
-    "icon": "images/characters/img_39.png"
+    "icon": "images/characters/img_39.png",
+    "paths": "智识"
   },
   "Silver Wolf": {
     "name": "银狼",
-    "icon": "images/characters/img_40.png"
+    "icon": "images/characters/img_40.png",
+    "paths": "虚无"
   },
   "Sparkle": {
     "name": "花火",
-    "icon": "images/characters/img_41.png"
+    "icon": "images/characters/img_41.png",
+    "paths": "同协"
   },
   "Sushang": {
     "name": "素裳",
-    "icon": "images/characters/img_42.png"
+    "icon": "images/characters/img_42.png",
+    "paths": "巡猎"
   },
   "Tingyun": {
     "name": "停云",
-    "icon": "images/characters/img_43.png"
+    "icon": "images/characters/img_43.png",
+    "paths": "同协"
   },
   "Topaz and Numby": {
     "name": "托帕&账账",
-    "icon": "images/characters/img_44.png"
+    "icon": "images/characters/img_44.png",
+    "paths": "巡猎"
   },
   "Trailblazer: Destruction": {
     "name": "开拓者•毁灭",
-    "icon": "images/characters/img_45.png"
+    "icon": "images/characters/img_45.png",
+    "paths": "毁灭"
   },
   "Trailblazer: Preservation": {
     "name": "开拓者•存护",
-    "icon": "images/characters/img_46.png"
+    "icon": "images/characters/img_46.png",
+    "paths": "存护"
   },
   "Trailblazer: Harmony": {
     "name": "开拓者•同谐",
-    "icon": "images/characters/img_47.png"
+    "icon": "images/characters/img_47.png",
+    "paths": "同协"
   },
   "Welt": {
     "name": "瓦尔特",
-    "icon": "images/characters/img_48.png"
+    "icon": "images/characters/img_48.png",
+    "paths": "虚无"
   },
   "Xueyi": {
     "name": "雪衣",
-    "icon": "images/characters/img_49.png"
+    "icon": "images/characters/img_49.png",
+    "paths": "毁灭"
   },
   "Yanqing": {
     "name": "彦卿",
-    "icon": "images/characters/img_50.png"
+    "icon": "images/characters/img_50.png",
+    "paths": "巡猎"
   },
   "Yukong": {
     "name": "驭空",
-    "icon": "images/characters/img_51.png"
+    "icon": "images/characters/img_51.png",
+    "paths": "同协"
   },
   "Jade": {
     "name": "翡翠",
-    "icon": "images/characters/img_52.png"
+    "icon": "images/characters/img_52.png",
+    "paths": "智识"
   },
   "Yunli": {
     "name": "云璃",
-    "icon": "images/characters/img_53.png"
+    "icon": "images/characters/img_53.png",
+    "paths": "毁灭"
   },
   "March 7th: Hunt": {
     "name": "三月七•巡猎",
-    "icon": "images/characters/img_54.png"
+    "icon": "images/characters/img_54.png",
+    "paths": "巡猎"
   },
   "Lingsha": {
     "name": "灵砂",
-    "icon": "images/characters/img_55.png"
+    "icon": "images/characters/img_55.png",
+    "paths": "丰饶"
   },
   "Jiaoqiu": {
     "name": "椒丘",
-    "icon": "images/characters/img_56.png"
+    "icon": "images/characters/img_56.png",
+    "paths": "虚无"
   },
   "Feixiao": {
     "name": "飞霄",
-    "icon": "images/characters/img_57.png"
+    "icon": "images/characters/img_57.png",
+    "paths": "巡猎"
   },
   "Moze": {
     "name": "貊泽",
-    "icon": "images/characters/img_58.png"
+    "icon": "images/characters/img_58.png",
+    "paths": "巡猎"
   },
   "Rappa": {
     "name": "乱破",
-    "icon": "images/characters/img_59.png"
+    "icon": "images/characters/img_59.png",
+    "paths": "智识"
   },
   "Sunday": {
     "name": "星期日",
-    "icon": "images/characters/img_60.png"
+    "icon": "images/characters/img_60.png",
+    "paths": "同协"
   },
   "Fugue": {
     "name": "忘归人",
-    "icon": "images/characters/img_61.png"
+    "icon": "images/characters/img_61.png",
+    "paths": "虚无"
   },
   "Trailblazer: Remembrance": {
     "name": "开拓者•记忆",
-    "icon": "images/characters/img_62.png"
+    "icon": "images/characters/img_62.png",
+    "paths": "记忆"
   },
   "The Herta": {
     "name": "大黑塔",
-    "icon": "images/characters/img_63.png"
+    "icon": "images/characters/img_63.png",
+    "paths": "智识"
   },
   "Aglaea": {
     "name": "阿格莱雅",
-    "icon": "images/characters/img_64.png"
+    "icon": "images/characters/img_64.png",
+    "paths": "记忆"
   },
   "Tribbie": {
     "name": "缇宝",
-    "icon": "images/characters/img_65.png"
+    "icon": "images/characters/img_65.png",
+    "paths": "同协"
   },
   "Mydei": {
     "name": "万敌",
-    "icon": "images/characters/img_66.png"
+    "icon": "images/characters/img_66.png",
+    "paths": "毁灭"
   }
 }

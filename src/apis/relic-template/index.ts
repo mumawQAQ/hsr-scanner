@@ -226,6 +226,8 @@ export const useRelicRule = (ruleId: string) => {
                 throw error
             }
         },
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
     })
 }
 
