@@ -25,6 +25,8 @@ import { listen } from '@tauri-apps/api/event'
 import { LogViewer } from '@patternfly/react-log-viewer'
 import { useUpdateFullLogState } from '@/apis/state'
 import { invoke } from '@tauri-apps/api/core'
+import { useCheckAssetUpdate } from '@/hooks/use-check-asset-update.ts'
+import { useCheckAppUpdate } from '@/hooks/use-check-app-update.ts'
 
 const SCORE_THRESHOLDS = {
     VERY_LOW: 20,
@@ -58,6 +60,7 @@ const Home = () => {
     const [windowOnTop, setWindowOnTop] = useState(false)
     const [minimized, setMinimized] = useState(false)
     const logViewerRef = useRef()
+
     const backendStore = useBackend()
     const relicStore = useRelic()
     const modelStore = useModal()
@@ -73,6 +76,9 @@ const Home = () => {
     const relicMainStatBoxPosition = useRelicBoxPosition('relic_main_stat')
     const relicSubStatBoxPosition = useRelicBoxPosition('relic_sub_stat')
     const updateFullLogState = useUpdateFullLogState()
+
+    useCheckAssetUpdate()
+    useCheckAppUpdate()
 
     useEffect(() => {
         if (!backendStore.backendPort) {
