@@ -460,7 +460,7 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![check_asserts_update, start_screen_annotator,post_backup,pre_backup, start_backend, install_python_requirements,set_window_on_top,set_window_size])
+        .invoke_handler(tauri::generate_handler![check_asserts_update,kill_background_process, start_screen_annotator,post_backup,pre_backup, start_backend, install_python_requirements,set_window_on_top,set_window_size])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
