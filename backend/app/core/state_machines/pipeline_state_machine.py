@@ -28,6 +28,7 @@ class PipelineStateMachine:
         )
         self.config = pipeline_config
         self.config_name = config_name
+        self.stop_event = asyncio.Event()
 
         self.machine = AsyncMachine(
             model=self,
@@ -43,6 +44,10 @@ class PipelineStateMachine:
         """
         Invoked after a transition leads us to a new stage, or after we move to an error stage.
         """
+        if self.stop_event.is_set():
+            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Pipeline has been cancelled.")
+            return
+
         try:
             # TODO: this need to be configurable by the user
             await asyncio.sleep(0.05)
@@ -127,6 +132,9 @@ class PipelineStateMachine:
         """
         Called externally (e.g., from a socket event) to stop the pipeline.
         """
+        # set stop event
+        self.stop_event.set()
+
         # If already idle, do nothing:
         if self.state == "idle":
             logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Stop requested but pipeline is already idle.")
