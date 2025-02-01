@@ -1,3 +1,5 @@
+// @ts-ignore
+import sponsorImg from '/sponsor.jpg'
 import { getVersion } from '@tauri-apps/api/app'
 import { useEffect, useState } from 'react'
 import { Bug, Flag, Github, RefreshCcw } from 'lucide-react'
@@ -413,6 +415,28 @@ const Setting = () => {
                     </CardContent>
                 </Card>
             )}
+
+            <div className="flex justify-center">
+                <Card className="pt-4 px-2 shadow-lg rounded-xl w-[320px] h-[400px] relative bg-white">
+                    <div className="relative w-full h-full flex flex-col items-center">
+                        <div className="absolute top-0 left-0 right-0 h-16 overflow-hidden">
+                            <div className="w-full h-16 bg-[#4285f4] rounded-b-[100%]" />
+                        </div>
+
+                        <div className="relative z-10 mt-8 bg-white rounded-xl shadow-sm p-3">
+                            <img
+                                src={sponsorImg}
+                                alt="sponsor QR code"
+                                className="w-[220px] h-[220px] object-contain rounded-lg"
+                            />
+                        </div>
+                        <div className="mt-6 text-center">
+                            <p className="text-gray-700 font-medium text-lg mb-2">感谢支持开源项目</p>
+                            <p className="text-gray-500 text-sm">打赏一杯咖啡</p>
+                        </div>
+                    </div>
+                </Card>
+            </div>
         </div>
     )
 }
