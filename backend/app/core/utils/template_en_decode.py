@@ -31,7 +31,7 @@ class TemplateEnDecoder:
                 backward = {index: key for index, key in enumerate(data.keys())}
                 return {'forward': forward, 'backward': backward}
         except Exception as e:
-            logger.error(f"Failed to initialize export tool file: {e}")
+            logger.error(f"初始化映射失败: {e}")
             raise e
 
     def encode(self, template: GetRatingTemplateResponse, rules: List[GetRatingRuleResponse]) -> str:
@@ -75,7 +75,7 @@ class TemplateEnDecoder:
             RatingRuleORM.bulk_create(rules)
 
         except Exception as e:
-            logger.error(f"Error decoding template: {e}")
+            logger.error(f"编码解析失败: {e}")
             raise e
 
     def _decode_rule(self, rule_data: Dict, template_id: int) -> RatingRuleORM:

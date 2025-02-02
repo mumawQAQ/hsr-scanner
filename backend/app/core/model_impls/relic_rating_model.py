@@ -19,16 +19,16 @@ class RelicRatingModel(ModelInterface[RelicOCRResponse, Union[None, List[RelicSc
         global_state = self.global_state_manager.get_state()
 
         if 'formatted_rules' not in global_state.keys():
-            raise ValueError("Template rules are not found, make sure you have active a template")
+            raise ValueError("未检测到模板规则, 请检查是否启用了模板")
 
         if not input_data.relic_main_stat:
-            raise ValueError("Relic main stat is not found")
+            raise ValueError("未找到遗器主属性")
 
         if not input_data.relic_sub_stat:
-            raise ValueError("Relic sub stat is not found")
+            raise ValueError("未找到遗器副属性")
 
         if not input_data.relic_title:
-            raise ValueError("Relic title is not found")
+            raise ValueError("未找到遗器标题")
 
         rules = global_state['formatted_rules'][input_data.relic_title.title]
 

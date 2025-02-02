@@ -50,7 +50,7 @@ class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, Reli
                         self.relic_parts[details['parts'][part]] = part_model
 
         except Exception as e:
-            logger.error(f"read relic sets data failed: {e}")
+            logger.error(f"读取遗器数据失败: {e}")
             raise e
 
         try:
@@ -58,7 +58,7 @@ class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, Reli
             with open(self.relic_main_stats_path, 'r', encoding='utf-8') as f:
                 self.relic_main_stats = json.load(f)
         except Exception as e:
-            logger.error(f"read relic main stats data failed: {e}")
+            logger.error(f"读取遗器主属性数据失败: {e}")
             raise e
 
         try:
@@ -66,7 +66,7 @@ class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, Reli
             with open(self.relic_sub_stats_path, 'r', encoding='utf-8') as f:
                 self.relic_sub_stats = json.load(f)
         except Exception as e:
-            logger.error(f"read relic sub stats data failed: {e}")
+            logger.error(f"读取遗器副属性数据失败: {e}")
             raise e
 
     def predict(self, input_data: RelicMatcherInput) -> Union[RelicTitle, None, RelicMainStat, List[RelicSubStat]]:
@@ -83,7 +83,7 @@ class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, Reli
     def match_relic_part(self, relic_title: str) -> Optional[RelicTitle]:
         fuzz_result = process.extractOne(relic_title, self.relic_parts.keys())
         if fuzz_result is None or fuzz_result[1] < 50:
-            logger.error(f"fuzz matching cannot match the relic part: {relic_title}, matching result: {fuzz_result}")
+            logger.error(f"模糊匹配无法匹配遗器标题: {relic_title}, 匹配结果: {fuzz_result}")
             return None
 
         relic_title = fuzz_result[0]
@@ -96,16 +96,14 @@ class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, Reli
     def match_relic_main_stat(self, relic_main_stat: str, relic_main_stat_val: str) -> Optional[RelicMainStat]:
         fuzz_main_stat_result = process.extractOne(relic_main_stat, self.relic_main_stats.keys())
         if fuzz_main_stat_result is None or fuzz_main_stat_result[1] < 50:
-            logger.error(
-                f"fuzz matching cannot match the relic main stat: {relic_main_stat}， matching result: {fuzz_main_stat_result}")
+            logger.error(f"模糊匹配无法匹配遗器主属性: {relic_main_stat}, 匹配结果: {fuzz_main_stat_result}")
             return None
 
         main_stat_level_map = self.relic_main_stats[fuzz_main_stat_result[0]]
         # fuzz match the relic main stat value
         fuzz_main_stat_val_result = process.extractOne(relic_main_stat_val, main_stat_level_map.keys())
         if fuzz_main_stat_val_result is None or fuzz_main_stat_val_result[1] < 50:
-            logger.error(
-                f"fuzz matching cannot match the relic main stat val: {relic_main_stat_val}， matching result: {fuzz_main_stat_val_result}")
+            logger.error(f"模糊匹配无法匹配遗器主属性值: {relic_main_stat_val}, 匹配结果: {fuzz_main_stat_val_result}")
             return None
 
         # calculate the level and enhance level
@@ -127,15 +125,13 @@ class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, Reli
         for key, value in relic_sub_stats.items():
             fuzz_sub_stat_result = process.extractOne(key, self.relic_sub_stats.keys())
             if fuzz_sub_stat_result is None or fuzz_sub_stat_result[1] < 50:
-                logger.error(
-                    f"fuzz matching cannot match relic sub stat: {key}，matching result: {fuzz_sub_stat_result}")
+                logger.error(f"模糊匹配无法匹配遗器副属性: {key}, 匹配结果: {fuzz_sub_stat_result}")
                 return None
 
             sub_stat_score_map = self.relic_sub_stats[fuzz_sub_stat_result[0]]
             fuzz_sub_stat_val_result = process.extractOne(value, sub_stat_score_map.keys())
             if fuzz_sub_stat_val_result is None or fuzz_sub_stat_val_result[1] < 50:
-                logger.error(
-                    f"fuzz matching cannot match relic sub stat val: {value}，matching result: {fuzz_sub_stat_val_result}")
+                logger.error(f"模糊匹配无法匹配遗器副属性值: {value}, 匹配结果: {fuzz_sub_stat_val_result}")
                 return None
 
             scores = sub_stat_score_map[fuzz_sub_stat_val_result[0]]

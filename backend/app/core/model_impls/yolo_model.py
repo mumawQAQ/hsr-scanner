@@ -19,7 +19,7 @@ class YOLOModel(ModelInterface[Any, Any]):
         self.model = YOLO(self.model_path)
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.model.to(device)
-        logger.info(f"YOLO model loaded on device: {device}")
+        logger.debug(f"YOLO model loaded on device: {device}")
 
     def predict(self, input_data: Any) -> Any:
         """Perform object detection on the input data."""
@@ -50,7 +50,7 @@ class YOLOModel(ModelInterface[Any, Any]):
 
             sub_region_img = img_np[y1:y2, x1:x2]
 
-            logger.info(
+            logger.debug(
                 f"Detected {cls} with x_center: {x_center}, y_center: {y_center}, width: {width}, height: {height}")
 
             if cls not in sub_regions:

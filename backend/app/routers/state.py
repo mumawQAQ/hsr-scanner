@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from loguru import logger
 from pynput.mouse import Controller as MouseController
 
 from app.core.network_models.requests.mouse_position_request import MousePositionRequest
@@ -27,5 +26,3 @@ async def mouse_position(
 
     mouse = MouseController()
     mouse.position = (x, y)
-
-    logger.info(f"Mouse moved to ({x}, {y})")

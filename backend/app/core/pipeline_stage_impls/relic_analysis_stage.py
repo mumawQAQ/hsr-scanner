@@ -15,7 +15,7 @@ class RelicAnalysisStage(BasePipelineStage):
             relic_rating_model = ModelManager().get_model("relic_rating")
 
             if not ocr_data:
-                error_msg = "OCR data not found."
+                error_msg = "遗器OCR数据未找到"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,
@@ -24,7 +24,7 @@ class RelicAnalysisStage(BasePipelineStage):
                 )
 
             if not relic_rating_model:
-                error_msg = "Relic rating model not found. This error should not happen. please contact the developer."
+                error_msg = "遗器评分模组未找到, 请联系开发者"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,

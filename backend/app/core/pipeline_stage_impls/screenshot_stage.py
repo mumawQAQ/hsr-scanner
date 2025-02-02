@@ -19,7 +19,7 @@ class ScreenshotStage(BasePipelineStage):
             # Find game window
             window_info = self.__find_game_window__()
             if not window_info:
-                error_msg = f"Game window not found. Searched titles: {GAME_TITLES}. Make sure the game is running and the language is set to English."
+                error_msg = f"未检测到游戏窗口, 尝试搜索标题: {GAME_TITLES}. 请检查游戏是否运行中, 语言是否设置为英文"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,
@@ -35,10 +35,10 @@ class ScreenshotStage(BasePipelineStage):
             )
 
         except Exception as e:
-            logger.exception(f"Error in screenshot stage")
+            logger.exception(f"截图阶段异常")
             return StageResult(
                 success=False,
-                error=f"Unexpected error during screenshot capture: {str(e)}",
+                error=f"截图阶段异常 {str(e)}",
                 data=None,
             )
 

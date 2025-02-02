@@ -29,10 +29,10 @@ class ModelManager:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
         except FileNotFoundError:
-            logger.exception(f"config file {config_path} not found.")
+            logger.exception(f"配置文件不存在: {config_path}")
             raise SystemExit()
         except json.JSONDecodeError:
-            logger.exception(f"config file {config_path} parse error")
+            logger.exception(f"配置文件解析失败: {config_path}")
             raise SystemExit()
 
         for model_config in config.get('models', []):
@@ -41,13 +41,13 @@ class ModelManager:
             model_params = model_config.get('params', {})
 
             if not model_cls_path or not model_name:
-                logger.warning(f"config missing 'class' or 'name' field: {model_config}")
+                logger.warning(f"配置文件缺少 'class' 或 'name' 字段: {model_config}")
                 raise SystemExit()
 
             try:
                 model_cls = self.load_class(model_cls_path)
             except (ImportError, AttributeError) as e:
-                logger.exception(f"unable to load class {model_cls_path}")
+                logger.exception(f"无法加载模型类: {e}")
                 raise SystemExit()
 
             resolved_params = {}
@@ -60,7 +60,7 @@ class ModelManager:
                         resolved_class = self.load_class(value['value'])
                         resolved_params[key] = resolved_class()
                     except (ImportError, AttributeError):
-                        logger.exception(f"unable to load class {value['value']}")
+                        logger.exception(f"无法加载模型类: {value['value']}")
                         raise SystemExit()
 
                 else:
@@ -68,29 +68,29 @@ class ModelManager:
             try:
                 model_instance = model_cls(**resolved_params)
             except Exception:
-                logger.exception(f"unable to instantiate class {model_cls_path}")
+                logger.exception(f"无法实例化模型类: {model_cls_path}")
                 raise SystemExit()
 
             try:
                 self.register_model(model_name, model_instance)
             except Exception:
-                logger.exception(f"unable to register model '{model_name}'")
+                logger.exception(f"无法注册模型类: {model_cls_path}")
                 raise SystemExit()
 
     def register_model(self, name: str, model: ModelInterface) -> None:
         """Register and load a model."""
         if name in self._models:
-            logger.warning(f"Model '{name}' is already registered.")
+            logger.warning(f"模型 '{name}' 已经注册")
             return
 
         model.load()
         self._models[name] = model
-        logger.info(f"Model '{name}' registered and loaded.")
+        logger.info(f"模型{name}注册成功")
 
     def get_model(self, name: str) -> Optional[ModelInterface]:
         """Retrieve a registered model."""
         if name not in self._models:
-            logger.error(f"Model '{name}' is not registered.")
+            logger.error(f"无法获取模型: {name}, 模型未注册")
             return None
 
         return self._models[name]

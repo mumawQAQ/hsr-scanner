@@ -45,7 +45,7 @@ class PipelineStateMachine:
         Invoked after a transition leads us to a new stage, or after we move to an error stage.
         """
         if self.stop_event.is_set():
-            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Pipeline has been cancelled.")
+            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] 流水线已取消")
             return
 
         try:
@@ -53,11 +53,11 @@ class PipelineStateMachine:
             await asyncio.sleep(0.05)
             # If we've just become idle, we shouldn't proceed.
             if self.state == "idle":
-                logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Pipeline has been cancelled.")
+                logger.info(f"[{self.config_name}:{self.context.pipeline_id}] 流水线已空闲")
                 return
 
             stage_instance = self.stage_manager.get_stage(self.state)
-            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Running {self.state} ...")
+            logger.debug(f"[{self.config_name}:{self.context.pipeline_id}] 运行 {self.state} ...")
 
             result = await stage_instance.process(self.context)
 
@@ -80,7 +80,7 @@ class PipelineStateMachine:
                     )
 
                 logger.info(
-                    f"[{self.config_name}:{self.context.pipeline_id}] Completed stage {stage_instance.get_stage_name()}."
+                    f"[{self.config_name}:{self.context.pipeline_id}] 完成阶段 {stage_instance.get_stage_name()}."
                 )
 
                 # Only trigger next stage if we haven't stopped or errored in the meantime
@@ -102,7 +102,7 @@ class PipelineStateMachine:
                     to=self.sid
                 )
                 logger.error(
-                    f"[{self.config_name}:{self.context.pipeline_id}] Error while running {self.state} stage."
+                    f"[{self.config_name}:{self.context.pipeline_id}] 阶段 {self.state} 出错: {result.error}"
                 )
 
                 # Avoid repeatedly triggering the error if we're already in an error state
@@ -111,7 +111,7 @@ class PipelineStateMachine:
 
         except Exception:
             logger.exception(
-                f"[{self.config_name}:{self.context.pipeline_id}] Exception while running {self.state} stage."
+                f"[{self.config_name}:{self.context.pipeline_id}] 阶段 {self.state} 时发生异常"
             )
             # Avoid repeatedly triggering the error if we're already in an error state
             if "error_state" not in self.state:
@@ -137,7 +137,7 @@ class PipelineStateMachine:
 
         # If already idle, do nothing:
         if self.state == "idle":
-            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Stop requested but pipeline is already idle.")
+            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] 尝试停止流水线,但流水线已处于空闲状态")
             return
 
         await self.sio.emit(
@@ -147,5 +147,5 @@ class PipelineStateMachine:
         )
 
         # Attempt to stop the pipeline (valid from any state except idle).
-        logger.info(f"[{self.config_name}:{self.context.pipeline_id}] Stopping pipeline.")
+        logger.info(f"[{self.config_name}:{self.context.pipeline_id}] 尝试停止流水线")
         await self.stop_pipeline_trigger()

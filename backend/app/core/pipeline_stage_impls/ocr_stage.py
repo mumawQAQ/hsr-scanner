@@ -26,7 +26,7 @@ def pp_relic_stat_img(img: ndarray, split_ratio: float) -> tuple[ndarray, ndarra
 
 def pp_ocr_result(ocr_result: List[Any]) -> Optional[List[Any]]:
     if not ocr_result:
-        logger.error("OCR result is empty")
+        logger.error("无效OCR结果, OCR结果为空")
         return None
 
     return ocr_result[0]
@@ -47,7 +47,7 @@ def format_relic_title(ocr_result: List[Any]) -> Optional[str]:
     relic_title = re.sub(r"[^a-zA-Z- ']", "", relic_title)
 
     if len(relic_title) == 0:
-        logger.error(f"Not a valid relic title: {relic_title}")
+        logger.error(f"无效遗器标题: {relic_title}")
         return None
 
     return relic_title
@@ -62,26 +62,26 @@ def format_relic_main_stat(
 
     if not relic_main_stat_name_ocr_result or not relic_main_stat_val_ocr_result:
         logger.error(
-            f"No relic main stat name ocr result or relic main stat val ocr result: {relic_main_stat_name_ocr_result} ----> {relic_main_stat_val_ocr_result}"
+            f"无效OCR遗器主属性名称或者主属性值: {relic_main_stat_name_ocr_result} ----> {relic_main_stat_val_ocr_result}"
         )
         return None
 
     if len(relic_main_stat_name_ocr_result) < 1:
-        logger.error(f"Not a valid relic main stat name, current ocr result {relic_main_stat_name_ocr_result}")
+        logger.error(f"无效遗器主属性名称: {relic_main_stat_name_ocr_result}")
         return None
 
     if len(relic_main_stat_val_ocr_result) < 1:
-        logger.error(f"Not a valid relic main stat val, current ocr result {relic_main_stat_val_ocr_result}")
+        logger.error(f"无效遗器主属性值: {relic_main_stat_val_ocr_result}")
         return None
 
     relic_main_stat_name, confidence = relic_main_stat_name_ocr_result[0][1]
     if confidence < OCR_CONFIDENCE_THRESHOLD:
-        logger.error(f"OCR confidence is too low for main stat name: {confidence}")
+        logger.error(f"OCR遗器主属性置信度过低: {confidence}")
         return None
 
     relic_main_stat_val, confidence = relic_main_stat_val_ocr_result[0][1]
     if confidence < OCR_CONFIDENCE_THRESHOLD:
-        logger.error(f"OCR confidence is too low for main stat val: {confidence}")
+        logger.error(f"OCR遗器主属性值置信度过低: {confidence}")
         return None
 
     relic_main_stat_name = relic_main_stat_name.strip().replace(' ', '')
@@ -109,11 +109,11 @@ def format_relic_sub_stat(
     max_result_count = 4
 
     if len(relic_sub_stat_name_ocr_result) < min_result_count:
-        logger.error(f"Not valid relic sub stat name length, current ocr result {relic_sub_stat_name_ocr_result}")
+        logger.error(f"遗器副属性数量低于最小值(3): {relic_sub_stat_name_ocr_result}")
         return None
 
     if len(relic_sub_stat_val_ocr_result) > max_result_count:
-        logger.error(f"Not valid relic sub stat val length, current ocr result {relic_sub_stat_val_ocr_result}")
+        logger.error(f"遗器副属性数量大于最大值(4): {relic_sub_stat_val_ocr_result}")
         return None
 
     format_result = {}
@@ -121,18 +121,18 @@ def format_relic_sub_stat(
     for idx in range(len(relic_sub_stat_name_ocr_result)):
         name, confidence = relic_sub_stat_name_ocr_result[idx][1]
         if confidence < OCR_CONFIDENCE_THRESHOLD:
-            logger.error(f"OCR confidence is too low for sub stat name: {confidence}")
+            logger.error(f"OCR遗器副属性名称置信度过低: {confidence}")
             return None
 
         # in the manually set sub stat area, sub stat val can be empty
         if idx >= len(relic_sub_stat_val_ocr_result):
             logger.error(
-                f"Relic sub stat val length is not match with sub stat name, current ocr result {relic_sub_stat_name_ocr_result} {relic_sub_stat_val_ocr_result}")
+                f"副属性名称数量和值数量不匹配: {relic_sub_stat_name_ocr_result} {relic_sub_stat_val_ocr_result}")
             continue
 
         val, confidence = relic_sub_stat_val_ocr_result[idx][1]
         if confidence < OCR_CONFIDENCE_THRESHOLD:
-            logger.error(f"OCR confidence is too low for sub stat val: {confidence}")
+            logger.error(f"OCR遗器副属性值置信度过低: {confidence}")
             return None
 
         format_name = name.strip().replace(' ', '')
@@ -145,7 +145,7 @@ def format_relic_sub_stat(
             else:
                 int(format_val)
         except ValueError:
-            logger.error(f"sub stat val is not a number: {format_val}")
+            logger.error(f"无效遗器副属性值: {format_val}")
             continue
 
         if format_name in ['HP', 'ATK', 'DEF'] and format_val.endswith('%'):
@@ -165,7 +165,7 @@ class OCRStage(BasePipelineStage):
             relic_matcher_model = ModelManager().get_model("relic_matcher")
 
             if not ocr_model:
-                error_msg = "OCR model not found. This error should not happen. please contact the developer."
+                error_msg = "OCR模组未找到, 请联系开发者"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,
@@ -174,7 +174,7 @@ class OCRStage(BasePipelineStage):
                 )
 
             if not relic_matcher_model:
-                error_msg = "Relic matcher model not found. This error should not happen. please contact the developer."
+                error_msg = "遗器匹配模组未找到, 请联系开发者"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,
@@ -185,7 +185,7 @@ class OCRStage(BasePipelineStage):
             if auto_detect_relic_box_position:
                 detection_data = context.data.get("detection_stage")
                 if not detection_data:
-                    error_msg = "detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    error_msg = "未检测到数据, 可能是YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -196,7 +196,7 @@ class OCRStage(BasePipelineStage):
                 if "relic-title" in detection_data:
                     relic_title_image = detection_data["relic-title"]["image"]
                 else:
-                    error_msg = "relic title detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    error_msg = "遗器标题检测数据未找到, YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -207,7 +207,7 @@ class OCRStage(BasePipelineStage):
                 if "relic-main-stat" in detection_data:
                     relic_main_stat_image = detection_data["relic-main-stat"]["image"]
                 else:
-                    error_msg = "relic main stat detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    error_msg = "遗器主属性检测数据未找到, YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -218,7 +218,7 @@ class OCRStage(BasePipelineStage):
                 if "relic-sub-stat" in detection_data:
                     relic_sub_stat_image = detection_data["relic-sub-stat"]["image"]
                 else:
-                    error_msg = "relic sub stat detection data not found. Yolo model not able to detect the positions :( make be try to manually set the positions?"
+                    error_msg = "遗器副属性检测数据未找到, YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -232,7 +232,7 @@ class OCRStage(BasePipelineStage):
                 relic_sub_stat_box = context.meta_data.get('relic_sub_stat_box', None)
 
                 if not screenshot:
-                    error_msg = "Screenshot data not found. This error should not happen. please contact the developer."
+                    error_msg = "无法获取到截图数据, 请联系开发者"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -241,7 +241,7 @@ class OCRStage(BasePipelineStage):
                     )
 
                 if not relic_title_box or not relic_main_stat_box or not relic_sub_stat_box:
-                    error_msg = "Relic box data not found. if you disable the auto detect relic box position, you need to manually set the relic box position."
+                    error_msg = "遗器框选数据未找到, 如果你禁用了自动检测遗器位置, 你需要手动设置遗器位置。"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -302,7 +302,7 @@ class OCRStage(BasePipelineStage):
                 relic_sub_stat=relic_sub_stat
             )
 
-            logger.info(f"OCR data: {relic_ocr_response}")
+            logger.debug(f"OCR data: {relic_ocr_response}")
 
             return StageResult(
                 success=True,
@@ -310,7 +310,7 @@ class OCRStage(BasePipelineStage):
                 metadata=StageResultMetaData(send_to_frontend=True)
             )
         except Exception as e:
-            logger.exception(f"Error in relic ocr stage")
+            logger.exception(f"遗器OCR阶段异常")
             return StageResult(success=False, data=None, error=str(e))
 
     def __handle_relic_title_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[str]:

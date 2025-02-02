@@ -3,7 +3,6 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from loguru import logger
 
 from app.core.managers.global_state_manager import GlobalStateManager
 from app.core.network_models.requests.rating_rule_request import CreateRatingRuleRequest, UpdateRatingRuleRequest, \
@@ -58,7 +57,7 @@ def init_rating_template(
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'data': 'Template inited'
+            'data': '模板初始化成功'
         }
     )
 
@@ -76,7 +75,7 @@ def import_rating_template(
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'data': 'Template imported'
+            'data': '模板导入成功'
         }
     )
 
@@ -100,7 +99,7 @@ def export_rating_template(
                 status_code=HTTPStatus.NOT_FOUND,
                 content={
                     'status': 'failed',
-                    'message': 'No rules to export'
+                    'message': '未找到模板规则'
                 }
             )
 
@@ -119,12 +118,11 @@ def export_rating_template(
 
 
     except RatingTemplateORM.DoesNotExist:
-        logger.error(f"Template not found: {template_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Template not found'
+                'message': f'未找到模板{template_id}'
             }
         )
 
@@ -149,7 +147,7 @@ def stop_use_rating_template(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'No template in use'
+                'message': '未找到正在使用的模板'
             }
         )
 
@@ -168,17 +166,16 @@ def stop_use_rating_template(
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': 'Template stopped'
+                'message': '模板停用成功'
             }
         )
 
     except RatingTemplateORM.DoesNotExist:
-        logger.error(f"Template not found: {template_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': "Template not found"
+                'message': f"未找到模板{template_id}"
             }
         )
 
@@ -234,12 +231,11 @@ def use_rating_template(
         )
 
     except RatingTemplateORM.DoesNotExist:
-        logger.error(f"Template not found: {template_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Template not found'
+                'message': f'未找到模板{template_id}'
             }
         )
 
@@ -296,16 +292,15 @@ def delete_rating_template(
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': 'Template deleted'
+                'message': '模板删除成功'
             }
         )
     except RatingTemplateORM.DoesNotExist:
-        logger.error(f"Template not found: {template_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Template not found'
+                'message': f'未找到模板{template_id}'
             }
         )
 
@@ -347,17 +342,16 @@ def delete_rating_template_rule(
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': 'Rule deleted'
+                'message': '规则删除成功'
             }
         )
 
     except RatingRuleORM.DoesNotExist:
-        logger.error(f"Rule not found: {rule_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Rule not found'
+                'message': f'未找到规则{rule_id}'
             }
         )
 
@@ -380,7 +374,7 @@ def update_rating_template_rule(
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': 'Rule updated'
+            'message': '规则更新成功'
         }
     )
 
@@ -408,12 +402,11 @@ def get_rating_template_rule_list(
         )
 
     except RatingTemplateORM.DoesNotExist:
-        logger.error(f"Template not found: {template_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Template not found'
+                'message': f'模板不存在{template_id}'
             }
         )
 
@@ -439,11 +432,10 @@ def get_rating_template_rule(
         )
 
     except RatingRuleORM.DoesNotExist:
-        logger.error(f"Rule not found: {rule_id}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Rule not found'
+                'message': f'规则不存在{rule_id}'
             }
         )

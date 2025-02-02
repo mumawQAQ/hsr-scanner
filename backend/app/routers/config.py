@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from loguru import logger
 
 from app.constant import RELIC_BOX_TYPES, AUTO_DETECT_DISCARD_ICON, AUTO_DETECT_RELIC_BOX, DISCARD_ICON_POSITION, \
     RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP
@@ -53,7 +52,7 @@ def change_analysis_fail_skip(state: bool):
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': "Config created"
+                'message': "配置更新成功"
             }
         )
 
@@ -65,7 +64,7 @@ def change_analysis_fail_skip(state: bool):
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': "Config updated"
+            'message': "配置更新成功"
         }
     )
 
@@ -106,7 +105,7 @@ def change_relic_discard_score(score: int):
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': "Config created"
+                'message': "配置更新成功"
             }
         )
 
@@ -118,7 +117,7 @@ def change_relic_discard_score(score: int):
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': "Config updated"
+            'message': "配置更新成功"
         }
     )
 
@@ -138,7 +137,7 @@ def change_auto_detect_discard_icon(state: bool):
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': "Config created"
+                'message': "配置更新成功"
             }
         )
 
@@ -150,7 +149,7 @@ def change_auto_detect_discard_icon(state: bool):
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': "Config updated"
+            'message': "配置更新成功"
         }
     )
 
@@ -215,7 +214,7 @@ def set_discard_icon_position(req: UpdateDiscardIconPositionRequest):
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': "Config created"
+                'message': "配置更新成功"
             }
         )
 
@@ -226,7 +225,7 @@ def set_discard_icon_position(req: UpdateDiscardIconPositionRequest):
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': "Config updated"
+            'message': "配置更新成功"
         }
     )
 
@@ -246,7 +245,7 @@ def change_auto_detect_relic_box(state: bool):
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': "Config created"
+                'message': "配置更新成功"
             }
         )
 
@@ -258,7 +257,7 @@ def change_auto_detect_relic_box(state: bool):
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': "Config updated"
+            'message': "配置更新成功"
         }
     )
 
@@ -296,7 +295,7 @@ def set_relic_box_config(req: UpdateRelicBoxPositionRequest):
             status_code=HTTPStatus.BAD_REQUEST,
             content={
                 'status': 'failed',
-                'message': 'Invalid type'
+                'message': f'无效类型: {req.type}'
             }
         )
 
@@ -312,7 +311,7 @@ def set_relic_box_config(req: UpdateRelicBoxPositionRequest):
             status_code=HTTPStatus.OK,
             content={
                 'status': 'success',
-                'message': "Config created"
+                'message': "配置更新成功"
             }
         )
 
@@ -324,7 +323,7 @@ def set_relic_box_config(req: UpdateRelicBoxPositionRequest):
         status_code=HTTPStatus.OK,
         content={
             'status': 'success',
-            'message': "Config updated"
+            'message': "配置更新成功"
         }
     )
 
@@ -359,11 +358,10 @@ def get_relic_box_config(relic_box_type: str):
             }
         )
     else:
-        logger.error(f"Config not found: {relic_box_type}")
         return JSONResponse(
             status_code=HTTPStatus.NOT_FOUND,
             content={
                 'status': 'failed',
-                'message': 'Config not found'
+                'message': f'未找到{relic_box_type}遗器box配置'
             }
         )

@@ -2,6 +2,7 @@ import socketio
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
 from uvicorn import Server
 
 from app.core.state_machines.pipeline_state_machine import PipelineStateMachine
@@ -33,12 +34,13 @@ current_runners = {}
 
 @sio.event
 async def connect(sid, environ):
-    print(f"Client connected: {sid}")
+    logger.debug(f"新的ws连接: {sid}")
+    pass
 
 
 @sio.event
 async def disconnect(sid):
-    print(f"Client disconnected: {sid}")
+    logger.debug(f"ws断开连接: {sid}")
     runner = current_runners.get(sid)
     if runner:
         await runner.handle_stop_pipeline()

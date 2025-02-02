@@ -15,7 +15,7 @@ FILE_FOLDER_PATH = os.path.join(os.path.dirname(__file__), '../assets')
 def get_files(request: GetFileRequest):
     file_path = os.path.join(FILE_FOLDER_PATH, request.file_path)
     if not os.path.exists(file_path):
-        return {'status': 'failed', 'message': f"File {file_path} not found"}
+        return {'status': 'failed', 'message': f"文件{file_path}不存在"}
 
     # base on the file type, return the file content
     if request.file_type == 'img':
@@ -29,4 +29,4 @@ def get_files(request: GetFileRequest):
             json_data = json.load(f)
         return {'status': 'success', 'data': json.dumps(json_data)}
     else:
-        return {'status': 'failed', 'message': 'Invalid file type'}
+        return {'status': 'failed', 'message': '无效文件类型'}

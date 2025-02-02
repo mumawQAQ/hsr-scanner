@@ -15,7 +15,7 @@ class AutoAnalysisErrorStage(BasePipelineStage):
             keyboard_model = ModelManager().get_model("keyboard")
 
             if not keyboard_model:
-                error_msg = "Keyboard model not found. This error should not happen. please contact the developer."
+                error_msg = "键盘模组未找到, 请联系开发者"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,

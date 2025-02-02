@@ -21,10 +21,10 @@ class StageManager:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
         except FileNotFoundError:
-            logger.exception(f"config file {config_path} not found.")
+            logger.exception(f"配置文件不存在: {config_path}")
             raise SystemExit()
         except json.JSONDecodeError:
-            logger.exception(f"config file {config_path} parse error")
+            logger.exception(f"配置文件解析失败: {config_path}")
             raise SystemExit()
 
         for stage_config in config.get('stages', []):
@@ -32,7 +32,7 @@ class StageManager:
             stage_name = stage_config.get('name')
 
             if not stage_cls_path or not stage_name:
-                logger.warning(f"config missing 'class' or 'name' field: {stage_config}")
+                logger.warning(f"配置文件缺少 'class' 或 'name' 字段: {stage_config}")
                 continue
 
             try:
@@ -41,18 +41,18 @@ class StageManager:
                 stage_cls = getattr(module, class_name)
                 self.register_stage(stage_name, stage_cls(stage_name))
             except (ImportError, AttributeError) as e:
-                logger.exception(f"unable to load class {stage_cls_path}")
+                logger.exception(f"无法加载阶段类{stage_cls_path}")
                 raise SystemExit()
             except Exception:
-                logger.exception(f"unable to load class {stage_cls_path}")
+                logger.exception(f"无法加载阶段类{stage_cls_path}")
                 raise SystemExit()
 
     def register_stage(self, stage_name: str, stage: PipelineStageProtocol):
         self._stages[stage_name] = stage
-        logger.info(f"Stage '{stage_name}' registered.")
+        logger.info(f"阶段'{stage_name}'加载成功")
 
     def get_stage(self, stage_name: str):
         if stage_name not in self._stages:
-            logger.error(f"Stage '{stage_name}' is not registered.")
+            logger.error(f"无法获取阶段: {stage_name}, 阶段未注册")
             return None
         return self._stages.get(stage_name)

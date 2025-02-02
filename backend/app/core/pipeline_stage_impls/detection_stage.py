@@ -16,7 +16,7 @@ class DetectionStage(BasePipelineStage):
             auto_detect_discard_icon = context.meta_data.get('auto_detect_discard_icon', True)
 
             if not screenshot:
-                error_msg = "Screenshot data not found. This error should not happen. please contact the developer."
+                error_msg = "无法获取到截图数据, 请联系开发者"
                 logger.error(error_msg)
                 return StageResult(
                     success=False,
@@ -33,7 +33,7 @@ class DetectionStage(BasePipelineStage):
                 yolo_model = ModelManager().get_model("yolo")
 
                 if not yolo_model:
-                    error_msg = "YOLO model not found. This error should not happen. please contact the developer."
+                    error_msg = "YOLO模组未找到, 请联系开发者"
                     logger.error(error_msg)
                     return StageResult(
                         success=False,
@@ -50,5 +50,5 @@ class DetectionStage(BasePipelineStage):
 
 
         except Exception as e:
-            logger.exception(f"Error in detection stage")
+            logger.exception(f"检测阶段异常")
             return StageResult(success=False, data=None, error=str(e))

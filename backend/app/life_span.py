@@ -61,9 +61,6 @@ def get_state_machine_config() -> Dict[str, Any]:
 
 @asynccontextmanager
 async def life_span(app: FastAPI):
-    global websocket_manager
-    global pipeline_manager
-    global pipeline_executor
     global model_manager
     global formatter
     global template_en_decoder
@@ -73,18 +70,19 @@ async def life_span(app: FastAPI):
 
     set_log_level("INFO")
 
-    logger.info("Initializing the backend...")
+    logger.info("正在初始化后端服务...")
 
-    logger.info("Loading state machine configs...")
     # Init pipeline configs
     with open(os.path.join(ROOT_PATH, "assets", "configs", "state_machine_config.json"), 'r',
               encoding='utf-8') as f:
         state_machine_config = json.load(f)
 
     # Init the template en decoder
+    logger.info("正在初始化模板解码器...")
     template_en_decoder = TemplateEnDecoder()
 
     # Init the formatter
+    logger.info("正在初始化格式化器...")
     formatter = Formatter()
 
     # Init the managers
@@ -92,10 +90,10 @@ async def life_span(app: FastAPI):
     model_manager = ModelManager()
     stage_manager = StageManager()
 
+    logger.info("正在初始化数据库...")
     # Init the database
     database.init_db()
 
-    set_log_level("ERROR")
     yield
 
     database.close_db()

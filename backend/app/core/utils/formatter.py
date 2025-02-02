@@ -24,7 +24,7 @@ class Formatter:
                     self.relic_parts[relic_set_name] = details['parts']
 
         except Exception as e:
-            logger.error(f"reading relic set failed: {e}")
+            logger.error(f"获取遗器数据失败: {e}")
             raise e
 
     def format_rating_template(self, rules):
@@ -72,6 +72,6 @@ class Formatter:
 
                     formatted_rating_rules[self.relic_parts[set_name][main_stat_key]].append(formatted_rule)
 
-                    logger.info(f"formatting relic rating template success: {formatted_rule}")
+                    logger.debug(f"格式化后的评分规则: {formatted_rule}")
 
         return formatted_rating_rules
