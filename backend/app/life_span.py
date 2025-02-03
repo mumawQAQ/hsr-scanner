@@ -1,10 +1,11 @@
+import io
 import json
 import os
+import sys
 from contextlib import asynccontextmanager
-from typing import Optional, Dict, Any
-
 from fastapi import FastAPI
 from loguru import logger
+from typing import Optional, Dict, Any
 
 from app.constant import ROOT_PATH
 from app.core.managers.global_state_manager import GlobalStateManager
@@ -68,6 +69,7 @@ async def life_span(app: FastAPI):
     global stage_manager
     global state_machine_config
 
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
     set_log_level("INFO")
 
     logger.info("正在初始化后端服务...")

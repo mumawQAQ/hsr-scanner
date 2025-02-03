@@ -1,6 +1,6 @@
 'use client'
 import { LogViewer } from '@patternfly/react-log-viewer'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { listen } from '@tauri-apps/api/event'
 import { useModal } from '@/hooks/use-modal.ts'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog.tsx'
@@ -10,6 +10,8 @@ import { useBackend } from '@/hooks/use-backend.ts'
 
 const InstallRequirementModal = () => {
     const [logQueue, setLogQueue] = useState<string[]>([])
+    const [title, setTitle] = useState('正在安装必要依赖....')
+    const logViewerRef = useRef()
     const backendStore = useBackend()
     const { isOpen, type } = useModal()
 
@@ -35,6 +37,9 @@ const InstallRequirementModal = () => {
 
                 // Listen for 'backend-log' events
                 const logUnlistener = await listen<string>('requirements-install-log', (event) => {
+                    if (event.payload.startsWith('Frontend-Progress Log:')) {
+                        setTitle(event.payload.replace('Frontend-Progress Log:', ''))
+                    }
                     setLogQueue((prevState) => [...prevState, event.payload])
                 })
 
@@ -70,12 +75,27 @@ const InstallRequirementModal = () => {
         }
     }, [isModalOpen])
 
+    useEffect(() => {
+        if (logViewerRef.current) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            logViewerRef.current.scrollToBottom()
+        }
+    }, [logViewerRef.current, logQueue])
+
     return (
         <Dialog open={isModalOpen}>
             <DialogContent>
-                <DialogTitle>正在安装必要依赖....</DialogTitle>
+                <DialogTitle>{title}</DialogTitle>
                 <DialogDescription>根据你的网络情况，可能需要5-30分钟</DialogDescription>
-                <LogViewer height={400} width={450} isTextWrapped={true} data={logQueue} hasLineNumbers={false} />
+                <LogViewer
+                    height={400}
+                    width={450}
+                    isTextWrapped={true}
+                    data={logQueue}
+                    hasLineNumbers={false}
+                    ref={logViewerRef}
+                />
             </DialogContent>
         </Dialog>
     )

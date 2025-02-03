@@ -242,14 +242,14 @@ fn start_backend(app: AppHandle) {
 
 #[tauri::command]
 fn post_backup(app: AppHandle) -> Result<String, String> {
-    let bat_dir =
+    let tools_dir =
         resolve_path(app.clone(), "../tools").expect("Failed to resolve batch file directory");
-    let bat_path = resolve_path(app.clone(), "../tools/post_update.bat")
+    let backup_script_path = resolve_path(app.clone(), "../tools/post_update.ps1")
         .expect("Failed to resolve batch file path");
 
-    let output = Command::new("cmd")
-        .args(&["/C", &*bat_path])
-        .current_dir(bat_dir)
+    let output = Command::new("powershell")
+        .args(&["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", &*backup_script_path])
+        .current_dir(tools_dir)
         .creation_flags(0x08000000)
         .output()
         .map_err(|e| format!("Failed to execute pre_update.bat: {}", e))?;
@@ -273,14 +273,14 @@ fn post_backup(app: AppHandle) -> Result<String, String> {
 
 #[tauri::command]
 fn pre_backup(app: AppHandle) -> Result<String, String> {
-    let bat_dir =
+    let tools_dir =
         resolve_path(app.clone(), "../tools").expect("Failed to resolve batch file directory");
-    let bat_path = resolve_path(app.clone(), "../tools/pre_update.bat")
+    let backup_script_path = resolve_path(app.clone(), "../tools/pre_update.ps1")
         .expect("Failed to resolve batch file path");
 
-    let output = Command::new("cmd")
-        .args(&["/C", &*bat_path])
-        .current_dir(bat_dir)
+    let output = Command::new("powershell")
+        .args(&["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", &*backup_script_path])
+        .current_dir(tools_dir)
         .creation_flags(0x08000000)
         .output()
         .map_err(|e| format!("Failed to execute pre_update.bat: {}", e))?;
@@ -316,14 +316,20 @@ fn install_python_requirements(app: AppHandle) {
                 )
                     .expect("Failed to send install start notification");
 
-                let bat_dir = resolve_path(app.clone(), "../tools")
-                    .expect("Failed to resolve batch file directory");
-                let bat_path = resolve_path(app.clone(), "../tools/install.bat")
-                    .expect("Failed to resolve batch file path");
+                let tools_dir = resolve_path(app.clone(), "../tools")
+                    .expect("Failed to resolve tools directory");
+                let install_ps1_path = resolve_path(app.clone(), "../tools/install.ps1")
+                    .expect("Failed to resolve powershell script path");
 
-                let mut child = Command::new("cmd")
-                    .args(&["/C", &*bat_path])
-                    .current_dir(bat_dir)
+                let mut child = Command::new("powershell")
+                    .args(&[
+                        "-NoProfile",
+                        "-ExecutionPolicy",
+                        "Bypass",
+                        "-File",
+                        &*install_ps1_path,
+                    ])
+                    .current_dir(tools_dir)
                     .creation_flags(0x08000000) // This prevents the creation of a console window on Windows.
                     .stdout(Stdio::piped())
                     .stderr(Stdio::piped())
