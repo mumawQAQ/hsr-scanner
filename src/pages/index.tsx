@@ -53,6 +53,7 @@ const Home = () => {
     const [socketIoClient, setSocketIoClient] = useState<Socket | null>(null)
     const [windowOnTop, setWindowOnTop] = useState(false)
     const [minimized, setMinimized] = useState(false)
+    const [showLogWindow, setShowLogWindow] = useState(false)
 
     const backendStore = useBackend()
     const relicStore = useRelic()
@@ -242,6 +243,15 @@ const Home = () => {
         setWindowOnTop(checked)
     }
 
+    const handleToggleLogWindow = async (checked: boolean) => {
+        try {
+            await invoke('toggle_log_window', { show: checked })
+            setShowLogWindow(checked)
+        } catch (e) {
+            toast.error(`切换日志窗口时出现错误 ${e}`)
+        }
+    }
+
     const handleMinimizeChange = async (checked: boolean) => {
         if (checked) {
             await invoke('set_window_size', { width: 600, height: 350 })
@@ -298,6 +308,12 @@ const Home = () => {
                                 handleStopPipeline()
                             }
                         }}
+                    />
+                    <SwitchWithLabel
+                        text={'日志窗口'}
+                        id={'log_window'}
+                        checked={showLogWindow}
+                        onCheckedChange={(checked) => handleToggleLogWindow(checked)}
                     />
                     {!minimized && (
                         <>
