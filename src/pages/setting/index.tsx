@@ -28,6 +28,7 @@ import { Card, CardContent } from '@/components/ui/card.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Input } from '@/components/ui/input'
 import BoxSetting from './box-setting'
+import OtherSetting from '@/pages/setting/other-setting.tsx'
 
 const Setting = () => {
     const [version, setVersion] = useState<string | null>(null)
@@ -339,6 +340,8 @@ const Setting = () => {
                     <BoxSetting name={'relic_sub_stat'} />
                 </CardContent>
             </Card>
+
+            <OtherSetting />
 
             <div className="text-medium font-semibold">版本 & 更新</div>
             <Card className="pt-5 px-2 shadow-lg rounded-lg">
