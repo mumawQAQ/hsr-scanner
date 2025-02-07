@@ -9,13 +9,16 @@ import { FileUp, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useModal } from '@/hooks/use-modal.ts'
 import { useJsonFile } from '@/apis/files'
-import { OptionSet } from '@/components/ui/selecter.tsx'
-import PathSelector from '@/components/path-selecter.tsx'
+import { OptionSet, OptionSetWithIcon } from '@/components/ui/selecter.tsx'
+import TemplateFilters from '@/pages/templates/template-filters.tsx'
 
 const Templates = () => {
     const [viewTemplateInUse, setViewTemplateInUse] = useState(false)
     const [viewTemplateId, setViewTemplateId] = useState<string>('')
+    const [filterType, setFilterType] = useState('character')
     const [selectedCharacterPath, setSelectedCharacterPath] = useState<readonly OptionSet[]>([])
+    const [selectedCharacter, setSelectedCharacter] = useState<readonly OptionSetWithIcon[]>([])
+
     const viewTemplateRef = useRef<HTMLDivElement>(null)
 
     const { onOpen } = useModal()
@@ -34,9 +37,10 @@ const Templates = () => {
         }
     }, [relicTemplateList.data, viewTemplateId])
 
-    const { characterPathOptions, characterPathToCharacters } = useMemo(() => {
+    const { characterOptions, characterPathOptions, characterPathToCharacters } = useMemo(() => {
         const mapper: Record<string, string[]> = {}
         const pathOptions: OptionSet[] = []
+        const characterOptions: OptionSetWithIcon[] = []
         if (characters.data) {
             Object.keys(characters.data).forEach((c) => {
                 const character = characters.data[c]
@@ -45,9 +49,11 @@ const Templates = () => {
                     pathOptions.push({ value: character.paths, label: character.paths })
                 }
                 mapper[character.paths].push(c)
+                characterOptions.push({ value: c, label: character.name, icon: character.icon })
             })
         }
         return {
+            characterOptions: characterOptions,
             characterPathOptions: pathOptions,
             characterPathToCharacters: mapper,
         }
@@ -122,16 +128,26 @@ const Templates = () => {
                         <Masonry>
                             {relicRuleList.data
                                 ?.filter((relicRule) => {
-                                    if (selectedCharacterPath.length === 0) {
-                                        return true
-                                    }
-                                    const showingCharacters = selectedCharacterPath
-                                        .map((s) => {
-                                            return characterPathToCharacters[s.value]
-                                        })
-                                        .flat()
+                                    if (filterType === 'character') {
+                                        if (selectedCharacter.length === 0) {
+                                            return true
+                                        } else {
+                                            return selectedCharacter.some((s) =>
+                                                relicRule.fit_characters.includes(s.value)
+                                            )
+                                        }
+                                    } else if (filterType === 'path') {
+                                        if (selectedCharacterPath.length === 0) {
+                                            return true
+                                        }
+                                        const showingCharacters = selectedCharacterPath
+                                            .map((s) => {
+                                                return characterPathToCharacters[s.value]
+                                            })
+                                            .flat()
 
-                                    return relicRule.fit_characters.some((c) => showingCharacters.includes(c))
+                                        return relicRule.fit_characters.some((c) => showingCharacters.includes(c))
+                                    }
                                 })
                                 .map((relicRule) => (
                                     <RelicRuleCard
@@ -145,10 +161,15 @@ const Templates = () => {
                     </ResponsiveMasonry>
 
                     <div className="fixed bottom-[1rem] right-4 z-40 flex gap-2 flex-col items-end">
-                        <PathSelector
-                            options={characterPathOptions}
-                            value={selectedCharacterPath}
-                            onChange={setSelectedCharacterPath}
+                        <TemplateFilters
+                            filterType={filterType}
+                            setFilterType={setFilterType}
+                            characterPathOptions={characterPathOptions}
+                            selectedCharacterPath={selectedCharacterPath}
+                            setSelectedCharacterPath={setSelectedCharacterPath}
+                            characterOptions={characterOptions}
+                            selectedCharacter={selectedCharacter}
+                            setSelectedCharacter={setSelectedCharacter}
                         />
                         <Button onClick={handleExportTemplate} className="w-fit">
                             <FileUp />
