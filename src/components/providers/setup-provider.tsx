@@ -14,7 +14,10 @@ export function SetupProvider({ children, ...props }: SetupProviderProps) {
     const backendStore = useBackend()
 
     useEffect(() => {
-        console.log(backendStore.appState)
+        // hide log window by default
+        invoke('toggle_log_window', {
+            show: false,
+        })
         if (backendStore.appState === 'idle') {
             invoke('post_backup').catch((e) => console.error('Failed to restore backup file:', e))
             onOpen('install-requirement')

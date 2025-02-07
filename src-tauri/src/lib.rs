@@ -433,6 +433,17 @@ fn kill_background_process() -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn toggle_log_window(app: AppHandle, show: bool) {
+    let logs = app.get_window("logs").unwrap();
+    if show {
+        logs.show().unwrap();
+    } else {
+        logs.hide().unwrap();
+    }
+}
+
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -443,6 +454,9 @@ pub fn run() {
             let logs = app.get_window("logs").unwrap();
 
             logs.set_ignore_cursor_events(true).unwrap();
+
+            // hide the log window by default
+            logs.hide().unwrap();
 
             if let Some(monitor) = logs.current_monitor().unwrap(){
                 let monitor_size = monitor.size();
@@ -466,7 +480,17 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![check_asserts_update,kill_background_process, start_screen_annotator,post_backup,pre_backup, start_backend, install_python_requirements,set_window_on_top,set_window_size])
+        .invoke_handler(tauri::generate_handler![
+            check_asserts_update,
+            kill_background_process,
+            start_screen_annotator,
+            post_backup,pre_backup,
+            start_backend,
+            install_python_requirements,
+            set_window_on_top,
+            set_window_size,
+            toggle_log_window]
+        )
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
