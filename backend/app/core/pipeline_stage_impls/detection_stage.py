@@ -1,5 +1,6 @@
 from loguru import logger
 
+from app.constant import AUTO_DETECT_RELIC_BOX, AUTO_DETECT_DISCARD_ICON
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -12,8 +13,8 @@ class DetectionStage(BasePipelineStage):
         try:
             screenshot = context.data.get("screenshot_stage")
 
-            auto_detect_relic_box_position = context.meta_data.get('auto_detect_relic_box_position', True)
-            auto_detect_discard_icon = context.meta_data.get('auto_detect_discard_icon', True)
+            auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
+            auto_detect_discard_icon = context.meta_data.get(AUTO_DETECT_DISCARD_ICON, True)
 
             if not screenshot:
                 error_msg = "无法获取到截图数据, 请联系开发者"

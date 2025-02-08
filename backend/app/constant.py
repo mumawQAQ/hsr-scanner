@@ -38,8 +38,10 @@ AUTO_DETECT_RELIC_BOX = 'auto_detect_relic_box'
 ANALYSIS_FAIL_SKIP = 'analysis_fail_skip'
 
 DISCARD_ICON_POSITION = "discard_icon_position"
-
-RELIC_BOX_TYPES = ["relic_main_stat", "relic_sub_stat", "relic_title"]
+RELIC_TITLE = "relic_title"
+RELIC_MAIN_STAT = "relic_main_stat"
+RELIC_SUB_STAT = "relic_sub_stat"
+RELIC_BOX_TYPES = [RELIC_MAIN_STAT, RELIC_SUB_STAT, RELIC_TITLE]
 
 RELIC_INNER_PARTS = ['sphere', 'rope']
 RELIC_OUTER_PARTS = ['head', 'hand', 'body', 'feet']

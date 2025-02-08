@@ -6,6 +6,7 @@ from loguru import logger
 from uvicorn import Server
 
 from app.core.state_machines.pipeline_state_machine import PipelineStateMachine
+from app.core.utils.database import get_pipeline_config
 from app.life_span import life_span
 from app.routers import config
 from app.routers import files
@@ -50,7 +51,9 @@ async def disconnect(sid):
 @sio.event
 async def start_pipeline(sid, data):
     config_name = data.get("config_name")
-    meta_data = data.get("meta_data")
+    meta_data = get_pipeline_config(config_name)
+
+    logger.info(f"{meta_data}")
 
     # Stop existing pipeline if running
     existing_runner = current_runners.get(sid)

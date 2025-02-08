@@ -7,14 +7,6 @@ import useRelic from '@/hooks/use-relic.ts'
 import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
-import {
-    useAnalysisFailSkip,
-    useAutoDetectDiscardIcon,
-    useAutoDetectRelicBoxPosition,
-    useDiscardIconPosition,
-    useRelicBoxPosition,
-    useRelicDiscardScore,
-} from '@/apis/config'
 import { useModal } from '@/hooks/use-modal.ts'
 import ImageDisplay from '@/components/image-display.tsx'
 import { useJsonFile } from '@/apis/files'
@@ -61,14 +53,6 @@ const Home = () => {
     const relicTemplateList = useRelicTemplateList()
     const relicSets = useJsonFile('relic/relic_sets.json')
     const characters = useJsonFile('character/character_meta.json')
-    const discardIconPosition = useDiscardIconPosition()
-    const analysisFailSkip = useAnalysisFailSkip()
-    const relicDiscardScore = useRelicDiscardScore()
-    const autoDetectDiscardIcon = useAutoDetectDiscardIcon()
-    const autoDetectRelicBoxPosition = useAutoDetectRelicBoxPosition()
-    const relicTitleBoxPosition = useRelicBoxPosition('relic_title')
-    const relicMainStatBoxPosition = useRelicBoxPosition('relic_main_stat')
-    const relicSubStatBoxPosition = useRelicBoxPosition('relic_sub_stat')
 
     useCheckAssetUpdate()
     useCheckAppUpdate()
@@ -173,54 +157,13 @@ const Home = () => {
             toast.error('socket-io服务未启动, 请稍后再试')
             return
         }
-
-        const relicTitleBox = {
-            x: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.x : 0,
-            y: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.y : 0,
-            w: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.w : 0,
-            h: relicTitleBoxPosition.data ? relicTitleBoxPosition.data.value.h : 0,
-        }
-
-        const relicMainStatBox = {
-            x: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.x : 0,
-            y: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.y : 0,
-            w: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.w : 0,
-            h: relicMainStatBoxPosition.data ? relicMainStatBoxPosition.data.value.h : 0,
-        }
-
-        const relicSubStatBox = {
-            x: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.x : 0,
-            y: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.y : 0,
-            w: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.w : 0,
-            h: relicSubStatBoxPosition.data ? relicSubStatBoxPosition.data.value.h : 0,
-        }
-
         if (type === 'SingleRelicAnalysisPipeline') {
             socketIoClient.emit('start_pipeline', {
                 config_name: type,
-                meta_data: {
-                    auto_detect_relic_box_position: autoDetectRelicBoxPosition.data ?? true,
-                    relic_title_box: relicTitleBox,
-                    relic_main_stat_box: relicMainStatBox,
-                    relic_sub_stat_box: relicSubStatBox,
-                },
             })
         } else if (type === 'AutoRelicAnalysisPipeline') {
             socketIoClient.emit('start_pipeline', {
                 config_name: type,
-                meta_data: {
-                    analysis_fail_skip: analysisFailSkip.data ?? true,
-                    relic_discard_score: relicDiscardScore.data ?? 40,
-
-                    auto_detect_discard_icon: autoDetectDiscardIcon.data ?? true,
-                    discard_icon_x: discardIconPosition.data ? discardIconPosition.data.value.x : 0,
-                    discard_icon_y: discardIconPosition.data ? discardIconPosition.data.value.y : 0,
-
-                    auto_detect_relic_box_position: autoDetectRelicBoxPosition.data ?? true,
-                    relic_title_box: relicTitleBox,
-                    relic_main_stat_box: relicMainStatBox,
-                    relic_sub_stat_box: relicSubStatBox,
-                },
             })
         }
     }

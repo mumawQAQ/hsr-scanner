@@ -3,6 +3,7 @@ import asyncio
 import pyautogui as pg
 from loguru import logger
 
+from app.constant import RELIC_DISCARD_SCORE, AUTO_DETECT_DISCARD_ICON, DISCARD_ICON_POSITION
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -16,10 +17,15 @@ class RelicDiscardStage(BasePipelineStage):
             screenshot = context.data.get("screenshot_stage")
             detection = context.data.get("detection_stage")
             relic_analysis = context.data.get("relic_analysis_stage")
-            relic_discard_score = context.meta_data.get("relic_discard_score", 40) / 100
-            auto_detect_discard_icon = context.meta_data.get("auto_detect_discard_icon", True)
-            discard_icon_x = context.meta_data.get("discard_icon_x", 0)
-            discard_icon_y = context.meta_data.get("discard_icon_y", 0)
+            relic_discard_score = context.meta_data.get(RELIC_DISCARD_SCORE, 40) / 100
+            auto_detect_discard_icon = context.meta_data.get(AUTO_DETECT_DISCARD_ICON, True)
+            discard_icon_position = context.meta_data.get(DISCARD_ICON_POSITION, {})
+            discard_icon_x = discard_icon_position.get('x', 0)
+            discard_icon_y = discard_icon_position.get('y', 0)
+
+            logger.info(f"relic_discard_score: {relic_discard_score}")
+            logger.info(f"auto_detect_discard_icon: {auto_detect_discard_icon}")
+            logger.info(f"discard_icon_position: {discard_icon_position}")
 
             # TODO: this may need to move to a separate stage
             keyboard_model = ModelManager().get_model("keyboard")

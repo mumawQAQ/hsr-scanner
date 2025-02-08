@@ -3,9 +3,10 @@ import json
 import os
 import sys
 from contextlib import asynccontextmanager
+from typing import Optional, Dict, Any
+
 from fastapi import FastAPI
 from loguru import logger
-from typing import Optional, Dict, Any
 
 from app.constant import ROOT_PATH
 from app.core.managers.global_state_manager import GlobalStateManager

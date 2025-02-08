@@ -5,6 +5,7 @@ import cv2
 from loguru import logger
 from numpy import ndarray
 
+from app.constant import AUTO_DETECT_RELIC_BOX, RELIC_TITLE, RELIC_MAIN_STAT, RELIC_SUB_STAT
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -160,7 +161,7 @@ class OCRStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            auto_detect_relic_box_position = context.meta_data.get('auto_detect_relic_box_position', True)
+            auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
             ocr_model = ModelManager().get_model("ocr")
             relic_matcher_model = ModelManager().get_model("relic_matcher")
 
@@ -227,9 +228,9 @@ class OCRStage(BasePipelineStage):
                     )
             else:
                 screenshot = context.data.get("screenshot_stage")
-                relic_title_box = context.meta_data.get('relic_title_box', None)
-                relic_main_stat_box = context.meta_data.get('relic_main_stat_box', None)
-                relic_sub_stat_box = context.meta_data.get('relic_sub_stat_box', None)
+                relic_title_box = context.meta_data.get(RELIC_TITLE, None)
+                relic_main_stat_box = context.meta_data.get(RELIC_MAIN_STAT, None)
+                relic_sub_stat_box = context.meta_data.get(RELIC_SUB_STAT, None)
 
                 if not screenshot:
                     error_msg = "无法获取到截图数据, 请联系开发者"
