@@ -452,9 +452,7 @@ pub fn run() {
             let _ = app.handle().plugin(tauri_plugin_updater::Builder::new().build());
             let main = app.get_window("main").unwrap();
             let logs = app.get_window("logs").unwrap();
-
-            logs.set_ignore_cursor_events(true).unwrap();
-
+            
             // hide the log window by default
             logs.hide().unwrap();
 
