@@ -24,8 +24,8 @@ class YOLOModel(ModelInterface[Any, Any]):
     def predict(self, input_data: Any) -> Any:
         """Perform object detection on the input data."""
         img_np = input_data['image']
-        window_h = input_data['window']['height']
-        window_w = input_data['window']['width']
+        window_h = input_data['window_info'].height
+        window_w = input_data['window_info'].width
 
         detection_result = self.model.predict(source=img_np, imgsz=640, conf=0.8, save=False, verbose=False)
         boxes = detection_result[0].boxes.xywhn if len(detection_result) > 0 else []

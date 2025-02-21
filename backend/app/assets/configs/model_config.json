@@ -1,6 +1,14 @@
 {
   "models": [
     {
+      "name": "window_info",
+      "class": "app.core.model_impls.window_info_model.WindowInfoModel"
+    },
+    {
+      "name": "screenshot",
+      "class": "app.core.model_impls.screenshot_model.ScreenshotModel"
+    },
+    {
       "name": "keyboard",
       "class": "app.core.model_impls.keyboard_model.KeyboardModel"
     },
