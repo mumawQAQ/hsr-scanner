@@ -1,13 +1,16 @@
 import importlib
 import json
 import os
-from typing import Dict, Optional
+from typing import Dict, Type, TypeVar
 
 from loguru import logger
 
 from app.constant import MODEL_CONFIG_PATH, ROOT_PATH
+from app.core.custom_exception import ModelNotFoundException
 from app.core.interfaces.model_interface import ModelInterface
 from app.core.singleton import singleton
+
+T = TypeVar('T', bound=ModelInterface)
 
 
 @singleton
@@ -86,10 +89,12 @@ class ModelManager:
         self._models[name] = model
         logger.info(f"模型{name}注册成功")
 
-    def get_model(self, name: str) -> Optional[ModelInterface]:
+    def get_model(self, name: str, model_cls: Type[T]) -> T:
         """Retrieve a registered model."""
         if name not in self._models:
-            logger.error(f"无法获取模型: {name}, 模型未注册")
-            return None
+            raise ModelNotFoundException(f"无法获取模型: {name}, 模型未注册")
+
+        if not isinstance(self._models[name], model_cls):
+            raise ModelNotFoundException(f"无法获取模型: {name}, 类型不匹配")
 
         return self._models[name]
