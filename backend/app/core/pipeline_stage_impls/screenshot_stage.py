@@ -15,8 +15,8 @@ class ScreenshotStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            window_info_model: Optional[WindowInfoModel] = ModelManager().get_model('window_info')
-            screenshot_model: Optional[ScreenshotModel] = ModelManager().get_model('screenshot')
+            window_info_model: Optional[WindowInfoModel] = ModelManager().get_model(WindowInfoModel.get_name())
+            screenshot_model: Optional[ScreenshotModel] = ModelManager().get_model(ScreenshotModel.get_name())
             if not window_info_model:
                 error_msg = "窗口信息模组未找到, 请联系开发者"
                 logger.error(error_msg)

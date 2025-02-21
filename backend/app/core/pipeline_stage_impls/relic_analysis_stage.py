@@ -1,9 +1,12 @@
+from typing import Optional
+
 from loguru import logger
 
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
+from app.core.model_impls.relic_rating_model import RelicRatingModel
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
 
 
@@ -11,8 +14,8 @@ class RelicAnalysisStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            ocr_data: RelicOCRResponse = context.data.get("ocr_stage")
-            relic_rating_model = ModelManager().get_model("relic_rating")
+            ocr_data: Optional[RelicOCRResponse] = context.data.get("ocr_stage")
+            relic_rating_model: Optional[RelicRatingModel] = ModelManager().get_model(RelicRatingModel.get_name())
 
             if not ocr_data:
                 error_msg = "遗器OCR数据未找到"

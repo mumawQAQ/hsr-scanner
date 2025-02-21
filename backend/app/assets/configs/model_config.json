@@ -1,23 +1,18 @@
 {
   "models": [
     {
-      "name": "window_info",
       "class": "app.core.model_impls.window_info_model.WindowInfoModel"
     },
     {
-      "name": "screenshot",
       "class": "app.core.model_impls.screenshot_model.ScreenshotModel"
     },
     {
-      "name": "keyboard",
       "class": "app.core.model_impls.keyboard_model.KeyboardModel"
     },
     {
-      "name": "ocr",
       "class": "app.core.model_impls.ocr_model.OCRModel"
     },
     {
-      "name": "relic_matcher",
       "class": "app.core.model_impls.relic_matcher_model.RelicMatcherModel",
       "params": {
         "relic_sets_path": {
@@ -35,7 +30,6 @@
       }
     },
     {
-      "name": "relic_rating",
       "class": "app.core.model_impls.relic_rating_model.RelicRatingModel",
       "params": {
         "global_state_manager": {
@@ -45,7 +39,6 @@
       }
     },
     {
-      "name": "yolo",
       "class": "app.core.model_impls.yolo_model.YOLOModel",
       "params": {
         "model_path": {

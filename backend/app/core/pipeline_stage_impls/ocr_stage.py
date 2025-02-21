@@ -11,7 +11,8 @@ from app.core.data_models.stage_result import StageResult, StageResultMetaData
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.interfaces.model_interface import ModelInterface
 from app.core.managers.model_manager import ModelManager
-from app.core.model_impls.relic_matcher_model import RelicMatcherInput, RelicMatcherInputType
+from app.core.model_impls.ocr_model import OCRModel
+from app.core.model_impls.relic_matcher_model import RelicMatcherInput, RelicMatcherInputType, RelicMatcherModel
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
 
 OCR_CONFIDENCE_THRESHOLD = 0.7
@@ -162,8 +163,8 @@ class OCRStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
-            ocr_model = ModelManager().get_model("ocr")
-            relic_matcher_model = ModelManager().get_model("relic_matcher")
+            ocr_model: Optional[OCRModel] = ModelManager().get_model(OCRModel.get_name())
+            relic_matcher_model: Optional[RelicMatcherModel] = ModelManager().get_model(RelicMatcherModel.get_name())
 
             if not ocr_model:
                 error_msg = "OCR模组未找到, 请联系开发者"

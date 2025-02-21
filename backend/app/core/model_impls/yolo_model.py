@@ -10,6 +10,10 @@ from app.core.interfaces.model_interface import ModelInterface
 class YOLOModel(ModelInterface[Any, Any]):
     """YOLO model for object detection."""
 
+    @staticmethod
+    def get_name() -> str:
+        return "yolo_model"
+
     def __init__(self, model_path: str):
         self.model_path = model_path
         self.model = None

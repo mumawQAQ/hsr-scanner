@@ -37,11 +37,10 @@ class ModelManager:
 
         for model_config in config.get('models', []):
             model_cls_path = model_config.get('class')
-            model_name = model_config.get('name')
             model_params = model_config.get('params', {})
 
-            if not model_cls_path or not model_name:
-                logger.warning(f"配置文件缺少 'class' 或 'name' 字段: {model_config}")
+            if not model_cls_path:
+                logger.error(f"配置文件缺少 'class' 字段: {model_config}")
                 raise SystemExit()
 
             try:
@@ -72,7 +71,7 @@ class ModelManager:
                 raise SystemExit()
 
             try:
-                self.register_model(model_name, model_instance)
+                self.register_model(model_cls.get_name(), model_instance)
             except Exception:
                 logger.exception(f"无法注册模型类: {model_cls_path}")
                 raise SystemExit()

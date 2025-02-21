@@ -1,3 +1,5 @@
+from typing import Optional
+
 from loguru import logger
 
 from app.constant import AUTO_DETECT_RELIC_BOX, AUTO_DETECT_DISCARD_ICON
@@ -5,10 +7,10 @@ from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
+from app.core.model_impls.yolo_model import YOLOModel
 
 
 class DetectionStage(BasePipelineStage):
-
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             screenshot = context.data.get("screenshot_stage")
@@ -31,7 +33,7 @@ class DetectionStage(BasePipelineStage):
                     data={},
                 )
             else:
-                yolo_model = ModelManager().get_model("yolo")
+                yolo_model: Optional[YOLOModel] = ModelManager().get_model(YOLOModel.get_name())
 
                 if not yolo_model:
                     error_msg = "YOLO模组未找到, 请联系开发者"

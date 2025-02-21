@@ -7,6 +7,9 @@ from app.core.interfaces.model_interface import ModelInterface
 
 
 class ScreenshotModel(ModelInterface[WindowInfo, np.ndarray]):
+    @staticmethod
+    def get_name() -> str:
+        return "screenshot_model"
 
     def __init__(self) -> None:
         self.model = None

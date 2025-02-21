@@ -23,6 +23,10 @@ class RelicMatcherInput(BaseModel):
 
 
 class RelicMatcherModel(ModelInterface[RelicMatcherInput, Union[RelicTitle, RelicMainStat, List[RelicSubStat], None]]):
+    @staticmethod
+    def get_name() -> str:
+        return "relic_matcher_model"
+
     def __init__(self, relic_sets_path: str, relic_main_stats_path: str, relic_sub_stats_path: str):
         self.relic_parts = {}
         self.relic_main_stats = {}

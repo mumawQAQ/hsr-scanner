@@ -9,6 +9,10 @@ from app.core.network_models.responses.relic_ocr_response import RelicOCRRespons
 
 
 class RelicRatingModel(ModelInterface[RelicOCRResponse, Union[None, List[RelicScoreResponse]]]):
+    @staticmethod
+    def get_name() -> str:
+        return "relic_rating_model"
+
     def __init__(self, global_state_manager: GlobalStateManager):
         self.global_state_manager = global_state_manager
 

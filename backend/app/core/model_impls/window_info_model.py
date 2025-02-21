@@ -9,6 +9,10 @@ from app.core.interfaces.model_interface import ModelInterface
 
 class WindowInfoModel(ModelInterface[None, Optional[WindowInfo]]):
 
+    @staticmethod
+    def get_name() -> str:
+        return "window_info_model"
+
     def load(self) -> None:
         pass
 

@@ -1,4 +1,5 @@
 import asyncio
+from typing import Optional
 
 import pyautogui as pg
 from loguru import logger
@@ -9,6 +10,7 @@ from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
+from app.core.model_impls.keyboard_model import KeyboardModel
 
 
 class RelicDiscardStage(BasePipelineStage):
@@ -27,7 +29,7 @@ class RelicDiscardStage(BasePipelineStage):
             logger.info(
                 f"当前阶段配置: relic_discard_score: {relic_discard_score}, auto_detect_discard_icon: {auto_detect_discard_icon}, discard_icon_position: {discard_icon_position}")
 
-            keyboard_model = ModelManager().get_model("keyboard")
+            keyboard_model: Optional[KeyboardModel] = ModelManager().get_model(KeyboardModel.get_name())
 
             if not keyboard_model:
                 error_msg = "键盘模组未找到, 请联系开发者"

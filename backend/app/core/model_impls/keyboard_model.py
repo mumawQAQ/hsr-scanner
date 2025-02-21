@@ -7,6 +7,10 @@ from app.core.interfaces.model_interface import ModelInterface
 
 class KeyboardModel(ModelInterface[str, None]):
 
+    @staticmethod
+    def get_name() -> str:
+        return "keyboard_model"
+
     def __init__(self):
         self.keyboard = KeyboardController()
 
