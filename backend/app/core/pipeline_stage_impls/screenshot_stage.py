@@ -1,8 +1,7 @@
-from typing import Optional
-
 from loguru import logger
 
 from app.constant import GAME_TITLES
+from app.core.custom_exception import ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -19,25 +18,8 @@ class ScreenshotStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            window_info_model: Optional[WindowInfoModel] = ModelManager().get_model(WindowInfoModel.get_name())
-            screenshot_model: Optional[ScreenshotModel] = ModelManager().get_model(ScreenshotModel.get_name())
-            if not window_info_model:
-                error_msg = "窗口信息模组未找到, 请联系开发者"
-                logger.error(error_msg)
-                return StageResult(
-                    success=False,
-                    error=error_msg,
-                    data=None
-                )
-
-            if not screenshot_model:
-                error_msg = "截图模组未找到, 请联系开发者"
-                logger.error(error_msg)
-                return StageResult(
-                    success=False,
-                    error=error_msg,
-                    data=None
-                )
+            window_info_model = ModelManager().get_model(WindowInfoModel)
+            screenshot_model = ModelManager().get_model(ScreenshotModel)
 
             window_info = window_info_model.predict(None)
             if not window_info:
@@ -59,7 +41,10 @@ class ScreenshotStage(BasePipelineStage):
                 }
             )
 
-        except Exception as e:
+        except ModelNotFoundException as e:
+            logger.exception(e.message)
+            return StageResult(success=False, data=None, error=e.message)
+        except Exception:
             logger.exception(f"截图阶段异常")
             return StageResult(
                 success=False,

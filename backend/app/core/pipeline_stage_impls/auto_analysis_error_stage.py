@@ -1,6 +1,7 @@
 from loguru import logger
 
 from app.constant import ANALYSIS_FAIL_SKIP
+from app.core.custom_exception import ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -20,23 +21,13 @@ class AutoAnalysisErrorStage(BasePipelineStage):
             context.cleanup()
 
             if skip_if_error:
-                keyboard_model = ModelManager().get_model(KeyboardModel.get_name(), KeyboardModel)
-
-                if not keyboard_model:
-                    error_msg = "键盘模组未找到, 请联系开发者"
-                    logger.error(error_msg)
-                    return StageResult(
-                        success=False,
-                        data=None,
-                        error=error_msg
-                    )
-
+                keyboard_model = ModelManager().get_model(KeyboardModel)
                 keyboard_model.predict("d")
-                
+
             return StageResult(success=True, data=None)
-        except ModuleNotFoundError:
-            logger.exception("无法找到模组, 请联系开发者")
-            return StageResult(success=False, data=None, error="无法找到模组, 请联系开发者")
+        except ModelNotFoundException as e:
+            logger.exception(e.message)
+            return StageResult(success=False, data=None, error=e.message)
         except Exception:
             logger.exception("自动分析错误处理阶段异常")
             return StageResult(success=False, data=None, error="自动分析错误处理阶段异常, 打开日志查看详细信息")

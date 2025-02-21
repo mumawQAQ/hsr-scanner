@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 from pydantic import BaseModel
 
-from app.core.custom_exception import StageDateNotFoundException
+from app.core.custom_exception import StageResultNotFoundException
 
 
 class PipelineContext(BaseModel):
@@ -13,9 +13,9 @@ class PipelineContext(BaseModel):
     meta_data: Dict[str, Any]
     cache: Dict[str, Any] = {}
 
-    def get_stage_data(self, stage_name: str) -> Any:
-        if stage_name not in self.data:
-            raise StageDateNotFoundException(f"无法获取到stage:{stage_name}数据, 请查看日志")
+    def get_stage_result(self, stage_name: str) -> Any:
+        if stage_name not in self.data or self.data[stage_name] is None:
+            raise StageResultNotFoundException(f"无法获取到stage:{stage_name}数据, 请查看日志")
         return self.data[stage_name]
 
     def cleanup(self) -> None:

@@ -74,13 +74,14 @@ class ModelManager:
                 raise SystemExit()
 
             try:
-                self.register_model(model_cls.get_name(), model_instance)
+                self.register_model(model_instance)
             except Exception:
                 logger.exception(f"无法注册模型类: {model_cls_path}")
                 raise SystemExit()
 
-    def register_model(self, name: str, model: ModelInterface) -> None:
+    def register_model(self, model: ModelInterface) -> None:
         """Register and load a model."""
+        name = model.get_name()
         if name in self._models:
             logger.warning(f"模型 '{name}' 已经注册")
             return
@@ -89,8 +90,14 @@ class ModelManager:
         self._models[name] = model
         logger.info(f"模型{name}注册成功")
 
-    def get_model(self, name: str, model_cls: Type[T]) -> T:
-        """Retrieve a registered model."""
+    def get_model(self, model_cls: Type[T]) -> T:
+        """
+        Retrieve a registered model by its name,
+        :arg model_cls: The class of the model to retrieve.
+        :return: The model instance.
+        :raise ModelNotFoundException: If the model is not found or the class type does not match.
+        """
+        name = model_cls.get_name()
         if name not in self._models:
             raise ModelNotFoundException(f"无法获取模型: {name}, 模型未注册")
 

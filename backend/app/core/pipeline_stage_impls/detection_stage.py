@@ -1,8 +1,7 @@
-from typing import Optional
-
 from loguru import logger
 
 from app.constant import AUTO_DETECT_RELIC_BOX, AUTO_DETECT_DISCARD_ICON
+from app.core.custom_exception import StageResultNotFoundException, ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -18,19 +17,9 @@ class DetectionStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            screenshot = context.data.get(ScreenshotStage.get_name())
-
             auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
             auto_detect_discard_icon = context.meta_data.get(AUTO_DETECT_DISCARD_ICON, True)
-
-            if not screenshot:
-                error_msg = "无法获取到截图数据, 请联系开发者"
-                logger.error(error_msg)
-                return StageResult(
-                    success=False,
-                    data=None,
-                    error=error_msg
-                )
+            screenshot_stage_result = context.get_stage_result(ScreenshotStage.get_name())
 
             if not auto_detect_relic_box_position and not auto_detect_discard_icon:
                 return StageResult(
@@ -38,26 +27,29 @@ class DetectionStage(BasePipelineStage):
                     data={},
                 )
             else:
-                yolo_model: Optional[YOLOModel] = ModelManager().get_model(YOLOModel.get_name())
-
-                if not yolo_model:
-                    error_msg = "YOLO模组未找到, 请联系开发者"
-                    logger.error(error_msg)
-                    return StageResult(
-                        success=False,
-                        data=None,
-                        error=error_msg
-                    )
-
-                detection_data = yolo_model.predict(screenshot)
+                yolo_model = ModelManager().get_model(YOLOModel)
+                detection_data = yolo_model.predict(screenshot_stage_result)
 
                 return StageResult(
                     success=True,
                     data=detection_data,
                 )
 
-
-        except Exception as e:
+        except StageResultNotFoundException as e:
+            logger.exception(e.message)
+            return StageResult(
+                success=False,
+                data=None,
+                error=e.message
+            )
+        except ModelNotFoundException as e:
+            logger.exception(e.message)
+            return StageResult(
+                success=False,
+                data=None,
+                error=e.message
+            )
+        except Exception:
             logger.exception(f"检测阶段异常")
             return StageResult(
                 success=False,

@@ -2,10 +2,12 @@ import re
 from typing import Optional, List, Any, Dict
 
 import cv2
+import numpy as np
 from loguru import logger
 from numpy import ndarray
 
 from app.constant import AUTO_DETECT_RELIC_BOX, RELIC_TITLE, RELIC_MAIN_STAT, RELIC_SUB_STAT
+from app.core.custom_exception import ModelNotFoundException, StageResultNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -169,40 +171,14 @@ class OCRStage(BasePipelineStage):
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
-            ocr_model: Optional[OCRModel] = ModelManager().get_model(OCRModel.get_name())
-            relic_matcher_model: Optional[RelicMatcherModel] = ModelManager().get_model(RelicMatcherModel.get_name())
-
-            if not ocr_model:
-                error_msg = "OCR模组未找到, 请联系开发者"
-                logger.error(error_msg)
-                return StageResult(
-                    success=False,
-                    data=None,
-                    error=error_msg
-                )
-
-            if not relic_matcher_model:
-                error_msg = "遗器匹配模组未找到, 请联系开发者"
-                logger.error(error_msg)
-                return StageResult(
-                    success=False,
-                    data=None,
-                    error=error_msg
-                )
+            ocr_model = ModelManager().get_model(OCRModel)
+            relic_matcher_model = ModelManager().get_model(RelicMatcherModel)
 
             if auto_detect_relic_box_position:
-                detection_data = context.data.get(DetectionStage.get_name())
-                if not detection_data:
-                    error_msg = "未检测到数据, 可能是YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
-                    logger.error(error_msg)
-                    return StageResult(
-                        success=False,
-                        error=error_msg,
-                        data=None
-                    )
+                detection_stage_result = context.get_stage_result(DetectionStage.get_name())
 
-                if "relic-title" in detection_data:
-                    relic_title_image = detection_data["relic-title"]["image"]
+                if "relic-title" in detection_stage_result:
+                    relic_title_image = detection_stage_result["relic-title"]["image"]
                 else:
                     error_msg = "遗器标题检测数据未找到, YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
@@ -212,8 +188,8 @@ class OCRStage(BasePipelineStage):
                         data=None
                     )
 
-                if "relic-main-stat" in detection_data:
-                    relic_main_stat_image = detection_data["relic-main-stat"]["image"]
+                if "relic-main-stat" in detection_stage_result:
+                    relic_main_stat_image = detection_stage_result["relic-main-stat"]["image"]
                 else:
                     error_msg = "遗器主属性检测数据未找到, YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
@@ -223,8 +199,8 @@ class OCRStage(BasePipelineStage):
                         data=None
                     )
 
-                if "relic-sub-stat" in detection_data:
-                    relic_sub_stat_image = detection_data["relic-sub-stat"]["image"]
+                if "relic-sub-stat" in detection_stage_result:
+                    relic_sub_stat_image = detection_stage_result["relic-sub-stat"]["image"]
                 else:
                     error_msg = "遗器副属性检测数据未找到, YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
@@ -234,19 +210,10 @@ class OCRStage(BasePipelineStage):
                         data=None
                     )
             else:
-                screenshot = context.data.get(ScreenshotStage.get_name())
+                screenshot_stage_result = context.get_stage_result(ScreenshotStage.get_name())
                 relic_title_box = context.meta_data.get(RELIC_TITLE, None)
                 relic_main_stat_box = context.meta_data.get(RELIC_MAIN_STAT, None)
                 relic_sub_stat_box = context.meta_data.get(RELIC_SUB_STAT, None)
-
-                if not screenshot:
-                    error_msg = "无法获取到截图数据, 请联系开发者"
-                    logger.error(error_msg)
-                    return StageResult(
-                        success=False,
-                        data=None,
-                        error=error_msg
-                    )
 
                 if not relic_title_box or not relic_main_stat_box or not relic_sub_stat_box:
                     error_msg = "遗器框选数据未找到, 如果你禁用了自动检测遗器位置, 你需要手动设置遗器位置。"
@@ -256,48 +223,31 @@ class OCRStage(BasePipelineStage):
                         data=None,
                         error=error_msg
                     )
-                img_np = screenshot['image']
+                img_np = screenshot_stage_result['image']
 
-                relic_title_box_x1 = relic_title_box['x']
-                relic_title_box_y1 = relic_title_box['y']
-                relic_title_box_x2 = relic_title_box_x1 + relic_title_box['w']
-                relic_title_box_y2 = relic_title_box_y1 + relic_title_box['h']
-
-                relic_main_stat_box_x1 = relic_main_stat_box['x']
-                relic_main_stat_box_y1 = relic_main_stat_box['y']
-                relic_main_stat_box_x2 = relic_main_stat_box_x1 + relic_main_stat_box['w']
-                relic_main_stat_box_y2 = relic_main_stat_box_y1 + relic_main_stat_box['h']
-
-                relic_sub_stat_box_x1 = relic_sub_stat_box['x']
-                relic_sub_stat_box_y1 = relic_sub_stat_box['y']
-                relic_sub_stat_box_x2 = relic_sub_stat_box_x1 + relic_sub_stat_box['w']
-                relic_sub_stat_box_y2 = relic_sub_stat_box_y1 + relic_sub_stat_box['h']
-
-                relic_title_image = img_np[relic_title_box_y1:relic_title_box_y2, relic_title_box_x1:relic_title_box_x2]
-                relic_main_stat_image = img_np[relic_main_stat_box_y1:relic_main_stat_box_y2,
-                                        relic_main_stat_box_x1:relic_main_stat_box_x2]
-                relic_sub_stat_image = img_np[relic_sub_stat_box_y1:relic_sub_stat_box_y2,
-                                       relic_sub_stat_box_x1:relic_sub_stat_box_x2]
+                relic_title_image = self.crop_image(img_np, relic_title_box)
+                relic_main_stat_image = self.crop_image(img_np, relic_main_stat_box)
+                relic_sub_stat_image = self.crop_image(img_np, relic_sub_stat_box)
 
             relic_title = None
             relic_main_stat = None
             relic_sub_stat = None
 
-            relic_title_info = self.__handle_relic_title_ocr(ocr_model, relic_title_image)
+            relic_title_info = self.handle_relic_title_ocr(ocr_model, relic_title_image)
             if relic_title_info:
                 relic_title = relic_matcher_model.predict(RelicMatcherInput(
                     type=RelicMatcherInputType.RELIC_TITLE,
                     data=relic_title_info,
                 ))
 
-            relic_main_stat_info = self.__handle_relic_main_stat_ocr(ocr_model, relic_main_stat_image)
+            relic_main_stat_info = self.handle_relic_main_stat_ocr(ocr_model, relic_main_stat_image)
             if relic_main_stat_info:
                 relic_main_stat = relic_matcher_model.predict(RelicMatcherInput(
                     type=RelicMatcherInputType.RELIC_MAIN_STAT,
                     data=relic_main_stat_info,
                 ))
 
-            relic_sub_stat_info = self.__handle_relic_sub_stat_ocr(ocr_model, relic_sub_stat_image)
+            relic_sub_stat_info = self.handle_relic_sub_stat_ocr(ocr_model, relic_sub_stat_image)
             if relic_sub_stat_info:
                 relic_sub_stat = relic_matcher_model.predict(RelicMatcherInput(
                     type=RelicMatcherInputType.RELIC_SUB_STAT,
@@ -317,15 +267,29 @@ class OCRStage(BasePipelineStage):
                 data=relic_ocr_response,
                 metadata=StageResultMetaData(send_to_frontend=True)
             )
-        except Exception as e:
+
+        except StageResultNotFoundException as e:
+            logger.exception(e.message)
+            return StageResult(success=False, data=None, error=e.message)
+        except ModelNotFoundException as e:
+            logger.exception(e.message)
+            return StageResult(success=False, data=None, error=e.message)
+        except Exception:
             logger.exception(f"遗器OCR阶段异常")
             return StageResult(success=False, data=None, error="遗器OCR阶段异常, 打开日志查看详情")
 
-    def __handle_relic_title_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[str]:
+    def crop_image(self, img: np.ndarray, box: Dict[str, int]) -> np.ndarray:
+        x1 = box['x']
+        y1 = box['y']
+        x2 = x1 + box['w']
+        y2 = y1 + box['h']
+        return img[y1:y2, x1:x2]
+
+    def handle_relic_title_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[str]:
         result = ocr_model.predict(img)
         return format_relic_title(result)
 
-    def __handle_relic_main_stat_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[
+    def handle_relic_main_stat_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[
         Dict[str, str]]:
         # TODO: make the split ratio read from config file, this should not be hardcoded
         stat_name_area, stat_val_area = pp_relic_stat_img(img, 0.7)
@@ -333,7 +297,7 @@ class OCRStage(BasePipelineStage):
         val_result = ocr_model.predict(stat_val_area)
         return format_relic_main_stat(name_result, val_result)
 
-    def __handle_relic_sub_stat_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[
+    def handle_relic_sub_stat_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[
         Dict[str, str]]:
         # TODO: make the split ratio read from config file, this should not be hardcoded
         stat_name_area, stat_val_area = pp_relic_stat_img(img, 0.7)
