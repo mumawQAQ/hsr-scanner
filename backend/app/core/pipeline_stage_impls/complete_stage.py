@@ -5,6 +5,10 @@ from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 
 class CompleteStage(BasePipelineStage):
 
+    @staticmethod
+    def get_name() -> str:
+        return "complete_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         context.cleanup()
         return StageResult(success=True, data=None)

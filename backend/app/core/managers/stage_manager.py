@@ -5,13 +5,13 @@ from typing import Dict
 from loguru import logger
 
 from app.constant import STAGE_CONFIG_PATH
-from app.core.interfaces.pipeline_stage_interface import PipelineStageProtocol
+from app.core.interfaces.pipeline_stage_interface import PipelineStageInterface
 from app.core.singleton import singleton
 
 
 @singleton
 class StageManager:
-    _stages: Dict[str, PipelineStageProtocol] = {}
+    _stages: Dict[str, PipelineStageInterface] = {}
 
     def __init__(self):
         self.auto_register_stages(config_path=STAGE_CONFIG_PATH)
@@ -29,17 +29,16 @@ class StageManager:
 
         for stage_config in config.get('stages', []):
             stage_cls_path = stage_config.get('class')
-            stage_name = stage_config.get('name')
 
-            if not stage_cls_path or not stage_name:
-                logger.warning(f"配置文件缺少 'class' 或 'name' 字段: {stage_config}")
+            if not stage_cls_path:
+                logger.warning(f"配置文件缺少 'class' 字段: {stage_config}")
                 continue
 
             try:
                 stage_path, class_name = stage_cls_path.rsplit('.', 1)
                 module = importlib.import_module(stage_path)
-                stage_cls = getattr(module, class_name)
-                self.register_stage(stage_name, stage_cls(stage_name))
+                stage_cls: PipelineStageInterface = getattr(module, class_name)
+                self.register_stage(stage_cls.get_name(), stage_cls())
             except (ImportError, AttributeError) as e:
                 logger.exception(f"无法加载阶段类{stage_cls_path}")
                 raise SystemExit()
@@ -47,7 +46,7 @@ class StageManager:
                 logger.exception(f"无法加载阶段类{stage_cls_path}")
                 raise SystemExit()
 
-    def register_stage(self, stage_name: str, stage: PipelineStageProtocol):
+    def register_stage(self, stage_name: str, stage: PipelineStageInterface):
         self._stages[stage_name] = stage
         logger.info(f"阶段'{stage_name}'加载成功")
 

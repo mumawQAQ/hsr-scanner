@@ -11,6 +11,10 @@ from app.core.model_impls.keyboard_model import KeyboardModel
 
 
 class AutoAnalysisErrorStage(BasePipelineStage):
+    @staticmethod
+    def get_name() -> str:
+        return "auto_analysis_error_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         skip_if_error = context.meta_data.get(ANALYSIS_FAIL_SKIP, True)
         context.cleanup()

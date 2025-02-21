@@ -14,6 +14,8 @@ from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.ocr_model import OCRModel
 from app.core.model_impls.relic_matcher_model import RelicMatcherInput, RelicMatcherInputType, RelicMatcherModel
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
+from app.core.pipeline_stage_impls.detection_stage import DetectionStage
+from app.core.pipeline_stage_impls.screenshot_stage import ScreenshotStage
 
 OCR_CONFIDENCE_THRESHOLD = 0.7
 
@@ -160,6 +162,10 @@ def format_relic_sub_stat(
 
 class OCRStage(BasePipelineStage):
 
+    @staticmethod
+    def get_name() -> str:
+        return "ocr_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
@@ -185,7 +191,7 @@ class OCRStage(BasePipelineStage):
                 )
 
             if auto_detect_relic_box_position:
-                detection_data = context.data.get("detection_stage")
+                detection_data = context.data.get(DetectionStage.get_name())
                 if not detection_data:
                     error_msg = "未检测到数据, 可能是YOLO模型无法检测到遗器位置, 如果此错误频繁发生, 请尝试手动设置遗器位置。"
                     logger.error(error_msg)
@@ -228,7 +234,7 @@ class OCRStage(BasePipelineStage):
                         data=None
                     )
             else:
-                screenshot = context.data.get("screenshot_stage")
+                screenshot = context.data.get(ScreenshotStage.get_name())
                 relic_title_box = context.meta_data.get(RELIC_TITLE, None)
                 relic_main_stat_box = context.meta_data.get(RELIC_MAIN_STAT, None)
                 relic_sub_stat_box = context.meta_data.get(RELIC_SUB_STAT, None)

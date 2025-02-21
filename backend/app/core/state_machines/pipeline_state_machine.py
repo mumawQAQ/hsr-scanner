@@ -56,13 +56,13 @@ class PipelineStateMachine:
                 return
 
             stage_instance = self.stage_manager.get_stage(self.state)
-            logger.debug(f"[{self.config_name}:{self.context.pipeline_id}] 运行 {self.state} ...")
+            logger.info(f"[{self.config_name}:{self.context.pipeline_id}] 运行 {self.state} ...")
 
             result = await stage_instance.process(self.context)
 
             if result.success:
                 # Stage completed successfully
-                self.context.data[stage_instance.get_stage_name()] = result.data
+                self.context.data[stage_instance.get_name()] = result.data
 
                 if result.metadata.send_to_frontend:
                     # Send result to frontend
@@ -70,7 +70,7 @@ class PipelineStateMachine:
                         "pipeline_result",
                         PipelineResponse(
                             type="result",
-                            stage=stage_instance.get_stage_name(),
+                            stage=stage_instance.get_name(),
                             data=result.data,
                             pipeline_id=self.context.pipeline_id,
                             pipeline_type=self.config_name
@@ -79,7 +79,7 @@ class PipelineStateMachine:
                     )
 
                 logger.info(
-                    f"[{self.config_name}:{self.context.pipeline_id}] 完成阶段 {stage_instance.get_stage_name()}."
+                    f"[{self.config_name}:{self.context.pipeline_id}] 完成阶段 {stage_instance.get_name()}."
                 )
 
                 # Only trigger next stage if we haven't stopped or errored in the meantime
@@ -87,13 +87,13 @@ class PipelineStateMachine:
                     await self.next_stage_trigger()
 
             else:
-                self.context.data[stage_instance.get_stage_name()] = None
+                self.context.data[stage_instance.get_name()] = None
                 # Stage returned an error
                 await self.sio.emit(
                     "pipeline_error",
                     PipelineResponse(
                         type="error",
-                        stage=stage_instance.get_stage_name(),
+                        stage=stage_instance.get_name(),
                         error=result.error,
                         pipeline_id=self.context.pipeline_id,
                         pipeline_type=self.config_name

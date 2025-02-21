@@ -11,15 +11,22 @@ from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.keyboard_model import KeyboardModel
+from app.core.pipeline_stage_impls.detection_stage import DetectionStage
+from app.core.pipeline_stage_impls.relic_analysis_stage import RelicAnalysisStage
+from app.core.pipeline_stage_impls.screenshot_stage import ScreenshotStage
 
 
 class RelicDiscardStage(BasePipelineStage):
 
+    @staticmethod
+    def get_name() -> str:
+        return "relic_discard_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            screenshot = context.data.get("screenshot_stage")
-            detection = context.data.get("detection_stage")
-            relic_analysis = context.data.get("relic_analysis_stage")
+            screenshot = context.data.get(ScreenshotStage.get_name())
+            detection = context.data.get(DetectionStage.get_name())
+            relic_analysis = context.data.get(RelicAnalysisStage.get_name())
             relic_discard_score = context.meta_data.get(RELIC_DISCARD_SCORE, 40) / 100
             auto_detect_discard_icon = context.meta_data.get(AUTO_DETECT_DISCARD_ICON, True)
             discard_icon_position = context.meta_data.get(DISCARD_ICON_POSITION, {})

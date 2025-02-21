@@ -8,12 +8,17 @@ from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.yolo_model import YOLOModel
+from app.core.pipeline_stage_impls.screenshot_stage import ScreenshotStage
 
 
 class DetectionStage(BasePipelineStage):
+    @staticmethod
+    def get_name() -> str:
+        return "detection_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            screenshot = context.data.get("screenshot_stage")
+            screenshot = context.data.get(ScreenshotStage.get_name())
 
             auto_detect_relic_box_position = context.meta_data.get(AUTO_DETECT_RELIC_BOX, True)
             auto_detect_discard_icon = context.meta_data.get(AUTO_DETECT_DISCARD_ICON, True)

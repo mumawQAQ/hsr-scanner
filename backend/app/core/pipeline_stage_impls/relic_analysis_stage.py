@@ -8,13 +8,18 @@ from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 from app.core.managers.model_manager import ModelManager
 from app.core.model_impls.relic_rating_model import RelicRatingModel
 from app.core.network_models.responses.relic_ocr_response import RelicOCRResponse
+from app.core.pipeline_stage_impls.ocr_stage import OCRStage
 
 
 class RelicAnalysisStage(BasePipelineStage):
 
+    @staticmethod
+    def get_name() -> str:
+        return "relic_analysis_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            ocr_data: Optional[RelicOCRResponse] = context.data.get("ocr_stage")
+            ocr_data: Optional[RelicOCRResponse] = context.data.get(OCRStage.get_name())
             relic_rating_model: Optional[RelicRatingModel] = ModelManager().get_model(RelicRatingModel.get_name())
 
             if not ocr_data:
@@ -51,6 +56,6 @@ class RelicAnalysisStage(BasePipelineStage):
                 data=result,
                 metadata=StageResultMetaData(send_to_frontend=True)
             )
-        except Exception as e:
+        except Exception:
             logger.exception(f"遗器分析阶段异常")
             return StageResult(success=False, data=None, error="遗器分析阶段异常, 打开日志查看详细信息")

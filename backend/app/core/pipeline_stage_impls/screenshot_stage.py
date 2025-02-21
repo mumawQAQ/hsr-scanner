@@ -13,6 +13,10 @@ from app.core.model_impls.window_info_model import WindowInfoModel
 
 class ScreenshotStage(BasePipelineStage):
 
+    @staticmethod
+    def get_name() -> str:
+        return "screenshot_stage"
+
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             window_info_model: Optional[WindowInfoModel] = ModelManager().get_model(WindowInfoModel.get_name())
