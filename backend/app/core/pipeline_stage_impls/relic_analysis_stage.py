@@ -49,5 +49,5 @@ class RelicAnalysisStage(BasePipelineStage):
                 metadata=StageResultMetaData(send_to_frontend=True)
             )
         except Exception as e:
-            logger.exception(f"Error in relic analysis stage")
-            return StageResult(success=False, data=None, error=str(e))
+            logger.exception(f"遗器分析阶段异常")
+            return StageResult(success=False, data=None, error="遗器分析阶段异常, 打开日志查看详细信息")

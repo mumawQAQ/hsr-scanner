@@ -52,4 +52,8 @@ class DetectionStage(BasePipelineStage):
 
         except Exception as e:
             logger.exception(f"检测阶段异常")
-            return StageResult(success=False, data=None, error=str(e))
+            return StageResult(
+                success=False,
+                error="检测阶段异常, 打开日志查看详细信息",
+                data=None,
+            )

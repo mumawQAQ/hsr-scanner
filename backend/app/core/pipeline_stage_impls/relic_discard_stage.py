@@ -101,4 +101,4 @@ class RelicDiscardStage(BasePipelineStage):
             )
         except Exception as e:
             logger.exception(f"遗器弃置阶段异常")
-            return StageResult(success=False, data=None, error=str(e))
+            return StageResult(success=False, data=None, error="遗器弃置阶段异常, 打开日志查看详细信息")
