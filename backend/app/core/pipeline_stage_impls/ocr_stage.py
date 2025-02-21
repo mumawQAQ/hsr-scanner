@@ -312,7 +312,7 @@ class OCRStage(BasePipelineStage):
             )
         except Exception as e:
             logger.exception(f"遗器OCR阶段异常")
-            return StageResult(success=False, data=None, error=str(e))
+            return StageResult(success=False, data=None, error="遗器OCR阶段异常, 打开日志查看详情")
 
     def __handle_relic_title_ocr(self, ocr_model: ModelInterface, img: ndarray) -> Optional[str]:
         result = ocr_model.predict(img)
