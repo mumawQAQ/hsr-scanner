@@ -24,7 +24,6 @@ class PipelineStateMachine:
         self.context = PipelineContext(
             pipeline_id=str(uuid4()),
             meta_data=meta_data or {},
-            data={}
         )
         self.config = pipeline_config
         self.config_name = config_name

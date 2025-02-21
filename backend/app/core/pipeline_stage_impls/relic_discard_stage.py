@@ -4,6 +4,7 @@ import pyautogui as pg
 from loguru import logger
 
 from app.constant import RELIC_DISCARD_SCORE, AUTO_DETECT_DISCARD_ICON, DISCARD_ICON_POSITION
+from app.core.data_models.caches import CachedDiscardIconPosition
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -23,11 +24,9 @@ class RelicDiscardStage(BasePipelineStage):
             discard_icon_x = discard_icon_position.get('x', 0)
             discard_icon_y = discard_icon_position.get('y', 0)
 
-            logger.info(f"relic_discard_score: {relic_discard_score}")
-            logger.info(f"auto_detect_discard_icon: {auto_detect_discard_icon}")
-            logger.info(f"discard_icon_position: {discard_icon_position}")
+            logger.info(
+                f"当前阶段配置: relic_discard_score: {relic_discard_score}, auto_detect_discard_icon: {auto_detect_discard_icon}, discard_icon_position: {discard_icon_position}")
 
-            # TODO: this may need to move to a separate stage
             keyboard_model = ModelManager().get_model("keyboard")
 
             if not keyboard_model:
@@ -62,7 +61,14 @@ class RelicDiscardStage(BasePipelineStage):
                 icon_center_x = discard_icon_x
                 icon_center_y = discard_icon_y
             else:
-                if detection is None or 'discard-icon' not in detection:
+                # check if the cached icon position is set
+                cached_discard_icon_position: CachedDiscardIconPosition = context.cache.get(
+                    CachedDiscardIconPosition.name)
+                if cached_discard_icon_position:
+                    logger.info("使用缓存的弃置图标位置")
+                    icon_center_x = cached_discard_icon_position.x
+                    icon_center_y = cached_discard_icon_position.y
+                elif detection is None or 'discard-icon' not in detection:
                     error_msg = "无法获取弃置图标位置, 如果此错误频繁发生, 请尝试手动设置弃置图标位置"
                     logger.error(error_msg)
                     return StageResult(
@@ -70,20 +76,22 @@ class RelicDiscardStage(BasePipelineStage):
                         data=None,
                         error=error_msg
                     )
+                else:
+                    icon_center_x = detection['discard-icon']['box']['x_center']
+                    icon_center_y = detection['discard-icon']['box']['y_center']
 
-                icon_center_x = detection['discard-icon']['box']['x_center']
-                icon_center_y = detection['discard-icon']['box']['y_center']
+                    # cache the icon position
+                    context.cache[CachedDiscardIconPosition.name] = CachedDiscardIconPosition(x=icon_center_x,
+                                                                                              y=icon_center_y)
 
-            logger.debug(f"弃置图标中点位置: ({icon_center_x}, {icon_center_y})")
+            logger.info(f"弃置图标位置: ({icon_center_x}, {icon_center_y})")
 
             if len(relic_analysis) == 0 or relic_analysis[0].score < relic_discard_score:
-                window_left = screenshot['window']['left']
-                window_top = screenshot['window']['top']
+                window_left = screenshot['window_info'].left
+                window_top = screenshot['window_info'].top
 
                 icon_x = window_left + icon_center_x
                 icon_y = window_top + icon_center_y
-
-                logger.debug(f"弃置图标屏幕位置: ({icon_x}, {icon_y})")
 
                 # click on the icon
                 pg.click(icon_x, icon_y)

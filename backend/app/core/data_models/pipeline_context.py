@@ -7,8 +7,9 @@ from pydantic import BaseModel
 class PipelineContext(BaseModel):
     """Base context holding pipeline execution data"""
     pipeline_id: str
-    data: Dict[str, Any]
+    data: Dict[str, Any] = {}
     meta_data: Dict[str, Any]
+    cache: Dict[str, Any] = {}
 
     def cleanup(self) -> None:
         for stage_name, resources in self.data.items():
