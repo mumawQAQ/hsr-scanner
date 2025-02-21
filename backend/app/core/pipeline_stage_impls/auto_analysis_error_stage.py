@@ -1,5 +1,3 @@
-from typing import Optional
-
 from loguru import logger
 
 from app.constant import ANALYSIS_FAIL_SKIP
@@ -16,22 +14,29 @@ class AutoAnalysisErrorStage(BasePipelineStage):
         return "auto_analysis_error_stage"
 
     async def process(self, context: PipelineContext) -> StageResult:
-        skip_if_error = context.meta_data.get(ANALYSIS_FAIL_SKIP, True)
-        context.cleanup()
 
-        if skip_if_error:
-            keyboard_model: Optional[KeyboardModel] = ModelManager().get_model(KeyboardModel.get_name())
+        try:
+            skip_if_error = context.meta_data.get(ANALYSIS_FAIL_SKIP, True)
+            context.cleanup()
 
-            if not keyboard_model:
-                error_msg = "键盘模组未找到, 请联系开发者"
-                logger.error(error_msg)
-                return StageResult(
-                    success=False,
-                    data=None,
-                    error=error_msg
-                )
+            if skip_if_error:
+                keyboard_model = ModelManager().get_model(KeyboardModel.get_name(), KeyboardModel)
 
-            keyboard_model.predict("d")
+                if not keyboard_model:
+                    error_msg = "键盘模组未找到, 请联系开发者"
+                    logger.error(error_msg)
+                    return StageResult(
+                        success=False,
+                        data=None,
+                        error=error_msg
+                    )
+
+                keyboard_model.predict("d")
+                
             return StageResult(success=True, data=None)
-
-        return StageResult(success=True, data=None)
+        except ModuleNotFoundError:
+            logger.exception("无法找到模组, 请联系开发者")
+            return StageResult(success=False, data=None, error="无法找到模组, 请联系开发者")
+        except Exception:
+            logger.exception("自动分析错误处理阶段异常")
+            return StageResult(success=False, data=None, error="自动分析错误处理阶段异常, 打开日志查看详细信息")
