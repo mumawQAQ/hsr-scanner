@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from app.constant import RELIC_BOX_TYPES, AUTO_DETECT_DISCARD_ICON, AUTO_DETECT_RELIC_BOX, DISCARD_ICON_POSITION, \
-    RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP
+    RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP, AUTO_ENHANCE, RELIC_ENHANCE_SCORE
 from app.core.data_models.icon_position import IconPosition
 from app.core.network_models.requests.discard_icon_position_request import UpdateDiscardIconPositionRequest
 from app.core.network_models.requests.relic_box_position_request import UpdateRelicBoxPositionRequest
@@ -14,6 +14,104 @@ from app.core.network_models.responses.relic_box_position_response import GetRel
 from app.core.orm_models.config_orm import ConfigORM
 
 router = APIRouter()
+
+
+@router.get("/auto-enhance", response_model=SuccessResponse[bool], status_code=HTTPStatus.OK)
+def get_auto_enhance():
+    db_config = ConfigORM.select().where(ConfigORM.key == AUTO_ENHANCE).first()
+
+    if not db_config:
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': False
+            }
+        )
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={'status': 'success', 'data': db_config.value}
+    )
+
+
+@router.patch("/auto-enhance/{state}", response_model=SuccessResponse[str], status_code=HTTPStatus.OK)
+def change_auto_enhance(state: bool):
+    db_config = ConfigORM.select().where(ConfigORM.key == AUTO_ENHANCE).first()
+
+    # if there is no config, create a new one
+    if not db_config:
+        new_db_config = ConfigORM(key=AUTO_ENHANCE, value=state)
+        new_db_config.save()
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': "配置更新成功"
+            }
+        )
+
+    # if there is a config, update it
+    db_config.value = state
+    db_config.save()
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'message': "配置更新成功"
+        }
+    )
+
+
+@router.get("/auto-enhance-score", response_model=SuccessResponse[int], status_code=HTTPStatus.OK)
+def get_auto_enhance_score():
+    db_config = ConfigORM.select().where(ConfigORM.key == RELIC_ENHANCE_SCORE).first()
+
+    if not db_config:
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'data': 70
+            }
+        )
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={'status': 'success', 'data': db_config.value}
+    )
+
+
+@router.patch("/auto-enhance-score/{score}", response_model=SuccessResponse[str], status_code=HTTPStatus.OK)
+def change_auto_enhance_score(score: int):
+    db_config = ConfigORM.select().where(ConfigORM.key == RELIC_ENHANCE_SCORE).first()
+
+    # if there is no config, create a new one
+    if not db_config:
+        new_db_config = ConfigORM(key=RELIC_ENHANCE_SCORE, value=score)
+        new_db_config.save()
+
+        return JSONResponse(
+            status_code=HTTPStatus.OK,
+            content={
+                'status': 'success',
+                'message': "配置更新成功"
+            }
+        )
+
+    # if there is a config, update it
+    db_config.value = score
+    db_config.save()
+
+    return JSONResponse(
+        status_code=HTTPStatus.OK,
+        content={
+            'status': 'success',
+            'message': "配置更新成功"
+        }
+    )
 
 
 @router.get("/analysis-fail-skip",
