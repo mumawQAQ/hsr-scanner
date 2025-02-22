@@ -1,5 +1,5 @@
 from app.constant import AUTO_DETECT_RELIC_BOX, RELIC_TITLE, RELIC_MAIN_STAT, RELIC_SUB_STAT, AUTO_DETECT_DISCARD_ICON, \
-    DISCARD_ICON_POSITION, RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP
+    DISCARD_ICON_POSITION, RELIC_DISCARD_SCORE, ANALYSIS_FAIL_SKIP, AUTO_ENHANCE, RELIC_ENHANCE_SCORE
 from app.core.database import db
 from app.core.orm_models.config_orm import ConfigORM
 from app.core.orm_models.rating_rule_orm import RatingRuleORM
@@ -76,6 +76,16 @@ def get_pipeline_config(config_name: str):
     except ConfigORM.DoesNotExist:
         analysis_fail_skip = True
 
+    try:
+        auto_enhance = ConfigORM.get(ConfigORM.key == AUTO_ENHANCE).value
+    except ConfigORM.DoesNotExist:
+        auto_enhance = False
+
+    try:
+        relic_enhance_score = ConfigORM.get(ConfigORM.key == RELIC_ENHANCE_SCORE).value
+    except ConfigORM.DoesNotExist:
+        relic_enhance_score = 70
+
     if config_name == 'SingleRelicAnalysisPipeline':
         return {
             AUTO_DETECT_RELIC_BOX: auto_detect_relic_box,
@@ -92,5 +102,7 @@ def get_pipeline_config(config_name: str):
             RELIC_SUB_STAT: relic_sub_stat_box,
             AUTO_DETECT_DISCARD_ICON: auto_detect_discard_icon,
             DISCARD_ICON_POSITION: discard_icon_position,
-            RELIC_DISCARD_SCORE: discard_score
+            RELIC_DISCARD_SCORE: discard_score,
+            AUTO_ENHANCE: auto_enhance,
+            RELIC_ENHANCE_SCORE: relic_enhance_score
         }
