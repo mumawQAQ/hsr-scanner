@@ -17,7 +17,7 @@ class RelicAnalysisStage(BasePipelineStage):
 
     async def process(self, context: PipelineContext) -> StageResult:
         try:
-            ocr_stage_result = context.get_result(OCRStage.get_name())
+            ocr_stage_result = context.get_stage_result(OCRStage.get_name())
             relic_rating_model = ModelManager().get_model(RelicRatingModel)
 
             try:
@@ -30,7 +30,6 @@ class RelicAnalysisStage(BasePipelineStage):
                     data=None,
                     error=error_msg
                 )
-
             return StageResult(
                 success=True,
                 data=result,

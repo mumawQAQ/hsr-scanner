@@ -8,7 +8,7 @@
         "ocr_stage",
         "relic_analysis_stage",
         "single_analysis_error_stage",
-        "complete_stage"
+        "single_complete_stage"
       ],
       "initial": "idle",
       "transitions": [
@@ -39,7 +39,7 @@
         {
           "trigger": "next_stage_trigger",
           "source": "relic_analysis_stage",
-          "dest": "complete_stage",
+          "dest": "single_complete_stage",
           "after": "run_current_stage"
         },
         {
@@ -50,7 +50,7 @@
         },
         {
           "trigger": "next_stage_trigger",
-          "source": "complete_stage",
+          "source": "single_complete_stage",
           "dest": "screenshot_stage",
           "after": "run_current_stage"
         },
@@ -75,8 +75,9 @@
         "ocr_stage",
         "relic_analysis_stage",
         "relic_discard_stage",
+        "relic_enhance_stage",
         "auto_analysis_error_stage",
-        "complete_stage"
+        "auto_complete_stage"
       ],
       "initial": "idle",
       "transitions": [
@@ -113,7 +114,13 @@
         {
           "trigger": "next_stage_trigger",
           "source": "relic_discard_stage",
-          "dest": "complete_stage",
+          "dest": "relic_enhance_stage",
+          "after": "run_current_stage"
+        },
+        {
+          "trigger": "next_stage_trigger",
+          "source": "relic_enhance_stage",
+          "dest": "auto_complete_stage",
           "after": "run_current_stage"
         },
         {
@@ -124,7 +131,7 @@
         },
         {
           "trigger": "next_stage_trigger",
-          "source": "complete_stage",
+          "source": "auto_complete_stage",
           "dest": "screenshot_stage",
           "after": "run_current_stage"
         },

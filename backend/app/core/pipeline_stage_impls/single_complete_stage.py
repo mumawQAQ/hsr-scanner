@@ -3,11 +3,11 @@ from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
 
 
-class CompleteStage(BasePipelineStage):
+class SingleCompleteStage(BasePipelineStage):
 
     @staticmethod
     def get_name() -> str:
-        return "complete_stage"
+        return "single_complete_stage"
 
     async def process(self, context: PipelineContext) -> StageResult:
         context.cleanup()

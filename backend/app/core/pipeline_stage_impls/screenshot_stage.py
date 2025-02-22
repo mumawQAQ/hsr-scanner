@@ -1,3 +1,5 @@
+import asyncio
+
 from loguru import logger
 
 from app.constant import GAME_TITLES
@@ -33,6 +35,7 @@ class ScreenshotStage(BasePipelineStage):
 
             screenshot_data = screenshot_model.predict(window_info)
 
+            await asyncio.sleep(0.25)
             return StageResult(
                 success=True,
                 data={

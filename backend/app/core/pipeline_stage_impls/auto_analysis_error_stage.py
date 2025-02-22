@@ -1,3 +1,5 @@
+import asyncio
+
 from loguru import logger
 
 from app.constant import ANALYSIS_FAIL_SKIP
@@ -24,6 +26,7 @@ class AutoAnalysisErrorStage(BasePipelineStage):
                 keyboard_model = ModelManager().get_model(KeyboardModel)
                 keyboard_model.predict("d")
 
+            await asyncio.sleep(0.25)
             return StageResult(success=True, data=None)
         except ModelNotFoundException as e:
             logger.exception(e.message)

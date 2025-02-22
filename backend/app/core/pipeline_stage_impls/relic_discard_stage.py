@@ -9,8 +9,6 @@ from app.core.data_models.caches import CachedDiscardIconPosition
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
-from app.core.managers.model_manager import ModelManager
-from app.core.model_impls.keyboard_model import KeyboardModel
 from app.core.pipeline_stage_impls.detection_stage import DetectionStage
 from app.core.pipeline_stage_impls.relic_analysis_stage import RelicAnalysisStage
 from app.core.pipeline_stage_impls.screenshot_stage import ScreenshotStage
@@ -36,8 +34,6 @@ class RelicDiscardStage(BasePipelineStage):
 
             logger.info(
                 f"当前阶段配置: relic_discard_score: {relic_discard_score}, auto_detect_discard_icon: {auto_detect_discard_icon}, discard_icon_position: {discard_icon_position}")
-
-            keyboard_model = ModelManager().get_model(KeyboardModel)
 
             # use the user set mouse position if available
             if not auto_detect_discard_icon:
@@ -84,11 +80,18 @@ class RelicDiscardStage(BasePipelineStage):
                 # wait for 0.5 seconds, if this is too fast the next relic may not be processed
                 await asyncio.sleep(0.5)
 
-            keyboard_model.predict("d")
+                return StageResult(
+                    success=True,
+                    data={
+                        'is_discarded': True
+                    }
+                )
 
             return StageResult(
                 success=True,
-                data=None,
+                data={
+                    'is_discarded': False
+                }
             )
         except StageResultNotFoundException as e:
             logger.exception(e.message)

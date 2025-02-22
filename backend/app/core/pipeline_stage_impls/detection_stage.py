@@ -29,7 +29,6 @@ class DetectionStage(BasePipelineStage):
             else:
                 yolo_model = ModelManager().get_model(YOLOModel)
                 detection_data = yolo_model.predict(screenshot_stage_result)
-
                 return StageResult(
                     success=True,
                     data=detection_data,

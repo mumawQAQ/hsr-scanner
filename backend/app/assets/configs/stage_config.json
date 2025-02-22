@@ -19,13 +19,16 @@
       "class": "app.core.pipeline_stage_impls.relic_enhance_stage.RelicEnhanceStage"
     },
     {
-      "class": "app.core.pipeline_stage_impls.complete_stage.CompleteStage"
+      "class": "app.core.pipeline_stage_impls.single_complete_stage.SingleCompleteStage"
     },
     {
       "class": "app.core.pipeline_stage_impls.single_analysis_error_stage.SingleAnalysisErrorStage"
     },
     {
       "class": "app.core.pipeline_stage_impls.auto_analysis_error_stage.AutoAnalysisErrorStage"
+    },
+    {
+      "class": "app.core.pipeline_stage_impls.auto_complete_stage.AutoCompleteStage"
     }
   ]
 }

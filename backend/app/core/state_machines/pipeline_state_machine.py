@@ -48,8 +48,6 @@ class PipelineStateMachine:
             return
 
         try:
-            # TODO: this need to be configurable by the user
-            await asyncio.sleep(0.05)
             # If we've just become idle, we shouldn't proceed.
             if self.state == "idle":
                 logger.info(f"[{self.config_name}:{self.context.pipeline_id}] 流水线已空闲")
