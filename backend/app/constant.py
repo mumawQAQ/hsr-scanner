@@ -33,7 +33,7 @@ GAME_TITLES = ['Honkai: Star Rail']
 
 RELIC_DISCARD_SCORE = 'relic_discard_score'
 AUTO_DETECT_DISCARD_ICON = 'auto_detect_discard_icon'
-RELIC_ENCHANT_SCORE = 'relic_enchant_score'
+RELIC_ENHANCE_SCORE = 'relic_enhance_score'
 AUTO_ENHANCE = 'auto_enhance'
 AUTO_DETECT_RELIC_BOX = 'auto_detect_relic_box'
 ANALYSIS_FAIL_SKIP = 'analysis_fail_skip'
