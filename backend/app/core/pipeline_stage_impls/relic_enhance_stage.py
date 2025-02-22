@@ -7,6 +7,8 @@ from pynput.keyboard import Key
 
 from app.constant import AUTO_ENHANCE, RELIC_ENHANCE_SCORE
 from app.core.custom_exception import StageResultNotFoundException, ModelNotFoundException
+from app.core.data_models.caches import CachedInventoryEnhanceButtonPosition, CachedRelicDetailEnhanceButtonPosition, \
+    CachedAutoAddButtonPosition
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -75,39 +77,67 @@ class RelicEnhanceStage(BasePipelineStage):
                 if error:
                     return error
 
-                screenshot_result = screenshot_model.predict(window_info)
-                ocr_result = ocr_model.predict(screenshot_result)
-                location_results = self.find_words_location(ocr_result, ["Enhance"])
-                error = validate_none(location_results.get("Enhance", None),
-                                      "未检测到遗器强化按钮")
-                if error:
-                    logger.error(error)
-                    return error
+                # check the cache before the expensive operation
+                cached_inventory_enhance_button_position: CachedInventoryEnhanceButtonPosition = context.cache.get(
+                    CachedInventoryEnhanceButtonPosition.name)
 
-                # calculate the center of the word "Enhance"
-                enhance_word_center_x, enhance_word_center_y = self.get_xy_center(location_results["Enhance"])
+                if cached_inventory_enhance_button_position:
+                    enhance_word_center_x = cached_inventory_enhance_button_position.x
+                    enhance_word_center_y = cached_inventory_enhance_button_position.y
+                else:
+
+                    screenshot_result = screenshot_model.predict(window_info)
+                    ocr_result = ocr_model.predict(screenshot_result)
+                    location_results = self.find_words_location(ocr_result, ["Enhance"])
+                    error = validate_none(location_results.get("Enhance", None),
+                                          "未检测到遗器强化按钮")
+                    if error:
+                        logger.error(error)
+                        return error
+                    # calculate the center of the word "Enhance"
+                    enhance_word_center_x, enhance_word_center_y = self.get_xy_center(location_results["Enhance"])
+
+                    # cache the position
+                    context.cache[CachedInventoryEnhanceButtonPosition.name] = CachedInventoryEnhanceButtonPosition(
+                        x=enhance_word_center_x,
+                        y=enhance_word_center_y)
+
                 pg.click(enhance_word_center_x, enhance_word_center_y)
                 await asyncio.sleep(0.5)
 
-                # screenshot again
-                screenshot_result = screenshot_model.predict(window_info)
-                ocr_result = ocr_model.predict(screenshot_result)
-                location_results = self.find_words_location(ocr_result, ["Enhance", "Auto-Add"])
+                # check the cache before the expensive operation
+                cached_relic_detail_enhance_button_position: CachedRelicDetailEnhanceButtonPosition = context.cache.get(
+                    CachedRelicDetailEnhanceButtonPosition.name
+                )
 
-                error = validate_none(location_results.get("Enhance", None),
-                                      "未检测到遗器强化按钮")
-                if error:
-                    logger.error(error)
-                    return error
+                cached_auto_add_button_position: CachedAutoAddButtonPosition = context.cache.get(
+                    CachedAutoAddButtonPosition.name)
 
-                error = validate_none(location_results.get("Auto-Add", None),
-                                      "未检测到遗器自动增加按钮")
-                if error:
-                    logger.error(error)
-                    return error
+                if cached_relic_detail_enhance_button_position and cached_auto_add_button_position:
+                    enhance_word_center_x = cached_relic_detail_enhance_button_position.x
+                    enhance_word_center_y = cached_relic_detail_enhance_button_position.y
+                    auto_add_word_center_x = cached_auto_add_button_position.x
+                    auto_add_word_center_y = cached_auto_add_button_position.y
+                else:
+                    # screenshot again
+                    screenshot_result = screenshot_model.predict(window_info)
+                    ocr_result = ocr_model.predict(screenshot_result)
+                    location_results = self.find_words_location(ocr_result, ["Enhance", "Auto-Add"])
 
-                enhance_word_center_x, enhance_word_center_y = self.get_xy_center(location_results["Enhance"])
-                auto_add_word_center_x, auto_add_word_center_y = self.get_xy_center(location_results["Auto-Add"])
+                    error = validate_none(location_results.get("Enhance", None),
+                                          "未检测到遗器强化按钮")
+                    if error:
+                        logger.error(error)
+                        return error
+
+                    error = validate_none(location_results.get("Auto-Add", None),
+                                          "未检测到遗器自动增加按钮")
+                    if error:
+                        logger.error(error)
+                        return error
+
+                    enhance_word_center_x, enhance_word_center_y = self.get_xy_center(location_results["Enhance"])
+                    auto_add_word_center_x, auto_add_word_center_y = self.get_xy_center(location_results["Auto-Add"])
 
                 pg.click(auto_add_word_center_x, auto_add_word_center_y)
                 await asyncio.sleep(0.2)
