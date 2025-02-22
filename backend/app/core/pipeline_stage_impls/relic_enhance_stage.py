@@ -5,7 +5,7 @@ import pyautogui as pg
 from loguru import logger
 from pynput.keyboard import Key
 
-from app.constant import AUTO_ENHANCE, RELIC_ENCHANT_SCORE
+from app.constant import AUTO_ENHANCE, RELIC_ENHANCE_SCORE
 from app.core.custom_exception import StageResultNotFoundException, ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
@@ -29,6 +29,7 @@ class RelicEnhanceStage(BasePipelineStage):
     def get_name() -> str:
         return "relic_enhance_stage"
 
+    # TODO: cached the icon positions
     async def process(self, context: PipelineContext) -> StageResult:
         try:
             relic_discard_stage_result = context.get_stage_result(RelicDiscardStage.get_name())
@@ -45,7 +46,7 @@ class RelicEnhanceStage(BasePipelineStage):
                     'next_relic': True
                 })
 
-            relic_enchant_score = context.meta_data.get(RELIC_ENCHANT_SCORE, 40) / 100
+            relic_enchant_score = context.meta_data.get(RELIC_ENHANCE_SCORE, 70) / 100
             ocr_stage_result: Optional[RelicOCRResponse] = context.get_stage_result(OCRStage.get_name())
             relic_analysis_stage_result: Union[None, List[RelicScoreResponse]] = context.get_stage_result(
                 RelicAnalysisStage.get_name())
