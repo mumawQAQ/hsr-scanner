@@ -11,6 +11,118 @@ import {
 import { useBackend } from '@/hooks/use-backend.ts'
 import { getBackendUrl } from '@/lib/utils.ts'
 
+export const useAutoEnhance = () => {
+    const { backendPort } = useBackend()
+    return useQuery({
+        queryKey: ['auto-enhance'],
+        queryFn: async () => {
+            if (!backendPort) {
+                throw new Error('API not initialized')
+            }
+
+            try {
+                const { data } = await axios.get<ApiResponse<boolean>>(
+                    `${getBackendUrl(backendPort)}/config/auto-enhance`
+                )
+
+                if (data.status !== 'success') {
+                    throw new Error(data.message)
+                }
+                return data.data
+            } catch (error) {
+                console.error('Failed to fetch auto-enhance:', error)
+                throw error
+            }
+        },
+    })
+}
+
+export const useUpdateAutoEnhance = () => {
+    const { backendPort } = useBackend()
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (autoEnhance: boolean) => {
+            if (!backendPort) {
+                throw new Error('API not initialized')
+            }
+            try {
+                const { data } = await axios.patch<ApiResponse<string>>(
+                    `${getBackendUrl(backendPort)}/config/auto-enhance/${autoEnhance}`
+                )
+                if (data.status !== 'success') {
+                    throw new Error(data.message)
+                }
+
+                return data.data
+            } catch (error) {
+                console.error('Failed to update auto-enhance:', error)
+                throw error
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['auto-enhance'],
+            })
+        },
+    })
+}
+
+export const useAutoEnhanceScore = () => {
+    const { backendPort } = useBackend()
+    return useQuery({
+        queryKey: ['auto-enhance-score'],
+        queryFn: async () => {
+            if (!backendPort) {
+                throw new Error('API not initialized')
+            }
+
+            try {
+                const { data } = await axios.get<ApiResponse<number>>(
+                    `${getBackendUrl(backendPort)}/config/auto-enhance-score`
+                )
+
+                if (data.status !== 'success') {
+                    throw new Error(data.message)
+                }
+                return data.data
+            } catch (error) {
+                console.error('Failed to fetch auto-enhance-score:', error)
+                throw error
+            }
+        },
+    })
+}
+
+export const useUpdateAutoEnhanceScore = () => {
+    const { backendPort } = useBackend()
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (autoEnhanceScore: number) => {
+            if (!backendPort) {
+                throw new Error('API not initialized')
+            }
+            try {
+                const { data } = await axios.patch<ApiResponse<string>>(
+                    `${getBackendUrl(backendPort)}/config/auto-enhance-score/${autoEnhanceScore}`
+                )
+                if (data.status !== 'success') {
+                    throw new Error(data.message)
+                }
+
+                return data.data
+            } catch (error) {
+                console.error('Failed to update auto-enhance-score:', error)
+                throw error
+            }
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['auto-enhance-score'],
+            })
+        },
+    })
+}
+
 export const useAnalysisFailSkip = () => {
     const { backendPort } = useBackend()
     return useQuery({

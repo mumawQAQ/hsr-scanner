@@ -11,11 +11,15 @@ import {
     useAnalysisFailSkip,
     useAutoDetectDiscardIcon,
     useAutoDetectRelicBoxPosition,
+    useAutoEnhance,
+    useAutoEnhanceScore,
     useDiscardIconPosition,
     useRelicDiscardScore,
     useUpdateAnalysisFailSkip,
     useUpdateAutoDetectDiscardIcon,
     useUpdateAutoDetectRelicBoxPosition,
+    useUpdateAutoEnhance,
+    useUpdateAutoEnhanceScore,
     useUpdateDiscardIconPosition,
     useUpdateRelicDiscardScore,
 } from '@/apis/config'
@@ -53,6 +57,10 @@ const Setting = () => {
     const updateRelicDiscardScore = useUpdateRelicDiscardScore()
     const analysisFailSkip = useAnalysisFailSkip()
     const updateAnalysisFailSkip = useUpdateAnalysisFailSkip()
+    const autoEnhance = useAutoEnhance()
+    const updateAutoEnhance = useUpdateAutoEnhance()
+    const autoEnhanceScore = useAutoEnhanceScore()
+    const updateAutoEnhanceScore = useUpdateAutoEnhanceScore()
 
     useEffect(() => {
         getVersion().then((version) => {
@@ -178,6 +186,15 @@ const Setting = () => {
         updateAnalysisFailSkip.mutate(isSelected)
     }
 
+    const handleChangeAutoEnhance = (isSelected: boolean) => {
+        updateAutoEnhance.mutate(isSelected)
+    }
+
+    const handleChangeAutoEnhanceScore = (val: string) => {
+        const newValue = parseInt(val, 10) || 0
+        updateAutoEnhanceScore.mutate(newValue)
+    }
+
     return (
         <div className="flex flex-col gap-4">
             <div className="text-center text-gray-600">
@@ -288,6 +305,43 @@ const Setting = () => {
                             min={0}
                             max={100}
                         />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="pt-5 px-2 shadow-lg rounded-lg">
+                <CardContent className="flex flex-col gap-4">
+                    <div className="flex flex-row items-center">
+                        <div className="grow flex flex-col gap-2">
+                            <div>自动强化</div>
+                            <div className="text-sm text-gray-500">
+                                如果该选择开启则会自动强化大于等于强化分数的遗器, 确保你有足够的狗粮可以强化,
+                                并且开启了强化至下一个节点
+                            </div>
+                        </div>
+
+                        <div className="ml-20">
+                            <Switch checked={autoEnhance.data} onCheckedChange={handleChangeAutoEnhance} />
+                        </div>
+                    </div>
+                    <Separator />
+                    <div className="flex flex-row gap-2 items-center">
+                        <div className="grow flex flex-col gap-2">
+                            <div>强化分数</div>
+                            <div className="text-sm text-gray-500">如果分数大于该值则会强化</div>
+                        </div>
+
+                        <div className="ml-20">
+                            <Input
+                                type="number"
+                                value={autoEnhanceScore.data ? autoEnhanceScore.data.toString() : '0'}
+                                onChange={(e) => {
+                                    handleChangeAutoEnhanceScore(e.target.value)
+                                }}
+                                min={0}
+                                max={100}
+                            />
+                        </div>
                     </div>
                 </CardContent>
             </Card>
