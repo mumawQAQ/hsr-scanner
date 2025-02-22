@@ -175,7 +175,7 @@ class RelicEnhanceStage(BasePipelineStage):
         return result
 
     def get_xy_center(self, locations: List[List]) -> Tuple[int, int]:
-        x_center = (locations[0][0] + locations[2][0]) / 2
-        y_center = (locations[0][1] + locations[2][1]) / 2
+        x_center = int((locations[0][0] + locations[2][0]) / 2)
+        y_center = int((locations[0][1] + locations[2][1]) / 2)
 
         return x_center, y_center
