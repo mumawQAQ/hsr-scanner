@@ -2,7 +2,6 @@ import asyncio
 
 from loguru import logger
 
-from app.core.custom_exception import StageResultNotFoundException, ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -29,12 +28,6 @@ class AutoCompleteStage(BasePipelineStage):
 
             await asyncio.sleep(0.25)
             return StageResult(success=True, data=None)
-        except ModelNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
-        except StageResultNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
-        except Exception:
+        except Exception as e:
             logger.exception("自动完成阶段异常")
-            return StageResult(success=False, data=None, error="自动完成阶段异常, 打开日志查看详细信息")
+            return StageResult(success=False, data=None, error=str(e))

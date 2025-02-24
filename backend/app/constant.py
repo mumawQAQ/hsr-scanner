@@ -13,6 +13,7 @@ CHARACTERS_FILE = os.path.join(ASSETS_FOLDER, 'character', 'character_meta.json'
 
 YOLO_MODEL_PATH = os.path.join(ASSETS_FOLDER, 'yolo_model', 'best.pt')
 
+ICON_FOLDER = os.path.join(ASSETS_FOLDER, 'images', 'icons')
 RELIC_DATA_FOLDER = os.path.join(ASSETS_FOLDER, 'relic')
 RELIC_SETS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_sets.json')
 RELIC_MAIN_STATS_FILE = os.path.join(RELIC_DATA_FOLDER, 'relic_main_stats.json')

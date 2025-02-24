@@ -7,7 +7,6 @@ from loguru import logger
 from numpy import ndarray
 
 from app.constant import AUTO_DETECT_RELIC_BOX, RELIC_TITLE, RELIC_MAIN_STAT, RELIC_SUB_STAT
-from app.core.custom_exception import ModelNotFoundException, StageResultNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult, StageResultMetaData
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -268,15 +267,9 @@ class OCRStage(BasePipelineStage):
                 metadata=StageResultMetaData(send_to_frontend=True)
             )
 
-        except StageResultNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
-        except ModelNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
-        except Exception:
+        except Exception as e:
             logger.exception(f"遗器OCR阶段异常")
-            return StageResult(success=False, data=None, error="遗器OCR阶段异常, 打开日志查看详情")
+            return StageResult(success=False, data=None, error=str(e))
 
     def crop_image(self, img: np.ndarray, box: Dict[str, int]) -> np.ndarray:
         x1 = box['x']

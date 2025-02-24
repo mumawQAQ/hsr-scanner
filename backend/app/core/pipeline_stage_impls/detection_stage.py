@@ -1,7 +1,6 @@
 from loguru import logger
 
 from app.constant import AUTO_DETECT_RELIC_BOX, AUTO_DETECT_DISCARD_ICON
-from app.core.custom_exception import StageResultNotFoundException, ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -34,24 +33,10 @@ class DetectionStage(BasePipelineStage):
                     data=detection_data,
                 )
 
-        except StageResultNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(
-                success=False,
-                data=None,
-                error=e.message
-            )
-        except ModelNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(
-                success=False,
-                data=None,
-                error=e.message
-            )
-        except Exception:
+        except Exception as e:
             logger.exception(f"检测阶段异常")
             return StageResult(
                 success=False,
-                error="检测阶段异常, 打开日志查看详细信息",
+                error=str(e),
                 data=None,
             )

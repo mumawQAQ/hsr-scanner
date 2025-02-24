@@ -6,7 +6,6 @@ from loguru import logger
 from pynput.keyboard import Key
 
 from app.constant import AUTO_ENHANCE, RELIC_ENHANCE_SCORE
-from app.core.custom_exception import StageResultNotFoundException, ModelNotFoundException
 from app.core.data_models.caches import CachedInventoryEnhanceButtonPosition, CachedRelicDetailEnhanceButtonPosition, \
     CachedAutoAddButtonPosition
 from app.core.data_models.pipeline_context import PipelineContext
@@ -73,9 +72,6 @@ class RelicEnhanceStage(BasePipelineStage):
                 keyboard_model = ModelManager().get_model(KeyboardModel)
 
                 window_info = window_info_model.predict(None)
-                error = validate_none(window_info, "未检测到游戏窗口, 请检查游戏是否运行中, 语言是否设置为英文")
-                if error:
-                    return error
 
                 # check the cache before the expensive operation
                 cached_inventory_enhance_button_position: CachedInventoryEnhanceButtonPosition = context.cache.get(
@@ -152,13 +148,6 @@ class RelicEnhanceStage(BasePipelineStage):
             return StageResult(success=True, data={
                 'next_relic': False
             })
-
-        except StageResultNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
-        except ModelNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
         except Exception as e:
             logger.exception(f"遗器强化阶段异常")
             return StageResult(success=False, data=None, error=str(e))

@@ -3,7 +3,6 @@ import asyncio
 from loguru import logger
 
 from app.constant import ANALYSIS_FAIL_SKIP
-from app.core.custom_exception import ModelNotFoundException
 from app.core.data_models.pipeline_context import PipelineContext
 from app.core.data_models.stage_result import StageResult
 from app.core.interfaces.impls.base_pipeline_stage import BasePipelineStage
@@ -17,7 +16,6 @@ class AutoAnalysisErrorStage(BasePipelineStage):
         return "auto_analysis_error_stage"
 
     async def process(self, context: PipelineContext) -> StageResult:
-
         try:
             skip_if_error = context.meta_data.get(ANALYSIS_FAIL_SKIP, True)
             context.cleanup()
@@ -28,9 +26,6 @@ class AutoAnalysisErrorStage(BasePipelineStage):
 
             await asyncio.sleep(0.25)
             return StageResult(success=True, data=None)
-        except ModelNotFoundException as e:
-            logger.exception(e.message)
-            return StageResult(success=False, data=None, error=e.message)
-        except Exception:
+        except Exception as e:
             logger.exception("自动分析错误处理阶段异常")
-            return StageResult(success=False, data=None, error="自动分析错误处理阶段异常, 打开日志查看详细信息")
+            return StageResult(success=False, data=None, error=str(e))
