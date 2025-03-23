@@ -16,18 +16,14 @@ $PyPiMirrors = @(
     "https://mirrors.aliyun.com/pypi/simple"
 )
 
-
 # Hashtable to store response times
 $mirrorResponseTimes = @{}
-
 
 Write-Host "$FrontendProgressLogIdicator Checking PyPI mirrors latency to select the best one..."
 # Loop through each mirror and measure response time using a HEAD request.
 foreach ($mirror in $PyPiMirrors) {
     try {
-        # Use a Stopwatch to measure elapsed milliseconds
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
-        # Issue a HEAD request with a short timeout (e.g., 5 seconds)
         Invoke-WebRequest -Uri $mirror -Method Head -TimeoutSec 5 | Out-Null
         $sw.Stop()
         $mirrorResponseTimes[$mirror] = $sw.ElapsedMilliseconds
@@ -35,19 +31,12 @@ foreach ($mirror in $PyPiMirrors) {
     }
     catch {
         Write-Host "Mirror $mirror failed to respond, assigning high latency."
-        # If a mirror fails, assign it a high latency value so it sorts to the bottom
         $mirrorResponseTimes[$mirror] = 9999
     }
 }
 
-
 # Reorder the mirrors by ascending response time.
-$sortedMirrors = $mirrorResponseTimes.GetEnumerator() |
-        Sort-Object Value |
-        ForEach-Object { $_.Key }
-
-
-
+$sortedMirrors = $mirrorResponseTimes.GetEnumerator() | Sort-Object Value | ForEach-Object { $_.Key }
 
 Write-Host "Toolkit directory: $ToolsDir"
 
@@ -67,7 +56,7 @@ if (-not $vcInstalled) {
     if (Test-Path $RedistFile) {
         Write-Host "$FrontendProgressLogIdicator Installing VC++ redistributable..."
         $process = Start-Process -FilePath $RedistFile `
-                                 -ArgumentList "/install", "/quiet", "/norestart" `
+                                 -ArgumentList '/install','/quiet','/norestart' `
                                  -Wait -PassThru
         if ($process.ExitCode -eq 0) {
             Write-Host "$FrontendProgressLogIdicator VC++ redistributable installed successfully"
@@ -101,19 +90,18 @@ if (-not (Test-Path $RequirementsFile)) {
 # Update the environment PATH to include Python and its Scripts directory
 $env:Path = "$PythonDir;$ScriptDir;" + $env:Path
 
-# Update the pip version
+# Update pip
 Write-Host "$FrontendProgressLogIdicator Updating pip..."
-$process = Start-Process -FilePath $PythonExe `
-                         -ArgumentList "-m", "pip", "install", "--upgrade", "pip" `
-                         -NoNewWindow `
-                         -Wait `
-                         -PassThru
+Start-Process -FilePath $PythonExe `
+              -ArgumentList '-m','pip','install','--upgrade','pip' `
+              -NoNewWindow `
+              -Wait
 
-# Install Python dependencies in one go
+# Install Python dependencies
 $installSuccess = $false
 foreach ($mirror in $sortedMirrors) {
     Write-Host "$FrontendProgressLogIdicator Installing all Python dependencies using mirror: $mirror"
-    $arguments = "-m", "pip", "install", "--upgrade", "-r", $RequirementsFile, "-i", $mirror, "--no-warn-script-location"
+    $arguments = @('-m','pip','install','--upgrade','-r',$RequirementsFile,'-i',$mirror,'--no-warn-script-location')
     $process = Start-Process -FilePath $PythonExe `
                              -ArgumentList $arguments `
                              -NoNewWindow `
