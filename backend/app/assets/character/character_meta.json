@@ -333,5 +333,15 @@
     "name": "万敌",
     "icon": "images/characters/img_66.png",
     "paths": "毁灭"
+  },
+  "Castorice": {
+    "name": "遐蝶",
+    "icon": "images/characters/img_67.png",
+    "paths": "记忆"
+  },
+  "Anaxa": {
+    "name": "那刻夏",
+    "icon": "images/characters/img_68.png",
+    "paths": "智识"
   }
 }
