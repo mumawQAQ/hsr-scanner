@@ -11,6 +11,9 @@ class IconMatcherInput(BaseModel):
     threshold: float
     scale: Optional[float]
 
+    class Config:
+        arbitrary_types_allowed = True
+
 
 class IconMatcherOutput(BaseModel):
     x_center: int
