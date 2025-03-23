@@ -424,5 +424,23 @@
       "body": "Poet's Star-Studded Skirt",
       "feet": "Poet's Silver-Studded Shoes"
     }
+  },
+  "Bone Collection's Serene Demesne": {
+    "name": "谧宁拾骨地",
+    "icon": "images/relics/43.png",
+    "isInner": true,
+    "parts": {
+      "sphere": "Aidonia's Deceased Gravestones",
+      "rope": "Aidonia's Deathward Bone Chains"
+    }
+  },
+  "Giant Tree of Rapt Brooding": {
+    "name": "渊思寂虑的巨树",
+    "icon": "images/relics/44.png",
+    "isInner": true,
+    "parts": {
+      "sphere": "Grove of Epiphany's Pondering Colossus",
+      "rope": "Grove of Epiphany's Interwoven Veins"
+    }
   }
 }
